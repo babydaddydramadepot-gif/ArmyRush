@@ -11,6 +11,7 @@ namespace ArmyRush
         [SerializeField] private Text _costText;
         [SerializeField] private Button _button;
         [SerializeField] private Image _backgroundImage;
+        [SerializeField] private Image _glowImage;
 
         private static readonly Color AffordableCostColor = new Color(1f, 0.83f, 0.2f);
         private static readonly Color BlockedCostColor = new Color(1f, 0.45f, 0.32f);
@@ -39,6 +40,7 @@ namespace ArmyRush
             {
                 _baseBackgroundColor = _backgroundImage.color;
             }
+            EnsureGlowImage();
             if (_button != null)
             {
                 _button.onClick.AddListener(Purchase);
@@ -68,6 +70,8 @@ namespace ArmyRush
             }
 
             float pulse = Mathf.PingPong(Time.unscaledTime * 10f, 1f);
+            float elapsed = 1f - Mathf.Clamp01(_purchaseFeedbackTimer / PurchaseFeedbackDuration);
+            float glowWeight = Mathf.Sin(elapsed * Mathf.PI);
             Color flash = Color.Lerp(PurchaseFlashColor, Color.white, pulse * 0.35f);
             if (_costText != null)
             {
@@ -81,6 +85,12 @@ namespace ArmyRush
             if (_backgroundImage != null)
             {
                 _backgroundImage.color = Color.Lerp(_baseBackgroundColor, PurchaseFlashColor, 0.45f + pulse * 0.4f);
+            }
+            if (_glowImage != null)
+            {
+                _glowImage.gameObject.SetActive(true);
+                _glowImage.color = new Color(PurchaseFlashColor.r, PurchaseFlashColor.g, PurchaseFlashColor.b, 0.38f * glowWeight);
+                _glowImage.transform.localScale = Vector3.one * (1f + glowWeight * 0.12f);
             }
         }
 
@@ -150,6 +160,41 @@ namespace ArmyRush
             {
                 _backgroundImage.color = backgroundColor;
             }
+            if (_glowImage != null && !showingPurchaseFeedback)
+            {
+                _glowImage.color = Color.clear;
+                _glowImage.gameObject.SetActive(false);
+                _glowImage.transform.localScale = Vector3.one;
+            }
+        }
+
+        private void EnsureGlowImage()
+        {
+            if (_glowImage == null)
+            {
+                Transform existing = transform.Find("UpgradeGlow");
+                if (existing != null)
+                {
+                    existing.TryGetComponent(out _glowImage);
+                }
+            }
+
+            if (_glowImage == null)
+            {
+                GameObject glow = new GameObject("UpgradeGlow");
+                glow.transform.SetParent(transform, false);
+                glow.transform.SetAsFirstSibling();
+                RectTransform rect = glow.AddComponent<RectTransform>();
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = new Vector2(-8f, -8f);
+                rect.offsetMax = new Vector2(8f, 8f);
+                _glowImage = glow.AddComponent<Image>();
+            }
+
+            _glowImage.raycastTarget = false;
+            _glowImage.color = Color.clear;
+            _glowImage.gameObject.SetActive(false);
         }
     }
 }

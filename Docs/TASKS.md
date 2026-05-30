@@ -1036,7 +1036,7 @@ Acceptance Criteria:
 
 ## 6.3 Upgrade Screen
 
-Status: Functional Pass Implemented with Feedback; Device Fit QA Pending
+Status: Functional Pass Implemented with Purchase Animation and Glow Feedback; Device Fit QA Pending
 Priority: Critical
 
 Tasks:
@@ -1047,7 +1047,7 @@ Tasks:
 - Add cost display.
 - Add purchase buttons.
 - Add disabled state when unaffordable.
-- Add purchase animation.
+- [x] Add purchase animation.
 
 Acceptance Criteria:
 
@@ -1209,7 +1209,7 @@ Add VFX for:
 - Crowd add burst
 - Crowd loss burst
 - Coin burst
-- Upgrade glow
+- [x] Upgrade glow
 - Obstacle explosion
 - Boss explosion
 - Victory fireworks

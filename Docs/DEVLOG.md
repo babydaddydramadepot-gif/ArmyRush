@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-51%
+52%
 
 Last Updated:
 
@@ -1078,6 +1078,34 @@ Date:
 
 System:
 
+Upgrade Purchase Glow Feedback
+
+Files:
+
+Assets/_Project/Scripts/UI/UpgradeButtonView.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a reusable non-interactive glow layer to upgrade buttons and animated it during successful purchases. The upgrade feedback now combines button color pulse, bought text, level/cost flash, audio, haptics, and a short UI glow burst.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. The documented upgrade glow VFX now has concrete runtime coverage.
+
+Follow Up:
+
+Tune glow size and alpha during device layout QA so dense upgrade panels remain readable.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1404,11 +1432,11 @@ Gameplay Systems
 
 UI Systems
 
-38%
+39%
 
 Visual Systems
 
-42%
+43%
 
 Audio Systems
 
