@@ -10,22 +10,34 @@ namespace ArmyRush
         [SerializeField] private Text _levelText;
         [SerializeField] private Text _costText;
         [SerializeField] private Button _button;
+        [SerializeField] private Image _backgroundImage;
 
         private static readonly Color AffordableCostColor = new Color(1f, 0.83f, 0.2f);
         private static readonly Color BlockedCostColor = new Color(1f, 0.45f, 0.32f);
         private static readonly Color MaxedCostColor = new Color(0.35f, 1f, 0.62f);
         private static readonly Color MutedTextColor = new Color(0.72f, 0.8f, 0.92f);
         private static readonly Color PurchaseFlashColor = new Color(0.35f, 1f, 0.62f);
+        private static readonly Color BlockedBackgroundColor = new Color(0.13f, 0.18f, 0.26f, 1f);
+        private static readonly Color MaxedBackgroundColor = new Color(0.05f, 0.38f, 0.22f, 1f);
         private const float PurchaseFeedbackDuration = 0.42f;
 
         private UpgradeService _service;
         private float _purchaseFeedbackTimer;
+        private Color _baseBackgroundColor = new Color(0.08f, 0.28f, 0.95f, 1f);
 
         private void Awake()
         {
             if (_button == null)
             {
                 _button = GetComponent<Button>();
+            }
+            if (_backgroundImage == null)
+            {
+                _backgroundImage = GetComponent<Image>();
+            }
+            if (_backgroundImage != null)
+            {
+                _baseBackgroundColor = _backgroundImage.color;
             }
             if (_button != null)
             {
@@ -65,6 +77,10 @@ namespace ArmyRush
             if (_levelText != null)
             {
                 _levelText.color = flash;
+            }
+            if (_backgroundImage != null)
+            {
+                _backgroundImage.color = Color.Lerp(_baseBackgroundColor, PurchaseFlashColor, 0.45f + pulse * 0.4f);
             }
         }
 
@@ -109,6 +125,7 @@ namespace ArmyRush
             bool canPurchase = _service.CanPurchase(_upgradeType);
             bool showingPurchaseFeedback = _purchaseFeedbackTimer > 0f;
             Color primaryTextColor = canPurchase || isMaxed ? Color.white : MutedTextColor;
+            Color backgroundColor = showingPurchaseFeedback ? PurchaseFlashColor : isMaxed ? MaxedBackgroundColor : canPurchase ? _baseBackgroundColor : BlockedBackgroundColor;
 
             if (_titleText != null)
             {
@@ -128,6 +145,10 @@ namespace ArmyRush
             if (_button != null)
             {
                 _button.interactable = canPurchase;
+            }
+            if (_backgroundImage != null)
+            {
+                _backgroundImage.color = backgroundColor;
             }
         }
     }

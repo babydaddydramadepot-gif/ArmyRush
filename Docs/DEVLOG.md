@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-30%
+31%
 
 Last Updated:
 
@@ -746,6 +746,34 @@ Date:
 
 System:
 
+Upgrade Glow Feedback
+
+Files:
+
+Assets/_Project/Scripts/UI/UpgradeButtonView.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added immediate upgrade purchase feedback directly to upgrade buttons. Buttons now pulse the cost and level text, show a short bought state, flash the button background on purchase, and use distinct blocked/maxed background states for faster readability.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Upgrade purchases now provide visible confirmation without adding debug UI or scene references.
+
+Follow Up:
+
+Device-test button readability on iPhone and iPad, then consider coin icon motion once the menu art pass is underway.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Camera Impact Feedback
 
 Files:
@@ -779,11 +807,11 @@ Gameplay Systems
 
 UI Systems
 
-32%
+33%
 
 Visual Systems
 
-32%
+33%
 
 Audio Systems
 
@@ -807,7 +835,7 @@ Optimization
 
 Polish
 
-18%
+19%
 
 Release Readiness
 
@@ -907,7 +935,7 @@ All interface-related changes belong here.
 
 ## Initial State
 
-First functional pass implemented for main menu, upgrade buttons, gameplay HUD, victory panel, defeat panel, and safe-area fitting.
+First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel, defeat panel, and safe-area fitting.
 
 ---
 
@@ -943,7 +971,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin reward bursts, and victory bursts implemented. Final authored particle styling remains pending.
+Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin reward bursts, victory bursts, and upgrade glow feedback implemented. Final authored particle styling remains pending.
 
 ---
 
@@ -1031,7 +1059,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, and boss explosion bursts are present, but upgrade glow, defeat fade, smoke variants, and final authored styling remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, boss explosion bursts, and upgrade glow feedback are present, but defeat fade, smoke variants, and final authored styling remain pending.
 
 Issue ID:
 

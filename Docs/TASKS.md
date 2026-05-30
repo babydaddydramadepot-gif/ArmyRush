@@ -1194,7 +1194,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: In Progress; Core Combat/Crowd/Reward Bursts Implemented
+Status: In Progress; Core Combat/Crowd/Reward/Upgrade Feedback Implemented
 Priority: High
 
 Add VFX for:
