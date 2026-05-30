@@ -587,18 +587,18 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented; Impact Polish Pending
+Status: Functional Pass Implemented with Projectile Trails and Impact Feedback; Device Feel QA Pending
 Priority: High
 
 Tasks:
 
 - Implement automatic weapon firing.
 - Units target nearest valid enemy or obstacle.
-- Add projectile pooling.
-- Add bullet trails.
-- Add muzzle flashes.
-- Add hit impacts.
-- Add damage numbers.
+- [x] Add projectile pooling.
+- [x] Add bullet trails.
+- [x] Add muzzle flashes.
+- [x] Add hit impacts.
+- [x] Add damage numbers.
 
 Acceptance Criteria:
 

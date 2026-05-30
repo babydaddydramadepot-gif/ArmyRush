@@ -311,9 +311,25 @@ public static class ArmyRushProjectBuilder
         root.AddComponent<PooledObject>();
         root.AddComponent<Projectile>();
         AddMeshPart(root.transform, "Tracer", meshes.box, materials.projectile, Vector3.zero, new Vector3(0.08f, 0.08f, 0.55f));
+        ConfigureProjectileTrail(root.AddComponent<TrailRenderer>(), materials.projectile);
         GameObject prefab = SavePrefab(root, PrefabPath + "/VFX/PF_ProjectileTracer.prefab");
         Object.DestroyImmediate(root);
         return prefab;
+    }
+
+    private static void ConfigureProjectileTrail(TrailRenderer trail, Material material)
+    {
+        trail.time = 0.09f;
+        trail.minVertexDistance = 0.035f;
+        trail.widthCurve = new AnimationCurve(new Keyframe(0f, 0.11f), new Keyframe(1f, 0f));
+        trail.startColor = new Color(1f, 0.88f, 0.18f, 0.78f);
+        trail.endColor = new Color(1f, 0.38f, 0.08f, 0f);
+        trail.alignment = LineAlignment.View;
+        trail.numCapVertices = 2;
+        trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        trail.receiveShadows = false;
+        trail.emitting = false;
+        trail.material = material;
     }
 
     private static GameObject CreateTrackSegmentPrefab(MaterialSet materials, MeshSet meshes)

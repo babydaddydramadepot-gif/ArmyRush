@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-47%
+48%
 
 Last Updated:
 
@@ -962,6 +962,35 @@ Date:
 
 System:
 
+Projectile Trail Feedback
+
+Files:
+
+Assets/_Project/Scripts/Combat/Projectile.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added projectile trail rendering that is configured once per pooled projectile and reset every time a shot is fired or released. Existing projectile prefabs gain the trail at runtime if needed, and newly generated projectile prefabs include the TrailRenderer from the project builder.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Auto-shooting feedback now covers projectile pooling, bullet trails, muzzle flashes, hit impacts, and damage-number feedback.
+
+Follow Up:
+
+Tune trail width and lifetime during device play-mode QA so dense volleys stay readable without visual clutter.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1284,7 +1313,7 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 Gameplay Systems
 
-41%
+42%
 
 UI Systems
 
@@ -1292,7 +1321,7 @@ UI Systems
 
 Visual Systems
 
-41%
+42%
 
 Audio Systems
 
@@ -1316,7 +1345,7 @@ Optimization
 
 Polish
 
-33%
+34%
 
 Release Readiness
 
