@@ -93,6 +93,7 @@ namespace ArmyRush
             VfxManager.Spawn(positive ? VfxCue.GatePositive : VfxCue.GateNegative, transform.position + Vector3.up * 1.2f);
             if (ServiceLocator.TryGet(out AudioService audio))
             {
+                audio.Play(AudioCue.GatePass);
                 audio.Play(positive ? AudioCue.GatePositive : AudioCue.GateNegative);
             }
             if (ServiceLocator.TryGet(out HapticsService haptics))

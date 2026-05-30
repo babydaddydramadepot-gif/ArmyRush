@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Gate Pass Audio Cue
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Gates/GateController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a generic gate-pass procedural sweep that plays whenever a valid gate activates. The pass cue now layers under positive and negative result cues so every gate traversal has a shared tactile audio beat before the arithmetic feedback.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Gate traversal now has dedicated audio feedback instead of relying only on positive or negative result sounds.
+
+Follow Up:
+
+Balance the pass sweep against positive and negative gate cues during device-speaker QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Crowd Gain/Loss Audio Cues
 
 Files:
@@ -1786,7 +1815,7 @@ Visual Systems
 
 Audio Systems
 
-31%
+32%
 
 Level Systems
 

@@ -9,6 +9,7 @@ namespace ArmyRush
         RunStart,
         CrowdGain,
         CrowdLoss,
+        GatePass,
         GatePositive,
         GateNegative,
         Shoot,
@@ -192,6 +193,7 @@ namespace ArmyRush
             _clips[AudioCue.RunStart] = CreateArpeggio("SFX_RunStart", 460f, 820f, 0.24f, 0.24f);
             _clips[AudioCue.CrowdGain] = CreateArpeggio("SFX_CrowdGain", 540f, 960f, 0.16f, 0.22f);
             _clips[AudioCue.CrowdLoss] = CreateTone("SFX_CrowdLoss", 180f, 0.13f, 0.2f, 0.03f);
+            _clips[AudioCue.GatePass] = CreateSweep("SFX_GatePass", 260f, 740f, 0.12f, 0.2f);
             _clips[AudioCue.GatePositive] = CreateArpeggio("SFX_GatePositive", 520f, 780f, 0.18f, 0.28f);
             _clips[AudioCue.GateNegative] = CreateTone("SFX_GateNegative", 170f, 0.18f, 0.24f, 0.02f);
             _clips[AudioCue.Shoot] = CreateNoiseBurst("SFX_Shoot", 0.045f, 0.09f, 0.45f);
@@ -263,6 +265,27 @@ namespace ArmyRush
                 float envelope = Mathf.Pow(1f - normalized, 2.2f);
                 float tone = Mathf.Sin((180f + toneBlend * 800f) * Mathf.PI * 2f * i / sampleRate);
                 data[i] = Mathf.Lerp(noise, tone, 0.24f) * envelope * gain;
+            }
+
+            AudioClip clip = AudioClip.Create(name, samples, 1, sampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private static AudioClip CreateSweep(string name, float startFrequency, float endFrequency, float duration, float gain)
+        {
+            const int sampleRate = 22050;
+            int samples = Mathf.CeilToInt(sampleRate * duration);
+            float[] data = new float[samples];
+            float phase = 0f;
+            for (int i = 0; i < samples; i++)
+            {
+                float normalized = i / (float)Mathf.Max(1, samples - 1);
+                float frequency = Mathf.Lerp(startFrequency, endFrequency, Mathf.SmoothStep(0f, 1f, normalized));
+                phase += frequency * Mathf.PI * 2f / sampleRate;
+                float envelope = Mathf.Sin(normalized * Mathf.PI);
+                float body = Mathf.Sin(phase) * 0.7f + Mathf.Sin(phase * 1.5f) * 0.3f;
+                data[i] = body * envelope * gain;
             }
 
             AudioClip clip = AudioClip.Create(name, samples, 1, sampleRate, false);
