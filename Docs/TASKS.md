@@ -1408,11 +1408,12 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Not Started
+Status: Automated Level Data QA Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
 
+- [x] Add automated authored level data validation.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.

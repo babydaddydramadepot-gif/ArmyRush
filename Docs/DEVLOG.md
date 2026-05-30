@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-58%
+59%
 
 Last Updated:
 
@@ -1487,6 +1487,34 @@ Date:
 
 System:
 
+Automated Level Data QA Baseline
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Expanded the production validator with an authored-level data QA pass. Validation now checks level count, duplicate indices, track/reward/bonus data, gate values and positions, enemy and obstacle combat data, boss definition coverage, boss-level count, and a conservative positive gate-path estimate from the starting troop count.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings, including the new authored-level data QA pass. Manual playthrough QA is still required, but malformed level data and several impossible-layout risks are now covered by repeatable editor validation.
+
+Follow Up:
+
+Add play-mode or device automation around actual victory/defeat/reward flows once Unity runtime test scaffolding is introduced.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Boss Intro Audio Cue
 
 Files:
@@ -1617,7 +1645,7 @@ Audio Systems
 
 Level Systems
 
-34%
+35%
 
 Progression Systems
 
@@ -1637,7 +1665,7 @@ Polish
 
 Release Readiness
 
-11%
+12%
 
 ---
 
@@ -1833,7 +1861,7 @@ AR-001
 
 Status:
 
-Manual Unity play-mode QA has not been completed yet after generated scene creation, including the new finish-line bonus section.
+Manual Unity play-mode QA has not been completed yet after generated scene creation, including the new finish-line bonus section. Authored level data now has automated production-validator coverage, but hands-on playthrough remains pending.
 
 Issue ID:
 

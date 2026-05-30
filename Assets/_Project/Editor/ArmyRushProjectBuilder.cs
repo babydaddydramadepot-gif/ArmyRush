@@ -53,6 +53,7 @@ public static class ArmyRushProjectBuilder
         List<string> failures = new List<string>();
         ValidatePrefabFolder(failures);
         ValidatePoolingSetup(failures);
+        ValidateLevelDataAssets(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
         ValidateScene(ScenePath + "/Game.unity", failures, ValidateGameScene);
@@ -1010,6 +1011,215 @@ public static class ArmyRushProjectBuilder
         if (upgradeButtonCount < requiredUpgradeCount)
         {
             failures.Add($"MainMenu exposes {upgradeButtonCount} upgrade buttons, but {requiredUpgradeCount} upgrade types exist.");
+        }
+    }
+
+    private static void ValidateLevelDataAssets(List<string> failures)
+    {
+        LevelData[] levels = AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .OrderBy(asset => asset.levelIndex)
+            .ToArray();
+
+        if (levels.Length < 20)
+        {
+            failures.Add("Expected at least 20 authored level assets.");
+        }
+
+        GlobalTuning tuning = AssetDatabase.LoadAssetAtPath<GlobalTuning>(TuningPath + "/SO_GlobalTuning.asset");
+        int defaultStartingSoldiers = tuning != null ? Mathf.Max(1, tuning.defaultStartingSoldiers) : 10;
+        float trackHalfWidth = tuning != null ? Mathf.Max(1f, tuning.trackHalfWidth) : 3.2f;
+        HashSet<int> seenIndices = new HashSet<int>();
+        int bossLevelCount = 0;
+
+        foreach (LevelData level in levels)
+        {
+            string label = level.name + " (Level " + level.levelIndex + ")";
+            if (!seenIndices.Add(level.levelIndex))
+            {
+                failures.Add(label + " duplicates another authored level index.");
+            }
+            if (level.levelIndex <= 0)
+            {
+                failures.Add(label + " has an invalid level index.");
+            }
+            if (level.trackLength < 80f)
+            {
+                failures.Add(label + " has an unusually short track length.");
+            }
+            if (level.baseCoinReward <= 0)
+            {
+                failures.Add(label + " has no base coin reward.");
+            }
+            if (level.difficultyRating <= 0)
+            {
+                failures.Add(label + " has no difficulty rating.");
+            }
+            if (level.bonusCrateCount <= 0 || level.bonusCrateHealth <= 0 || level.bonusCrateReward <= 0 || level.bonusSectionLength <= 0f)
+            {
+                failures.Add(label + " has invalid bonus-run reward data.");
+            }
+            if (level.gates == null || level.gates.Count < 2)
+            {
+                failures.Add(label + " has fewer than two gates.");
+            }
+            else if (EstimateBestGatePath(level, defaultStartingSoldiers) <= 0)
+            {
+                failures.Add(label + " has no positive gate path from the starting troop count.");
+            }
+
+            ValidateGateData(failures, level, label, trackHalfWidth);
+            ValidateEnemyData(failures, level, label, trackHalfWidth);
+            ValidateObstacleData(failures, level, label, trackHalfWidth);
+
+            if (level.hasBoss)
+            {
+                bossLevelCount++;
+                if (level.bossDefinition == null)
+                {
+                    failures.Add(label + " is marked as a boss level without a BossDefinition.");
+                }
+            }
+        }
+
+        if (bossLevelCount < 4)
+        {
+            failures.Add("Expected at least four authored boss levels.");
+        }
+    }
+
+    private static void ValidateGateData(List<string> failures, LevelData level, string label, float trackHalfWidth)
+    {
+        if (level.gates == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < level.gates.Count; i++)
+        {
+            GateSpawnData gate = level.gates[i];
+            if (gate == null)
+            {
+                failures.Add(label + " has a null gate entry.");
+                continue;
+            }
+
+            if (gate.z <= 0f || gate.z >= level.trackLength)
+            {
+                failures.Add(label + " has gate " + i + " outside the playable track.");
+            }
+            if (Mathf.Abs(gate.x) > trackHalfWidth)
+            {
+                failures.Add(label + " has gate " + i + " outside the track width.");
+            }
+            if (gate.value <= 0)
+            {
+                failures.Add(label + " has gate " + i + " with a non-positive value.");
+            }
+        }
+    }
+
+    private static void ValidateEnemyData(List<string> failures, LevelData level, string label, float trackHalfWidth)
+    {
+        if (level.enemyGroups == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < level.enemyGroups.Count; i++)
+        {
+            EnemyGroupSpawnData enemy = level.enemyGroups[i];
+            if (enemy == null)
+            {
+                failures.Add(label + " has a null enemy entry.");
+                continue;
+            }
+
+            if (enemy.z <= 0f || enemy.z >= level.trackLength)
+            {
+                failures.Add(label + " has enemy group " + i + " outside the playable track.");
+            }
+            if (Mathf.Abs(enemy.x) > trackHalfWidth)
+            {
+                failures.Add(label + " has enemy group " + i + " outside the track width.");
+            }
+            if (enemy.count <= 0 || enemy.healthPerUnit <= 0)
+            {
+                failures.Add(label + " has enemy group " + i + " with invalid combat values.");
+            }
+        }
+    }
+
+    private static void ValidateObstacleData(List<string> failures, LevelData level, string label, float trackHalfWidth)
+    {
+        if (level.obstacles == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < level.obstacles.Count; i++)
+        {
+            ObstacleSpawnData obstacle = level.obstacles[i];
+            if (obstacle == null)
+            {
+                failures.Add(label + " has a null obstacle entry.");
+                continue;
+            }
+
+            if (obstacle.z <= 0f || obstacle.z >= level.trackLength)
+            {
+                failures.Add(label + " has obstacle " + i + " outside the playable track.");
+            }
+            if (Mathf.Abs(obstacle.x) > trackHalfWidth)
+            {
+                failures.Add(label + " has obstacle " + i + " outside the track width.");
+            }
+            if (obstacle.health <= 0 || obstacle.collisionPenalty < 0)
+            {
+                failures.Add(label + " has obstacle " + i + " with invalid combat values.");
+            }
+        }
+    }
+
+    private static int EstimateBestGatePath(LevelData level, int startingSoldiers)
+    {
+        int count = Mathf.Max(1, level.startingSoldiersOverride > 0 ? level.startingSoldiersOverride : startingSoldiers);
+        List<GateSpawnData> gates = level.gates
+            .Where(gate => gate != null)
+            .OrderBy(gate => gate.z)
+            .ToList();
+
+        for (int i = 0; i < gates.Count;)
+        {
+            float z = gates[i].z;
+            int best = count;
+            while (i < gates.Count && Mathf.Abs(gates[i].z - z) <= 0.1f)
+            {
+                best = Mathf.Max(best, ApplyGateEstimate(count, gates[i]));
+                i++;
+            }
+
+            count = best;
+        }
+
+        return count;
+    }
+
+    private static int ApplyGateEstimate(int count, GateSpawnData gate)
+    {
+        switch (gate.operation)
+        {
+            case GateOperation.Add:
+                return count + gate.value;
+            case GateOperation.Subtract:
+                return Mathf.Max(0, count - gate.value);
+            case GateOperation.Multiply:
+                return count * Mathf.Max(1, gate.value);
+            case GateOperation.Divide:
+                return Mathf.FloorToInt(count / Mathf.Max(1f, gate.value));
+            default:
+                return count;
         }
     }
 
