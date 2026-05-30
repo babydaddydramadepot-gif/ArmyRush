@@ -131,10 +131,11 @@ namespace ArmyRush
 
             int level = _service.GetLevel(_upgradeType);
             int cost = definition.GetCost(level);
+            bool isUnlocked = _service.IsUnlocked(_upgradeType);
             bool isMaxed = definition.IsMaxed(level);
             bool canPurchase = _service.CanPurchase(_upgradeType);
             bool showingPurchaseFeedback = _purchaseFeedbackTimer > 0f;
-            Color primaryTextColor = canPurchase || isMaxed ? Color.white : MutedTextColor;
+            Color primaryTextColor = isUnlocked && (canPurchase || isMaxed) ? Color.white : MutedTextColor;
             Color backgroundColor = showingPurchaseFeedback ? PurchaseFlashColor : isMaxed ? MaxedBackgroundColor : canPurchase ? _baseBackgroundColor : BlockedBackgroundColor;
 
             if (_titleText != null)
@@ -149,7 +150,7 @@ namespace ArmyRush
             }
             if (_costText != null)
             {
-                _costText.text = showingPurchaseFeedback ? "BOUGHT" : isMaxed ? "MAX" : cost.ToString();
+                _costText.text = showingPurchaseFeedback ? "BOUGHT" : !isUnlocked ? $"LV {definition.unlockLevel}" : isMaxed ? "MAX" : cost.ToString();
                 _costText.color = showingPurchaseFeedback ? PurchaseFlashColor : isMaxed ? MaxedCostColor : canPurchase ? AffordableCostColor : BlockedCostColor;
             }
             if (_button != null)

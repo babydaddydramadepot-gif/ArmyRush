@@ -932,7 +932,7 @@ Acceptance Criteria:
 
 ## 5.2 Upgrade System
 
-Status: Functional Pass Implemented; Balance QA Pending
+Status: Functional Pass Implemented with Unlock Levels and Milestone Value Curves; Economy Balance QA Pending
 Priority: Critical
 
 Tasks:
@@ -947,6 +947,9 @@ Implement upgrades:
 - Obstacle Damage
 - Critical Chance
 - Critical Damage
+- [x] Add documented unlock levels for boss, obstacle, critical chance, and critical damage upgrades.
+- [x] Add milestone value curves for documented Level 10/25/50/100 upgrade targets.
+- [x] Add validator coverage for upgrade unlocks, caps, costs, and non-regressing values.
 
 Acceptance Criteria:
 
@@ -954,6 +957,7 @@ Acceptance Criteria:
 - Upgrades persist.
 - Upgrades affect gameplay.
 - Upgrade UI reflects cost and level.
+- Locked upgrades communicate their unlock level and cannot be purchased early.
 
 ---
 

@@ -2310,6 +2310,40 @@ Manual playthrough QA is still needed to tune chunk spacing, late-level encounte
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Upgrade Progression Curves
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scripts/Core/GameBootstrapper.cs
+Assets/_Project/Scripts/Progression/UpgradeDefinition.cs
+Assets/_Project/Scripts/Progression/UpgradeService.cs
+Assets/_Project/Scripts/UI/UpgradeButtonView.cs
+Assets/_Project/ScriptableObjects/Upgrades/
+Assets/_Project/Scenes/MainMenu.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added upgrade unlock levels and milestone value curves to upgrade definitions. Damage, fire rate, starting soldiers, coin bonus, critical chance, and critical damage now follow documented progression targets, while boss and obstacle damage unlock after Level 5 and critical upgrades unlock after Levels 10 and 15. Upgrade buttons now show locked upgrade requirements and block early purchases, and validation checks upgrade definitions for unlock levels, cost growth, caps, and non-regressing values.
+
+Result:
+
+Unity foundation generation and production validation passed. Upgrade progression is now closer to the documented economy targets and prevents late-game upgrade categories from being purchased before their intended onboarding moments.
+
+Follow Up:
+
+Run economy playthrough QA to compare coin income against upgrade costs across Levels 1-20 and tune reward pacing.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2334,7 +2368,7 @@ Level Systems
 
 Progression Systems
 
-47%
+53%
 
 Boss Systems
 
@@ -2350,7 +2384,7 @@ Polish
 
 Release Readiness
 
-24%
+25%
 
 ---
 

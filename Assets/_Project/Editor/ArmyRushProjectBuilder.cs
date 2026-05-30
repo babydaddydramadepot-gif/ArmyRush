@@ -65,6 +65,7 @@ public static class ArmyRushProjectBuilder
         ValidateObstaclePrefabs(failures);
         ValidateLevelChunkDataAssets(failures);
         ValidateLevelDataAssets(failures);
+        ValidateUpgradeDefinitions(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
         ValidateScene(ScenePath + "/Game.unity", failures, ValidateGameScene);
@@ -365,14 +366,14 @@ public static class ArmyRushProjectBuilder
     {
         return new[]
         {
-            CreateUpgrade(UpgradeType.StartingTroops, "Starting Soldiers", "Begin each run with a larger squad.", 250, 1.15f, 10f, 0.65f),
-            CreateUpgrade(UpgradeType.Damage, "Damage", "Increase all soldier weapon damage.", 100, 1.15f, 10f, 2.5f),
-            CreateUpgrade(UpgradeType.FireRate, "Fire Rate", "Increase shots per second.", 150, 1.15f, 1f, 0.1f),
-            CreateUpgrade(UpgradeType.CoinReward, "Coin Bonus", "Increase coins earned from every run.", 120, 1.15f, 1f, 0.02f),
-            CreateUpgrade(UpgradeType.BossDamage, "Boss Damage", "Increase damage dealt to boss targets.", 300, 1.18f, 1f, 0.08f),
-            CreateUpgrade(UpgradeType.ObstacleDamage, "Obstacle Damage", "Increase damage dealt to barricades and breakables.", 220, 1.16f, 1f, 0.06f),
-            CreateUpgrade(UpgradeType.CriticalChance, "Critical Chance", "Unlock a chance for high-impact critical volleys.", 400, 1.2f, 0f, 0.01f),
-            CreateUpgrade(UpgradeType.CriticalDamage, "Critical Damage", "Increase the multiplier on critical volleys.", 500, 1.2f, 1.5f, 0.04f)
+            CreateUpgrade(UpgradeType.StartingTroops, "Starting Soldiers", "Begin each run with a larger squad.", 250, 1.15f, 10f, 0.65f, 1, 75f, new[] { UpgradeMilestone(10, 15f), UpgradeMilestone(25, 25f), UpgradeMilestone(50, 40f), UpgradeMilestone(100, 75f) }),
+            CreateUpgrade(UpgradeType.Damage, "Damage", "Increase all soldier weapon damage.", 100, 1.15f, 10f, 2.5f, 1, 1200f, new[] { UpgradeMilestone(1, 12f), UpgradeMilestone(10, 35f), UpgradeMilestone(25, 100f), UpgradeMilestone(50, 300f), UpgradeMilestone(100, 1000f) }),
+            CreateUpgrade(UpgradeType.FireRate, "Fire Rate", "Increase shots per second.", 150, 1.15f, 1f, 0.1f, 1, 10f, new[] { UpgradeMilestone(10, 2f), UpgradeMilestone(25, 4f), UpgradeMilestone(50, 7f), UpgradeMilestone(100, 10f) }),
+            CreateUpgrade(UpgradeType.CoinReward, "Coin Bonus", "Increase coins earned from every run.", 120, 1.15f, 1f, 0.02f, 1, 5f, new[] { UpgradeMilestone(10, 1.2f), UpgradeMilestone(25, 1.5f), UpgradeMilestone(50, 2.5f), UpgradeMilestone(100, 5f) }),
+            CreateUpgrade(UpgradeType.BossDamage, "Boss Damage", "Increase damage dealt to boss targets.", 300, 1.18f, 1f, 0.08f, 6, 5f, new[] { UpgradeMilestone(10, 1.8f), UpgradeMilestone(25, 2.6f), UpgradeMilestone(50, 3.8f), UpgradeMilestone(100, 5f) }),
+            CreateUpgrade(UpgradeType.ObstacleDamage, "Obstacle Damage", "Increase damage dealt to barricades and breakables.", 220, 1.16f, 1f, 0.06f, 6, 4f, new[] { UpgradeMilestone(10, 1.6f), UpgradeMilestone(25, 2.1f), UpgradeMilestone(50, 3f), UpgradeMilestone(100, 4f) }),
+            CreateUpgrade(UpgradeType.CriticalChance, "Critical Chance", "Unlock a chance for high-impact critical volleys.", 400, 1.2f, 0f, 0.01f, 11, 0.5f, new[] { UpgradeMilestone(10, 0.1f), UpgradeMilestone(25, 0.25f), UpgradeMilestone(50, 0.4f), UpgradeMilestone(100, 0.5f) }),
+            CreateUpgrade(UpgradeType.CriticalDamage, "Critical Damage", "Increase the multiplier on critical volleys.", 500, 1.2f, 1.5f, 0.04f, 16, 5f, new[] { UpgradeMilestone(10, 2f), UpgradeMilestone(25, 2.6f), UpgradeMilestone(50, 3.6f), UpgradeMilestone(100, 5f) })
         };
     }
 
@@ -2377,6 +2378,66 @@ public static class ArmyRushProjectBuilder
         }
     }
 
+    private static void ValidateUpgradeDefinitions(List<string> failures)
+    {
+        UpgradeDefinition[] definitions = AssetDatabase.FindAssets("t:UpgradeDefinition", new[] { UpgradeDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<UpgradeDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+
+        foreach (UpgradeType type in System.Enum.GetValues(typeof(UpgradeType)))
+        {
+            UpgradeDefinition definition = definitions.FirstOrDefault(asset => asset.type == type);
+            if (definition == null)
+            {
+                failures.Add("Missing upgrade definition for " + type + ".");
+                continue;
+            }
+
+            if (definition.baseCost <= 0 || definition.costGrowth <= 1f)
+            {
+                failures.Add(definition.name + " has invalid cost scaling.");
+            }
+            if (definition.unlockLevel <= 0)
+            {
+                failures.Add(definition.name + " has an invalid unlock level.");
+            }
+            if (definition.GetCost(10) <= definition.GetCost(0))
+            {
+                failures.Add(definition.name + " cost does not grow by level 10.");
+            }
+            if (definition.GetValue(10) < definition.GetValue(0))
+            {
+                failures.Add(definition.name + " value regresses by level 10.");
+            }
+            if ((type == UpgradeType.CriticalChance || type == UpgradeType.CriticalDamage || type == UpgradeType.CoinReward) && definition.maxValue <= 0f)
+            {
+                failures.Add(definition.name + " is missing a max value cap.");
+            }
+        }
+
+        UpgradeDefinition bossDamage = definitions.FirstOrDefault(asset => asset.type == UpgradeType.BossDamage);
+        UpgradeDefinition obstacleDamage = definitions.FirstOrDefault(asset => asset.type == UpgradeType.ObstacleDamage);
+        UpgradeDefinition criticalChance = definitions.FirstOrDefault(asset => asset.type == UpgradeType.CriticalChance);
+        UpgradeDefinition criticalDamage = definitions.FirstOrDefault(asset => asset.type == UpgradeType.CriticalDamage);
+        if (bossDamage != null && bossDamage.unlockLevel < 6)
+        {
+            failures.Add("Boss Damage should unlock after the first boss level.");
+        }
+        if (obstacleDamage != null && obstacleDamage.unlockLevel < 6)
+        {
+            failures.Add("Obstacle Damage should unlock after Level 5.");
+        }
+        if (criticalChance != null && criticalChance.unlockLevel < 11)
+        {
+            failures.Add("Critical Chance should unlock after Level 10.");
+        }
+        if (criticalDamage != null && criticalDamage.unlockLevel < 16)
+        {
+            failures.Add("Critical Damage should unlock after Level 15.");
+        }
+    }
+
     private static void ValidateScene(string path, List<string> failures, System.Action<Scene, List<string>> validate)
     {
         if (!System.IO.File.Exists(path))
@@ -3678,7 +3739,7 @@ public static class ArmyRushProjectBuilder
         }
     }
 
-    private static UpgradeDefinition CreateUpgrade(UpgradeType type, string displayName, string description, int baseCost, float growth, float baseValue, float valuePerLevel)
+    private static UpgradeDefinition CreateUpgrade(UpgradeType type, string displayName, string description, int baseCost, float growth, float baseValue, float valuePerLevel, int unlockLevel, float maxValue, UpgradeValueMilestone[] valueMilestones)
     {
         string path = $"{UpgradeDataPath}/SO_Upgrade_{type}.asset";
         UpgradeDefinition definition = AssetDatabase.LoadAssetAtPath<UpgradeDefinition>(path);
@@ -3695,8 +3756,16 @@ public static class ArmyRushProjectBuilder
         definition.baseValue = baseValue;
         definition.valuePerLevel = valuePerLevel;
         definition.maxLevel = 100;
+        definition.unlockLevel = Mathf.Max(1, unlockLevel);
+        definition.maxValue = Mathf.Max(0f, maxValue);
+        definition.valueMilestones = valueMilestones ?? new UpgradeValueMilestone[0];
         EditorUtility.SetDirty(definition);
         return definition;
+    }
+
+    private static UpgradeValueMilestone UpgradeMilestone(int level, float value)
+    {
+        return new UpgradeValueMilestone { level = level, value = value };
     }
 
     private static ObstacleDefinition CreateObstacleDefinition(

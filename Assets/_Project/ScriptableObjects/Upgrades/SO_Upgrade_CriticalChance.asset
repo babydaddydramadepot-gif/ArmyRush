@@ -20,3 +20,14 @@ MonoBehaviour:
   baseValue: 0
   valuePerLevel: 0.01
   maxLevel: 100
+  unlockLevel: 11
+  maxValue: 0.5
+  valueMilestones:
+  - level: 10
+    value: 0.1
+  - level: 25
+    value: 0.25
+  - level: 50
+    value: 0.4
+  - level: 100
+    value: 0.5

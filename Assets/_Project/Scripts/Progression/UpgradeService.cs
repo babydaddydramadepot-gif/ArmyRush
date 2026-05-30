@@ -8,14 +8,16 @@ namespace ArmyRush
     {
         private readonly SaveService _saveService;
         private readonly EconomyService _economyService;
+        private readonly ProgressionService _progressionService;
         private readonly Dictionary<UpgradeType, UpgradeDefinition> _definitions = new Dictionary<UpgradeType, UpgradeDefinition>();
 
         public event Action<UpgradeType, int> UpgradePurchased;
 
-        public UpgradeService(SaveService saveService, EconomyService economyService, IEnumerable<UpgradeDefinition> definitions)
+        public UpgradeService(SaveService saveService, EconomyService economyService, ProgressionService progressionService, IEnumerable<UpgradeDefinition> definitions)
         {
             _saveService = saveService;
             _economyService = economyService;
+            _progressionService = progressionService;
 
             if (definitions == null)
             {
@@ -56,7 +58,18 @@ namespace ArmyRush
             }
 
             int level = GetLevel(type);
-            return !definition.IsMaxed(level) && _economyService.Coins >= definition.GetCost(level);
+            return IsUnlocked(type) && !definition.IsMaxed(level) && _economyService.Coins >= definition.GetCost(level);
+        }
+
+        public bool IsUnlocked(UpgradeType type)
+        {
+            if (!TryGetDefinition(type, out UpgradeDefinition definition))
+            {
+                return false;
+            }
+
+            int currentLevelIndex = _progressionService != null ? _progressionService.CurrentLevelIndex : 1;
+            return definition.IsUnlocked(currentLevelIndex);
         }
 
         public bool Purchase(UpgradeType type)
@@ -68,6 +81,10 @@ namespace ArmyRush
             }
 
             int level = GetLevel(type);
+            if (!definition.IsUnlocked(_progressionService != null ? _progressionService.CurrentLevelIndex : 1))
+            {
+                return false;
+            }
             if (definition.IsMaxed(level))
             {
                 return false;

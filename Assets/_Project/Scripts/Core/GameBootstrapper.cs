@@ -57,7 +57,7 @@ namespace ArmyRush
 
             if (!ServiceLocator.Has<UpgradeService>())
             {
-                ServiceLocator.Register(new UpgradeService(save, ServiceLocator.Get<EconomyService>(), upgradeDefinitions));
+                ServiceLocator.Register(new UpgradeService(save, ServiceLocator.Get<EconomyService>(), ServiceLocator.Get<ProgressionService>(), upgradeDefinitions));
             }
 
             if (!ServiceLocator.Has<AudioService>())
