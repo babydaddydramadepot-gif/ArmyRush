@@ -1,4 +1,7 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace ArmyRush
 {
@@ -28,13 +31,131 @@ namespace ArmyRush
 
         private void Update()
         {
+#if ENABLE_INPUT_SYSTEM
+            ReadInputSystemTouch();
+            ReadInputSystemMouse();
+            ReadInputSystemKeyboard();
+#else
             ReadTouch();
             ReadMouse();
 #if UNITY_EDITOR
             ReadKeyboard();
 #endif
+#endif
         }
 
+#if ENABLE_INPUT_SYSTEM
+        private void ReadInputSystemTouch()
+        {
+            Touchscreen touchscreen = Touchscreen.current;
+            if (touchscreen == null)
+            {
+                if (_touchId != -1)
+                {
+                    EndDrag();
+                }
+                return;
+            }
+
+            bool matchedActiveTouch = false;
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                UnityEngine.InputSystem.Controls.TouchControl touch = touchscreen.touches[i];
+                int touchId = touch.touchId.ReadValue();
+                if (_touchId != -1 && touchId != _touchId)
+                {
+                    continue;
+                }
+
+                UnityEngine.InputSystem.TouchPhase phase = touch.phase.ReadValue();
+                if (phase == UnityEngine.InputSystem.TouchPhase.Began)
+                {
+                    BeginDrag(touch.position.ReadValue(), touchId);
+                    matchedActiveTouch = true;
+                    break;
+                }
+
+                if (phase == UnityEngine.InputSystem.TouchPhase.Moved || phase == UnityEngine.InputSystem.TouchPhase.Stationary)
+                {
+                    Vector2 position = touch.position.ReadValue();
+                    if (_dragging)
+                    {
+                        ContinueDrag(position);
+                    }
+                    else
+                    {
+                        BeginDrag(position, touchId);
+                    }
+                    matchedActiveTouch = true;
+                    break;
+                }
+
+                if (phase == UnityEngine.InputSystem.TouchPhase.Ended || phase == UnityEngine.InputSystem.TouchPhase.Canceled)
+                {
+                    EndDrag();
+                    matchedActiveTouch = true;
+                    break;
+                }
+            }
+
+            if (!matchedActiveTouch && _touchId != -1)
+            {
+                EndDrag();
+            }
+        }
+
+        private void ReadInputSystemMouse()
+        {
+            if (_touchId != -1)
+            {
+                return;
+            }
+
+            Mouse mouse = Mouse.current;
+            if (mouse == null)
+            {
+                return;
+            }
+
+            if (mouse.leftButton.wasPressedThisFrame)
+            {
+                BeginDrag(mouse.position.ReadValue(), -1);
+            }
+            else if (mouse.leftButton.isPressed && _dragging)
+            {
+                ContinueDrag(mouse.position.ReadValue());
+            }
+            else if (mouse.leftButton.wasReleasedThisFrame && _dragging)
+            {
+                EndDrag();
+            }
+        }
+
+        private void ReadInputSystemKeyboard()
+        {
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null)
+            {
+                return;
+            }
+
+            float horizontal = 0f;
+            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+            {
+                horizontal -= 1f;
+            }
+            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+            {
+                horizontal += 1f;
+            }
+
+            if (!Mathf.Approximately(horizontal, 0f))
+            {
+                _pendingDeltaX += horizontal * 900f * Time.unscaledDeltaTime;
+                _startPressed = true;
+            }
+        }
+#else
         private void ReadTouch()
         {
             if (Input.touchCount <= 0)
@@ -110,6 +231,7 @@ namespace ArmyRush
                 _startPressed = true;
             }
         }
+#endif
 
         private void BeginDrag(Vector2 position, int touchId)
         {

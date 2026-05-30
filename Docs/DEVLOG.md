@@ -2755,6 +2755,41 @@ Expand performance validation with measured retry/next-level timings once simula
 
 ---
 
+System:
+
+Physical iPhone Gameplay Input and World Text Fix
+
+Files:
+
+Assets/_Project/Scripts/Input/RunnerInputController.cs
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Scripts/Utility/WorldTextGuard.cs
+Assets/_Project/Scripts/Camera/CameraFollowRig.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Assets/_Project/Scripts/Gates/GateController.cs
+Assets/_Project/Scripts/Combat/Damageable.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Scripts/Level/BonusCrateController.cs
+Assets/_Project/Scripts/VFX/FloatingText.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Addressed the physical iPhone report that gameplay loaded but remained stuck at the starting state, with Drag To Start not responding and world-space labels rendering at extreme portrait-device sizes. Runner input now reads real device touches through the Unity Input System path, while retaining mouse and keyboard support for simulator/editor smoke testing. Gameplay UI now disables passive text/image raycast targets so noninteractive HUD graphics cannot intercept drag-to-start or lane-drag input. Added `WorldTextGuard` to clamp TextMesh font size, character size, and local scale for crowd counts, gate labels, enemy/obstacle health, boss labels, bonus crate rewards, and pooled floating text.
+
+Result:
+
+Unity production validation passed after the fix and now validates world-text bounds, gameplay CanvasScaler settings, passive gameplay UI raycast targets, and the existing level pacing checks. A refreshed iOS simulator export and signing-independent Xcode simulator build completed successfully, and the app installed and launched as `com.armyrush.game` on the iPhone 17 Pro simulator. The simulator log scan showed only Apple/Unity service noise, not ArmyRush gameplay exceptions. Physical iPhone retest remains the authoritative check for the original touch and portrait-scaling report.
+
+Follow Up:
+
+Retest on the physical iPhone from main menu into gameplay: Drag To Start should begin the run on the first touch/drag, lane dragging should steer normally, and the soldier count, gates, health labels, boss labels, and floating rewards should remain readable without covering the crowd or HUD.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems

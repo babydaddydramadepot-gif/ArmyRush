@@ -41,6 +41,7 @@ namespace ArmyRush
             _kind = kind;
             _maxHealth = Mathf.Max(1, maxHealth);
             _label = label;
+            WorldTextGuard.Clamp(_label);
             ResetHealth();
         }
 
@@ -77,6 +78,7 @@ namespace ArmyRush
             if (_label != null)
             {
                 _label.text = Mathf.Max(0, _health).ToString();
+                WorldTextGuard.Clamp(_label);
             }
         }
     }

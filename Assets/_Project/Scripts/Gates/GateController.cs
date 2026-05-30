@@ -130,6 +130,7 @@ namespace ArmyRush
             {
                 _label.text = GetLabel();
                 _label.color = Color.white;
+                WorldTextGuard.Clamp(_label);
             }
 
             if (_panelRenderer != null)

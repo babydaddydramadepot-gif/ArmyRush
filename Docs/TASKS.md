@@ -191,6 +191,7 @@ Implementation Pass 1 Result:
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
 - Added pooled crowd gain/loss VFX bursts for army count changes after the initial spawn count.
 - Ran a post-mech iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted runtime exception scan all passed.
+- Fixed physical iPhone gameplay-start blocking risk by moving runner touch handling onto the Unity Input System path, disabling passive gameplay HUD raycast targets, clamping world-space TextMesh labels, and adding production validation for UI/world-text safety.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
@@ -1418,7 +1419,7 @@ Acceptance Criteria:
 
 ## 9.2 Safe Area Pass
 
-Status: Functional Pass Implemented; Device Matrix QA Pending
+Status: Functional Pass Implemented with CanvasScaler, Passive Raycast, and World-Text Safeguards; Device Matrix QA Pending
 Priority: Critical
 
 Tasks:
@@ -1428,18 +1429,22 @@ Tasks:
 - Test Home Indicator layout.
 - Test iPad layout.
 - [x] Ensure all UI remains anchored inside the runtime safe-area fitter.
+- [x] Confirm gameplay UI CanvasScaler remains portrait `1080x1920` with balanced width/height matching.
+- [x] Disable passive HUD text/images from blocking gameplay input raycasts.
+- [x] Add production validation coverage for passive gameplay UI raycast targets.
 
 Acceptance Criteria:
 
 - No critical UI is clipped.
 - Buttons remain reachable.
 - Gameplay remains centered and readable.
+- Passive HUD graphics do not intercept drag-to-start or lane-drag input.
 
 ---
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Post-Boss Unity Xcode Export, Signing-Independent Xcode Simulator Build, App Icon Packaging, Simulator Install/Launch, Screenshot, and Runtime Error Scan Passed; Physical Device Launch Pending
+Status: Latest Physical-Fix Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, and Runtime Smoke Passed; Physical Device Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1453,6 +1458,7 @@ Tasks:
 - [x] Confirm simulator Xcode build no longer reports missing 1024x1024 App Store icon.
 - [x] Run refreshed post-mech Xcode simulator build, install, launch, screenshot, and targeted runtime log scan.
 - [x] Run refreshed post-boss Xcode simulator build, install, launch, screenshot, and targeted runtime log scan after boss telegraph, boss audio, and floating-text optimization work.
+- [x] Run refreshed physical-input/world-text fix Xcode simulator export, signing-independent build, install, and launch smoke test.
 
 Acceptance Criteria:
 
@@ -1492,7 +1498,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; Main Menu UI Crowding Fixed; Post-Boss Simulator Smoke Test Passed
+Status: In Progress; Physical iPhone Gameplay Input and World Text Scaling Fix Implemented; Device Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1503,6 +1509,11 @@ Tasks:
 - [x] Correct reversed play icon sprite.
 - [x] Confirm post-mech simulator launch has no Unity runtime exception signatures.
 - [x] Confirm post-boss simulator launch has no Unity runtime exception signatures after latest VFX/audio/optimization changes.
+- [x] Fix gameplay runner input for physical iPhone touch under Input System-only player settings.
+- [x] Ensure Drag To Start responds to touch/drag through the gameplay input controller.
+- [x] Disable passive gameplay HUD raycast targets so invisible text/image panels cannot block run input.
+- [x] Clamp soldier count, gate, combat, boss, bonus, and floating world-space text to safe production sizes.
+- [x] Add production validation for world-text size limits, gameplay CanvasScaler configuration, and passive HUD raycast targets.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

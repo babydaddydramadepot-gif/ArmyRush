@@ -103,6 +103,7 @@ namespace ArmyRush
             SpawnBoss();
             SpawnFinish();
             SpawnBonusSection();
+            WorldTextGuard.ClampSceneText();
         }
 
         public LevelData PreviewLevelData(int levelIndex)

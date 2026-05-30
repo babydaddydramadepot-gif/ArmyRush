@@ -27,6 +27,7 @@ namespace ArmyRush
             _soldierPrefab = soldierPrefab;
             _poolManager = poolManager;
             _countLabel = countLabel;
+            WorldTextGuard.Clamp(_countLabel);
             if (_anchor == null)
             {
                 _anchor = transform;
@@ -197,6 +198,7 @@ namespace ArmyRush
             {
                 _countLabel.text = _logicalCount.ToString();
                 _countLabel.color = _logicalCount <= 5 ? new Color(1f, 0.35f, 0.25f) : Color.white;
+                WorldTextGuard.Clamp(_countLabel);
             }
         }
 

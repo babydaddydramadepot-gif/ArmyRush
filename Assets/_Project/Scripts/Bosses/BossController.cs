@@ -523,6 +523,7 @@ namespace ArmyRush
             if (_healthLabel != null)
             {
                 _healthLabel.text = _displayName + "\n" + Mathf.Max(0, Health);
+                WorldTextGuard.Clamp(_healthLabel);
             }
         }
 

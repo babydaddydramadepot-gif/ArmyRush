@@ -54,6 +54,7 @@ namespace ArmyRush
             EnsureDefeatFadeImage();
             EnsureResultUpgradeButtons();
             EnsureResultAdPlaceholders();
+            DisablePassiveRaycastTargets();
             RegisterResultButtons();
             SetRunState(RunState.PreRun);
         }
@@ -241,6 +242,35 @@ namespace ArmyRush
 
             _victoryCoinsText.text = $"+{targetCoins} COINS";
             _victoryCoinRoutine = null;
+        }
+
+        private void DisablePassiveRaycastTargets()
+        {
+            DisablePassiveRaycastTargets(transform);
+        }
+
+        public static void DisablePassiveRaycastTargets(Transform root)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic graphic = graphics[i];
+                if (graphic == null)
+                {
+                    continue;
+                }
+
+                bool isButtonGraphic = graphic.GetComponent<Button>() != null;
+                bool isInteractiveChild = graphic.GetComponentInParent<Button>(true) != null
+                    || graphic.GetComponentInParent<Slider>(true) != null
+                    || graphic.GetComponentInParent<Toggle>(true) != null;
+                graphic.raycastTarget = isButtonGraphic || (isInteractiveChild && graphic.GetComponent<Text>() == null);
+            }
         }
 
         private void StopVictoryCoinCount()

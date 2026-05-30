@@ -62,6 +62,7 @@ namespace ArmyRush
             {
                 _label.text = text;
                 _label.color = color;
+                WorldTextGuard.Clamp(_label);
             }
             _color = color;
             _remaining = _lifetime;

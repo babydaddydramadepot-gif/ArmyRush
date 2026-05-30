@@ -2965,7 +2965,10 @@ public static class ArmyRushProjectBuilder
         {
             encounterPositions.Add(GetBossApproachStart(level));
         }
-        encounterPositions.Add(level.trackLength);
+        else
+        {
+            encounterPositions.Add(level.trackLength);
+        }
         encounterPositions.Sort();
 
         float previousZ = 0f;
@@ -3454,7 +3457,29 @@ public static class ArmyRushProjectBuilder
         ValidatePooledLevelObjects<FinishLineTrigger>(failures, "finish trigger");
         ValidatePooledLevelObjects<BonusCrateController>(failures, "bonus crate");
         ValidatePooledLevelObjects<BonusEndTrigger>(failures, "bonus end trigger");
+        ValidateWorldTextSafety(failures);
         ValidateGameplayHudLayout(failures);
+    }
+
+    private static void ValidateWorldTextSafety(List<string> failures)
+    {
+        WorldTextGuard.ClampSceneText();
+        TextMesh[] labels = Object.FindObjectsByType<TextMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TextMesh label = labels[i];
+            if (label.fontSize > 64 || label.characterSize > 0.085f)
+            {
+                failures.Add(label.name + " world text exceeds the runtime size guard.");
+            }
+
+            Vector3 scale = label.transform.localScale;
+            float largestAxis = Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z));
+            if (largestAxis > 1.01f)
+            {
+                failures.Add(label.name + " world text has an unsafe local scale.");
+            }
+        }
     }
 
     private static void ValidatePooledLevelObjects<T>(List<string> failures, string label) where T : Component
@@ -3514,6 +3539,30 @@ public static class ArmyRushProjectBuilder
             failures.Add("Game scene UI is missing SafeArea.");
             return;
         }
+        GameplayUI.DisablePassiveRaycastTargets(safe);
+
+        CanvasScaler scaler = canvas != null ? canvas.GetComponent<CanvasScaler>() : null;
+        if (scaler == null)
+        {
+            failures.Add("Game scene UI is missing CanvasScaler.");
+        }
+        else
+        {
+            if (scaler.uiScaleMode != CanvasScaler.ScaleMode.ScaleWithScreenSize)
+            {
+                failures.Add("Gameplay UI must use Scale With Screen Size.");
+            }
+            if (scaler.referenceResolution != new Vector2(1080f, 1920f))
+            {
+                failures.Add("Gameplay UI CanvasScaler reference resolution must remain portrait 1080x1920.");
+            }
+            if (scaler.screenMatchMode != CanvasScaler.ScreenMatchMode.MatchWidthOrHeight || Mathf.Abs(scaler.matchWidthOrHeight - 0.5f) > 0.01f)
+            {
+                failures.Add("Gameplay UI CanvasScaler must match width/height evenly for iPhone and iPad portrait layouts.");
+            }
+        }
+
+        ValidatePassiveRaycastTargets(safe, failures);
 
         if (!TryGetChildRect(safe, "SettingsButton", out RectTransform settingsRect))
         {
@@ -3540,6 +3589,30 @@ public static class ArmyRushProjectBuilder
         if (TryGetChildRect(safe, "CoinText", out RectTransform coinRect) && RectTransformsOverlap(settingsRect, coinRect))
         {
             failures.Add("Gameplay HUD SettingsButton overlaps the coin counter.");
+        }
+    }
+
+    private static void ValidatePassiveRaycastTargets(Transform root, List<string> failures)
+    {
+        Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
+        {
+            Graphic graphic = graphics[i];
+            if (graphic == null || !graphic.raycastTarget)
+            {
+                continue;
+            }
+
+            bool allowed = graphic.GetComponent<Button>() != null
+                || graphic.GetComponent<Slider>() != null
+                || graphic.GetComponent<Toggle>() != null
+                || graphic.GetComponentInParent<Button>(true) != null
+                || graphic.GetComponentInParent<Slider>(true) != null
+                || graphic.GetComponentInParent<Toggle>(true) != null;
+            if (!allowed)
+            {
+                failures.Add(graphic.name + " has raycastTarget enabled without being an interactive gameplay UI control.");
+            }
         }
     }
 
@@ -3670,6 +3743,7 @@ public static class ArmyRushProjectBuilder
         label.resizeTextForBestFit = true;
         label.resizeTextMinSize = Mathf.Max(12, Mathf.RoundToInt(size * 0.55f));
         label.resizeTextMaxSize = size;
+        label.raycastTarget = false;
         return label;
     }
 
@@ -3840,6 +3914,7 @@ public static class ArmyRushProjectBuilder
         label.anchor = TextAnchor.MiddleCenter;
         label.alignment = TextAlignment.Center;
         label.color = color;
+        WorldTextGuard.Ensure(label);
         return label;
     }
 

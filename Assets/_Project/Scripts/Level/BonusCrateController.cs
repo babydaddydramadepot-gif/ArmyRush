@@ -72,6 +72,7 @@ namespace ArmyRush
             if (_rewardLabel != null)
             {
                 _rewardLabel.text = "+" + _coinReward;
+                WorldTextGuard.Clamp(_rewardLabel);
             }
         }
     }
