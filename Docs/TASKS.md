@@ -807,7 +807,7 @@ Acceptance Criteria:
 
 ## 4.1 Boss Architecture
 
-Status: Functional Combat Pass Implemented; Balance/Variants Pending
+Status: Functional Combat and Defeat Animation Pass Implemented; Balance/Variants Pending
 Priority: High
 
 Tasks:
@@ -830,7 +830,7 @@ Acceptance Criteria:
 
 ## 4.2 Tank Boss
 
-Status: In Progress; Data-Driven Combat Pass Implemented
+Status: In Progress; Data-Driven Combat and Defeat Animation Pass Implemented
 Priority: High
 
 Tasks:
@@ -839,8 +839,8 @@ Tasks:
 - [x] Add movement or idle combat behavior.
 - [x] Add cannon attack behavior.
 - Add damage states.
-- Add destruction animation.
-- Add explosion VFX.
+- [x] Add destruction animation.
+- [x] Add explosion VFX.
 
 Acceptance Criteria:
 
@@ -1310,7 +1310,7 @@ Acceptance Criteria:
 
 ## 8.4 Animation Polish Pass
 
-Status: In Progress; Button/Reward/Unit/Gate Animation Pass Implemented
+Status: In Progress; Button/Reward/Unit/Gate/Boss Defeat Animation Pass Implemented
 Priority: High
 
 Tasks:
@@ -1320,7 +1320,7 @@ Tasks:
 - [x] Add gate punch animation.
 - [x] Add unit spawn animation.
 - [x] Add unit death animation.
-- Add boss defeat animation.
+- [x] Add boss defeat animation.
 - Add victory celebration animation.
 
 Acceptance Criteria:

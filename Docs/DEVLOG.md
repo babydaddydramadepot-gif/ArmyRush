@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-38%
+39%
 
 Last Updated:
 
@@ -767,7 +767,7 @@ Unity production validation passes with no C# compiler errors or warnings. Unit 
 
 Follow Up:
 
-Add explicit hit reactions, gate punch animation, victory celebration poses, and authored boss defeat animation during the broader animation polish pass.
+Add explicit hit reactions, victory celebration poses, and authored animation replacements where final production assets require them.
 
 ---
 
@@ -796,6 +796,34 @@ Unity production validation passes with no C# compiler errors or warnings. Gate 
 Follow Up:
 
 Tune gate punch amplitude during device QA and add authored glow/VFX styling in the final visual polish pass.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
+Boss Defeat Animation Polish
+
+Files:
+
+Assets/_Project/Scripts/Bosses/BossController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a short procedural tank boss defeat sequence. Boss defeat now disables the trigger, stops boss combat behavior, shakes the tank into a tilted sinking pose, fades the world health label, layers smoke during the tumble, resumes the run after the payoff beat, and then deactivates the boss cleanly.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Boss defeat no longer disappears instantly after VFX.
+
+Follow Up:
+
+Add boss damage-state reactions, tune boss balance on device, and replace procedural motion with authored boss animation clips if final art production supplies them.
 
 ---
 
@@ -1019,7 +1047,7 @@ UI Systems
 
 Visual Systems
 
-37%
+38%
 
 Audio Systems
 
@@ -1035,7 +1063,7 @@ Progression Systems
 
 Boss Systems
 
-28%
+30%
 
 Optimization
 
@@ -1043,7 +1071,7 @@ Optimization
 
 Polish
 
-27%
+28%
 
 Release Readiness
 
@@ -1155,7 +1183,7 @@ All visual changes belong here.
 
 ## Initial State
 
-Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, finish line, and procedural unit spawn/shoot/death motion. Final art polish and VFX pass remain pending.
+Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, finish line, procedural unit spawn/shoot/death motion, and procedural boss defeat motion. Final art polish and VFX pass remain pending.
 
 ---
 
@@ -1251,7 +1279,7 @@ AR-002
 
 Status:
 
-Boss levels now have a data-driven tank boss, combat pause, telegraphed cannon attacks, boss rewards, and boss audio/haptics, but authored boss animations, tuned boss balance, boss VFX, and additional boss variants are still pending.
+Boss levels now have a data-driven tank boss, combat pause, telegraphed cannon attacks, boss rewards, boss audio/haptics, and procedural defeat motion, but damage-state reactions, tuned boss balance, final authored boss VFX, and additional boss variants are still pending.
 
 Issue ID:
 

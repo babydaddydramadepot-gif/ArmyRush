@@ -23,21 +23,27 @@ namespace ArmyRush
 
         private CrowdManager _targetCrowd;
         private RunManager _runManager;
+        private Collider _triggerCollider;
         private int _levelIndex = 1;
         private bool _engaged;
         private bool _attackWarningActive;
         private float _nextAttackTime;
         private float _attackResolveTime;
         private Vector3 _attackMarker;
+        private Vector3 _restLocalPosition;
+        private Quaternion _restLocalRotation;
+        private Vector3 _restLocalScale;
+        private Coroutine _defeatRoutine;
 
         private void Awake()
         {
-            Collider trigger = GetComponent<Collider>();
-            trigger.isTrigger = true;
+            _triggerCollider = GetComponent<Collider>();
+            _triggerCollider.isTrigger = true;
             if (_damageable == null)
             {
                 _damageable = GetComponent<Damageable>();
             }
+            CaptureRestPose();
         }
 
         private void Update()
@@ -78,6 +84,8 @@ namespace ArmyRush
                 _damageable.Damaged -= OnDamaged;
                 _damageable.Died -= OnDied;
             }
+            StopDefeatAnimation();
+            RestoreRestPose();
         }
 
         public void Configure(int health, int collisionPenalty, string displayName)
@@ -108,9 +116,21 @@ namespace ArmyRush
 
         private void ApplyRuntimeConfig()
         {
+            StopDefeatAnimation();
+            CaptureRestPose();
+            RestoreRestPose();
             _engaged = false;
             _attackWarningActive = false;
             _nextAttackTime = Time.time + 0.75f;
+            if (_triggerCollider != null)
+            {
+                _triggerCollider.enabled = true;
+            }
+            if (_healthLabel != null)
+            {
+                _healthLabel.gameObject.SetActive(true);
+                _healthLabel.color = Color.white;
+            }
 
             if (_damageable == null)
             {
@@ -235,7 +255,18 @@ namespace ArmyRush
 
         private void OnDied(Damageable damageable)
         {
+            if (_defeatRoutine != null)
+            {
+                return;
+            }
+
             UpdateLabel();
+            _engaged = false;
+            _attackWarningActive = false;
+            if (_triggerCollider != null)
+            {
+                _triggerCollider.enabled = false;
+            }
             VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 1.1f);
             VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 1.05f);
             VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.right * 0.75f);
@@ -252,11 +283,67 @@ namespace ArmyRush
             {
                 haptics.Play(HapticCue.Success);
             }
+            _defeatRoutine = StartCoroutine(PlayDefeatAnimation());
+        }
+
+        private System.Collections.IEnumerator PlayDefeatAnimation()
+        {
+            const float duration = 0.82f;
+            const float resumeDelay = 0.46f;
+            bool resumed = false;
+            bool smokeSpawned = false;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float normalized = Mathf.Clamp01(elapsed / duration);
+                float eased = EaseInOutCubic(normalized);
+                float shake = Mathf.Sin(normalized * Mathf.PI * 7f) * (1f - normalized);
+                transform.localPosition = _restLocalPosition + new Vector3(shake * 0.08f, Mathf.Lerp(0f, -0.32f, eased), 0f);
+                transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Lerp(0f, -68f, eased), 0f, Mathf.Lerp(0f, 9f, eased) + shake * 7f);
+                transform.localScale = Vector3.Lerp(_restLocalScale * 1.04f, _restLocalScale * 0.9f, eased);
+
+                if (_healthLabel != null)
+                {
+                    Color labelColor = _healthLabel.color;
+                    labelColor.a = Mathf.Lerp(1f, 0f, eased);
+                    _healthLabel.color = labelColor;
+                }
+
+                if (!smokeSpawned && normalized >= 0.42f)
+                {
+                    smokeSpawned = true;
+                    VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.65f);
+                }
+
+                if (!resumed && elapsed >= resumeDelay)
+                {
+                    resumed = true;
+                    ResumeRunAfterDefeat();
+                }
+
+                yield return null;
+            }
+
+            if (!resumed)
+            {
+                ResumeRunAfterDefeat();
+            }
+            if (_healthLabel != null)
+            {
+                _healthLabel.gameObject.SetActive(false);
+            }
+            _defeatRoutine = null;
+            gameObject.SetActive(false);
+        }
+
+        private void ResumeRunAfterDefeat()
+        {
             if (_runManager != null)
             {
                 _runManager.ResumeFromCombat();
             }
-            gameObject.SetActive(false);
         }
 
         private void UpdateLabel()
@@ -265,6 +352,42 @@ namespace ArmyRush
             {
                 _healthLabel.text = _displayName + "\n" + Mathf.Max(0, Health);
             }
+        }
+
+        private void CaptureRestPose()
+        {
+            _restLocalPosition = transform.localPosition;
+            _restLocalRotation = transform.localRotation;
+            _restLocalScale = transform.localScale;
+        }
+
+        private void RestoreRestPose()
+        {
+            transform.localPosition = _restLocalPosition;
+            transform.localRotation = _restLocalRotation;
+            transform.localScale = _restLocalScale;
+        }
+
+        private void StopDefeatAnimation()
+        {
+            if (_defeatRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(_defeatRoutine);
+            _defeatRoutine = null;
+        }
+
+        private static float EaseInOutCubic(float value)
+        {
+            if (value < 0.5f)
+            {
+                return 4f * value * value * value;
+            }
+
+            float inverse = -2f * value + 2f;
+            return 1f - inverse * inverse * inverse * 0.5f;
         }
     }
 }
