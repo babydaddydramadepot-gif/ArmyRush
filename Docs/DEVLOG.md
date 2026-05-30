@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-33%
+34%
 
 Last Updated:
 
@@ -746,6 +746,37 @@ Date:
 
 System:
 
+Procedural Music and Settings Control
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Core/GameBootstrapper.cs
+Assets/_Project/Scripts/UI/SettingsPanelUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added procedural looping menu/game music, persisted music volume control, and a music slider in the settings panel. `AudioService` now owns a looping music source, `GameBootstrapper` starts music once services are available, and `SettingsPanelUI` creates the music slider at runtime for existing generated scenes while the builder wires it for future scenes.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Audio settings now cover both music and SFX without requiring external music assets.
+
+Follow Up:
+
+Replace the procedural loop with authored mobile-ready music and add legal/settings links before release readiness.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Smoke VFX Variants
 
 Files:
@@ -868,7 +899,7 @@ Gameplay Systems
 
 UI Systems
 
-34%
+35%
 
 Visual Systems
 
@@ -876,7 +907,7 @@ Visual Systems
 
 Audio Systems
 
-23%
+25%
 
 Level Systems
 
@@ -896,7 +927,7 @@ Optimization
 
 Polish
 
-21%
+22%
 
 Release Readiness
 
@@ -1020,7 +1051,7 @@ All audio changes belong here.
 
 ## Initial State
 
-Centralized audio cue hooks and pooled procedural runtime SFX implemented. Final authored clips and music remain pending.
+Centralized audio cue hooks, pooled procedural runtime SFX, procedural music loop, and persisted music/SFX volume settings implemented. Final authored clips and music remain pending.
 
 ---
 
@@ -1112,7 +1143,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist with pooled procedural SFX playback including boss attack/defeat cues, but final authored SFX and music are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback including boss attack/defeat cues, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 

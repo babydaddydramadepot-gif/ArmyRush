@@ -1098,14 +1098,14 @@ Acceptance Criteria:
 
 ## 6.6 Settings Screen
 
-Status: In Progress; SFX Slider and Haptics Toggle Implemented
+Status: Functional Pass Implemented with Music/SFX Sliders and Haptics Toggle; Legal Links Pending
 Priority: Medium
 
 Tasks:
 
-- Add music toggle/slider.
-- Add SFX toggle/slider.
-- Add haptics toggle.
+- [x] Add music toggle/slider.
+- [x] Add SFX toggle/slider.
+- [x] Add haptics toggle.
 - Add privacy policy placeholder link.
 - Add terms placeholder link.
 - Add restore purchases placeholder.
@@ -1122,14 +1122,14 @@ Acceptance Criteria:
 
 ## 7.1 Audio System
 
-Status: Functional Pass Implemented; Final Audio/Music Assets Pending
+Status: Functional Pass Implemented with Procedural Music; Final Audio Assets Pending
 Priority: High
 
 Tasks:
 
 - Implement AudioManager.
 - Add SFX categories.
-- Add music support.
+- [x] Add music support.
 - [x] Add SFX volume settings.
 - Add pooled audio sources.
 

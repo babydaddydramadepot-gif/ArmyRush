@@ -1239,14 +1239,17 @@ public static class ArmyRushProjectBuilder
     {
         GameObject panel = CreatePanel("SettingsPanel", parent, new Vector2(0.5f, 0.52f), new Vector2(720f, 560f), new Color(0.04f, 0.11f, 0.22f, 0.96f));
         CreateUIText("Header", panel.transform, "SETTINGS", 58, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.82f), new Vector2(620f, 90f));
-        CreateUIText("SfxLabel", panel.transform, "SFX", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.62f), new Vector2(220f, 58f));
-        Slider sfxSlider = CreateInteractiveSlider("SfxSlider", panel.transform, new Vector2(0.62f, 0.62f), new Vector2(390f, 34f));
-        Toggle hapticsToggle = CreateToggle("HapticsToggle", panel.transform, "HAPTICS", new Vector2(0.5f, 0.45f), new Vector2(540f, 78f));
-        Button close = CreateButton("CloseButton", panel.transform, "CLOSE", new Vector2(0.5f, 0.2f), new Vector2(390f, 96f), new Color(0.08f, 0.28f, 0.95f));
+        CreateUIText("MusicLabel", panel.transform, "MUSIC", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.68f), new Vector2(220f, 58f));
+        Slider musicSlider = CreateInteractiveSlider("MusicSlider", panel.transform, new Vector2(0.62f, 0.68f), new Vector2(390f, 34f));
+        CreateUIText("SfxLabel", panel.transform, "SFX", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.54f), new Vector2(220f, 58f));
+        Slider sfxSlider = CreateInteractiveSlider("SfxSlider", panel.transform, new Vector2(0.62f, 0.54f), new Vector2(390f, 34f));
+        Toggle hapticsToggle = CreateToggle("HapticsToggle", panel.transform, "HAPTICS", new Vector2(0.5f, 0.39f), new Vector2(540f, 78f));
+        Button close = CreateButton("CloseButton", panel.transform, "CLOSE", new Vector2(0.5f, 0.17f), new Vector2(390f, 96f), new Color(0.08f, 0.28f, 0.95f));
         UnityEventTools.AddPersistentListener(close.onClick, settings.Close);
         panel.SetActive(false);
 
         SetObject(settings, "_panel", panel);
+        SetObject(settings, "_musicSlider", musicSlider);
         SetObject(settings, "_sfxSlider", sfxSlider);
         SetObject(settings, "_hapticsToggle", hapticsToggle);
         SetObject(settings, "_closeButton", close);

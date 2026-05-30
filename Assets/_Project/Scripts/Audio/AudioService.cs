@@ -26,6 +26,8 @@ namespace ArmyRush
         private readonly Dictionary<AudioCue, AudioClip> _clips = new Dictionary<AudioCue, AudioClip>();
         private readonly List<AudioSource> _sources = new List<AudioSource>();
         private GameObject _root;
+        private AudioSource _musicSource;
+        private AudioClip _musicClip;
         private int _nextSourceIndex;
         private float _lastShootTime;
         private float _lastHitTime;
@@ -79,6 +81,56 @@ namespace ArmyRush
             source.PlayOneShot(clip);
         }
 
+        public void StartMusic()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            EnsureRuntimeAudio();
+            if (_musicSource == null || _musicClip == null)
+            {
+                return;
+            }
+
+            ApplyMusicVolume();
+            if (!_musicSource.isPlaying && _saveService.Data.musicVolume > 0.01f)
+            {
+                _musicSource.Play();
+            }
+        }
+
+        public void SetMusicVolume(float volume)
+        {
+            _saveService.Data.musicVolume = Mathf.Clamp01(volume);
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            EnsureRuntimeAudio();
+            ApplyMusicVolume();
+            if (_musicSource == null)
+            {
+                return;
+            }
+
+            if (_saveService.Data.musicVolume <= 0.01f)
+            {
+                _musicSource.Stop();
+            }
+            else if (!_musicSource.isPlaying)
+            {
+                _musicSource.Play();
+            }
+        }
+
+        public void SetSfxVolume(float volume)
+        {
+            _saveService.Data.sfxVolume = Mathf.Clamp01(volume);
+        }
+
         private void EnsureRuntimeAudio()
         {
             if (_root != null)
@@ -98,6 +150,12 @@ namespace ArmyRush
                 _sources.Add(source);
             }
 
+            _musicSource = _root.AddComponent<AudioSource>();
+            _musicSource.playOnAwake = false;
+            _musicSource.spatialBlend = 0f;
+            _musicSource.loop = true;
+            _musicSource.pitch = 1f;
+
             _clips[AudioCue.Button] = CreateTone("SFX_Button", 620f, 0.055f, 0.18f, 0.04f);
             _clips[AudioCue.GatePositive] = CreateArpeggio("SFX_GatePositive", 520f, 780f, 0.18f, 0.28f);
             _clips[AudioCue.GateNegative] = CreateTone("SFX_GateNegative", 170f, 0.18f, 0.24f, 0.02f);
@@ -111,6 +169,9 @@ namespace ArmyRush
             _clips[AudioCue.BossDefeat] = CreateNoiseBurst("SFX_BossDefeat", 0.42f, 0.36f, 0.62f);
             _clips[AudioCue.Victory] = CreateArpeggio("SFX_Victory", 520f, 1040f, 0.42f, 0.34f);
             _clips[AudioCue.Defeat] = CreateTone("SFX_Defeat", 140f, 0.32f, 0.28f, 0.01f);
+            _musicClip = CreateMusicLoop();
+            _musicSource.clip = _musicClip;
+            ApplyMusicVolume();
         }
 
         private static AudioClip CreateTone(string name, float frequency, float duration, float gain, float vibrato)
@@ -170,6 +231,39 @@ namespace ArmyRush
             AudioClip clip = AudioClip.Create(name, samples, 1, sampleRate, false);
             clip.SetData(data, 0);
             return clip;
+        }
+
+        private static AudioClip CreateMusicLoop()
+        {
+            const int sampleRate = 22050;
+            const float duration = 8f;
+            int samples = Mathf.CeilToInt(sampleRate * duration);
+            float[] data = new float[samples];
+            float[] notes = { 110f, 146.83f, 164.81f, 196f, 220f, 196f, 164.81f, 146.83f };
+
+            for (int i = 0; i < samples; i++)
+            {
+                float t = i / (float)sampleRate;
+                float normalized = i / (float)Mathf.Max(1, samples - 1);
+                int noteIndex = Mathf.FloorToInt(normalized * notes.Length) % notes.Length;
+                float bass = Mathf.Sin(notes[noteIndex] * Mathf.PI * 2f * t) * 0.11f;
+                float pulse = Mathf.Sin(notes[(noteIndex + 2) % notes.Length] * Mathf.PI * 4f * t) * 0.035f;
+                float tick = Mathf.Sin(880f * Mathf.PI * 2f * t) * Mathf.Pow(Mathf.Clamp01(1f - (t % 0.5f) / 0.08f), 5f) * 0.025f;
+                float edgeFade = Mathf.Min(Mathf.Clamp01(t / 0.12f), Mathf.Clamp01((duration - t) / 0.12f));
+                data[i] = (bass + pulse + tick) * edgeFade * 0.42f;
+            }
+
+            AudioClip clip = AudioClip.Create("Music_RuntimeMarchLoop", samples, 1, sampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private void ApplyMusicVolume()
+        {
+            if (_musicSource != null)
+            {
+                _musicSource.volume = Mathf.Clamp01(_saveService.Data.musicVolume) * 0.32f;
+            }
         }
     }
 }

@@ -64,6 +64,7 @@ namespace ArmyRush
             {
                 ServiceLocator.Register(new AudioService(save));
             }
+            ServiceLocator.Get<AudioService>().StartMusic();
 
             if (!ServiceLocator.Has<HapticsService>())
             {
