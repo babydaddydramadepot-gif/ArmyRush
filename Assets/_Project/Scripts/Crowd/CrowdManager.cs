@@ -21,14 +21,6 @@ namespace ArmyRush
         public int Count => _logicalCount;
         public Transform Anchor => _anchor != null ? _anchor : transform;
 
-        private void Update()
-        {
-            if (_countLabel != null)
-            {
-                _countLabel.transform.rotation = Quaternion.Euler(55f, 0f, 0f);
-            }
-        }
-
         public void Configure(GlobalTuning tuning, GameObject soldierPrefab, PoolManager poolManager, TextMesh countLabel)
         {
             _tuning = tuning;

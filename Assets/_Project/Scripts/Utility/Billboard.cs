@@ -4,13 +4,18 @@ namespace ArmyRush
 {
     public sealed class Billboard : MonoBehaviour
     {
+        private static Camera _mainCamera;
         private Camera _camera;
 
         private void LateUpdate()
         {
             if (_camera == null)
             {
-                _camera = Camera.main;
+                if (_mainCamera == null)
+                {
+                    _mainCamera = Camera.main;
+                }
+                _camera = _mainCamera;
             }
 
             if (_camera != null)

@@ -2463,6 +2463,35 @@ Retry Unity validation and the iOS simulator export after the active Unity edito
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+World Label Update Optimization
+
+Files:
+
+Assets/_Project/Scripts/Utility/Billboard.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Shared the cached main camera across billboard labels and removed the redundant per-frame crowd-count label rotation in `CrowdManager`. The crowd count label already uses the same billboard component as enemy, obstacle, boss, and bonus labels.
+
+Result:
+
+World-space label updates do less duplicate camera lookup and rotation work during gameplay.
+
+Follow Up:
+
+Retry Unity validation and the iOS simulator export after the active Unity editor releases the project lock.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2495,7 +2524,7 @@ Boss Systems
 
 Optimization
 
-31%
+32%
 
 Polish
 

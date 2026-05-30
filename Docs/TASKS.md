@@ -1388,6 +1388,7 @@ Tasks:
 - [x] Wire level-spawned combat, finish, and bonus objects with cached `RunManager` references instead of repeated runtime scene searches.
 - [x] Remove runtime scene-search fallbacks from static VFX and camera shake dispatch.
 - [x] Cache pooled-object component lookups for repeated projectile, soldier, floating text, and particle checkouts.
+- [x] Remove redundant crowd-label rotation updates and share main-camera lookup across billboard labels.
 
 Acceptance Criteria:
 
@@ -1397,6 +1398,7 @@ Acceptance Criteria:
 - Level object spawning avoids avoidable scene-wide dependency lookups during level construction.
 - Runtime gameplay scripts avoid scene-wide object searches in normal play.
 - Pool checkouts avoid repeated `GetComponent<T>()` lookups for cached pooled components.
+- World-space labels avoid duplicate per-frame camera/rotation work.
 
 ---
 
