@@ -190,7 +190,8 @@ Implementation Pass 1 Result:
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
 - Added pooled crowd gain/loss VFX bursts for army count changes after the initial spawn count.
-- Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
+- Ran a post-mech iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted runtime exception scan all passed.
+- Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
 
 ---
 
@@ -1426,7 +1427,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Current Unity Xcode Export, Signing-Independent Xcode Build, App Icon Packaging, and Simulator Launch Passed; Physical Device Launch Pending
+Status: Latest Unity Xcode Export, Signing-Independent Xcode Simulator Build, App Icon Packaging, Simulator Install/Launch, Screenshot, and Runtime Error Scan Passed; Physical Device Launch Pending
 Priority: Critical
 
 Tasks:
@@ -1438,6 +1439,7 @@ Tasks:
 - [x] Fix signing-independent iOS build errors.
 - [x] Assign branded iOS app icon across Unity iOS icon slots.
 - [x] Confirm simulator Xcode build no longer reports missing 1024x1024 App Store icon.
+- [x] Run refreshed post-mech Xcode simulator build, install, launch, screenshot, and targeted runtime log scan.
 
 Acceptance Criteria:
 
@@ -1446,6 +1448,7 @@ Acceptance Criteria:
 - [ ] App launches successfully on a physical device.
 - [x] No missing signing-independent build issues.
 - [x] Generated Xcode asset catalog contains the required App Store icon.
+- [x] Latest simulator launch log scan finds no Unity exception, missing-reference, null-reference, argument-exception, or crash signatures.
 
 ---
 
@@ -1476,7 +1479,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; Main Menu UI Crowding Fixed
+Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; Main Menu UI Crowding Fixed; Post-Mech Simulator Smoke Test Passed
 Priority: Critical
 
 Tasks:
@@ -1485,6 +1488,7 @@ Tasks:
 - [x] Fix missing 1024x1024 iOS App Store icon warning in simulator Xcode build.
 - [x] Fix main-menu upgrade tile text/icon crowding on simulator-sized portrait screens.
 - [x] Correct reversed play icon sprite.
+- [x] Confirm post-mech simulator launch has no Unity runtime exception signatures.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

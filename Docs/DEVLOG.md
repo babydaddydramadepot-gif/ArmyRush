@@ -2547,6 +2547,33 @@ Tune mech phase damage/radius on device or simulator playthrough.
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Post-Mech Simulator Build and Launch Validation
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran the full simulator validation chain after the mech boss phase polish: Unity iOS simulator development export, signing-independent Xcode simulator build, install to the iPhone 17 Pro simulator, app launch, portrait screenshot capture, and a targeted runtime log scan for Unity exception signatures.
+
+Result:
+
+Unity export and Xcode simulator build completed successfully, with Xcode ending in `** BUILD SUCCEEDED **`. The app installed and launched as `com.armyrush.game` on the iPhone 17 Pro simulator, the screenshot confirmed the portrait main menu, staging squad, upgrade locks, and play button render correctly, and the targeted runtime scan found no Unity exception, null-reference, missing-reference, argument-exception, or crash signatures. Remaining messages were generated Unity/Xcode warnings, optional Unity Cloud Diagnostics symbol-upload auth warnings, and simulator security/device-property chatter.
+
+Follow Up:
+
+Physical iPhone deployment still requires signing/provisioning. Continue manual gameplay QA and device-feel tuning for boss phase balance.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2575,11 +2602,11 @@ Progression Systems
 
 Boss Systems
 
-41%
+43%
 
 Optimization
 
-32%
+34%
 
 Polish
 
@@ -2587,7 +2614,7 @@ Polish
 
 Release Readiness
 
-25%
+28%
 
 ---
 
@@ -2791,7 +2818,7 @@ AR-002
 
 Status:
 
-Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, impact behavior, boss rewards, audio/haptics, and procedural defeat motion. Remaining work includes balance, authored helicopter crash polish, true mech multi-phase behavior, unique mech defeat animation, final boss VFX styling, and physical device QA.
+Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, impact behavior, boss rewards, audio/haptics, procedural defeat motion, and mech-specific multi-phase escalation/collapse behavior. Remaining work includes balance, authored helicopter crash polish, final boss VFX styling, and physical device QA.
 
 Issue ID:
 
