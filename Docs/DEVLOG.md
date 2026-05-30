@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-28%
+29%
 
 Last Updated:
 
@@ -710,6 +710,36 @@ Device-test pacing against typical early and boss-level payouts, then tune durat
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Pool Prewarm Optimization
+
+Files:
+
+Assets/_Project/Scripts/Utility/PoolManager.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Improved runtime pool preparation for mobile frame stability. `PoolManager.Prewarm` now tops up the inactive queue instead of duplicating counts on repeated calls. `LevelManager` prewarms starting crowd visuals and all level enemy visual units before spawning the run, and `CrowdManager` exposes a capped visual prewarm helper.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Level start now does less surprise instantiation for soldier and enemy visuals.
+
+Follow Up:
+
+Profile real device frame time during level load, large gate multipliers, and boss encounters to tune pool sizes.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -742,7 +772,7 @@ Boss Systems
 
 Optimization
 
-15%
+18%
 
 Polish
 

@@ -41,6 +41,17 @@ namespace ArmyRush
             }
         }
 
+        public void PrewarmVisuals(int count)
+        {
+            if (_soldierPrefab == null || _poolManager == null || count <= 0)
+            {
+                return;
+            }
+
+            int visualCount = Mathf.Min(count, _tuning != null ? _tuning.maxVisualSoldiers : 120);
+            _poolManager.Prewarm(_soldierPrefab, visualCount);
+        }
+
         public void SetCount(int count)
         {
             int hardCap = _tuning != null ? _tuning.hardSoldierCap : 300;

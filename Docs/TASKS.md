@@ -1332,7 +1332,7 @@ Acceptance Criteria:
 
 ## 9.1 Mobile Performance Pass
 
-Status: In Progress; Runtime Frame Pacing Baseline Implemented
+Status: In Progress; Runtime Frame Pacing and Pool Prewarm Baseline Implemented
 Priority: Critical
 
 Tasks:
@@ -1343,6 +1343,8 @@ Tasks:
 - [x] Set runtime 60 FPS target.
 - [x] Disable runtime vSync dependency.
 - [x] Prevent device sleep during play sessions.
+- [x] Prewarm starting crowd and enemy visual pools before level spawn.
+- [x] Top up pools instead of duplicating prewarm counts.
 - Reduce draw calls where possible.
 - Use shared materials.
 - Verify object pooling.

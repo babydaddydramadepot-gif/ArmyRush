@@ -83,6 +83,7 @@ namespace ArmyRush
             {
                 startingSoldiers = Mathf.RoundToInt(Mathf.Max(startingSoldiers, _upgrades.GetValue(UpgradeType.StartingTroops)));
             }
+            PrewarmLevelPools(startingSoldiers);
             _crowd?.SetCount(startingSoldiers);
 
             BuildTrack(CurrentLevel.trackLength + Mathf.Max(0f, CurrentLevel.bonusSectionLength));
@@ -232,6 +233,26 @@ namespace ArmyRush
             {
                 GameObject end = Instantiate(_bonusEndPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength + sectionLength), Quaternion.identity, _levelRoot);
                 _spawned.Add(end);
+            }
+        }
+
+        private void PrewarmLevelPools(int startingSoldiers)
+        {
+            _crowd?.PrewarmVisuals(startingSoldiers);
+
+            if (_poolManager == null || _enemyUnitPrefab == null || CurrentLevel == null)
+            {
+                return;
+            }
+
+            int enemyVisualCount = 0;
+            for (int i = 0; i < CurrentLevel.enemyGroups.Count; i++)
+            {
+                enemyVisualCount += Mathf.Min(CurrentLevel.enemyGroups[i].count, 80);
+            }
+            if (enemyVisualCount > 0)
+            {
+                _poolManager.Prewarm(_enemyUnitPrefab, enemyVisualCount);
             }
         }
 

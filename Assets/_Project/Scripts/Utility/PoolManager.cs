@@ -14,11 +14,13 @@ namespace ArmyRush
                 return;
             }
 
-            for (int i = 0; i < count; i++)
+            Queue<PooledObject> queue = GetQueue(prefab);
+            int needed = Mathf.Max(0, count - queue.Count);
+            for (int i = 0; i < needed; i++)
             {
                 PooledObject pooled = Create(prefab);
                 pooled.gameObject.SetActive(false);
-                GetQueue(prefab).Enqueue(pooled);
+                queue.Enqueue(pooled);
             }
         }
 
