@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-63%
+64%
 
 Last Updated:
 
@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Crowd Gain/Loss Audio Cues
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added aggregate procedural SFX cues for soldier count gains and losses. The shared crowd count feedback path now plays throttled gain/loss audio alongside the existing pooled crowd VFX, covering gates, combat losses, obstacles, and boss attacks without per-soldier audio spam.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Crowd growth and attrition now have consistent audio feedback in addition to floating numbers, VFX, and animations.
+
+Follow Up:
+
+Tune gain/loss cue loudness against gate and hit sounds during device audio QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Start Run Audio Cue
 
 Files:
@@ -1757,7 +1786,7 @@ Visual Systems
 
 Audio Systems
 
-30%
+31%
 
 Level Systems
 

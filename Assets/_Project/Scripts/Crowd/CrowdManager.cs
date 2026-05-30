@@ -224,6 +224,10 @@ namespace ArmyRush
             VfxCue cue = nextCount > previousCount ? VfxCue.CrowdGain : VfxCue.CrowdLoss;
             Vector3 position = Anchor.position + Vector3.up * 1.05f;
             VfxManager.Spawn(cue, position);
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(nextCount > previousCount ? AudioCue.CrowdGain : AudioCue.CrowdLoss);
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ namespace ArmyRush
     {
         Button,
         RunStart,
+        CrowdGain,
+        CrowdLoss,
         GatePositive,
         GateNegative,
         Shoot,
@@ -36,6 +38,7 @@ namespace ArmyRush
         private float _lastHitTime;
         private float _lastObstacleDamageTime;
         private float _lastCoinRewardTime;
+        private float _lastCrowdChangeTime;
 
         public AudioService(SaveService saveService)
         {
@@ -66,6 +69,10 @@ namespace ArmyRush
             {
                 return;
             }
+            if ((cue == AudioCue.CrowdGain || cue == AudioCue.CrowdLoss) && Time.unscaledTime - _lastCrowdChangeTime < 0.1f)
+            {
+                return;
+            }
 
             if (cue == AudioCue.Shoot)
             {
@@ -82,6 +89,10 @@ namespace ArmyRush
             else if (cue == AudioCue.CoinReward)
             {
                 _lastCoinRewardTime = Time.unscaledTime;
+            }
+            else if (cue == AudioCue.CrowdGain || cue == AudioCue.CrowdLoss)
+            {
+                _lastCrowdChangeTime = Time.unscaledTime;
             }
 
             if (!Application.isPlaying)
@@ -179,6 +190,8 @@ namespace ArmyRush
 
             _clips[AudioCue.Button] = CreateTone("SFX_Button", 620f, 0.055f, 0.18f, 0.04f);
             _clips[AudioCue.RunStart] = CreateArpeggio("SFX_RunStart", 460f, 820f, 0.24f, 0.24f);
+            _clips[AudioCue.CrowdGain] = CreateArpeggio("SFX_CrowdGain", 540f, 960f, 0.16f, 0.22f);
+            _clips[AudioCue.CrowdLoss] = CreateTone("SFX_CrowdLoss", 180f, 0.13f, 0.2f, 0.03f);
             _clips[AudioCue.GatePositive] = CreateArpeggio("SFX_GatePositive", 520f, 780f, 0.18f, 0.28f);
             _clips[AudioCue.GateNegative] = CreateTone("SFX_GateNegative", 170f, 0.18f, 0.24f, 0.02f);
             _clips[AudioCue.Shoot] = CreateNoiseBurst("SFX_Shoot", 0.045f, 0.09f, 0.45f);
