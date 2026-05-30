@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-52%
+53%
 
 Last Updated:
 
@@ -1106,6 +1106,35 @@ Date:
 
 System:
 
+Rewarded and Revive Placeholder UI
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added future-ready rewarded/revive placeholder controls to the result panels without adding an ad SDK dependency. Victory now has a 2X Reward placeholder, defeat has a Revive placeholder, and both provide button audio, light haptics, and status text feedback when ads are unavailable.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Generated scenes receive wired placeholder controls from the builder, while existing scenes create or reposition the controls at runtime.
+
+Follow Up:
+
+Connect the buttons to a real rewarded-ad availability service if monetization is introduced after core gameplay/device QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1432,7 +1461,7 @@ Gameplay Systems
 
 UI Systems
 
-39%
+40%
 
 Visual Systems
 
@@ -1464,7 +1493,7 @@ Polish
 
 Release Readiness
 
-10%
+11%
 
 ---
 

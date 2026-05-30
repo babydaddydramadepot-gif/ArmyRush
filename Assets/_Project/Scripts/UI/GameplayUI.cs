@@ -17,9 +17,13 @@ namespace ArmyRush
         [SerializeField] private GameObject _startPrompt;
         [SerializeField] private GameObject _victoryPanel;
         [SerializeField] private Text _victoryCoinsText;
+        [SerializeField] private Button _victoryRewardedButton;
+        [SerializeField] private Text _victoryStatusText;
         [SerializeField] private Button _victoryUpgradeButton;
         [SerializeField] private GameObject _defeatPanel;
         [SerializeField] private Text _defeatText;
+        [SerializeField] private Button _defeatReviveButton;
+        [SerializeField] private Text _defeatStatusText;
         [SerializeField] private Button _defeatUpgradeButton;
         [SerializeField] private Image _defeatFadeImage;
         [SerializeField] private PlayerController _player;
@@ -49,6 +53,7 @@ namespace ArmyRush
             }
             EnsureDefeatFadeImage();
             EnsureResultUpgradeButtons();
+            EnsureResultAdPlaceholders();
             RegisterResultButtons();
             SetRunState(RunState.PreRun);
         }
@@ -123,6 +128,7 @@ namespace ArmyRush
                 StopVictoryCoinCount();
                 _victoryCoinRoutine = StartCoroutine(CountVictoryCoins(Mathf.Max(0, coinsEarned)));
             }
+            SetResultStatus(_victoryStatusText, string.Empty);
         }
 
         public void ShowDefeat(int coinsEarned)
@@ -135,6 +141,7 @@ namespace ArmyRush
             {
                 _defeatText.text = coinsEarned > 0 ? $"TRY AGAIN\n+{coinsEarned} COINS" : "TRY AGAIN";
             }
+            SetResultStatus(_defeatStatusText, string.Empty);
             StartDefeatFade();
         }
 
@@ -156,6 +163,18 @@ namespace ArmyRush
         public void OpenUpgrades()
         {
             BackToMenu();
+        }
+
+        public void ShowRewardedPlaceholder()
+        {
+            PlayResultPlaceholderFeedback();
+            SetResultStatus(_victoryStatusText, "REWARDED ADS COMING SOON");
+        }
+
+        public void ShowRevivePlaceholder()
+        {
+            PlayResultPlaceholderFeedback();
+            SetResultStatus(_defeatStatusText, "REVIVE COMING SOON");
         }
 
         private void OnCoinsChanged(int coins)
@@ -237,8 +256,29 @@ namespace ArmyRush
 
         private void EnsureResultUpgradeButtons()
         {
+            RepositionResultActionButtons(_victoryPanel);
+            RepositionResultActionButtons(_defeatPanel);
             _victoryUpgradeButton = EnsureResultUpgradeButton(_victoryPanel, _victoryUpgradeButton);
             _defeatUpgradeButton = EnsureResultUpgradeButton(_defeatPanel, _defeatUpgradeButton);
+        }
+
+        private void EnsureResultAdPlaceholders()
+        {
+            _victoryRewardedButton = EnsureResultPlaceholderButton(_victoryPanel, _victoryRewardedButton, "RewardedButton", "2X REWARD");
+            _defeatReviveButton = EnsureResultPlaceholderButton(_defeatPanel, _defeatReviveButton, "ReviveButton", "REVIVE");
+            _victoryStatusText = EnsureResultStatusText(_victoryPanel, _victoryStatusText);
+            _defeatStatusText = EnsureResultStatusText(_defeatPanel, _defeatStatusText);
+        }
+
+        private void RepositionResultActionButtons(GameObject panel)
+        {
+            if (panel == null)
+            {
+                return;
+            }
+
+            SetResultChildRect(panel.transform.Find("ActionButton"), new Vector2(0.32f, 0.16f), new Vector2(286f, 78f));
+            SetResultChildRect(panel.transform.Find("UpgradeButton"), new Vector2(0.68f, 0.16f), new Vector2(286f, 78f));
         }
 
         private Button EnsureResultUpgradeButton(GameObject panel, Button currentButton)
@@ -254,16 +294,45 @@ namespace ArmyRush
                 return existingButton;
             }
 
-            Transform action = panel.transform.Find("ActionButton");
-            if (action != null && action.TryGetComponent(out RectTransform actionRect))
+            SetResultChildRect(panel.transform.Find("ActionButton"), new Vector2(0.32f, 0.16f), new Vector2(286f, 78f));
+
+            return CreateResultButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.68f, 0.16f), new Vector2(286f, 78f), new Color(0.08f, 0.28f, 0.95f));
+        }
+
+        private Button EnsureResultPlaceholderButton(GameObject panel, Button currentButton, string name, string text)
+        {
+            if (currentButton != null || panel == null)
             {
-                actionRect.anchorMin = new Vector2(0.32f, 0.22f);
-                actionRect.anchorMax = new Vector2(0.32f, 0.22f);
-                actionRect.sizeDelta = new Vector2(300f, 96f);
-                actionRect.anchoredPosition = Vector2.zero;
+                return currentButton;
             }
 
-            return CreateResultButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.68f, 0.22f), new Vector2(300f, 96f), new Color(0.08f, 0.28f, 0.95f));
+            Transform existing = panel.transform.Find(name);
+            if (existing != null && existing.TryGetComponent(out Button existingButton))
+            {
+                SetResultChildRect(existing, new Vector2(0.5f, 0.36f), new Vector2(620f, 70f));
+                return existingButton;
+            }
+
+            return CreateResultButton(name, panel.transform, text, new Vector2(0.5f, 0.36f), new Vector2(620f, 70f), new Color(0.05f, 0.13f, 0.24f));
+        }
+
+        private Text EnsureResultStatusText(GameObject panel, Text currentText)
+        {
+            if (currentText != null || panel == null)
+            {
+                return currentText;
+            }
+
+            Transform existing = panel.transform.Find("StatusText");
+            if (existing != null && existing.TryGetComponent(out Text existingText))
+            {
+                SetResultChildRect(existing, new Vector2(0.5f, 0.27f), new Vector2(620f, 44f));
+                return existingText;
+            }
+
+            Text status = CreateResultText("StatusText", panel.transform, string.Empty, 24, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.27f), new Vector2(620f, 44f));
+            status.color = new Color(1f, 0.78f, 0.12f);
+            return status;
         }
 
         private void RegisterResultButtons()
@@ -276,6 +345,14 @@ namespace ArmyRush
             {
                 _defeatUpgradeButton.onClick.AddListener(OpenUpgrades);
             }
+            if (_victoryRewardedButton != null)
+            {
+                _victoryRewardedButton.onClick.AddListener(ShowRewardedPlaceholder);
+            }
+            if (_defeatReviveButton != null)
+            {
+                _defeatReviveButton.onClick.AddListener(ShowRevivePlaceholder);
+            }
         }
 
         private void UnregisterResultButtons()
@@ -287,6 +364,14 @@ namespace ArmyRush
             if (_defeatUpgradeButton != null)
             {
                 _defeatUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+            }
+            if (_victoryRewardedButton != null)
+            {
+                _victoryRewardedButton.onClick.RemoveListener(ShowRewardedPlaceholder);
+            }
+            if (_defeatReviveButton != null)
+            {
+                _defeatReviveButton.onClick.RemoveListener(ShowRevivePlaceholder);
             }
         }
 
@@ -383,6 +468,39 @@ namespace ArmyRush
             _defeatFadeImage.color = color;
         }
 
+        private static void SetResultStatus(Text statusText, string text)
+        {
+            if (statusText != null)
+            {
+                statusText.text = text;
+            }
+        }
+
+        private static void SetResultChildRect(Transform target, Vector2 anchorPosition, Vector2 size)
+        {
+            if (target == null || !target.TryGetComponent(out RectTransform rect))
+            {
+                return;
+            }
+
+            rect.anchorMin = anchorPosition;
+            rect.anchorMax = anchorPosition;
+            rect.sizeDelta = size;
+            rect.anchoredPosition = Vector2.zero;
+        }
+
+        private static void PlayResultPlaceholderFeedback()
+        {
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(AudioCue.Button);
+            }
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Light);
+            }
+        }
+
         private static Button CreateResultButton(string name, Transform parent, string text, Vector2 anchorPosition, Vector2 size, Color color)
         {
             GameObject root = new GameObject(name);
@@ -409,6 +527,32 @@ namespace ArmyRush
             Text label = CreateResultButtonText(root.transform, text, size);
             label.color = Color.white;
             return button;
+        }
+
+        private static Text CreateResultText(string name, Transform parent, string text, int fontSize, FontStyle fontStyle, TextAnchor alignment, Vector2 anchorPosition, Vector2 size)
+        {
+            GameObject obj = new GameObject(name);
+            RectTransform rect = obj.AddComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = anchorPosition;
+            rect.anchorMax = anchorPosition;
+            rect.sizeDelta = size;
+            rect.anchoredPosition = Vector2.zero;
+
+            Text label = obj.AddComponent<Text>();
+            label.text = text;
+            label.fontSize = fontSize;
+            label.fontStyle = fontStyle;
+            label.alignment = alignment;
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+            label.verticalOverflow = VerticalWrapMode.Truncate;
+            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (font != null)
+            {
+                label.font = font;
+            }
+
+            return label;
         }
 
         private static Text CreateResultButtonText(Transform parent, string text, Vector2 size)
