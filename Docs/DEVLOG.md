@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-55%
+56%
 
 Last Updated:
 
@@ -1487,6 +1487,34 @@ Date:
 
 System:
 
+Enemy Shoot Animation Feedback
+
+Files:
+
+Assets/_Project/Scripts/Enemies/EnemyGroup.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added enemy attack animation feedback to combat. Enemy units now face back toward the player, pulse sampled front-line soldiers with the existing weapon kick when damaged, force an attack pulse during collision attrition, and emit a pooled muzzle flash at the enemy firing line.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Enemy visual coverage now includes run, death, hit reaction, and shoot/attack feedback; final authored character art and stronger enemy silhouette work remain open.
+
+Follow Up:
+
+Tune attack cadence and enemy silhouette readability during manual device combat QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Defeat Rewards
 
 Files:
@@ -1514,7 +1542,7 @@ Balance enemy reward values against enemy density and early upgrade costs during
 
 Gameplay Systems
 
-44%
+45%
 
 UI Systems
 
@@ -1522,7 +1550,7 @@ UI Systems
 
 Visual Systems
 
-43%
+44%
 
 Audio Systems
 

@@ -17,6 +17,8 @@ namespace ArmyRush
         private int _healthPerUnit;
         private int _lastDisplayedUnitCount;
         private RunManager _runManager;
+        private int _attackFeedbackCursor;
+        private float _nextAttackFeedbackTime;
         private bool _rewardClaimed;
 
         private void Awake()
@@ -62,6 +64,8 @@ namespace ArmyRush
             _coinReward = Mathf.Max(0, coinReward);
             _runManager = runManager;
             _lastDisplayedUnitCount = _unitCount;
+            _attackFeedbackCursor = 0;
+            _nextAttackFeedbackTime = 0f;
             _rewardClaimed = false;
 
             if (_damageable == null)
@@ -91,11 +95,13 @@ namespace ArmyRush
 
             if (crowd.Count > remainingEnemies)
             {
+                PlayAttackFeedback(remainingEnemies, true);
                 crowd.Remove(remainingEnemies);
                 _damageable.ApplyDamage(_damageable.Health);
             }
             else
             {
+                PlayAttackFeedback(crowd.Count, true);
                 crowd.Remove(crowd.Count);
                 if (ServiceLocator.TryGet(out AudioService audio))
                 {
@@ -113,6 +119,10 @@ namespace ArmyRush
                 _lastDisplayedUnitCount = remainingUnits;
             }
             PlayHitFeedback(amount);
+            if (damageable.Health > 0)
+            {
+                PlayAttackFeedback(Mathf.CeilToInt(amount / (float)Mathf.Max(1, _healthPerUnit)), false);
+            }
             UpdateLabel();
         }
 
@@ -173,6 +183,7 @@ namespace ArmyRush
                 int column = i - row * maxColumns;
                 float x = (column - (columns - 1) * 0.5f) * 0.45f;
                 float z = row * 0.42f;
+                _units[i].transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
                 _units[i].SetTargetLocalPosition(new Vector3(x, 0f, z), i);
             }
         }
@@ -200,6 +211,31 @@ namespace ArmyRush
                 int index = (i * step) % _units.Count;
                 _units[index].PlayHitReaction(1f + (i % 2) * 0.18f);
             }
+        }
+
+        private void PlayAttackFeedback(int requestedUnits, bool force)
+        {
+            if (_units.Count == 0 || requestedUnits <= 0)
+            {
+                return;
+            }
+
+            if (!force && Time.time < _nextAttackFeedbackTime)
+            {
+                return;
+            }
+
+            int feedbackCount = Mathf.Min(requestedUnits, _units.Count, 16);
+            int step = Mathf.Max(1, _units.Count / feedbackCount);
+            for (int i = 0; i < feedbackCount; i++)
+            {
+                int index = (_attackFeedbackCursor + i * step) % _units.Count;
+                _units[index].PlayShootKick();
+            }
+
+            _attackFeedbackCursor = (_attackFeedbackCursor + 1) % _units.Count;
+            _nextAttackFeedbackTime = Time.time + 0.28f;
+            VfxManager.Spawn(VfxCue.MuzzleFlash, transform.position + Vector3.up * 1.05f - Vector3.forward * 0.7f);
         }
     }
 }
