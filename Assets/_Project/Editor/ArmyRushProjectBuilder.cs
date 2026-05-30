@@ -18,6 +18,7 @@ public static class ArmyRushProjectBuilder
     private const string MaterialPath = Root + "/Art/Materials";
     private const string MeshPath = Root + "/Art/Models/Generated";
     private const string UiGeneratedPath = Root + "/Art/UI/Generated";
+    private const string AppIconPath = UiGeneratedPath + "/APP_ArmyRush_1024.png";
     private const string LevelDataPath = Root + "/ScriptableObjects/Levels";
     private const string UpgradeDataPath = Root + "/ScriptableObjects/Upgrades";
     private const string TuningPath = Root + "/ScriptableObjects/Tuning";
@@ -41,6 +42,7 @@ public static class ArmyRushProjectBuilder
         CreateMainMenuScene(upgrades);
         CreateGameScene(tuning, upgrades, prefabs, levels, materials, meshes);
         PolishUiArt();
+        GenerateAppIconAsset();
         ConfigureBuildSettings();
         ConfigurePlayerSettings();
 
@@ -169,6 +171,17 @@ public static class ArmyRushProjectBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("ArmyRush UI art polish applied.");
+    }
+
+    [MenuItem("ArmyRush/Generate App Icon")]
+    public static void GenerateAppIconAsset()
+    {
+        Texture2D icon = CreateAppIconTexture();
+        SaveAppIconTexture(icon);
+        ConfigureAppIcons();
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("ArmyRush app icon generated and assigned.");
     }
 
     [MenuItem("ArmyRush/Repair UI Input Modules")]
@@ -763,6 +776,122 @@ public static class ArmyRushProjectBuilder
         }
 
         return LoadRequiredAsset<Sprite>(path);
+    }
+
+    private static Texture2D CreateAppIconTexture()
+    {
+        const int size = 1024;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color skyTop = new Color(0.08f, 0.72f, 1f, 1f);
+        Color skyBottom = new Color(0.02f, 0.2f, 0.52f, 1f);
+        Color navy = new Color(0.02f, 0.08f, 0.2f, 1f);
+        Color deepBlue = new Color(0.02f, 0.22f, 0.58f, 1f);
+        Color gold = new Color(1f, 0.7f, 0.06f, 1f);
+        Color highlight = new Color(0.92f, 0.98f, 1f, 1f);
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float nx = (x + 0.5f - size * 0.5f) / (size * 0.5f);
+                float ny = (y + 0.5f - size * 0.5f) / (size * 0.5f);
+                float vertical = Mathf.InverseLerp(-1f, 1f, ny);
+                Color pixel = Color.Lerp(skyBottom, skyTop, vertical);
+
+                float roadWidth = Mathf.Lerp(0.7f, 0.25f, Mathf.InverseLerp(-1f, 0.78f, ny));
+                if (ny < 0.78f && Mathf.Abs(nx) < roadWidth)
+                {
+                    pixel = Color.Lerp(new Color(0.03f, 0.09f, 0.18f, 1f), deepBlue, vertical * 0.35f);
+                    if (Mathf.Abs(nx) < 0.035f && ny < 0.62f && Mathf.Sin((ny + 1f) * 32f) > -0.15f)
+                    {
+                        pixel = gold;
+                    }
+                }
+
+                float shield = Mathf.Sqrt((nx * nx) / 0.62f + ((ny - 0.1f) * (ny - 0.1f)) / 0.82f);
+                if (shield < 0.72f)
+                {
+                    pixel = Color.Lerp(navy, deepBlue, Mathf.Clamp01((ny + 0.55f) * 0.9f));
+                }
+
+                bool helmet = Mathf.Pow(nx / 0.42f, 2f) + Mathf.Pow((ny - 0.28f) / 0.28f, 2f) < 1f && ny > 0.12f;
+                bool visor = Mathf.Abs(nx) < 0.32f && ny > 0.12f && ny < 0.25f;
+                bool body = Mathf.Pow(nx / 0.48f, 2f) + Mathf.Pow((ny + 0.2f) / 0.42f, 2f) < 1f && ny < 0.08f;
+                if (body)
+                {
+                    pixel = new Color(0.04f, 0.42f, 0.95f, 1f);
+                }
+
+                if (helmet)
+                {
+                    pixel = highlight;
+                }
+
+                if (visor)
+                {
+                    pixel = navy;
+                }
+
+                bool chevron = ny < -0.38f && ny > -0.66f && Mathf.Abs(Mathf.Abs(nx) - (ny + 0.82f) * 0.78f) < 0.08f;
+                if (chevron)
+                {
+                    pixel = gold;
+                }
+
+                bool rim = shield > 0.68f && shield < 0.73f;
+                if (rim)
+                {
+                    pixel = gold;
+                }
+
+                texture.SetPixel(x, y, pixel);
+            }
+        }
+
+        texture.Apply();
+        return texture;
+    }
+
+    private static void SaveAppIconTexture(Texture2D texture)
+    {
+        EnsureFolder(UiGeneratedPath);
+        System.IO.File.WriteAllBytes(AppIconPath, texture.EncodeToPNG());
+        AssetDatabase.ImportAsset(AppIconPath);
+        TextureImporter importer = AssetImporter.GetAtPath(AppIconPath) as TextureImporter;
+        if (importer != null)
+        {
+            importer.textureType = TextureImporterType.Default;
+            importer.mipmapEnabled = false;
+            importer.alphaSource = TextureImporterAlphaSource.None;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
+        }
+    }
+
+    private static Texture2D EnsureAppIconTexture()
+    {
+        if (!System.IO.File.Exists(AppIconPath))
+        {
+            SaveAppIconTexture(CreateAppIconTexture());
+        }
+
+        return LoadRequiredAsset<Texture2D>(AppIconPath);
+    }
+
+    private static void ConfigureAppIcons()
+    {
+        Texture2D icon = EnsureAppIconTexture();
+        foreach (IconKind iconKind in System.Enum.GetValues(typeof(IconKind)))
+        {
+            int[] iconSizes = PlayerSettings.GetIconSizes(NamedBuildTarget.iOS, iconKind);
+            if (iconSizes == null || iconSizes.Length == 0)
+            {
+                continue;
+            }
+
+            Texture2D[] icons = Enumerable.Repeat(icon, iconSizes.Length).ToArray();
+            PlayerSettings.SetIcons(NamedBuildTarget.iOS, icons, iconKind);
+        }
     }
 
     private static Image UpsertUiImage(Transform parent, string name, Sprite sprite, Vector2 anchorPosition, Vector2 size, Color color)
@@ -1496,13 +1625,13 @@ public static class ArmyRushProjectBuilder
 
     private static void ValidateInputModules(string path, List<string> failures)
     {
-        UnityEngine.EventSystems.StandaloneInputModule[] legacyModules = Object.FindObjectsByType<UnityEngine.EventSystems.StandaloneInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        UnityEngine.EventSystems.StandaloneInputModule[] legacyModules = Object.FindObjectsByType<UnityEngine.EventSystems.StandaloneInputModule>(FindObjectsInactive.Include);
         if (legacyModules.Length > 0)
         {
             failures.Add($"{path} uses StandaloneInputModule, which throws at runtime when Player Settings use Input System package input.");
         }
 
-        UnityEngine.EventSystems.EventSystem[] eventSystems = Object.FindObjectsByType<UnityEngine.EventSystems.EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        UnityEngine.EventSystems.EventSystem[] eventSystems = Object.FindObjectsByType<UnityEngine.EventSystems.EventSystem>(FindObjectsInactive.Include);
         foreach (UnityEngine.EventSystems.EventSystem eventSystem in eventSystems)
         {
             if (eventSystem.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>() == null)
@@ -1900,6 +2029,7 @@ public static class ArmyRushProjectBuilder
         PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
         PlayerSettings.iOS.sdkVersion = sdkVersion;
         PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, "com.armyrush.game");
+        ConfigureAppIcons();
     }
 
     private static void CreateLighting()

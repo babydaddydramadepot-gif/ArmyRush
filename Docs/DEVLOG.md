@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-70%
+71%
 
 Last Updated:
 
@@ -1572,6 +1572,36 @@ Date:
 
 System:
 
+iOS App Icon Polish
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Art/UI/Generated/APP_ArmyRush_1024.png
+ProjectSettings/ProjectSettings.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Generated a branded 1024x1024 ArmyRush app icon from the editor build tooling, imported it as a production texture asset, and assigned it across Unity's iOS icon slots for iPhone, iPad, notification, spotlight, settings, and App Store usage.
+
+Result:
+
+Unity production validation passed. The refreshed iOS simulator export produced an Xcode asset catalog containing `Icon-Store-1024.png`, and the simulator `xcodebuild` completed with `** BUILD SUCCEEDED **` without the previous missing 1024x1024 App Store icon warning. The freshly built app installed and launched on the iPhone 17 Pro simulator, and a targeted simulator log scan found no Unity exception strings.
+
+Follow Up:
+
+Keep the branded icon under visual review with any later brand/art direction changes. Physical-device deployment remains blocked on signing credentials/provisioning, and main-menu upgrade tile crowding remains in the UI polish backlog.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Silhouette Polish
 
 Files:
@@ -2070,7 +2100,7 @@ Polish
 
 Release Readiness
 
-18%
+19%
 
 ---
 
@@ -2298,7 +2328,7 @@ AR-005
 
 Status:
 
-Generated Xcode project builds successfully with signing disabled, but simulator/device launch QA and physical iPhone deployment are still pending.
+Generated Xcode project builds successfully with signing disabled, simulator launch QA passes, and branded app icon packaging is validated. Physical iPhone deployment is still pending because signing credentials/provisioning are required.
 
 Issue ID:
 
@@ -2307,6 +2337,14 @@ AR-006
 Status:
 
 Unity Cloud Diagnostics symbol upload reports missing `USYM_UPLOAD_AUTH_TOKEN`; this is optional for local development builds and only needs configuration if cloud symbol upload is enabled.
+
+Issue ID:
+
+AR-007
+
+Status:
+
+Simulator visual QA shows main-menu upgrade tiles are crowded, with upgrade arrows competing with label text on portrait phone layout. This is tracked for the next UI polish pass.
 
 ---
 
