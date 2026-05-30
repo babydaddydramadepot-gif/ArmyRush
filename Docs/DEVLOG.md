@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-48%
+49%
 
 Last Updated:
 
@@ -724,6 +724,7 @@ Files:
 Assets/_Project/Scripts/Utility/PoolManager.cs
 Assets/_Project/Scripts/Crowd/CrowdManager.cs
 Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
 Docs/TASKS.md
 Docs/DEVLOG.md
 
@@ -982,6 +983,34 @@ Unity production validation passes with no C# compiler errors or warnings. Auto-
 Follow Up:
 
 Tune trail width and lifetime during device play-mode QA so dense volleys stay readable without visual clutter.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
+Deterministic Endless Level Generation
+
+Files:
+
+Assets/_Project/Scripts/Level/LevelManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Replaced authored-level wrapping with runtime deterministic LevelData generation after the highest authored level. Endless levels now scale track length, gate values, enemy counts, obstacle health, bonus crate rewards, and boss cadence from the requested level index while preserving the authored lane/chunk spawning path. Added production validation coverage for the first post-authored level preview.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings, including the new post-authored endless level preview check. Endless support now creates designed, repeatable post-authored levels instead of replaying earlier authored layouts.
+
+Follow Up:
+
+Add true boss-type rotation once helicopter and mech boss variants exist; the current endless path reuses the available tank boss definition.
 
 ---
 
@@ -1329,7 +1358,7 @@ Audio Systems
 
 Level Systems
 
-31%
+34%
 
 Progression Systems
 

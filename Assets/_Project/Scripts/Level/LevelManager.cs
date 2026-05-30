@@ -23,6 +23,7 @@ namespace ArmyRush
         private readonly List<GameObject> _spawned = new List<GameObject>();
         private ProgressionService _progression;
         private UpgradeService _upgrades;
+        private LevelData _runtimeEndlessLevel;
 
         public LevelData CurrentLevel { get; private set; }
         public BossController ActiveBoss { get; private set; }
@@ -95,11 +96,22 @@ namespace ArmyRush
             SpawnBonusSection();
         }
 
+        public LevelData PreviewLevelData(int levelIndex)
+        {
+            return SelectLevel(Mathf.Max(1, levelIndex));
+        }
+
         private LevelData SelectLevel(int desiredIndex)
         {
             if (_levels == null || _levels.Length == 0)
             {
                 return null;
+            }
+
+            int highestAuthoredLevel = GetHighestAuthoredLevelIndex();
+            if (desiredIndex > highestAuthoredLevel)
+            {
+                return BuildEndlessLevel(desiredIndex, highestAuthoredLevel);
             }
 
             for (int i = 0; i < _levels.Length; i++)
@@ -112,6 +124,116 @@ namespace ArmyRush
 
             int wrapped = Mathf.Abs((desiredIndex - 1) % _levels.Length);
             return _levels[wrapped];
+        }
+
+        private int GetHighestAuthoredLevelIndex()
+        {
+            int highest = 0;
+            for (int i = 0; i < _levels.Length; i++)
+            {
+                if (_levels[i] != null)
+                {
+                    highest = Mathf.Max(highest, _levels[i].levelIndex);
+                }
+            }
+
+            return Mathf.Max(1, highest);
+        }
+
+        private LevelData BuildEndlessLevel(int desiredIndex, int highestAuthoredLevel)
+        {
+            if (_runtimeEndlessLevel == null)
+            {
+                _runtimeEndlessLevel = ScriptableObject.CreateInstance<LevelData>();
+                _runtimeEndlessLevel.hideFlags = HideFlags.DontSave;
+            }
+
+            int overflow = Mathf.Max(1, desiredIndex - highestAuthoredLevel);
+            float difficulty = 1f + overflow * 0.08f;
+            float trackLength = Mathf.Min(270f, 190f + overflow * 4.5f);
+            BossDefinition bossDefinition = FindEndlessBossDefinition(overflow);
+
+            _runtimeEndlessLevel.name = "Runtime_Endless_Level_" + desiredIndex;
+            _runtimeEndlessLevel.levelIndex = desiredIndex;
+            _runtimeEndlessLevel.trackLength = trackLength;
+            _runtimeEndlessLevel.startingSoldiersOverride = 0;
+            _runtimeEndlessLevel.baseCoinReward = Mathf.RoundToInt(1200f + overflow * 95f);
+            _runtimeEndlessLevel.difficultyRating = desiredIndex;
+            _runtimeEndlessLevel.hasBoss = bossDefinition != null && desiredIndex % 5 == 0;
+            _runtimeEndlessLevel.bossDefinition = _runtimeEndlessLevel.hasBoss ? bossDefinition : null;
+            _runtimeEndlessLevel.bossHealth = _runtimeEndlessLevel.hasBoss ? bossDefinition.GetHealth(desiredIndex, 0) : 0;
+            _runtimeEndlessLevel.bonusCrateCount = Mathf.Clamp(3 + overflow / 8, 3, 5);
+            _runtimeEndlessLevel.bonusCrateHealth = Mathf.RoundToInt(120f * difficulty + overflow * 18f);
+            _runtimeEndlessLevel.bonusCrateReward = Mathf.RoundToInt(130f + overflow * 12f);
+            _runtimeEndlessLevel.bonusSectionLength = Mathf.Clamp(34f + overflow * 0.35f, 34f, 48f);
+            _runtimeEndlessLevel.gates.Clear();
+            _runtimeEndlessLevel.enemyGroups.Clear();
+            _runtimeEndlessLevel.obstacles.Clear();
+
+            AddEndlessGatePair(16f, GateOperation.Add, Mathf.RoundToInt(18f * difficulty), GateOperation.Multiply, overflow % 3 == 0 ? 3 : 2);
+            AddEndlessEnemy(34f, 0f, Mathf.RoundToInt(28f * difficulty), Mathf.RoundToInt(16f * difficulty));
+            AddEndlessGatePair(52f, overflow % 2 == 0 ? GateOperation.Subtract : GateOperation.Add, Mathf.RoundToInt(14f * difficulty), GateOperation.Add, Mathf.RoundToInt(26f * difficulty));
+            AddEndlessObstacle(72f, overflow % 2 == 0 ? -1.45f : 1.45f, Mathf.RoundToInt(210f * difficulty), Mathf.RoundToInt(14f * difficulty));
+            AddEndlessGatePair(94f, GateOperation.Multiply, overflow % 4 == 0 ? 3 : 2, GateOperation.Add, Mathf.RoundToInt(32f * difficulty));
+            AddEndlessEnemy(118f, overflow % 2 == 0 ? 1.15f : -1.15f, Mathf.RoundToInt(42f * difficulty), Mathf.RoundToInt(18f * difficulty));
+            AddEndlessObstacle(142f, -1.55f, Mathf.RoundToInt(250f * difficulty), Mathf.RoundToInt(16f * difficulty));
+            AddEndlessObstacle(142f, 1.55f, Mathf.RoundToInt(270f * difficulty), Mathf.RoundToInt(16f * difficulty));
+
+            if (_runtimeEndlessLevel.hasBoss)
+            {
+                AddEndlessGatePair(trackLength - 48f, GateOperation.Add, Mathf.RoundToInt(42f * difficulty), GateOperation.Multiply, overflow >= 10 ? 3 : 2);
+            }
+            else
+            {
+                AddEndlessGatePair(trackLength - 42f, GateOperation.Add, Mathf.RoundToInt(36f * difficulty), GateOperation.Multiply, 2);
+                AddEndlessEnemy(trackLength - 22f, 0f, Mathf.RoundToInt(52f * difficulty), Mathf.RoundToInt(20f * difficulty));
+            }
+
+            return _runtimeEndlessLevel;
+        }
+
+        private BossDefinition FindEndlessBossDefinition(int overflow)
+        {
+            BossDefinition fallback = null;
+            int bossIndex = 0;
+            for (int i = 0; i < _levels.Length; i++)
+            {
+                BossDefinition definition = _levels[i] != null ? _levels[i].bossDefinition : null;
+                if (definition == null)
+                {
+                    continue;
+                }
+
+                if (fallback == null)
+                {
+                    fallback = definition;
+                }
+
+                if (bossIndex == overflow / 5)
+                {
+                    return definition;
+                }
+
+                bossIndex++;
+            }
+
+            return fallback;
+        }
+
+        private void AddEndlessGatePair(float z, GateOperation leftOperation, int leftValue, GateOperation rightOperation, int rightValue)
+        {
+            _runtimeEndlessLevel.gates.Add(new GateSpawnData { z = z, x = -1.45f, operation = leftOperation, value = Mathf.Max(1, leftValue) });
+            _runtimeEndlessLevel.gates.Add(new GateSpawnData { z = z, x = 1.45f, operation = rightOperation, value = Mathf.Max(1, rightValue) });
+        }
+
+        private void AddEndlessEnemy(float z, float x, int count, int healthPerUnit)
+        {
+            _runtimeEndlessLevel.enemyGroups.Add(new EnemyGroupSpawnData { z = z, x = x, count = Mathf.Max(1, count), healthPerUnit = Mathf.Max(1, healthPerUnit) });
+        }
+
+        private void AddEndlessObstacle(float z, float x, int health, int penalty)
+        {
+            _runtimeEndlessLevel.obstacles.Add(new ObstacleSpawnData { z = z, x = x, health = Mathf.Max(1, health), collisionPenalty = Mathf.Max(0, penalty) });
         }
 
         private void BuildTrack(float length)

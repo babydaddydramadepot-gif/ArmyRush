@@ -1113,6 +1113,16 @@ public static class ArmyRushProjectBuilder
             .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
             .Where(asset => asset != null)
             .ToArray();
+        int endlessPreviewIndex = levelAssets.Length > 0 ? levelAssets.Max(level => level.levelIndex) + 1 : 21;
+        LevelData endlessPreview = levelManager.PreviewLevelData(endlessPreviewIndex);
+        if (endlessPreview == null || endlessPreview.levelIndex != endlessPreviewIndex)
+        {
+            failures.Add("LevelManager did not create a deterministic endless level preview.");
+        }
+        else if (endlessPreview.gates.Count < 6 || endlessPreview.enemyGroups.Count < 2 || endlessPreview.obstacles.Count < 2 || endlessPreview.baseCoinReward <= 0)
+        {
+            failures.Add("Endless level preview is missing required scaled encounters or rewards.");
+        }
         if (levelAssets.Any(level => level.hasBoss && level.bossDefinition == null))
         {
             failures.Add("One or more boss levels are missing a BossDefinition reference.");

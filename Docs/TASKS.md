@@ -785,16 +785,16 @@ Acceptance Criteria:
 
 ## 3.5 Endless Level Support
 
-Status: Functional Pass Implemented; Device Matrix QA Pending
+Status: Functional Deterministic Runtime Generation Implemented; Boss Variant Rotation Pending
 Priority: Medium
 
 Tasks:
 
-- Add procedural level generation after authored levels.
-- Use chunk system.
-- Scale difficulty.
+- [x] Add procedural level generation after authored levels.
+- [x] Use chunk system.
+- [x] Scale difficulty.
 - Rotate boss types.
-- Scale rewards.
+- [x] Scale rewards.
 
 Acceptance Criteria:
 
