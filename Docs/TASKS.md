@@ -541,17 +541,17 @@ Acceptance Criteria:
 
 ## 1.8 Production Enemy Visuals
 
-Status: In Progress; Procedural Low-Poly Visual and Run/Death/Hit/Shoot Animation Pass Implemented
+Status: Functional Enemy Visual Pass Implemented with Team Color, Animation, and Distinct Silhouette Polish; Device QA Pending
 Priority: Critical
 
 Tasks:
 
-- Create stylized red enemy soldier prefab.
+- [x] Create stylized red enemy soldier prefab.
 - [x] Add enemy run and death animations.
 - [x] Add enemy shoot animation.
 - [x] Add enemy hit reaction animation.
-- Add team color material.
-- Ensure enemy silhouette differs from player.
+- [x] Add team color material.
+- [x] Ensure enemy silhouette differs from player.
 
 Acceptance Criteria:
 

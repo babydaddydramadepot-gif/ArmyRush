@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Enemy Silhouette Polish
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/Enemies/PF_EnemyUnit_Red.prefab
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added enemy-only silhouette details to the shared character prefab polish path. Red enemy units now receive a helmet crest and extra shoulder profile pieces, giving them a more aggressive outline than the blue player soldiers while keeping the same optimized low-poly construction.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Enemy visuals now satisfy the team color and distinct silhouette requirements in addition to the existing run, shoot, hit, and death animation pass.
+
+Follow Up:
+
+Review dense enemy groups from the gameplay camera to make sure the added profile remains readable without visual clutter.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Generated UI Sprite Art Pass
 
 Files:
@@ -1928,7 +1957,7 @@ UI Systems
 
 Visual Systems
 
-52%
+53%
 
 Audio Systems
 

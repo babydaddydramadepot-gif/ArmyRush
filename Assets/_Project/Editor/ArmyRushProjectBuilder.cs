@@ -451,6 +451,14 @@ public static class ArmyRushProjectBuilder
         UpsertMeshPart(weaponRoot, "RifleStock", meshes.box, dark, new Vector3(0f, 0f, -0.28f), new Vector3(0.19f, 0.15f, 0.16f));
         UpsertMeshPart(weaponRoot, "RifleBarrel", meshes.box, materials.obstacleMetal, new Vector3(0f, 0f, 0.31f), new Vector3(0.07f, 0.07f, 0.26f));
         UpsertMeshPart(weaponRoot, "RifleMuzzle", meshes.box, accent, new Vector3(0f, 0f, 0.48f), new Vector3(0.09f, 0.09f, 0.05f));
+
+        if (!player)
+        {
+            UpsertMeshPart(bodyRoot, "EnemyHelmetCrest", meshes.wedge, materials.enemyCrimson, new Vector3(0f, 1.46f, 0f), new Vector3(0.16f, 0.16f, 0.34f));
+            UpsertMeshPart(bodyRoot, "EnemyShoulderProfile_L", meshes.box, materials.enemyCrimson, new Vector3(-0.43f, 1.02f, 0f), new Vector3(0.12f, 0.16f, 0.2f));
+            UpsertMeshPart(bodyRoot, "EnemyShoulderProfile_R", meshes.box, materials.enemyCrimson, new Vector3(0.43f, 1.02f, 0f), new Vector3(0.12f, 0.16f, 0.2f));
+        }
+
         return weaponRoot;
     }
 
