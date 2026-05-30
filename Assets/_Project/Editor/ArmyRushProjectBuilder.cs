@@ -674,18 +674,31 @@ public static class ArmyRushProjectBuilder
         Button settingsButton = CreateButton("SettingsButton", safe.transform, "SETTINGS", new Vector2(0.16f, 0.955f), new Vector2(250f, 64f), new Color(0.05f, 0.13f, 0.24f));
         UnityEventTools.AddPersistentListener(settingsButton.onClick, settings.Open);
 
-        Button play = CreateButton("PlayButton", safe.transform, "PLAY", new Vector2(0.5f, 0.19f), new Vector2(520f, 130f), new Color(0.05f, 0.78f, 0.35f));
+        Button play = CreateButton("PlayButton", safe.transform, "PLAY", new Vector2(0.5f, 0.17f), new Vector2(520f, 122f), new Color(0.05f, 0.78f, 0.35f));
         UnityEventTools.AddPersistentListener(play.onClick, menu.Play);
 
-        UpgradeButtonView[] views = new UpgradeButtonView[4];
-        UpgradeType[] types = { UpgradeType.Damage, UpgradeType.FireRate, UpgradeType.StartingTroops, UpgradeType.CoinReward };
+        UpgradeType[] types =
+        {
+            UpgradeType.Damage,
+            UpgradeType.FireRate,
+            UpgradeType.StartingTroops,
+            UpgradeType.CoinReward,
+            UpgradeType.BossDamage,
+            UpgradeType.ObstacleDamage,
+            UpgradeType.CriticalChance,
+            UpgradeType.CriticalDamage
+        };
+        UpgradeButtonView[] views = new UpgradeButtonView[types.Length];
         for (int i = 0; i < views.Length; i++)
         {
-            Button button = CreateButton("Upgrade_" + types[i], safe.transform, string.Empty, new Vector2(0.5f, 0.62f - i * 0.105f), new Vector2(720f, 92f), new Color(0.08f, 0.28f, 0.95f));
+            int row = i / 2;
+            int column = i % 2;
+            Vector2 anchor = new Vector2(column == 0 ? 0.31f : 0.69f, 0.64f - row * 0.098f);
+            Button button = CreateButton("Upgrade_" + types[i], safe.transform, string.Empty, anchor, new Vector2(360f, 84f), new Color(0.08f, 0.28f, 0.95f));
             UpgradeButtonView view = button.gameObject.AddComponent<UpgradeButtonView>();
-            Text titleText = CreateUIText("Title", button.transform, types[i].ToString().ToUpperInvariant(), 28, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.27f, 0.56f), new Vector2(340f, 40f));
-            Text levelText = CreateUIText("Level", button.transform, "Lv. 0", 24, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.27f, 0.24f), new Vector2(220f, 34f));
-            Text costText = CreateUIText("Cost", button.transform, "100", 30, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f), new Vector2(0.82f, 0.5f), new Vector2(180f, 54f));
+            Text titleText = CreateUIText("Title", button.transform, types[i].ToString().ToUpperInvariant(), 23, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.36f, 0.62f), new Vector2(220f, 34f));
+            Text levelText = CreateUIText("Level", button.transform, "Lv. 0", 20, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.28f), new Vector2(130f, 30f));
+            Text costText = CreateUIText("Cost", button.transform, "100", 24, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f), new Vector2(0.77f, 0.3f), new Vector2(150f, 36f));
             view.Configure(types[i]);
             SetObject(view, "_titleText", titleText);
             SetObject(view, "_levelText", levelText);
@@ -880,6 +893,13 @@ public static class ArmyRushProjectBuilder
         if (Object.FindAnyObjectByType<Canvas>() == null)
         {
             failures.Add("MainMenu scene is missing a Canvas.");
+        }
+
+        int upgradeButtonCount = Object.FindObjectsByType<UpgradeButtonView>(FindObjectsInactive.Include).Length;
+        int requiredUpgradeCount = System.Enum.GetValues(typeof(UpgradeType)).Length;
+        if (upgradeButtonCount < requiredUpgradeCount)
+        {
+            failures.Add($"MainMenu exposes {upgradeButtonCount} upgrade buttons, but {requiredUpgradeCount} upgrade types exist.");
         }
     }
 

@@ -909,7 +909,7 @@ Acceptance Criteria:
 
 ## 5.2 Upgrade System
 
-Status: Functional Pass Implemented; UI Exposure/Balance QA Pending
+Status: Functional Pass Implemented; Balance QA Pending
 Priority: Critical
 
 Tasks:
@@ -1030,7 +1030,7 @@ Acceptance Criteria:
 
 ## 6.3 Upgrade Screen
 
-Status: Functional Pass Implemented; Purchase Juice Polish Pending
+Status: Functional Pass Implemented with All Categories; Purchase Juice Polish Pending
 Priority: Critical
 
 Tasks:

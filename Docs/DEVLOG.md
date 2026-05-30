@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-22%
+23%
 
 Last Updated:
 
@@ -526,6 +526,35 @@ Manual play-mode QA needs to tune crate health, section pacing, camera framing b
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Full Upgrade Menu Exposure
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/MainMenu.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Expanded the generated main menu upgrade area from four wide buttons to a compact two-column grid exposing all eight progression categories: Damage, Fire Rate, Starting Soldiers, Coin Bonus, Boss Damage, Obstacle Damage, Critical Chance, and Critical Damage. The production validator now checks that the generated MainMenu scene has at least one upgrade button per defined `UpgradeType`.
+
+Result:
+
+Unity generation and production validation both pass with no C# compiler errors or warnings. All combat and economy upgrade definitions are now reachable from the menu instead of existing only in data and gameplay calculations.
+
+Follow Up:
+
+Add purchase animation juice, improve unaffordable/max-state presentation, and device-test text fit across iPhone and iPad safe areas.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -534,7 +563,7 @@ Gameplay Systems
 
 UI Systems
 
-26%
+29%
 
 Visual Systems
 
@@ -550,7 +579,7 @@ Level Systems
 
 Progression Systems
 
-40%
+42%
 
 Boss Systems
 
@@ -562,7 +591,7 @@ Optimization
 
 Polish
 
-12%
+13%
 
 Release Readiness
 
