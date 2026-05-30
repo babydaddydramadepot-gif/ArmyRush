@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-60%
+61%
 
 Last Updated:
 
@@ -1487,6 +1487,34 @@ Date:
 
 System:
 
+Obstacle Damage-State Feedback
+
+Files:
+
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added obstacle durability feedback before destruction. Obstacles now pulse and wobble on damage, then emit one-time cracked/breaking floating text with debris or smoke as health crosses damage thresholds.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Obstacle visuals now communicate durability changes through motion and VFX, while the larger authored obstacle catalog remains open.
+
+Follow Up:
+
+Tune wobble amplitude and threshold cue density during manual combat QA, especially on smaller iPhone screens.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Centralized Coin Reward Audio
 
 Files:
@@ -1667,7 +1695,7 @@ UI Systems
 
 Visual Systems
 
-45%
+46%
 
 Audio Systems
 
@@ -1691,7 +1719,7 @@ Optimization
 
 Polish
 
-36%
+37%
 
 Release Readiness
 

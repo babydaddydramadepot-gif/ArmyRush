@@ -636,10 +636,12 @@ Acceptance Criteria:
 
 ## 2.2 Production Obstacle Visuals
 
-Status: In Progress; Barricade/Crate Visual Pass Implemented
+Status: In Progress; Barricade/Crate Visual and Damage-State Feedback Implemented
 Priority: High
 
 Tasks:
+
+- [x] Add damage-state readability feedback.
 
 Create production visuals for:
 
