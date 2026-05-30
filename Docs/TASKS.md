@@ -1335,7 +1335,7 @@ Acceptance Criteria:
 
 ## 9.1 Mobile Performance Pass
 
-Status: In Progress; Runtime Frame Pacing, Pool Prewarm, and Formation Update Baseline Implemented
+Status: In Progress; Runtime Frame Pacing, Pool Prewarm, Formation Update, and Instanced Material Baseline Implemented
 Priority: Critical
 
 Tasks:
@@ -1348,8 +1348,8 @@ Tasks:
 - [x] Prevent device sleep during play sessions.
 - [x] Prewarm starting crowd and enemy visual pools before level spawn.
 - [x] Top up pools instead of duplicating prewarm counts.
-- Reduce draw calls where possible.
-- Use shared materials.
+- [x] Reduce draw calls where possible with GPU-instanced generated materials.
+- [x] Use shared generated materials.
 - Verify object pooling.
 - [x] Avoid excessive player-crowd formation Update loops.
 

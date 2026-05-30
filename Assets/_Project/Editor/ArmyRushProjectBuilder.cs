@@ -1341,6 +1341,7 @@ public static class ArmyRushProjectBuilder
         }
         material.name = name;
         material.color = alpha > 0f ? new Color(color.r, color.g, color.b, 1f - alpha) : color;
+        material.enableInstancing = true;
         EditorUtility.SetDirty(material);
         return material;
     }

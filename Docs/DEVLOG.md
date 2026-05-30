@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-41%
+42%
 
 Last Updated:
 
@@ -775,6 +775,50 @@ Date:
 
 System:
 
+Generated Material Instancing Optimization
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Art/Materials/MAT_PlayerBlue.mat
+Assets/_Project/Art/Materials/MAT_PlayerNavy.mat
+Assets/_Project/Art/Materials/MAT_EnemyRed.mat
+Assets/_Project/Art/Materials/MAT_EnemyCrimson.mat
+Assets/_Project/Art/Materials/MAT_StylizedSkin.mat
+Assets/_Project/Art/Materials/MAT_TrackGray.mat
+Assets/_Project/Art/Materials/MAT_RailWhite.mat
+Assets/_Project/Art/Materials/MAT_OceanBlue.mat
+Assets/_Project/Art/Materials/MAT_GatePositive.mat
+Assets/_Project/Art/Materials/MAT_GateNegative.mat
+Assets/_Project/Art/Materials/MAT_ProjectileYellow.mat
+Assets/_Project/Art/Materials/MAT_CoinGold.mat
+Assets/_Project/Art/Materials/MAT_ObstacleWood.mat
+Assets/_Project/Art/Materials/MAT_ObstacleMetal.mat
+Assets/_Project/Art/Materials/MAT_UIBlue.mat
+Assets/_Project/Art/Materials/MAT_VFXParticle.mat
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Enabled GPU instancing on the generated shared material library and updated the project builder so regenerated materials keep instancing enabled. This keeps the repeated low-poly meshes aligned with the mobile draw-call reduction pass while preserving the existing shared-material workflow.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Generated material draw-call optimization is in place.
+
+Follow Up:
+
+Profile actual device batches in Xcode/Unity profiler and tune mesh/material grouping if repeated soldiers, obstacles, or track pieces still dominate rendering cost.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1125,7 +1169,7 @@ Boss Systems
 
 Optimization
 
-20%
+22%
 
 Polish
 
@@ -1301,7 +1345,7 @@ All performance improvements belong here.
 
 ## Initial State
 
-Runtime frame pacing setup, pool prewarm top-ups, and player-crowd formation update reduction are implemented. Device profiling remains pending.
+Runtime frame pacing setup, pool prewarm top-ups, player-crowd formation update reduction, and generated material instancing are implemented. Device profiling remains pending.
 
 ---
 
