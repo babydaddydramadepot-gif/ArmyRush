@@ -66,6 +66,7 @@ public static class ArmyRushProjectBuilder
         ValidateLevelChunkDataAssets(failures);
         ValidateLevelDataAssets(failures);
         ValidateUpgradeDefinitions(failures);
+        ValidateEconomyProgression(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
         ValidateScene(ScenePath + "/Game.unity", failures, ValidateGameScene);
@@ -2436,6 +2437,139 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Critical Damage should unlock after Level 15.");
         }
+    }
+
+    private static void ValidateEconomyProgression(List<string> failures)
+    {
+        LevelData[] levels = AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .OrderBy(asset => asset.levelIndex)
+            .ToArray();
+        UpgradeDefinition[] definitions = AssetDatabase.FindAssets("t:UpgradeDefinition", new[] { UpgradeDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<UpgradeDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+
+        if (levels.Length == 0 || definitions.Length == 0)
+        {
+            return;
+        }
+
+        Dictionary<UpgradeType, int> simulatedUpgradeLevels = new Dictionary<UpgradeType, int>();
+        int coins = 0;
+        int earlyAffordableRuns = 0;
+
+        for (int i = 0; i < levels.Length && i < 20; i++)
+        {
+            LevelData level = levels[i];
+            coins += EstimateLevelReward(level, definitions, simulatedUpgradeLevels);
+
+            int postCompletionLevelIndex = level.levelIndex + 1;
+            UpgradeDefinition cheapest = FindCheapestAffordableUpgrade(definitions, simulatedUpgradeLevels, coins, postCompletionLevelIndex);
+            if (level.levelIndex <= 10)
+            {
+                if (cheapest == null)
+                {
+                    failures.Add("Economy simulation cannot afford an upgrade after Level " + level.levelIndex + ".");
+                }
+                else
+                {
+                    earlyAffordableRuns++;
+                }
+            }
+
+            if (cheapest != null)
+            {
+                int currentLevel = GetSimulatedUpgradeLevel(simulatedUpgradeLevels, cheapest.type);
+                coins -= cheapest.GetCost(currentLevel);
+                simulatedUpgradeLevels[cheapest.type] = currentLevel + 1;
+            }
+        }
+
+        if (earlyAffordableRuns < Mathf.Min(10, levels.Length))
+        {
+            failures.Add("Early economy simulation failed the one-upgrade-per-run target.");
+        }
+    }
+
+    private static int EstimateLevelReward(LevelData level, UpgradeDefinition[] definitions, Dictionary<UpgradeType, int> simulatedUpgradeLevels)
+    {
+        int reward = Mathf.Max(0, level.baseCoinReward);
+        for (int i = 0; i < level.enemyGroups.Count; i++)
+        {
+            EnemyGroupSpawnData enemy = level.enemyGroups[i];
+            if (enemy != null)
+            {
+                float rewardPerEnemy = 2f + Mathf.Max(0, level.levelIndex - 1) * 0.25f;
+                reward += Mathf.RoundToInt(enemy.count * rewardPerEnemy);
+            }
+        }
+
+        for (int i = 0; i < level.obstacles.Count; i++)
+        {
+            ObstacleSpawnData obstacle = level.obstacles[i];
+            if (obstacle == null)
+            {
+                continue;
+            }
+
+            reward += obstacle.definition != null
+                ? obstacle.definition.GetCoinReward(level.levelIndex, obstacle.coinReward)
+                : Mathf.Max(0, obstacle.coinReward);
+        }
+
+        if (level.hasBoss)
+        {
+            reward += level.bossDefinition != null ? level.bossDefinition.GetCoinReward(level.levelIndex) : 250;
+        }
+
+        int survivorEstimate = Mathf.Max(8, level.startingSoldiersOverride > 0 ? level.startingSoldiersOverride : 10 + level.levelIndex / 3);
+        reward += survivorEstimate * 2;
+
+        for (int i = 0; i < level.bonusCrateCount; i++)
+        {
+            reward += level.bonusCrateReward + level.levelIndex * 6 + i * 10;
+        }
+
+        UpgradeDefinition coinBonus = definitions.FirstOrDefault(definition => definition.type == UpgradeType.CoinReward);
+        int coinBonusLevel = GetSimulatedUpgradeLevel(simulatedUpgradeLevels, UpgradeType.CoinReward);
+        float multiplier = coinBonus != null ? Mathf.Max(1f, coinBonus.GetValue(coinBonusLevel)) : 1f;
+        return Mathf.RoundToInt(reward * multiplier);
+    }
+
+    private static UpgradeDefinition FindCheapestAffordableUpgrade(UpgradeDefinition[] definitions, Dictionary<UpgradeType, int> simulatedUpgradeLevels, int coins, int currentLevelIndex)
+    {
+        UpgradeDefinition cheapest = null;
+        int cheapestCost = int.MaxValue;
+        for (int i = 0; i < definitions.Length; i++)
+        {
+            UpgradeDefinition definition = definitions[i];
+            if (definition == null || !definition.IsUnlocked(currentLevelIndex))
+            {
+                continue;
+            }
+
+            int currentLevel = GetSimulatedUpgradeLevel(simulatedUpgradeLevels, definition.type);
+            if (definition.IsMaxed(currentLevel))
+            {
+                continue;
+            }
+
+            int cost = definition.GetCost(currentLevel);
+            if (cost <= coins && cost < cheapestCost)
+            {
+                cheapest = definition;
+                cheapestCost = cost;
+            }
+        }
+
+        return cheapest;
+    }
+
+    private static int GetSimulatedUpgradeLevel(Dictionary<UpgradeType, int> simulatedUpgradeLevels, UpgradeType type)
+    {
+        return simulatedUpgradeLevels.TryGetValue(type, out int level) ? Mathf.Max(0, level) : 0;
     }
 
     private static void ValidateScene(string path, List<string> failures, System.Action<Scene, List<string>> validate)

@@ -963,7 +963,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, and Multiplier Rewards; Economy Balance QA Pending
+Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, and Automated Early-Economy Validation; Manual Balance QA Pending
 Priority: High
 
 Tasks:
@@ -974,12 +974,14 @@ Tasks:
 - [x] Calculate boss rewards.
 - [x] Calculate bonus run crate rewards.
 - [x] Apply coin multipliers.
+- [x] Add validator simulation for early one-upgrade-per-run affordability.
 
 Acceptance Criteria:
 
 - Rewards feel generous early.
 - Rewards scale correctly.
 - Reward screen matches actual payout.
+- Automated validation catches early economy regressions.
 
 ---
 

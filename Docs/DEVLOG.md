@@ -2344,6 +2344,34 @@ Run economy playthrough QA to compare coin income against upgrade costs across L
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Economy Progression Validator
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added an automated economy simulation to production validation. The validator estimates Level 1-20 coin income from base rewards, enemies, obstacles, bosses, survivor bonuses, bonus crates, and coin multiplier upgrades, then simulates buying the cheapest unlocked upgrade after each level. Early levels now fail validation if they cannot support the documented one-upgrade-per-run target.
+
+Result:
+
+Unity production validation passed. The project now has a regression guard for early economy generosity before manual balance playthroughs.
+
+Follow Up:
+
+Manual economy QA still needs to compare actual player performance, deaths, missed bonus crates, and upgrade choices against the automated optimistic simulation.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2368,7 +2396,7 @@ Level Systems
 
 Progression Systems
 
-53%
+55%
 
 Boss Systems
 
