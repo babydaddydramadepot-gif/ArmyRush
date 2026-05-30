@@ -984,7 +984,7 @@ Acceptance Criteria:
 
 ## 6.1 HUD
 
-Status: Functional Pass Implemented; Settings Button Pending
+Status: Functional Pass Implemented; Device Layout QA Pending
 Priority: Critical
 
 Tasks:
@@ -1094,7 +1094,7 @@ Acceptance Criteria:
 
 ## 6.6 Settings Screen
 
-Status: Not Started
+Status: In Progress; SFX Slider and Haptics Toggle Implemented
 Priority: Medium
 
 Tasks:
@@ -1118,7 +1118,7 @@ Acceptance Criteria:
 
 ## 7.1 Audio System
 
-Status: Functional Pass Implemented; Final Audio Assets Pending
+Status: Functional Pass Implemented; Final Audio/Music Assets Pending
 Priority: High
 
 Tasks:
@@ -1126,7 +1126,7 @@ Tasks:
 - Implement AudioManager.
 - Add SFX categories.
 - Add music support.
-- Add volume settings.
+- [x] Add SFX volume settings.
 - Add pooled audio sources.
 
 Acceptance Criteria:

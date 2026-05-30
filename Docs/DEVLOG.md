@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-19%
+20%
 
 Last Updated:
 
@@ -424,6 +424,37 @@ Add muzzle flashes, obstacle debris, victory fireworks, defeat fade, final autho
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Settings UI
+
+Files:
+
+Assets/_Project/Scripts/UI/SettingsPanelUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/MainMenu.unity
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a reusable settings panel to the main menu and gameplay HUD. The panel exposes an SFX volume slider and haptics toggle backed by `PlayerSaveData`, persists changes through `SaveService`, and is generated into both production scenes with safe-area placement.
+
+Result:
+
+Unity generation and production validation pass with no C# compiler errors or warnings. Audio and haptics settings are now accessible to players instead of existing only in save data.
+
+Follow Up:
+
+Add music controls after music exists, add privacy/terms/restore entries for monetization readiness, and device-test the panel on iPhone and iPad safe areas.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -432,7 +463,7 @@ Gameplay Systems
 
 UI Systems
 
-22%
+26%
 
 Visual Systems
 
@@ -440,7 +471,7 @@ Visual Systems
 
 Audio Systems
 
-22%
+23%
 
 Level Systems
 
@@ -460,7 +491,7 @@ Optimization
 
 Polish
 
-10%
+11%
 
 Release Readiness
 

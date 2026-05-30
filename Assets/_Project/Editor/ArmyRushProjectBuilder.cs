@@ -604,10 +604,13 @@ public static class ArmyRushProjectBuilder
         Canvas canvas = CreateCanvas("MainMenuCanvas");
         GameObject safe = CreateSafeArea(canvas.transform);
         MainMenuUI menu = canvas.gameObject.AddComponent<MainMenuUI>();
+        SettingsPanelUI settings = canvas.gameObject.AddComponent<SettingsPanelUI>();
 
         Text title = CreateUIText("Title", safe.transform, "ARMY RUSH", 86, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(0.08f, 0.16f, 0.32f), new Vector2(0.5f, 0.88f), new Vector2(760f, 120f));
         Text coins = CreateUIText("CoinsText", safe.transform, "0", 42, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.78f, 0.12f), new Vector2(0.82f, 0.955f), new Vector2(260f, 80f));
         Text level = CreateUIText("LevelText", safe.transform, "LEVEL 1", 40, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.78f), new Vector2(400f, 80f));
+        Button settingsButton = CreateButton("SettingsButton", safe.transform, "SETTINGS", new Vector2(0.16f, 0.955f), new Vector2(250f, 64f), new Color(0.05f, 0.13f, 0.24f));
+        UnityEventTools.AddPersistentListener(settingsButton.onClick, settings.Open);
 
         Button play = CreateButton("PlayButton", safe.transform, "PLAY", new Vector2(0.5f, 0.19f), new Vector2(520f, 130f), new Color(0.05f, 0.78f, 0.35f));
         UnityEventTools.AddPersistentListener(play.onClick, menu.Play);
@@ -633,6 +636,7 @@ public static class ArmyRushProjectBuilder
         SetObject(menu, "_coinsText", coins);
         SetObject(menu, "_levelText", level);
         SetObjectArray(menu, "_upgradeButtons", views);
+        CreateSettingsPanel(safe.transform, settings);
 
         EditorSceneManager.SaveScene(scene, ScenePath + "/MainMenu.unity");
     }
@@ -691,8 +695,11 @@ public static class ArmyRushProjectBuilder
         Canvas canvas = CreateCanvas("RuntimeCanvas");
         GameObject safe = CreateSafeArea(canvas.transform);
         GameplayUI gameplayUI = canvas.gameObject.AddComponent<GameplayUI>();
+        SettingsPanelUI settings = canvas.gameObject.AddComponent<SettingsPanelUI>();
         Text levelText = CreateUIText("LevelText", safe.transform, "Level 1", 36, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.965f), new Vector2(360f, 60f));
         Text coinText = CreateUIText("CoinText", safe.transform, "0", 34, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.78f, 0.12f), new Vector2(0.84f, 0.965f), new Vector2(220f, 60f));
+        Button settingsButton = CreateButton("SettingsButton", safe.transform, "SETTINGS", new Vector2(0.16f, 0.965f), new Vector2(230f, 58f), new Color(0.05f, 0.13f, 0.24f));
+        UnityEventTools.AddPersistentListener(settingsButton.onClick, settings.Open);
         Slider progress = CreateProgressBar("ProgressBar", safe.transform, new Vector2(0.5f, 0.925f), new Vector2(520f, 26f));
         GameObject bossPanel = CreatePanel("BossPanel", safe.transform, new Vector2(0.5f, 0.875f), new Vector2(660f, 74f), new Color(0.24f, 0.03f, 0.05f, 0.86f));
         Text bossText = CreateUIText("BossText", bossPanel.transform, "TANK BOSS", 24, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.68f), new Vector2(560f, 32f));
@@ -736,6 +743,7 @@ public static class ArmyRushProjectBuilder
         SetObject(gameplayUI, "_defeatText", defeatText);
         SetObject(gameplayUI, "_player", playerController);
         SetObject(gameplayUI, "_levelManager", levelManager);
+        CreateSettingsPanel(safe.transform, settings);
 
         EditorSceneManager.SaveScene(scene, ScenePath + "/Game.unity");
     }
@@ -1078,6 +1086,65 @@ public static class ArmyRushProjectBuilder
         coinsText = CreateUIText("Coins", panel.transform, "+0 COINS", 44, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(1f, 0.78f, 0.12f), new Vector2(0.5f, 0.55f), new Vector2(620f, 80f));
         actionButton = CreateButton("ActionButton", panel.transform, header == "VICTORY" ? "NEXT" : "RETRY", new Vector2(0.5f, 0.22f), new Vector2(430f, 105f), new Color(0.05f, 0.75f, 0.35f));
         return panel;
+    }
+
+    private static void CreateSettingsPanel(Transform parent, SettingsPanelUI settings)
+    {
+        GameObject panel = CreatePanel("SettingsPanel", parent, new Vector2(0.5f, 0.52f), new Vector2(720f, 560f), new Color(0.04f, 0.11f, 0.22f, 0.96f));
+        CreateUIText("Header", panel.transform, "SETTINGS", 58, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.82f), new Vector2(620f, 90f));
+        CreateUIText("SfxLabel", panel.transform, "SFX", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.62f), new Vector2(220f, 58f));
+        Slider sfxSlider = CreateInteractiveSlider("SfxSlider", panel.transform, new Vector2(0.62f, 0.62f), new Vector2(390f, 34f));
+        Toggle hapticsToggle = CreateToggle("HapticsToggle", panel.transform, "HAPTICS", new Vector2(0.5f, 0.45f), new Vector2(540f, 78f));
+        Button close = CreateButton("CloseButton", panel.transform, "CLOSE", new Vector2(0.5f, 0.2f), new Vector2(390f, 96f), new Color(0.08f, 0.28f, 0.95f));
+        UnityEventTools.AddPersistentListener(close.onClick, settings.Close);
+        panel.SetActive(false);
+
+        SetObject(settings, "_panel", panel);
+        SetObject(settings, "_sfxSlider", sfxSlider);
+        SetObject(settings, "_hapticsToggle", hapticsToggle);
+        SetObject(settings, "_closeButton", close);
+    }
+
+    private static Slider CreateInteractiveSlider(string name, Transform parent, Vector2 anchorPosition, Vector2 size)
+    {
+        GameObject root = CreatePanel(name, parent, anchorPosition, size, new Color(0.02f, 0.06f, 0.11f, 0.92f));
+        Slider slider = root.AddComponent<Slider>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = 1f;
+        slider.interactable = true;
+
+        GameObject fill = CreatePanel("Fill", root.transform, new Vector2(0f, 0.5f), size, new Color(0.1f, 0.86f, 0.36f, 1f));
+        RectTransform fillRect = fill.GetComponent<RectTransform>();
+        fillRect.anchorMin = new Vector2(0f, 0f);
+        fillRect.anchorMax = new Vector2(1f, 1f);
+        fillRect.pivot = new Vector2(0f, 0.5f);
+        fillRect.offsetMin = Vector2.zero;
+        fillRect.offsetMax = Vector2.zero;
+        slider.fillRect = fillRect;
+
+        GameObject handle = CreatePanel("Handle", root.transform, new Vector2(1f, 0.5f), new Vector2(52f, 52f), Color.white);
+        RectTransform handleRect = handle.GetComponent<RectTransform>();
+        handleRect.anchorMin = new Vector2(0f, 0.5f);
+        handleRect.anchorMax = new Vector2(1f, 0.5f);
+        handleRect.pivot = new Vector2(0.5f, 0.5f);
+        slider.handleRect = handleRect;
+        slider.targetGraphic = handle.GetComponent<Image>();
+        return slider;
+    }
+
+    private static Toggle CreateToggle(string name, Transform parent, string label, Vector2 anchorPosition, Vector2 size)
+    {
+        GameObject root = CreatePanel(name, parent, anchorPosition, size, new Color(0.02f, 0.06f, 0.11f, 0.92f));
+        Toggle toggle = root.AddComponent<Toggle>();
+        Image background = root.GetComponent<Image>();
+        toggle.targetGraphic = background;
+
+        GameObject check = CreatePanel("Checkmark", root.transform, new Vector2(0.16f, 0.5f), new Vector2(46f, 46f), new Color(0.1f, 0.86f, 0.36f, 1f));
+        toggle.graphic = check.GetComponent<Image>();
+        CreateUIText("Label", root.transform, label, 32, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.62f, 0.5f), new Vector2(360f, 60f));
+        toggle.isOn = true;
+        return toggle;
     }
 
     private static TextMesh CreateWorldText(string name, Transform parent, string text, Vector3 localPosition, float characterSize, Color color)
