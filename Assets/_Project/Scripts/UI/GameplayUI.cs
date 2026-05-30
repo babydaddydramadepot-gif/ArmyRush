@@ -17,8 +17,10 @@ namespace ArmyRush
         [SerializeField] private GameObject _startPrompt;
         [SerializeField] private GameObject _victoryPanel;
         [SerializeField] private Text _victoryCoinsText;
+        [SerializeField] private Button _victoryUpgradeButton;
         [SerializeField] private GameObject _defeatPanel;
         [SerializeField] private Text _defeatText;
+        [SerializeField] private Button _defeatUpgradeButton;
         [SerializeField] private Image _defeatFadeImage;
         [SerializeField] private PlayerController _player;
         [SerializeField] private LevelManager _levelManager;
@@ -46,6 +48,8 @@ namespace ArmyRush
                 _levelText.text = $"Level {level}";
             }
             EnsureDefeatFadeImage();
+            EnsureResultUpgradeButtons();
+            RegisterResultButtons();
             SetRunState(RunState.PreRun);
         }
 
@@ -66,6 +70,7 @@ namespace ArmyRush
             {
                 _economy.CoinsChanged -= OnCoinsChanged;
             }
+            UnregisterResultButtons();
         }
 
         private void Update()
@@ -148,6 +153,11 @@ namespace ArmyRush
             SceneManager.LoadScene("MainMenu");
         }
 
+        public void OpenUpgrades()
+        {
+            BackToMenu();
+        }
+
         private void OnCoinsChanged(int coins)
         {
             if (_coinText != null)
@@ -223,6 +233,61 @@ namespace ArmyRush
 
             StopCoroutine(_victoryCoinRoutine);
             _victoryCoinRoutine = null;
+        }
+
+        private void EnsureResultUpgradeButtons()
+        {
+            _victoryUpgradeButton = EnsureResultUpgradeButton(_victoryPanel, _victoryUpgradeButton);
+            _defeatUpgradeButton = EnsureResultUpgradeButton(_defeatPanel, _defeatUpgradeButton);
+        }
+
+        private Button EnsureResultUpgradeButton(GameObject panel, Button currentButton)
+        {
+            if (currentButton != null || panel == null)
+            {
+                return currentButton;
+            }
+
+            Transform existing = panel.transform.Find("UpgradeButton");
+            if (existing != null && existing.TryGetComponent(out Button existingButton))
+            {
+                return existingButton;
+            }
+
+            Transform action = panel.transform.Find("ActionButton");
+            if (action != null && action.TryGetComponent(out RectTransform actionRect))
+            {
+                actionRect.anchorMin = new Vector2(0.32f, 0.22f);
+                actionRect.anchorMax = new Vector2(0.32f, 0.22f);
+                actionRect.sizeDelta = new Vector2(300f, 96f);
+                actionRect.anchoredPosition = Vector2.zero;
+            }
+
+            return CreateResultButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.68f, 0.22f), new Vector2(300f, 96f), new Color(0.08f, 0.28f, 0.95f));
+        }
+
+        private void RegisterResultButtons()
+        {
+            if (_victoryUpgradeButton != null)
+            {
+                _victoryUpgradeButton.onClick.AddListener(OpenUpgrades);
+            }
+            if (_defeatUpgradeButton != null)
+            {
+                _defeatUpgradeButton.onClick.AddListener(OpenUpgrades);
+            }
+        }
+
+        private void UnregisterResultButtons()
+        {
+            if (_victoryUpgradeButton != null)
+            {
+                _victoryUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+            }
+            if (_defeatUpgradeButton != null)
+            {
+                _defeatUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+            }
         }
 
         private void EnsureDefeatFadeImage()
@@ -316,6 +381,60 @@ namespace ArmyRush
             Color color = DefeatFadeColor;
             color.a *= Mathf.Clamp01(normalizedAlpha);
             _defeatFadeImage.color = color;
+        }
+
+        private static Button CreateResultButton(string name, Transform parent, string text, Vector2 anchorPosition, Vector2 size, Color color)
+        {
+            GameObject root = new GameObject(name);
+            RectTransform rect = root.AddComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = anchorPosition;
+            rect.anchorMax = anchorPosition;
+            rect.sizeDelta = size;
+            rect.anchoredPosition = Vector2.zero;
+
+            Image image = root.AddComponent<Image>();
+            image.color = color;
+            Button button = root.AddComponent<Button>();
+            ColorBlock colors = button.colors;
+            colors.normalColor = color;
+            colors.highlightedColor = Color.Lerp(color, Color.white, 0.08f);
+            colors.pressedColor = Color.Lerp(color, Color.black, 0.12f);
+            colors.disabledColor = new Color(0.35f, 0.38f, 0.44f, 0.75f);
+            colors.colorMultiplier = 1f;
+            button.colors = colors;
+            button.targetGraphic = image;
+            root.AddComponent<SimpleButtonAnimator>();
+
+            Text label = CreateResultButtonText(root.transform, text, size);
+            label.color = Color.white;
+            return button;
+        }
+
+        private static Text CreateResultButtonText(Transform parent, string text, Vector2 size)
+        {
+            GameObject obj = new GameObject("Text");
+            RectTransform rect = obj.AddComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = size * 0.9f;
+            rect.anchoredPosition = Vector2.zero;
+
+            Text label = obj.AddComponent<Text>();
+            label.text = text;
+            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (font != null)
+            {
+                label.font = font;
+            }
+            label.fontSize = 42;
+            label.fontStyle = FontStyle.Bold;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.resizeTextForBestFit = true;
+            label.resizeTextMinSize = 18;
+            label.resizeTextMaxSize = 42;
+            return label;
         }
     }
 }

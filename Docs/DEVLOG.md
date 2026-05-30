@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-34%
+35%
 
 Last Updated:
 
@@ -246,6 +246,7 @@ Files:
 Assets/_Project/Scripts/Bosses/BossController.cs
 Assets/_Project/Scripts/Level/LevelManager.cs
 Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Scripts/UI/SettingsPanelUI.cs
 Assets/_Project/Editor/ArmyRushProjectBuilder.cs
 Assets/_Project/Prefabs/Bosses/PF_Boss_Tank.prefab
 Assets/_Project/ScriptableObjects/Levels/SO_Level_005.asset
@@ -746,6 +747,35 @@ Date:
 
 System:
 
+Result Screen Upgrade Shortcuts
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added upgrade shortcut buttons to both victory and defeat result panels. Existing generated scenes create the shortcut buttons at runtime and resize the primary result action into a two-button layout, while future generated scenes receive serialized upgrade buttons from the builder. Runtime-created UI labels now preserve their default font if Unity's built-in font lookup is unavailable.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Win/loss flow now gives players a fast path back to upgrades instead of only next/retry.
+
+Follow Up:
+
+Add rewarded-ad revive/reward architecture once monetization services are selected.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Music and Settings Control
 
 Files:
@@ -899,7 +929,7 @@ Gameplay Systems
 
 UI Systems
 
-35%
+36%
 
 Visual Systems
 
@@ -915,7 +945,7 @@ Level Systems
 
 Progression Systems
 
-43%
+44%
 
 Boss Systems
 
@@ -927,7 +957,7 @@ Optimization
 
 Polish
 
-22%
+23%
 
 Release Readiness
 
@@ -1027,7 +1057,7 @@ All interface-related changes belong here.
 
 ## Initial State
 
-First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel, defeat panel with fade overlay, and safe-area fitting.
+First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel with upgrade shortcut, defeat panel with fade overlay and upgrade shortcut, and safe-area fitting.
 
 ---
 

@@ -1056,7 +1056,7 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Functional Pass Implemented with Animated Reveal/Reward Count-Up; Upgrade Shortcut/Rewarded Architecture Pending
+Status: Functional Pass Implemented with Animated Reveal/Reward Count-Up/Upgrade Shortcut; Rewarded Architecture Pending
 Priority: Critical
 
 Tasks:
@@ -1065,7 +1065,7 @@ Tasks:
 - Show coins earned.
 - Show bonus rewards in earned coin total.
 - Add next level button.
-- Add upgrade shortcut.
+- [x] Add upgrade shortcut.
 - Add optional rewarded ad placeholder architecture.
 
 Acceptance Criteria:
@@ -1078,14 +1078,14 @@ Acceptance Criteria:
 
 ## 6.5 Defeat Screen
 
-Status: Functional Pass Implemented with Animated Reveal; Upgrade/Revive Options Pending
+Status: Functional Pass Implemented with Animated Reveal/Upgrade Shortcut; Revive Architecture Pending
 Priority: High
 
 Tasks:
 
 - Create defeat screen.
 - Add retry button.
-- Add upgrade button.
+- [x] Add upgrade button.
 - Add coins earned.
 - Add revive architecture for rewarded ads future.
 

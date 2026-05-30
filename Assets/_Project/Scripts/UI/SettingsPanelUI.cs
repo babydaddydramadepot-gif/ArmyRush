@@ -209,7 +209,11 @@ namespace ArmyRush
 
             Text label = obj.AddComponent<Text>();
             label.text = text;
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (font != null)
+            {
+                label.font = font;
+            }
             label.fontSize = size;
             label.fontStyle = style;
             label.alignment = anchor;

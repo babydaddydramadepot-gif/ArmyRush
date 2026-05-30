@@ -817,10 +817,10 @@ public static class ArmyRushProjectBuilder
         bossPanel.SetActive(false);
         GameObject prompt = CreatePanel("StartPrompt", safe.transform, new Vector2(0.5f, 0.36f), new Vector2(530f, 98f), new Color(0.05f, 0.13f, 0.24f, 0.82f));
         Text promptText = CreateUIText("PromptText", prompt.transform, "DRAG TO START", 38, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(480f, 80f));
-        GameObject victoryPanel = CreateResultPanel("VictoryPanel", safe.transform, "VICTORY", out Text victoryCoins, out Button nextButton);
+        GameObject victoryPanel = CreateResultPanel("VictoryPanel", safe.transform, "VICTORY", out Text victoryCoins, out Button nextButton, out Button victoryUpgradeButton);
         GameplayUI capturedGameplayUI = gameplayUI;
         UnityEventTools.AddPersistentListener(nextButton.onClick, capturedGameplayUI.NextLevel);
-        GameObject defeatPanel = CreateResultPanel("DefeatPanel", safe.transform, "DEFEAT", out Text defeatText, out Button retryButton);
+        GameObject defeatPanel = CreateResultPanel("DefeatPanel", safe.transform, "DEFEAT", out Text defeatText, out Button retryButton, out Button defeatUpgradeButton);
         UnityEventTools.AddPersistentListener(retryButton.onClick, capturedGameplayUI.Retry);
         victoryPanel.SetActive(false);
         defeatPanel.SetActive(false);
@@ -849,8 +849,10 @@ public static class ArmyRushProjectBuilder
         SetObject(gameplayUI, "_startPrompt", prompt);
         SetObject(gameplayUI, "_victoryPanel", victoryPanel);
         SetObject(gameplayUI, "_victoryCoinsText", victoryCoins);
+        SetObject(gameplayUI, "_victoryUpgradeButton", victoryUpgradeButton);
         SetObject(gameplayUI, "_defeatPanel", defeatPanel);
         SetObject(gameplayUI, "_defeatText", defeatText);
+        SetObject(gameplayUI, "_defeatUpgradeButton", defeatUpgradeButton);
         SetObject(gameplayUI, "_defeatFadeImage", defeatFade);
         SetObject(gameplayUI, "_player", playerController);
         SetObject(gameplayUI, "_levelManager", levelManager);
@@ -1225,13 +1227,14 @@ public static class ArmyRushProjectBuilder
         return slider;
     }
 
-    private static GameObject CreateResultPanel(string name, Transform parent, string header, out Text coinsText, out Button actionButton)
+    private static GameObject CreateResultPanel(string name, Transform parent, string header, out Text coinsText, out Button actionButton, out Button upgradeButton)
     {
         GameObject panel = CreatePanel(name, parent, new Vector2(0.5f, 0.48f), new Vector2(720f, 520f), new Color(0.04f, 0.11f, 0.22f, 0.94f));
         panel.AddComponent<ResultPanelAnimator>();
         CreateUIText("Header", panel.transform, header, 68, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.78f), new Vector2(620f, 100f));
         coinsText = CreateUIText("Coins", panel.transform, "+0 COINS", 44, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(1f, 0.78f, 0.12f), new Vector2(0.5f, 0.55f), new Vector2(620f, 80f));
-        actionButton = CreateButton("ActionButton", panel.transform, header == "VICTORY" ? "NEXT" : "RETRY", new Vector2(0.5f, 0.22f), new Vector2(430f, 105f), new Color(0.05f, 0.75f, 0.35f));
+        actionButton = CreateButton("ActionButton", panel.transform, header == "VICTORY" ? "NEXT" : "RETRY", new Vector2(0.32f, 0.22f), new Vector2(300f, 96f), new Color(0.05f, 0.75f, 0.35f));
+        upgradeButton = CreateButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.68f, 0.22f), new Vector2(300f, 96f), new Color(0.08f, 0.28f, 0.95f));
         return panel;
     }
 
