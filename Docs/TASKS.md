@@ -1293,18 +1293,18 @@ Acceptance Criteria:
 
 ## 8.3 UI Art Pass
 
-Status: Not Started
+Status: In Progress; Generated Sprite UI Art Pass Implemented with Custom Frames and Icons; Final Font/Brand Polish Pending
 Priority: Critical
 
 Tasks:
 
 - Replace default UI.
-- Add custom button visuals.
-- Add custom panels.
-- Add icons.
-- Add coin icon.
-- Add upgrade icons.
-- Add settings icons.
+- [x] Add custom button visuals.
+- [x] Add custom panels.
+- [x] Add icons.
+- [x] Add coin icon.
+- [x] Add upgrade icons.
+- [x] Add settings icons.
 
 Acceptance Criteria:
 

@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-66%
+67%
 
 Last Updated:
 
@@ -1487,6 +1487,37 @@ Date:
 
 System:
 
+Generated UI Sprite Art Pass
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Art/UI/Generated/
+Assets/_Project/Scenes/MainMenu.unity
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a generated UI sprite asset pipeline and applied it to the main menu and gameplay UI. Buttons and panels now use project-owned frame sprites, coin counters use a coin icon, settings buttons use a gear icon, the play button uses a play icon, upgrade cards use upgrade icons, and key panels receive accent stripes.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. The UI no longer relies on null/default image sprites for its buttons and panels, and the art pass now has functional custom icon coverage.
+
+Follow Up:
+
+Replace the remaining default font dependency with a final project font and tune icon placement on iPhone/iPad safe-area layouts.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Environment Harbor Polish Pass
 
 Files:
@@ -1893,7 +1924,7 @@ Gameplay Systems
 
 UI Systems
 
-40%
+44%
 
 Visual Systems
 

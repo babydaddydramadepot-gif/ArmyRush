@@ -17,6 +17,7 @@ public static class ArmyRushProjectBuilder
     private const string PrefabPath = Root + "/Prefabs";
     private const string MaterialPath = Root + "/Art/Materials";
     private const string MeshPath = Root + "/Art/Models/Generated";
+    private const string UiGeneratedPath = Root + "/Art/UI/Generated";
     private const string LevelDataPath = Root + "/ScriptableObjects/Levels";
     private const string UpgradeDataPath = Root + "/ScriptableObjects/Upgrades";
     private const string TuningPath = Root + "/ScriptableObjects/Tuning";
@@ -39,6 +40,7 @@ public static class ArmyRushProjectBuilder
         CreateBootScene(upgrades);
         CreateMainMenuScene(upgrades);
         CreateGameScene(tuning, upgrades, prefabs, levels, materials, meshes);
+        PolishUiArt();
         ConfigureBuildSettings();
         ConfigurePlayerSettings();
 
@@ -130,6 +132,26 @@ public static class ArmyRushProjectBuilder
         Debug.Log("ArmyRush game environment polish applied.");
     }
 
+    [MenuItem("ArmyRush/Polish UI Art")]
+    public static void PolishUiArt()
+    {
+        UiSpriteSet sprites = CreateUiSprites();
+
+        Scene mainMenu = EditorSceneManager.OpenScene(ScenePath + "/MainMenu.unity", OpenSceneMode.Single);
+        ApplyUiArtToOpenScene(sprites);
+        EditorSceneManager.MarkSceneDirty(mainMenu);
+        EditorSceneManager.SaveScene(mainMenu);
+
+        Scene game = EditorSceneManager.OpenScene(ScenePath + "/Game.unity", OpenSceneMode.Single);
+        ApplyUiArtToOpenScene(sprites);
+        EditorSceneManager.MarkSceneDirty(game);
+        EditorSceneManager.SaveScene(game);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("ArmyRush UI art polish applied.");
+    }
+
     private static void CreateFolders()
     {
         string[] folders =
@@ -142,6 +164,7 @@ public static class ArmyRushProjectBuilder
             Root + "/Art/Obstacles",
             Root + "/Art/Environment",
             Root + "/Art/UI",
+            UiGeneratedPath,
             Root + "/Art/VFX",
             MaterialPath,
             MeshPath,
@@ -502,6 +525,283 @@ public static class ArmyRushProjectBuilder
         UpsertMeshPart(environment, $"{prefix}Container_B_{index:00}", meshes.box, materials.obstacleMetal, new Vector3(x + side * 0.85f, 0.29f, z + 1.8f), new Vector3(1.25f, 0.52f, 1.05f));
         UpsertMeshPart(environment, $"{prefix}BeaconPost_{index:00}", meshes.box, materials.rail, new Vector3(side * 6.15f, 1.05f, z + 6.2f), new Vector3(0.16f, 2.1f, 0.16f));
         UpsertMeshPart(environment, $"{prefix}BeaconLight_{index:00}", meshes.box, materials.coin, new Vector3(side * 6.15f, 2.18f, z + 6.2f), new Vector3(0.42f, 0.22f, 0.42f));
+    }
+
+    private static UiSpriteSet CreateUiSprites()
+    {
+        EnsureFolder(UiGeneratedPath);
+        return new UiSpriteSet
+        {
+            buttonFrame = CreateRoundedRectSprite("SPR_UI_ButtonFrame", 96, 18, new Vector4(20f, 20f, 20f, 20f)),
+            panelFrame = CreateRoundedRectSprite("SPR_UI_PanelFrame", 96, 14, new Vector4(18f, 18f, 18f, 18f)),
+            coinIcon = CreateIconSprite("SPR_UI_CoinIcon", "coin"),
+            settingsIcon = CreateIconSprite("SPR_UI_SettingsIcon", "settings"),
+            playIcon = CreateIconSprite("SPR_UI_PlayIcon", "play"),
+            upgradeIcon = CreateIconSprite("SPR_UI_UpgradeIcon", "upgrade")
+        };
+    }
+
+    private static void ApplyUiArtToOpenScene(UiSpriteSet sprites)
+    {
+        foreach (Image image in Object.FindObjectsByType<Image>(FindObjectsInactive.Include))
+        {
+            if (image == null || image.name.Contains("DefeatFade"))
+            {
+                continue;
+            }
+
+            bool isButton = image.GetComponent<Button>() != null;
+            image.sprite = isButton ? sprites.buttonFrame : sprites.panelFrame;
+            image.type = Image.Type.Sliced;
+            image.raycastTarget = isButton;
+        }
+
+        foreach (Canvas canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include))
+        {
+            Transform safe = FindDeepChild(canvas.transform, "SafeArea");
+            if (safe == null)
+            {
+                continue;
+            }
+
+            if (FindDeepChild(safe, "CoinsText") != null)
+            {
+                UpsertUiImage(safe, "CoinIcon", sprites.coinIcon, new Vector2(0.665f, 0.955f), new Vector2(54f, 54f), Color.white);
+            }
+
+            if (FindDeepChild(safe, "CoinText") != null)
+            {
+                UpsertUiImage(safe, "CoinIcon", sprites.coinIcon, new Vector2(0.685f, 0.965f), new Vector2(50f, 50f), Color.white);
+            }
+        }
+
+        foreach (Button button in Object.FindObjectsByType<Button>(FindObjectsInactive.Include))
+        {
+            if (button == null)
+            {
+                continue;
+            }
+
+            if (button.name.Contains("Settings"))
+            {
+                UpsertUiImage(button.transform, "SettingsIcon", sprites.settingsIcon, new Vector2(0.18f, 0.5f), new Vector2(34f, 34f), Color.white);
+                PlaceChildText(button.transform, "Text", new Vector2(0.62f, 0.5f), new Vector2(150f, 52f));
+            }
+            else if (button.name == "PlayButton")
+            {
+                UpsertUiImage(button.transform, "PlayIcon", sprites.playIcon, new Vector2(0.23f, 0.5f), new Vector2(58f, 58f), Color.white);
+                PlaceChildText(button.transform, "Text", new Vector2(0.58f, 0.5f), new Vector2(270f, 86f));
+            }
+            else if (button.name.StartsWith("Upgrade_"))
+            {
+                UpsertUiImage(button.transform, "UpgradeIcon", sprites.upgradeIcon, new Vector2(0.13f, 0.5f), new Vector2(50f, 50f), Color.white);
+            }
+        }
+
+        AddPanelAccent("SettingsPanel", sprites.panelFrame, new Color(0.12f, 0.42f, 1f, 0.9f));
+        AddPanelAccent("VictoryPanel", sprites.panelFrame, new Color(0.14f, 0.9f, 0.42f, 0.95f));
+        AddPanelAccent("DefeatPanel", sprites.panelFrame, new Color(1f, 0.24f, 0.12f, 0.95f));
+        AddPanelAccent("BossPanel", sprites.panelFrame, new Color(1f, 0.24f, 0.12f, 0.9f));
+    }
+
+    private static Sprite CreateRoundedRectSprite(string name, int size, int radius, Vector4 border)
+    {
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color clear = Color.clear;
+        Color fill = Color.white;
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                texture.SetPixel(x, y, IsInsideRoundedRect(x, y, size, radius) ? fill : clear);
+            }
+        }
+
+        texture.Apply();
+        return SaveSpriteTexture(name, texture, border);
+    }
+
+    private static Sprite CreateIconSprite(string name, string kind)
+    {
+        const int size = 64;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float nx = (x + 0.5f - size * 0.5f) / (size * 0.5f);
+                float ny = (y + 0.5f - size * 0.5f) / (size * 0.5f);
+                texture.SetPixel(x, y, GetIconPixel(kind, nx, ny));
+            }
+        }
+
+        texture.Apply();
+        return SaveSpriteTexture(name, texture, Vector4.zero);
+    }
+
+    private static Color GetIconPixel(string kind, float x, float y)
+    {
+        float radius = Mathf.Sqrt(x * x + y * y);
+        if (kind == "coin")
+        {
+            if (radius > 0.88f)
+            {
+                return Color.clear;
+            }
+
+            if (Mathf.Abs(radius - 0.62f) < 0.07f || (x > -0.18f && x < 0.18f && y > -0.48f && y < 0.48f))
+            {
+                return new Color(1f, 0.9f, 0.22f, 1f);
+            }
+
+            return new Color(1f, 0.64f, 0.04f, 1f);
+        }
+
+        if (kind == "settings")
+        {
+            float angle = Mathf.Atan2(y, x);
+            float teeth = Mathf.Sin(angle * 8f) > 0.35f ? 0.12f : 0f;
+            if (radius > 0.32f && radius < 0.7f + teeth)
+            {
+                return Color.white;
+            }
+
+            return Color.clear;
+        }
+
+        if (kind == "play")
+        {
+            bool inside = x > -0.34f && x < 0.48f && Mathf.Abs(y) < (x + 0.45f) * 0.62f;
+            return inside ? Color.white : Color.clear;
+        }
+
+        if (kind == "upgrade")
+        {
+            bool shaft = Mathf.Abs(x) < 0.16f && y > -0.54f && y < 0.24f;
+            bool head = y > 0.02f && y < 0.58f && Mathf.Abs(x) < 0.58f - y * 0.62f;
+            return shaft || head ? Color.white : Color.clear;
+        }
+
+        return Color.clear;
+    }
+
+    private static bool IsInsideRoundedRect(int x, int y, int size, int radius)
+    {
+        int min = radius;
+        int max = size - radius - 1;
+        int cx = Mathf.Clamp(x, min, max);
+        int cy = Mathf.Clamp(y, min, max);
+        int dx = x - cx;
+        int dy = y - cy;
+        return dx * dx + dy * dy <= radius * radius;
+    }
+
+    private static Sprite SaveSpriteTexture(string name, Texture2D texture, Vector4 border)
+    {
+        string path = UiGeneratedPath + "/" + name + ".png";
+        System.IO.File.WriteAllBytes(path, texture.EncodeToPNG());
+        AssetDatabase.ImportAsset(path);
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer != null)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.mipmapEnabled = false;
+            importer.alphaIsTransparency = true;
+            importer.spritePixelsPerUnit = 100f;
+            importer.spriteBorder = border;
+            importer.SaveAndReimport();
+        }
+
+        return LoadRequiredAsset<Sprite>(path);
+    }
+
+    private static Image UpsertUiImage(Transform parent, string name, Sprite sprite, Vector2 anchorPosition, Vector2 size, Color color)
+    {
+        Transform existing = parent.Find(name);
+        GameObject obj = existing != null ? existing.gameObject : new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        obj.transform.SetParent(parent, false);
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = anchorPosition;
+        rect.anchorMax = anchorPosition;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = Vector2.zero;
+        Image image = obj.GetComponent<Image>();
+        image.sprite = sprite;
+        image.type = Image.Type.Simple;
+        image.color = color;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static void PlaceChildText(Transform parent, string name, Vector2 anchorPosition, Vector2 size)
+    {
+        Transform child = parent.Find(name);
+        if (child == null)
+        {
+            return;
+        }
+
+        RectTransform rect = child.GetComponent<RectTransform>();
+        if (rect == null)
+        {
+            return;
+        }
+
+        rect.anchorMin = anchorPosition;
+        rect.anchorMax = anchorPosition;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = Vector2.zero;
+    }
+
+    private static void AddPanelAccent(string panelName, Sprite sprite, Color color)
+    {
+        Transform panel = FindDeepChildInOpenScene(panelName);
+        if (panel == null)
+        {
+            return;
+        }
+
+        Image stripe = UpsertUiImage(panel, "AccentStripe", sprite, new Vector2(0.5f, 0.98f), new Vector2(0f, 8f), color);
+        RectTransform rect = stripe.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.08f, 0.98f);
+        rect.anchorMax = new Vector2(0.92f, 0.98f);
+        rect.sizeDelta = new Vector2(0f, 8f);
+    }
+
+    private static Transform FindDeepChildInOpenScene(string name)
+    {
+        foreach (Canvas canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include))
+        {
+            Transform child = FindDeepChild(canvas.transform, name);
+            if (child != null)
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindDeepChild(Transform parent, string name)
+    {
+        if (parent.name == name)
+        {
+            return parent;
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform result = FindDeepChild(parent.GetChild(i), name);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
     private static GameObject CreateGatePrefab(MaterialSet materials, MeshSet meshes)
@@ -2122,6 +2422,16 @@ public static class ArmyRushProjectBuilder
         public Mesh cylinder;
         public Mesh road;
         public Mesh wedge;
+    }
+
+    private sealed class UiSpriteSet
+    {
+        public Sprite buttonFrame;
+        public Sprite panelFrame;
+        public Sprite coinIcon;
+        public Sprite settingsIcon;
+        public Sprite playIcon;
+        public Sprite upgradeIcon;
     }
 
     private sealed class PrefabSet
