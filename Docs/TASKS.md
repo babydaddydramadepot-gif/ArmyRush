@@ -891,15 +891,15 @@ Acceptance Criteria:
 
 ## 4.4 Mech Boss
 
-Status: Functional Visual and Shockwave Pass Implemented; Multi-Phase/Authored Defeat Polish Pending
+Status: Functional Visual, Shockwave, Multi-Phase, and Collapse Defeat Pass Implemented; Device Balance QA Pending
 Priority: Medium
 
 Tasks:
 
 - [x] Create mech boss prefab.
-- Add multi-phase attack behavior.
+- [x] Add multi-phase attack behavior.
 - [x] Add heavy impact VFX.
-- Add unique defeat animation.
+- [x] Add unique defeat animation.
 
 Acceptance Criteria:
 

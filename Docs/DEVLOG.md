@@ -2519,6 +2519,34 @@ Run an Xcode simulator compile/install pass after the next gameplay-facing slice
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Mech Boss Phase Polish
+
+Files:
+
+Assets/_Project/Scripts/Bosses/BossController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a functional multi-phase pass for shockwave/mech bosses. At armor-crack thresholds the mech now escalates with phase callouts, faster attack cadence, increased shockwave damage/radius, heavier motion, smoke, shake, audio, and haptic feedback. The mech defeat pose now uses a squat collapse animation instead of the generic tilt-only boss fall.
+
+Result:
+
+Unity production validation passed. The mech boss reads more like a later-game escalation and has distinct behavior from the tank and helicopter variants.
+
+Follow Up:
+
+Tune mech phase damage/radius on device or simulator playthrough.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2547,7 +2575,7 @@ Progression Systems
 
 Boss Systems
 
-38%
+41%
 
 Optimization
 
@@ -2555,7 +2583,7 @@ Optimization
 
 Polish
 
-43%
+44%
 
 Release Readiness
 

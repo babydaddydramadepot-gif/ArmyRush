@@ -194,7 +194,7 @@ namespace ArmyRush
             _attackWarningActive = true;
             _attackResolveTime = Time.time + warningDuration;
             _attackMarker = GetAttackMarker();
-            _nextAttackTime = Time.time + (_definition != null ? Mathf.Max(0.8f, _definition.attackInterval) : 2.35f);
+            _nextAttackTime = Time.time + GetCurrentAttackInterval();
 
             string warning = _definition != null && !string.IsNullOrWhiteSpace(_definition.warningText) ? _definition.warningText : "CANNON";
             Color color = _definition != null ? _definition.warningColor : new Color(1f, 0.28f, 0.1f);
@@ -221,11 +221,11 @@ namespace ArmyRush
             Vector3 current = _targetCrowd.transform.position;
             Vector2 currentFlat = new Vector2(current.x, current.z);
             Vector2 markerFlat = new Vector2(_attackMarker.x, _attackMarker.z);
-            float radius = _definition != null ? Mathf.Max(0.2f, _definition.attackRadius) : 1.45f;
+            float radius = GetCurrentAttackRadius();
 
             if (Vector2.Distance(currentFlat, markerFlat) <= radius)
             {
-                int damage = _definition != null ? _definition.GetAttackDamage(_levelIndex) : 8;
+                int damage = GetCurrentAttackDamage();
                 _targetCrowd.Remove(damage);
                 VfxManager.SpawnFloatingText("HIT -" + damage, current + Vector3.up * 2.5f, new Color(1f, 0.18f, 0.1f));
                 SpawnAttackImpactFeedback(_attackMarker, true);
@@ -331,10 +331,34 @@ namespace ArmyRush
             VfxManager.Spawn(VfxCue.HitSpark, smokePosition + Vector3.forward * 0.35f);
             VfxManager.SpawnFloatingText(nextState == 1 ? "ARMOR CRACKED" : "CRITICAL DAMAGE", transform.position + Vector3.up * 2.75f, new Color(1f, 0.62f, 0.16f));
             CameraFollowRig.Shake(CameraShakeCue.BossHit);
+            ApplyPhaseEscalation(nextState);
 
             if (ServiceLocator.TryGet(out HapticsService haptics))
             {
                 haptics.Play(HapticCue.Medium);
+            }
+        }
+
+        private void ApplyPhaseEscalation(int phaseIndex)
+        {
+            if (_definition == null || _definition.attackPattern != BossAttackPattern.ShockwaveSlam || phaseIndex <= 0)
+            {
+                return;
+            }
+
+            _nextAttackTime = Mathf.Min(_nextAttackTime, Time.time + (phaseIndex == 1 ? 0.52f : 0.34f));
+            string text = phaseIndex == 1 ? "PHASE 2" : "FINAL PHASE";
+            VfxManager.SpawnFloatingText(text, transform.position + Vector3.up * 3.25f, phaseIndex == 1 ? new Color(1f, 0.84f, 0.18f) : new Color(1f, 0.24f, 0.12f));
+            VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.85f);
+            CameraFollowRig.Shake(phaseIndex == 1 ? CameraShakeCue.BossHit : CameraShakeCue.BossDefeat);
+
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(AudioCue.BossAttack);
+            }
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(phaseIndex == 1 ? HapticCue.Medium : HapticCue.Warning);
             }
         }
 
@@ -385,9 +409,7 @@ namespace ArmyRush
                 float normalized = Mathf.Clamp01(elapsed / duration);
                 float eased = EaseInOutCubic(normalized);
                 float shake = Mathf.Sin(normalized * Mathf.PI * 7f) * (1f - normalized);
-                transform.localPosition = _restLocalPosition + new Vector3(shake * 0.08f, Mathf.Lerp(0f, -0.32f, eased), 0f);
-                transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Lerp(0f, -68f, eased), 0f, Mathf.Lerp(0f, 9f, eased) + shake * 7f);
-                transform.localScale = Vector3.Lerp(_restLocalScale * 1.04f, _restLocalScale * 0.9f, eased);
+                ApplyDefeatPose(normalized, eased, shake);
 
                 if (_healthLabel != null)
                 {
@@ -431,6 +453,23 @@ namespace ArmyRush
             }
         }
 
+        private void ApplyDefeatPose(float normalized, float eased, float shake)
+        {
+            BossAttackPattern pattern = _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+            if (pattern == BossAttackPattern.ShockwaveSlam)
+            {
+                float hydraulicDrop = Mathf.Sin(normalized * Mathf.PI * 3f) * (1f - normalized) * 0.08f;
+                transform.localPosition = _restLocalPosition + new Vector3(shake * 0.045f, Mathf.Lerp(0f, -0.48f, eased) + hydraulicDrop, 0f);
+                transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Lerp(0f, -24f, eased) + shake * 3f, Mathf.Lerp(0f, 16f, eased), Mathf.Lerp(0f, -12f, eased));
+                transform.localScale = Vector3.Lerp(_restLocalScale * 1.06f, new Vector3(_restLocalScale.x * 1.12f, _restLocalScale.y * 0.72f, _restLocalScale.z * 1.08f), eased);
+                return;
+            }
+
+            transform.localPosition = _restLocalPosition + new Vector3(shake * 0.08f, Mathf.Lerp(0f, -0.32f, eased), 0f);
+            transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Lerp(0f, -68f, eased), 0f, Mathf.Lerp(0f, 9f, eased) + shake * 7f);
+            transform.localScale = Vector3.Lerp(_restLocalScale * 1.04f, _restLocalScale * 0.9f, eased);
+        }
+
         private void UpdateLabel()
         {
             if (_healthLabel != null)
@@ -472,10 +511,11 @@ namespace ArmyRush
                     break;
 
                 case BossAttackPattern.ShockwaveSlam:
-                    float stomp = Mathf.Abs(Mathf.Sin(time * 1.55f));
+                    float phaseIntensity = 1f + _damageState * 0.28f;
+                    float stomp = Mathf.Abs(Mathf.Sin(time * (1.55f + _damageState * 0.22f)));
                     float eased = stomp * stomp;
-                    transform.localPosition = _restLocalPosition + Vector3.up * Mathf.Lerp(0.03f, -0.04f, eased);
-                    transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Sin(time * 1.1f) * 1.8f, 0f, Mathf.Sin(time * 0.9f) * 1.3f);
+                    transform.localPosition = _restLocalPosition + Vector3.up * Mathf.Lerp(0.03f * phaseIntensity, -0.04f * phaseIntensity, eased);
+                    transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Sin(time * 1.1f) * 1.8f * phaseIntensity, 0f, Mathf.Sin(time * 0.9f) * 1.3f * phaseIntensity);
                     break;
 
                 case BossAttackPattern.SuppressionBurst:
@@ -486,6 +526,39 @@ namespace ArmyRush
                     transform.localRotation = _restLocalRotation * Quaternion.Euler(0f, Mathf.Sin(time * 0.9f) * 1.6f, 0f);
                     break;
             }
+        }
+
+        private float GetCurrentAttackInterval()
+        {
+            float interval = _definition != null ? Mathf.Max(0.8f, _definition.attackInterval) : 2.35f;
+            if (_definition != null && _definition.attackPattern == BossAttackPattern.ShockwaveSlam)
+            {
+                interval *= _damageState == 0 ? 1f : _damageState == 1 ? 0.82f : 0.68f;
+            }
+
+            return Mathf.Max(0.55f, interval);
+        }
+
+        private int GetCurrentAttackDamage()
+        {
+            int damage = _definition != null ? _definition.GetAttackDamage(_levelIndex) : 8;
+            if (_definition != null && _definition.attackPattern == BossAttackPattern.ShockwaveSlam)
+            {
+                damage = Mathf.RoundToInt(damage * (1f + _damageState * 0.18f));
+            }
+
+            return Mathf.Max(1, damage);
+        }
+
+        private float GetCurrentAttackRadius()
+        {
+            float radius = _definition != null ? Mathf.Max(0.2f, _definition.attackRadius) : 1.45f;
+            if (_definition != null && _definition.attackPattern == BossAttackPattern.ShockwaveSlam)
+            {
+                radius += _damageState * 0.18f;
+            }
+
+            return radius;
         }
 
         private void StopDefeatAnimation()
