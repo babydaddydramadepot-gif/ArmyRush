@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-31%
+32%
 
 Last Updated:
 
@@ -746,6 +746,35 @@ Date:
 
 System:
 
+Defeat Fade Overlay
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a full-screen defeat fade that eases in behind the retry panel using unscaled time. `GameplayUI` now creates a resilient runtime overlay when older generated scenes do not have the serialized reference, and the scene builder wires the overlay for future generated scenes.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Defeat now has a clearer visual transition while keeping the retry controls readable and free of debug UI.
+
+Follow Up:
+
+Device-test the fade opacity against combat-heavy loss states, then tune the final defeat composition during the authored UI art pass.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Upgrade Glow Feedback
 
 Files:
@@ -807,11 +836,11 @@ Gameplay Systems
 
 UI Systems
 
-33%
+34%
 
 Visual Systems
 
-33%
+34%
 
 Audio Systems
 
@@ -835,7 +864,7 @@ Optimization
 
 Polish
 
-19%
+20%
 
 Release Readiness
 
@@ -935,7 +964,7 @@ All interface-related changes belong here.
 
 ## Initial State
 
-First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel, defeat panel, and safe-area fitting.
+First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel, defeat panel with fade overlay, and safe-area fitting.
 
 ---
 
@@ -971,7 +1000,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin reward bursts, victory bursts, and upgrade glow feedback implemented. Final authored particle styling remains pending.
+Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin reward bursts, victory bursts, upgrade glow feedback, and defeat fade implemented. Final authored particle styling remains pending.
 
 ---
 
@@ -1059,7 +1088,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, boss explosion bursts, and upgrade glow feedback are present, but defeat fade, smoke variants, and final authored styling remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, boss explosion bursts, upgrade glow feedback, and defeat fade are present, but smoke variants and final authored styling remain pending.
 
 Issue ID:
 

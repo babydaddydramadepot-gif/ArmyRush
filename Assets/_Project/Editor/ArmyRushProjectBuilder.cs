@@ -774,6 +774,9 @@ public static class ArmyRushProjectBuilder
 
         Canvas canvas = CreateCanvas("RuntimeCanvas");
         GameObject safe = CreateSafeArea(canvas.transform);
+        Image defeatFade = CreateFullscreenImage("DefeatFadeOverlay", canvas.transform, new Color(0.24f, 0.02f, 0.04f, 0f));
+        defeatFade.transform.SetAsFirstSibling();
+        defeatFade.gameObject.SetActive(false);
         GameplayUI gameplayUI = canvas.gameObject.AddComponent<GameplayUI>();
         SettingsPanelUI settings = canvas.gameObject.AddComponent<SettingsPanelUI>();
         Text levelText = CreateUIText("LevelText", safe.transform, "Level 1", 36, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.965f), new Vector2(360f, 60f));
@@ -821,6 +824,7 @@ public static class ArmyRushProjectBuilder
         SetObject(gameplayUI, "_victoryCoinsText", victoryCoins);
         SetObject(gameplayUI, "_defeatPanel", defeatPanel);
         SetObject(gameplayUI, "_defeatText", defeatText);
+        SetObject(gameplayUI, "_defeatFadeImage", defeatFade);
         SetObject(gameplayUI, "_player", playerController);
         SetObject(gameplayUI, "_levelManager", levelManager);
         CreateSettingsPanel(safe.transform, settings);
@@ -1157,6 +1161,21 @@ public static class ArmyRushProjectBuilder
         Image image = obj.AddComponent<Image>();
         image.color = color;
         return obj;
+    }
+
+    private static Image CreateFullscreenImage(string name, Transform parent, Color color)
+    {
+        GameObject obj = new GameObject(name);
+        RectTransform rect = obj.AddComponent<RectTransform>();
+        rect.SetParent(parent, false);
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        Image image = obj.AddComponent<Image>();
+        image.color = color;
+        image.raycastTarget = false;
+        return image;
     }
 
     private static Slider CreateProgressBar(string name, Transform parent, Vector2 anchorPosition, Vector2 size)

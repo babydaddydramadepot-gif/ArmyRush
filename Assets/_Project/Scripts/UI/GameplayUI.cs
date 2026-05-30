@@ -19,13 +19,17 @@ namespace ArmyRush
         [SerializeField] private Text _victoryCoinsText;
         [SerializeField] private GameObject _defeatPanel;
         [SerializeField] private Text _defeatText;
+        [SerializeField] private Image _defeatFadeImage;
         [SerializeField] private PlayerController _player;
         [SerializeField] private LevelManager _levelManager;
         [SerializeField] private float _victoryCoinCountDuration = 0.65f;
+        [SerializeField] private float _defeatFadeDuration = 0.36f;
 
         private EconomyService _economy;
         private ProgressionService _progression;
         private Coroutine _victoryCoinRoutine;
+        private Coroutine _defeatFadeRoutine;
+        private static readonly Color DefeatFadeColor = new Color(0.24f, 0.02f, 0.04f, 0.54f);
 
         private void Start()
         {
@@ -41,6 +45,7 @@ namespace ArmyRush
                 int level = _progression != null ? _progression.CurrentLevelIndex : 1;
                 _levelText.text = $"Level {level}";
             }
+            EnsureDefeatFadeImage();
             SetRunState(RunState.PreRun);
         }
 
@@ -96,6 +101,10 @@ namespace ArmyRush
             {
                 _defeatPanel.SetActive(false);
             }
+            if (state != RunState.Defeat)
+            {
+                HideDefeatFade();
+            }
         }
 
         public void ShowVictory(int coinsEarned)
@@ -121,6 +130,7 @@ namespace ArmyRush
             {
                 _defeatText.text = coinsEarned > 0 ? $"TRY AGAIN\n+{coinsEarned} COINS" : "TRY AGAIN";
             }
+            StartDefeatFade();
         }
 
         public void NextLevel()
@@ -213,6 +223,99 @@ namespace ArmyRush
 
             StopCoroutine(_victoryCoinRoutine);
             _victoryCoinRoutine = null;
+        }
+
+        private void EnsureDefeatFadeImage()
+        {
+            if (_defeatFadeImage != null)
+            {
+                _defeatFadeImage.raycastTarget = false;
+                SetDefeatFadeAlpha(0f);
+                _defeatFadeImage.gameObject.SetActive(false);
+                return;
+            }
+
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                return;
+            }
+
+            GameObject fade = new GameObject("DefeatFadeOverlay", typeof(RectTransform), typeof(Image));
+            RectTransform rect = fade.GetComponent<RectTransform>();
+            rect.SetParent(canvas.transform, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.SetAsFirstSibling();
+
+            _defeatFadeImage = fade.GetComponent<Image>();
+            _defeatFadeImage.raycastTarget = false;
+            SetDefeatFadeAlpha(0f);
+            fade.SetActive(false);
+        }
+
+        private void StartDefeatFade()
+        {
+            EnsureDefeatFadeImage();
+            if (_defeatFadeImage == null)
+            {
+                return;
+            }
+
+            if (_defeatFadeRoutine != null)
+            {
+                StopCoroutine(_defeatFadeRoutine);
+            }
+            _defeatFadeImage.gameObject.SetActive(true);
+            _defeatFadeRoutine = StartCoroutine(FadeDefeatOverlay());
+        }
+
+        private IEnumerator FadeDefeatOverlay()
+        {
+            float duration = Mathf.Max(0.05f, _defeatFadeDuration);
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float eased = 1f - Mathf.Pow(1f - t, 3f);
+                SetDefeatFadeAlpha(eased);
+                yield return null;
+            }
+
+            SetDefeatFadeAlpha(1f);
+            _defeatFadeRoutine = null;
+        }
+
+        private void HideDefeatFade()
+        {
+            if (_defeatFadeRoutine != null)
+            {
+                StopCoroutine(_defeatFadeRoutine);
+                _defeatFadeRoutine = null;
+            }
+
+            if (_defeatFadeImage == null)
+            {
+                return;
+            }
+
+            SetDefeatFadeAlpha(0f);
+            _defeatFadeImage.gameObject.SetActive(false);
+        }
+
+        private void SetDefeatFadeAlpha(float normalizedAlpha)
+        {
+            if (_defeatFadeImage == null)
+            {
+                return;
+            }
+
+            Color color = DefeatFadeColor;
+            color.a *= Mathf.Clamp01(normalizedAlpha);
+            _defeatFadeImage.color = color;
         }
     }
 }
