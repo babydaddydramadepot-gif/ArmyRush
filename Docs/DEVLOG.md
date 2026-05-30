@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-23%
+24%
 
 Last Updated:
 
@@ -555,6 +555,34 @@ Add purchase animation juice, improve unaffordable/max-state presentation, and d
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Upgrade Purchase Feedback
+
+Files:
+
+Assets/_Project/Scripts/UI/UpgradeButtonView.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added clearer upgrade button state feedback. Affordable costs remain gold, unaffordable costs turn warm red with muted title/level text, maxed upgrades use a green `MAX` state, and successful purchases briefly flash the level/cost area with `BOUGHT` before returning to the next cost.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Upgrade purchases now provide visual confirmation in addition to audio and haptic feedback.
+
+Follow Up:
+
+Device-test text fit and perceived timing, then consider adding richer coin spend/count-up animation during the broader UI polish pass.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -563,7 +591,7 @@ Gameplay Systems
 
 UI Systems
 
-29%
+30%
 
 Visual Systems
 
@@ -579,7 +607,7 @@ Level Systems
 
 Progression Systems
 
-42%
+43%
 
 Boss Systems
 
@@ -591,7 +619,7 @@ Optimization
 
 Polish
 
-13%
+14%
 
 Release Readiness
 

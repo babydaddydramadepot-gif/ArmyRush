@@ -1030,7 +1030,7 @@ Acceptance Criteria:
 
 ## 6.3 Upgrade Screen
 
-Status: Functional Pass Implemented with All Categories; Purchase Juice Polish Pending
+Status: Functional Pass Implemented with Feedback; Device Fit QA Pending
 Priority: Critical
 
 Tasks:

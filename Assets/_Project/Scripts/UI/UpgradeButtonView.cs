@@ -11,7 +11,15 @@ namespace ArmyRush
         [SerializeField] private Text _costText;
         [SerializeField] private Button _button;
 
+        private static readonly Color AffordableCostColor = new Color(1f, 0.83f, 0.2f);
+        private static readonly Color BlockedCostColor = new Color(1f, 0.45f, 0.32f);
+        private static readonly Color MaxedCostColor = new Color(0.35f, 1f, 0.62f);
+        private static readonly Color MutedTextColor = new Color(0.72f, 0.8f, 0.92f);
+        private static readonly Color PurchaseFlashColor = new Color(0.35f, 1f, 0.62f);
+        private const float PurchaseFeedbackDuration = 0.42f;
+
         private UpgradeService _service;
+        private float _purchaseFeedbackTimer;
 
         private void Awake()
         {
@@ -30,6 +38,33 @@ namespace ArmyRush
             if (_button != null)
             {
                 _button.onClick.RemoveListener(Purchase);
+            }
+        }
+
+        private void Update()
+        {
+            if (_purchaseFeedbackTimer <= 0f)
+            {
+                return;
+            }
+
+            _purchaseFeedbackTimer -= Time.unscaledDeltaTime;
+            if (_purchaseFeedbackTimer <= 0f)
+            {
+                Refresh();
+                return;
+            }
+
+            float pulse = Mathf.PingPong(Time.unscaledTime * 10f, 1f);
+            Color flash = Color.Lerp(PurchaseFlashColor, Color.white, pulse * 0.35f);
+            if (_costText != null)
+            {
+                _costText.text = "BOUGHT";
+                _costText.color = flash;
+            }
+            if (_levelText != null)
+            {
+                _levelText.color = flash;
             }
         }
 
@@ -56,6 +91,7 @@ namespace ArmyRush
                 {
                     haptics.Play(HapticCue.Light);
                 }
+                _purchaseFeedbackTimer = PurchaseFeedbackDuration;
                 Refresh();
             }
         }
@@ -69,19 +105,25 @@ namespace ArmyRush
 
             int level = _service.GetLevel(_upgradeType);
             int cost = definition.GetCost(level);
+            bool isMaxed = definition.IsMaxed(level);
             bool canPurchase = _service.CanPurchase(_upgradeType);
+            bool showingPurchaseFeedback = _purchaseFeedbackTimer > 0f;
+            Color primaryTextColor = canPurchase || isMaxed ? Color.white : MutedTextColor;
 
             if (_titleText != null)
             {
                 _titleText.text = definition.displayName.ToUpperInvariant();
+                _titleText.color = primaryTextColor;
             }
             if (_levelText != null)
             {
                 _levelText.text = $"Lv. {level}";
+                _levelText.color = showingPurchaseFeedback ? PurchaseFlashColor : primaryTextColor;
             }
             if (_costText != null)
             {
-                _costText.text = definition.IsMaxed(level) ? "MAX" : cost.ToString();
+                _costText.text = showingPurchaseFeedback ? "BOUGHT" : isMaxed ? "MAX" : cost.ToString();
+                _costText.color = showingPurchaseFeedback ? PurchaseFlashColor : isMaxed ? MaxedCostColor : canPurchase ? AffordableCostColor : BlockedCostColor;
             }
             if (_button != null)
             {
