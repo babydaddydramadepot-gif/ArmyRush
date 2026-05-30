@@ -18,7 +18,8 @@ MonoBehaviour:
   baseCoinReward: 1200
   difficultyRating: 20
   hasBoss: 1
-  bossHealth: 2900
+  bossDefinition: {fileID: 11400000, guid: 2d1280016eb9c4988ba9ee4738b1fcad, type: 2}
+  bossHealth: 2268
   gates:
   - z: 16
     x: -1.45

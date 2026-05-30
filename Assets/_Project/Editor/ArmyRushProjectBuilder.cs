@@ -20,6 +20,7 @@ public static class ArmyRushProjectBuilder
     private const string LevelDataPath = Root + "/ScriptableObjects/Levels";
     private const string UpgradeDataPath = Root + "/ScriptableObjects/Upgrades";
     private const string TuningPath = Root + "/ScriptableObjects/Tuning";
+    private const string BossDataPath = Root + "/ScriptableObjects/Bosses";
 
     [MenuItem("ArmyRush/Build Production Foundation")]
     public static void BuildProductionFoundation()
@@ -31,8 +32,9 @@ public static class ArmyRushProjectBuilder
         MeshSet meshes = CreateMeshes();
         GlobalTuning tuning = CreateTuning();
         UpgradeDefinition[] upgrades = CreateUpgrades();
+        BossDefinition[] bosses = CreateBossDefinitions();
         PrefabSet prefabs = CreatePrefabs(materials, meshes);
-        LevelData[] levels = CreateLevels();
+        LevelData[] levels = CreateLevels(bosses);
 
         CreateBootScene(upgrades);
         CreateMainMenuScene(upgrades);
@@ -130,7 +132,7 @@ public static class ArmyRushProjectBuilder
             Root + "/ScriptableObjects/Economy",
             Root + "/ScriptableObjects/Enemies",
             Root + "/ScriptableObjects/Obstacles",
-            Root + "/ScriptableObjects/Bosses",
+            BossDataPath,
             Root + "/Settings",
             Root + "/Shaders",
             Root + "/Tests"
@@ -203,11 +205,35 @@ public static class ArmyRushProjectBuilder
             CreateUpgrade(UpgradeType.Damage, "Damage", "Increase all soldier weapon damage.", 100, 1.15f, 10f, 2.5f),
             CreateUpgrade(UpgradeType.FireRate, "Fire Rate", "Increase shots per second.", 150, 1.15f, 1f, 0.1f),
             CreateUpgrade(UpgradeType.CoinReward, "Coin Bonus", "Increase coins earned from every run.", 120, 1.15f, 1f, 0.02f),
-            CreateUpgrade(UpgradeType.BossDamage, "Boss Damage", "Future boss damage scaling.", 300, 1.18f, 1f, 0.08f),
-            CreateUpgrade(UpgradeType.ObstacleDamage, "Obstacle Damage", "Future obstacle damage scaling.", 220, 1.16f, 1f, 0.06f),
-            CreateUpgrade(UpgradeType.CriticalChance, "Critical Chance", "Future critical hit unlock.", 400, 1.2f, 0f, 0.01f),
-            CreateUpgrade(UpgradeType.CriticalDamage, "Critical Damage", "Future critical damage unlock.", 500, 1.2f, 1.5f, 0.04f)
+            CreateUpgrade(UpgradeType.BossDamage, "Boss Damage", "Increase damage dealt to boss targets.", 300, 1.18f, 1f, 0.08f),
+            CreateUpgrade(UpgradeType.ObstacleDamage, "Obstacle Damage", "Increase damage dealt to barricades and breakables.", 220, 1.16f, 1f, 0.06f),
+            CreateUpgrade(UpgradeType.CriticalChance, "Critical Chance", "Unlock a chance for high-impact critical volleys.", 400, 1.2f, 0f, 0.01f),
+            CreateUpgrade(UpgradeType.CriticalDamage, "Critical Damage", "Increase the multiplier on critical volleys.", 500, 1.2f, 1.5f, 0.04f)
         };
+    }
+
+    private static BossDefinition[] CreateBossDefinitions()
+    {
+        BossDefinition tank = CreateBossDefinition(
+            "SO_Boss_Tank",
+            "TANK BOSS",
+            BossAttackPattern.CannonVolley,
+            900,
+            72,
+            22,
+            260,
+            20,
+            18f,
+            2.35f,
+            0.72f,
+            1.45f,
+            3.2f,
+            7,
+            1,
+            "CANNON",
+            new Color(1f, 0.28f, 0.1f));
+
+        return new[] { tank };
     }
 
     private static PrefabSet CreatePrefabs(MaterialSet materials, MeshSet meshes)
@@ -401,9 +427,10 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
-    private static LevelData[] CreateLevels()
+    private static LevelData[] CreateLevels(BossDefinition[] bosses)
     {
         List<LevelData> levels = new List<LevelData>();
+        BossDefinition tankBoss = bosses != null && bosses.Length > 0 ? bosses[0] : null;
         for (int i = 1; i <= 20; i++)
         {
             string path = $"{LevelDataPath}/SO_Level_{i:000}.asset";
@@ -420,7 +447,8 @@ public static class ArmyRushProjectBuilder
             data.baseCoinReward = Mathf.RoundToInt(Mathf.Lerp(100f, 1200f, (i - 1) / 19f));
             data.difficultyRating = i;
             data.hasBoss = i == 5 || i == 10 || i == 15 || i == 20;
-            data.bossHealth = data.hasBoss ? 500 + i * 120 : 0;
+            data.bossDefinition = data.hasBoss ? tankBoss : null;
+            data.bossHealth = data.hasBoss && tankBoss != null ? tankBoss.GetHealth(i, 0) : 0;
             data.gates.Clear();
             data.enemyGroups.Clear();
             data.obstacles.Clear();
@@ -771,6 +799,18 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Missing tank boss prefab.");
         }
+        if (AssetDatabase.LoadAssetAtPath<BossDefinition>(BossDataPath + "/SO_Boss_Tank.asset") == null)
+        {
+            failures.Add("Missing tank boss definition.");
+        }
+        LevelData[] levelAssets = AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+        if (levelAssets.Any(level => level.hasBoss && level.bossDefinition == null))
+        {
+            failures.Add("One or more boss levels are missing a BossDefinition reference.");
+        }
         if (Object.FindAnyObjectByType<FinishLineTrigger>() == null)
         {
             failures.Add("Game scene validation spawned no finish trigger.");
@@ -1114,6 +1154,53 @@ public static class ArmyRushProjectBuilder
         definition.baseValue = baseValue;
         definition.valuePerLevel = valuePerLevel;
         definition.maxLevel = 100;
+        EditorUtility.SetDirty(definition);
+        return definition;
+    }
+
+    private static BossDefinition CreateBossDefinition(
+        string assetName,
+        string displayName,
+        BossAttackPattern attackPattern,
+        int baseHealth,
+        int healthPerLevel,
+        int collisionPenalty,
+        int coinReward,
+        int coinRewardPerLevel,
+        float activationDistance,
+        float attackInterval,
+        float warningDuration,
+        float attackRadius,
+        float lateralRange,
+        int attackDamage,
+        int attackDamagePerLevel,
+        string warningText,
+        Color warningColor)
+    {
+        string path = $"{BossDataPath}/{assetName}.asset";
+        BossDefinition definition = AssetDatabase.LoadAssetAtPath<BossDefinition>(path);
+        if (definition == null)
+        {
+            definition = ScriptableObject.CreateInstance<BossDefinition>();
+            AssetDatabase.CreateAsset(definition, path);
+        }
+
+        definition.displayName = displayName;
+        definition.attackPattern = attackPattern;
+        definition.baseHealth = baseHealth;
+        definition.healthPerLevel = healthPerLevel;
+        definition.collisionPenalty = collisionPenalty;
+        definition.coinReward = coinReward;
+        definition.coinRewardPerLevel = coinRewardPerLevel;
+        definition.activationDistance = activationDistance;
+        definition.attackInterval = attackInterval;
+        definition.warningDuration = warningDuration;
+        definition.attackRadius = attackRadius;
+        definition.lateralRange = lateralRange;
+        definition.attackDamage = attackDamage;
+        definition.attackDamagePerLevel = attackDamagePerLevel;
+        definition.warningText = warningText;
+        definition.warningColor = warningColor;
         EditorUtility.SetDirty(definition);
         return definition;
     }

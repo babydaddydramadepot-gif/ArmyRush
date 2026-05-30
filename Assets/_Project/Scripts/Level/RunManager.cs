@@ -60,6 +60,22 @@ namespace ArmyRush
             SetState(RunState.Running);
         }
 
+        public void PauseForCombat()
+        {
+            if (State == RunState.Running)
+            {
+                SetState(RunState.CombatPaused);
+            }
+        }
+
+        public void ResumeFromCombat()
+        {
+            if (State == RunState.CombatPaused)
+            {
+                SetState(RunState.Running);
+            }
+        }
+
         public void WinRun()
         {
             if (_levelCompleted || State == RunState.Victory || State == RunState.Defeat)
@@ -70,10 +86,18 @@ namespace ArmyRush
             _levelCompleted = true;
             SetState(RunState.FinishSequence);
 
-            int baseReward = _levelManager != null && _levelManager.CurrentLevel != null ? _levelManager.CurrentLevel.baseCoinReward : 100;
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            int baseReward = currentLevel != null ? currentLevel.baseCoinReward : 100;
+            int bossBonus = 0;
+            if (currentLevel != null && currentLevel.hasBoss)
+            {
+                bossBonus = currentLevel.bossDefinition != null
+                    ? currentLevel.bossDefinition.GetCoinReward(currentLevel.levelIndex)
+                    : (_tuning != null ? _tuning.bossCoinValue : 250);
+            }
             int survivorBonus = (_crowd != null ? _crowd.Count : 0) * (_tuning != null ? _tuning.soldierCoinValue : 2);
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            _runCoins = Mathf.RoundToInt((baseReward + survivorBonus) * coinMultiplier);
+            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus) * coinMultiplier);
 
             _economy?.AddCoins(_runCoins);
             _progression?.CompleteCurrentLevel();
@@ -117,7 +141,7 @@ namespace ArmyRush
 
         private void OnCrowdCountChanged(int count)
         {
-            if (count <= 0 && State == RunState.Running)
+            if (count <= 0 && (State == RunState.Running || State == RunState.CombatPaused))
             {
                 LoseRun();
             }

@@ -25,7 +25,7 @@ namespace ArmyRush
 
         private void Update()
         {
-            if (_runManager == null || _runManager.State != RunState.Running || _crowd == null || _crowd.Count <= 0 || _tuning == null)
+            if (_runManager == null || (_runManager.State != RunState.Running && _runManager.State != RunState.CombatPaused) || _crowd == null || _crowd.Count <= 0 || _tuning == null)
             {
                 return;
             }
@@ -50,7 +50,12 @@ namespace ArmyRush
                 fireInterval = Mathf.Max(_tuning.minFireInterval, 1f / fireRate);
             }
 
-            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damage * Mathf.Max(1f, _crowd.Count / 10f)));
+            float targetMultiplier = GetTargetMultiplier(target, out bool critical);
+            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damage * Mathf.Max(1f, _crowd.Count / 10f) * targetMultiplier));
+            if (critical)
+            {
+                VfxManager.SpawnFloatingText("CRIT", target.AimPoint + Vector3.up * 0.65f, new Color(1f, 0.9f, 0.15f));
+            }
             FireVisualBurst(target, armyScaledDamage);
             _nextFireTime = Time.time + fireInterval;
         }
@@ -63,6 +68,34 @@ namespace ArmyRush
             _poolManager = poolManager;
             _projectilePrefab = projectilePrefab;
             _aimOrigin = aimOrigin;
+        }
+
+        private float GetTargetMultiplier(Damageable target, out bool critical)
+        {
+            critical = false;
+            if (_upgradeService == null || target == null)
+            {
+                return 1f;
+            }
+
+            float multiplier = 1f;
+            if (target.Kind == CombatTargetKind.Boss)
+            {
+                multiplier *= Mathf.Max(1f, _upgradeService.GetValue(UpgradeType.BossDamage));
+            }
+            else if (target.Kind == CombatTargetKind.Obstacle)
+            {
+                multiplier *= Mathf.Max(1f, _upgradeService.GetValue(UpgradeType.ObstacleDamage));
+            }
+
+            float criticalChance = Mathf.Clamp01(_upgradeService.GetValue(UpgradeType.CriticalChance));
+            if (criticalChance > 0f && Random.value <= criticalChance)
+            {
+                critical = true;
+                multiplier *= Mathf.Max(1.25f, _upgradeService.GetValue(UpgradeType.CriticalDamage));
+            }
+
+            return multiplier;
         }
 
         private void FireVisualBurst(Damageable target, int totalDamage)

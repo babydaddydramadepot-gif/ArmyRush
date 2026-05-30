@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.UpgradeDefinition
   type: 5
   displayName: Obstacle Damage
-  description: Future obstacle damage scaling.
+  description: Increase damage dealt to barricades and breakables.
   baseCost: 220
   costGrowth: 1.16
   baseValue: 1

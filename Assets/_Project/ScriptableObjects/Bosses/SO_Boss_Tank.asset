@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1eaf2240c2b24fa28f6ea09b26f6f89, type: 3}
+  m_Name: SO_Boss_Tank
+  m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.BossDefinition
+  displayName: TANK BOSS
+  attackPattern: 0
+  baseHealth: 900
+  healthPerLevel: 72
+  collisionPenalty: 22
+  coinReward: 260
+  coinRewardPerLevel: 20
+  activationDistance: 18
+  attackInterval: 2.35
+  warningDuration: 0.72
+  attackRadius: 1.45
+  lateralRange: 3.2
+  attackDamage: 7
+  attackDamagePerLevel: 1
+  warningText: CANNON
+  warningColor: {r: 1, g: 0.28, b: 0.1, a: 1}

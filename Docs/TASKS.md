@@ -177,7 +177,8 @@ Implementation Pass 1 Result:
 - Added runtime procedural SFX playback through pooled AudioSources for buttons, gates, shooting, hits, clears, destruction, coin rewards, upgrades, victory, and defeat.
 - Added repeatable iOS development export command and successfully generated an Xcode project at `ArmyRush_iOSBuild`.
 - Confirmed the generated Xcode project builds successfully with `CODE_SIGNING_ALLOWED=NO` for a Debug `iphoneos` build.
-- Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
+- Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
+- Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
 
 ---
 
@@ -799,37 +800,37 @@ Acceptance Criteria:
 
 ## 4.1 Boss Architecture
 
-Status: Functional Pass Implemented; Attack Patterns Pending
+Status: Functional Combat Pass Implemented; Balance/Variants Pending
 Priority: High
 
 Tasks:
 
-- Create BossController.
-- Create BossData ScriptableObject.
-- Add boss health system.
-- Add boss attack system.
-- Add boss damage receiving.
-- Add boss defeat state.
-- Add boss reward flow.
+- [x] Create BossController.
+- [x] Create BossData ScriptableObject.
+- [x] Add boss health system.
+- [x] Add boss attack system.
+- [x] Add boss damage receiving.
+- [x] Add boss defeat state.
+- [x] Add boss reward flow.
 
 Acceptance Criteria:
 
 - Bosses are data-driven.
 - Boss fights are readable.
-- Boss defeat triggers special victory flow.
+- Boss defeat resumes the run after the combat pause.
 
 ---
 
 ## 4.2 Tank Boss
 
-Status: In Progress; Generated Tank Boss Pass Implemented
+Status: In Progress; Data-Driven Combat Pass Implemented
 Priority: High
 
 Tasks:
 
 - Create production tank boss model/prefab.
-- Add movement or idle combat behavior.
-- Add cannon attack animation.
+- [x] Add movement or idle combat behavior.
+- [x] Add cannon attack behavior.
 - Add damage states.
 - Add destruction animation.
 - Add explosion VFX.
@@ -906,7 +907,7 @@ Acceptance Criteria:
 
 ## 5.2 Upgrade System
 
-Status: Functional Pass Implemented; Balance/Full Effect QA Pending
+Status: Functional Pass Implemented; UI Exposure/Balance QA Pending
 Priority: Critical
 
 Tasks:
@@ -933,7 +934,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: In Progress; Completion/Survivor/Coin Multiplier Implemented
+Status: Functional Pass Implemented; Enemy/Obstacle Bonus Balance Pending
 Priority: High
 
 Tasks:
@@ -1137,7 +1138,7 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: Functional Pass Implemented with Procedural Runtime SFX; Final Clips Pending
+Status: Functional Pass Implemented with Procedural Runtime SFX; Final Clips/Music Pending
 Priority: High
 
 Add SFX for:
@@ -1156,6 +1157,7 @@ Add SFX for:
 - Victory
 - Defeat
 - Boss intro
+- Boss attack
 - Boss defeat
 
 Acceptance Criteria:
@@ -1215,7 +1217,7 @@ Acceptance Criteria:
 
 ## 7.5 Haptics
 
-Status: Not Started
+Status: Functional Pass Implemented; Device QA/Settings Toggle Pending
 Priority: Medium
 
 Tasks:

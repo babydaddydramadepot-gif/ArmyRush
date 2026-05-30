@@ -13,6 +13,7 @@ namespace ArmyRush
         public int baseCoinReward = 100;
         public int difficultyRating = 1;
         public bool hasBoss;
+        public BossDefinition bossDefinition;
         public int bossHealth = 0;
 
         public List<GateSpawnData> gates = new List<GateSpawnData>();

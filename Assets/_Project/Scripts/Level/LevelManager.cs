@@ -23,6 +23,7 @@ namespace ArmyRush
         private UpgradeService _upgrades;
 
         public LevelData CurrentLevel { get; private set; }
+        public BossController ActiveBoss { get; private set; }
 
         private void Start()
         {
@@ -178,7 +179,8 @@ namespace ArmyRush
 
             GameObject bossObject = Instantiate(_bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f), Quaternion.identity, _levelRoot);
             BossController boss = bossObject.GetComponent<BossController>();
-            boss?.Configure(CurrentLevel.bossHealth, 18 + CurrentLevel.levelIndex * 2, CurrentLevel.levelIndex >= 10 ? "HEAVY TANK" : "TANK BOSS");
+            boss?.Configure(CurrentLevel.bossDefinition, CurrentLevel.levelIndex, CurrentLevel.bossHealth, _crowd);
+            ActiveBoss = boss;
             _spawned.Add(bossObject);
         }
 
@@ -203,6 +205,7 @@ namespace ArmyRush
                 }
             }
             _spawned.Clear();
+            ActiveBoss = null;
         }
     }
 }

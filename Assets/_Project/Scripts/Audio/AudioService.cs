@@ -14,6 +14,8 @@ namespace ArmyRush
         ObstacleDestroyed,
         CoinReward,
         Upgrade,
+        BossAttack,
+        BossDefeat,
         Victory,
         Defeat
     }
@@ -105,6 +107,8 @@ namespace ArmyRush
             _clips[AudioCue.ObstacleDestroyed] = CreateNoiseBurst("SFX_Destroy", 0.22f, 0.28f, 0.85f);
             _clips[AudioCue.CoinReward] = CreateArpeggio("SFX_CoinReward", 760f, 1180f, 0.2f, 0.32f);
             _clips[AudioCue.Upgrade] = CreateArpeggio("SFX_Upgrade", 580f, 980f, 0.2f, 0.3f);
+            _clips[AudioCue.BossAttack] = CreateTone("SFX_BossAttack", 96f, 0.22f, 0.32f, 0.08f);
+            _clips[AudioCue.BossDefeat] = CreateNoiseBurst("SFX_BossDefeat", 0.42f, 0.36f, 0.62f);
             _clips[AudioCue.Victory] = CreateArpeggio("SFX_Victory", 520f, 1040f, 0.42f, 0.34f);
             _clips[AudioCue.Defeat] = CreateTone("SFX_Defeat", 140f, 0.32f, 0.28f, 0.01f);
         }

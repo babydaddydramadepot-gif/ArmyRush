@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.UpgradeDefinition
   type: 7
   displayName: Critical Damage
-  description: Future critical damage unlock.
+  description: Increase the multiplier on critical volleys.
   baseCost: 500
   costGrowth: 1.2
   baseValue: 1.5

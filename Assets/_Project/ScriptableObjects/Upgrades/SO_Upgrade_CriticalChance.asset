@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.UpgradeDefinition
   type: 6
   displayName: Critical Chance
-  description: Future critical hit unlock.
+  description: Unlock a chance for high-impact critical volleys.
   baseCost: 400
   costGrowth: 1.2
   baseValue: 0

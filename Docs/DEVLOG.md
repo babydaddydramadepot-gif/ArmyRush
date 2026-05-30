@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-16%
+18%
 
 Last Updated:
 
@@ -351,11 +351,48 @@ Run simulator launch if a compatible simulator destination is available, configu
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Boss Combat and Upgrade Scaling
+
+Files:
+
+Assets/_Project/Scripts/Bosses/BossDefinition.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Scripts/Level/LevelData.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Scripts/Player/PlayerController.cs
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Bosses/SO_Boss_Tank.asset
+Assets/_Project/ScriptableObjects/Levels/
+Assets/_Project/Scenes/Game.unity
+
+Summary:
+
+Added data-driven boss definitions and connected boss levels to a tank boss definition. Boss contact now pauses forward movement into a combat beat while preserving lateral steering, player volleys continue during the pause, the tank telegraphs cannon attacks, failed dodges remove soldiers, boss defeat resumes the run, and boss levels add a boss coin bonus. Combat upgrades now actively scale boss damage, obstacle damage, critical chance, and critical damage.
+
+Result:
+
+Unity generation and production validation both pass with no C# compiler errors or warnings. Boss levels now behave as distinct encounters instead of pass-through health targets.
+
+Follow Up:
+
+Tune boss damage/health on device, add authored boss animations, add boss explosion VFX, add additional boss variants, and expose late-game upgrade buttons in the UI.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-30%
+34%
 
 UI Systems
 
@@ -367,7 +404,7 @@ Visual Systems
 
 Audio Systems
 
-20%
+22%
 
 Level Systems
 
@@ -375,7 +412,11 @@ Level Systems
 
 Progression Systems
 
-35%
+38%
+
+Boss Systems
+
+28%
 
 Optimization
 
@@ -591,7 +632,7 @@ AR-002
 
 Status:
 
-Boss levels now have a tank boss foundation and boss health bar, but unique boss attacks, boss-specific rewards, and boss VFX/audio are still pending.
+Boss levels now have a data-driven tank boss, combat pause, telegraphed cannon attacks, boss rewards, and boss audio/haptics, but authored boss animations, tuned boss balance, boss VFX, and additional boss variants are still pending.
 
 Issue ID:
 
@@ -599,7 +640,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist with pooled procedural SFX playback, but final authored SFX and music are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback including boss attack/defeat cues, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 
@@ -607,7 +648,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers and simple gate/animation feedback are present, but hit sparks, coin bursts, debris, victory effects, and boss explosions remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate feedback, and boss attack telegraphs are present, but hit sparks, coin bursts, debris, victory effects, and boss explosions remain pending.
 
 Issue ID:
 

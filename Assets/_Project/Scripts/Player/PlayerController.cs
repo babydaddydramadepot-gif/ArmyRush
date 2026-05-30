@@ -43,7 +43,7 @@ namespace ArmyRush
                 _runManager.BeginRun();
             }
 
-            if (_runManager == null || _runManager.State != RunState.Running)
+            if (_runManager == null || (_runManager.State != RunState.Running && _runManager.State != RunState.CombatPaused))
             {
                 return;
             }
@@ -52,7 +52,10 @@ namespace ArmyRush
             _targetX = Mathf.Clamp(_targetX + deltaX * _tuning.lateralSensitivity, -_tuning.trackHalfWidth, _tuning.trackHalfWidth);
 
             Vector3 position = transform.position;
-            position.z += _tuning.forwardSpeed * Time.deltaTime;
+            if (_runManager.State == RunState.Running)
+            {
+                position.z += _tuning.forwardSpeed * Time.deltaTime;
+            }
             position.x = Mathf.SmoothDamp(position.x, _targetX, ref _xVelocity, _tuning.lateralSmoothTime);
             transform.position = position;
         }

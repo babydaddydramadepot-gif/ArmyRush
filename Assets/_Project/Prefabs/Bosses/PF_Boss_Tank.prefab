@@ -451,6 +451,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.BossController
   _damageable: {fileID: 4471477915546965265}
   _healthLabel: {fileID: 509427151289275571}
+  _definition: {fileID: 0}
   _collisionPenalty: 25
   _displayName: TANK BOSS
 --- !u!1 &8603769256184910891

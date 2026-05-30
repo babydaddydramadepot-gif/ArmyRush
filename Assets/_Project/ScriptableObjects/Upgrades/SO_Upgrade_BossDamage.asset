@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.UpgradeDefinition
   type: 4
   displayName: Boss Damage
-  description: Future boss damage scaling.
+  description: Increase damage dealt to boss targets.
   baseCost: 300
   costGrowth: 1.18
   baseValue: 1

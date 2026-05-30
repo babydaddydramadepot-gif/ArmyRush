@@ -18,6 +18,7 @@ MonoBehaviour:
   baseCoinReward: 274
   difficultyRating: 4
   hasBoss: 0
+  bossDefinition: {fileID: 0}
   bossHealth: 0
   gates:
   - z: 16
