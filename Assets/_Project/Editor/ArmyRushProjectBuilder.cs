@@ -258,10 +258,13 @@ public static class ArmyRushProjectBuilder
         prefabs.bonusCrate = CreateBonusCratePrefab(materials, meshes);
         prefabs.bonusEnd = CreateBonusEndPrefab(materials, meshes);
         prefabs.floatingText = CreateFloatingTextPrefab();
+        prefabs.muzzleFlash = CreateParticleVfxPrefab("PF_VFX_MuzzleFlash", new Color(1f, 0.88f, 0.16f), 0.18f, 0.12f, 1.8f, 10, 0.12f, 0.08f, materials.vfxParticle);
         prefabs.hitSpark = CreateParticleVfxPrefab("PF_VFX_HitSpark", new Color(1f, 0.84f, 0.18f), 0.38f, 0.28f, 3.4f, 14, 0.14f, 0.18f, materials.vfxParticle);
         prefabs.gatePositiveBurst = CreateParticleVfxPrefab("PF_VFX_GatePositive", new Color(0.16f, 1f, 0.62f), 0.62f, 0.42f, 2.2f, 26, 0.22f, 0.55f, materials.vfxParticle);
         prefabs.gateNegativeBurst = CreateParticleVfxPrefab("PF_VFX_GateNegative", new Color(1f, 0.24f, 0.12f), 0.62f, 0.42f, 2.2f, 22, 0.2f, 0.55f, materials.vfxParticle);
         prefabs.coinBurst = CreateParticleVfxPrefab("PF_VFX_CoinBurst", new Color(1f, 0.76f, 0.12f), 0.72f, 0.5f, 2.8f, 30, 0.17f, 0.75f, materials.vfxParticle);
+        prefabs.obstacleDebris = CreateParticleVfxPrefab("PF_VFX_ObstacleDebris", new Color(0.72f, 0.38f, 0.16f), 0.64f, 0.46f, 3.2f, 26, 0.16f, 0.48f, materials.vfxParticle);
+        prefabs.victoryBurst = CreateParticleVfxPrefab("PF_VFX_VictoryBurst", new Color(0.22f, 1f, 0.48f), 1.05f, 0.72f, 3.7f, 44, 0.18f, 0.82f, materials.vfxParticle);
         prefabs.bossExplosion = CreateParticleVfxPrefab("PF_VFX_BossExplosion", new Color(1f, 0.34f, 0.08f), 1.1f, 0.72f, 4.2f, 46, 0.36f, 1.35f, materials.vfxParticle);
         return prefabs;
     }
@@ -798,7 +801,7 @@ public static class ArmyRushProjectBuilder
 
         playerController.Configure(tuning, input, crowd, run);
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
-        vfx.Configure(pool, prefabs.floatingText, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.coinBurst, prefabs.bossExplosion);
+        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.victoryBurst, prefabs.bossExplosion);
 
         levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
@@ -940,10 +943,13 @@ public static class ArmyRushProjectBuilder
         }
         string[] requiredVfx =
         {
+            PrefabPath + "/VFX/PF_VFX_MuzzleFlash.prefab",
             PrefabPath + "/VFX/PF_VFX_HitSpark.prefab",
             PrefabPath + "/VFX/PF_VFX_GatePositive.prefab",
             PrefabPath + "/VFX/PF_VFX_GateNegative.prefab",
             PrefabPath + "/VFX/PF_VFX_CoinBurst.prefab",
+            PrefabPath + "/VFX/PF_VFX_ObstacleDebris.prefab",
+            PrefabPath + "/VFX/PF_VFX_VictoryBurst.prefab",
             PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab"
         };
         foreach (string vfxPath in requiredVfx)
@@ -1559,10 +1565,13 @@ public static class ArmyRushProjectBuilder
         public GameObject bonusCrate;
         public GameObject bonusEnd;
         public GameObject floatingText;
+        public GameObject muzzleFlash;
         public GameObject hitSpark;
         public GameObject gatePositiveBurst;
         public GameObject gateNegativeBurst;
         public GameObject coinBurst;
+        public GameObject obstacleDebris;
+        public GameObject victoryBurst;
         public GameObject bossExplosion;
     }
 }

@@ -4,10 +4,13 @@ namespace ArmyRush
 {
     public enum VfxCue
     {
+        MuzzleFlash,
         HitSpark,
         GatePositive,
         GateNegative,
         CoinBurst,
+        ObstacleDebris,
+        VictoryBurst,
         BossExplosion
     }
 
@@ -15,10 +18,13 @@ namespace ArmyRush
     {
         [SerializeField] private PoolManager _poolManager;
         [SerializeField] private GameObject _floatingTextPrefab;
+        [SerializeField] private GameObject _muzzleFlashPrefab;
         [SerializeField] private GameObject _hitSparkPrefab;
         [SerializeField] private GameObject _gatePositivePrefab;
         [SerializeField] private GameObject _gateNegativePrefab;
         [SerializeField] private GameObject _coinBurstPrefab;
+        [SerializeField] private GameObject _obstacleDebrisPrefab;
+        [SerializeField] private GameObject _victoryBurstPrefab;
         [SerializeField] private GameObject _bossExplosionPrefab;
 
         private static VfxManager _active;
@@ -30,10 +36,13 @@ namespace ArmyRush
             {
                 _poolManager.Prewarm(_floatingTextPrefab, 24);
             }
+            Prewarm(_muzzleFlashPrefab, 24);
             Prewarm(_hitSparkPrefab, 32);
             Prewarm(_gatePositivePrefab, 8);
             Prewarm(_gateNegativePrefab, 8);
             Prewarm(_coinBurstPrefab, 8);
+            Prewarm(_obstacleDebrisPrefab, 8);
+            Prewarm(_victoryBurstPrefab, 4);
             Prewarm(_bossExplosionPrefab, 4);
         }
 
@@ -48,18 +57,24 @@ namespace ArmyRush
         public void Configure(
             PoolManager poolManager,
             GameObject floatingTextPrefab,
+            GameObject muzzleFlashPrefab,
             GameObject hitSparkPrefab,
             GameObject gatePositivePrefab,
             GameObject gateNegativePrefab,
             GameObject coinBurstPrefab,
+            GameObject obstacleDebrisPrefab,
+            GameObject victoryBurstPrefab,
             GameObject bossExplosionPrefab)
         {
             _poolManager = poolManager;
             _floatingTextPrefab = floatingTextPrefab;
+            _muzzleFlashPrefab = muzzleFlashPrefab;
             _hitSparkPrefab = hitSparkPrefab;
             _gatePositivePrefab = gatePositivePrefab;
             _gateNegativePrefab = gateNegativePrefab;
             _coinBurstPrefab = coinBurstPrefab;
+            _obstacleDebrisPrefab = obstacleDebrisPrefab;
+            _victoryBurstPrefab = victoryBurstPrefab;
             _bossExplosionPrefab = bossExplosionPrefab;
         }
 
@@ -113,6 +128,8 @@ namespace ArmyRush
         {
             switch (cue)
             {
+                case VfxCue.MuzzleFlash:
+                    return _muzzleFlashPrefab;
                 case VfxCue.HitSpark:
                     return _hitSparkPrefab;
                 case VfxCue.GatePositive:
@@ -121,6 +138,10 @@ namespace ArmyRush
                     return _gateNegativePrefab;
                 case VfxCue.CoinBurst:
                     return _coinBurstPrefab;
+                case VfxCue.ObstacleDebris:
+                    return _obstacleDebrisPrefab;
+                case VfxCue.VictoryBurst:
+                    return _victoryBurstPrefab;
                 case VfxCue.BossExplosion:
                     return _bossExplosionPrefab;
                 default:

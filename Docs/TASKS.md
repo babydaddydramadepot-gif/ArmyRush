@@ -180,6 +180,7 @@ Implementation Pass 1 Result:
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
+- Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
 - Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
 
 ---
@@ -581,7 +582,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented; Muzzle/Impact Polish Pending
+Status: Functional Pass Implemented; Impact Polish Pending
 Priority: High
 
 Tasks:
@@ -656,7 +657,7 @@ Acceptance Criteria:
 
 ## 2.3 Destruction VFX
 
-Status: Not Started
+Status: Functional Pass Implemented; Smoke/Camera Shake/Explosive Variants Pending
 Priority: High
 
 Tasks:
@@ -1191,7 +1192,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: In Progress; Hit/Gate/Coin/Boss Particle Bursts Implemented
+Status: In Progress; Core Combat/Reward Bursts Implemented
 Priority: High
 
 Add VFX for:

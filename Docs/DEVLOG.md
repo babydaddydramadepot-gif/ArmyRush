@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-24%
+25%
 
 Last Updated:
 
@@ -583,6 +583,42 @@ Device-test text fit and perceived timing, then consider adding richer coin spen
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Core Gameplay VFX Expansion
+
+Files:
+
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/VFX/PF_VFX_MuzzleFlash.prefab
+Assets/_Project/Prefabs/VFX/PF_VFX_ObstacleDebris.prefab
+Assets/_Project/Prefabs/VFX/PF_VFX_VictoryBurst.prefab
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Expanded pooled gameplay VFX with generated prefabs and cues for muzzle flashes, obstacle debris, and victory celebration bursts. Player volleys now spawn a muzzle flash at the aim origin, destroyed obstacles emit debris, and victory now combines coin burst feedback with a separate celebration effect.
+
+Result:
+
+Unity generation and production validation both pass with no C# compiler errors or warnings. The validator now requires the new VFX prefabs alongside the existing hit, gate, coin, and boss effects.
+
+Follow Up:
+
+Add crowd add/loss bursts, upgrade glow, defeat fade, smoke variants, and final authored VFX styling during the broader visual polish pass.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -595,7 +631,7 @@ UI Systems
 
 Visual Systems
 
-25%
+29%
 
 Audio Systems
 
@@ -619,7 +655,7 @@ Optimization
 
 Polish
 
-14%
+15%
 
 Release Readiness
 
@@ -755,7 +791,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Basic projectile tracer, gate pulse feedback, pooled floating text, damage feedback, clear feedback, and coin reward text implemented. Final particle assets remain pending.
+Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, obstacle debris, coin reward bursts, and victory bursts implemented. Final authored particle styling remains pending.
 
 ---
 
@@ -843,7 +879,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, coin bursts, bonus crate reward bursts, boss attack telegraphs, and boss explosion bursts are present, but muzzle flashes, obstacle debris, victory effects, defeat fade, and final authored styling remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, and boss explosion bursts are present, but crowd add/loss bursts, upgrade glow, defeat fade, smoke variants, and final authored styling remain pending.
 
 Issue ID:
 
