@@ -15,6 +15,10 @@ namespace ArmyRush
         public bool hasBoss;
         public BossDefinition bossDefinition;
         public int bossHealth = 0;
+        public int bonusCrateCount = 3;
+        public int bonusCrateHealth = 80;
+        public int bonusCrateReward = 25;
+        public float bonusSectionLength = 34f;
 
         public List<GateSpawnData> gates = new List<GateSpawnData>();
         public List<EnemyGroupSpawnData> enemyGroups = new List<EnemyGroupSpawnData>();

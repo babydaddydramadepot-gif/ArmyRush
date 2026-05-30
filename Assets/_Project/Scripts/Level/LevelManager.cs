@@ -16,6 +16,8 @@ namespace ArmyRush
         [SerializeField] private GameObject _obstaclePrefab;
         [SerializeField] private GameObject _bossPrefab;
         [SerializeField] private GameObject _finishLinePrefab;
+        [SerializeField] private GameObject _bonusCratePrefab;
+        [SerializeField] private GameObject _bonusEndPrefab;
         [SerializeField] private Transform _levelRoot;
 
         private readonly List<GameObject> _spawned = new List<GameObject>();
@@ -44,6 +46,8 @@ namespace ArmyRush
             GameObject obstaclePrefab,
             GameObject bossPrefab,
             GameObject finishLinePrefab,
+            GameObject bonusCratePrefab,
+            GameObject bonusEndPrefab,
             Transform levelRoot)
         {
             _tuning = tuning;
@@ -57,6 +61,8 @@ namespace ArmyRush
             _obstaclePrefab = obstaclePrefab;
             _bossPrefab = bossPrefab;
             _finishLinePrefab = finishLinePrefab;
+            _bonusCratePrefab = bonusCratePrefab;
+            _bonusEndPrefab = bonusEndPrefab;
             _levelRoot = levelRoot;
         }
 
@@ -79,12 +85,13 @@ namespace ArmyRush
             }
             _crowd?.SetCount(startingSoldiers);
 
-            BuildTrack(CurrentLevel.trackLength);
+            BuildTrack(CurrentLevel.trackLength + Mathf.Max(0f, CurrentLevel.bonusSectionLength));
             SpawnGates();
             SpawnEnemies();
             SpawnObstacles();
             SpawnBoss();
             SpawnFinish();
+            SpawnBonusSection();
         }
 
         private LevelData SelectLevel(int desiredIndex)
@@ -193,6 +200,39 @@ namespace ArmyRush
 
             GameObject finish = Instantiate(_finishLinePrefab, new Vector3(0f, 0f, CurrentLevel.trackLength), Quaternion.identity, _levelRoot);
             _spawned.Add(finish);
+        }
+
+        private void SpawnBonusSection()
+        {
+            if (CurrentLevel == null)
+            {
+                return;
+            }
+
+            int crateCount = Mathf.Max(0, CurrentLevel.bonusCrateCount);
+            float sectionLength = Mathf.Max(12f, CurrentLevel.bonusSectionLength);
+            if (_bonusCratePrefab != null && crateCount > 0)
+            {
+                float spacing = sectionLength / (crateCount + 1f);
+                RunManager runManager = FindAnyObjectByType<RunManager>();
+                for (int i = 0; i < crateCount; i++)
+                {
+                    float laneX = i % 3 == 0 ? 0f : i % 3 == 1 ? -1.45f : 1.45f;
+                    float z = CurrentLevel.trackLength + spacing * (i + 1);
+                    GameObject crateObject = Instantiate(_bonusCratePrefab, new Vector3(laneX, 0f, z), Quaternion.identity, _levelRoot);
+                    BonusCrateController crate = crateObject.GetComponent<BonusCrateController>();
+                    int health = CurrentLevel.bonusCrateHealth + CurrentLevel.levelIndex * 12 + i * 18;
+                    int reward = CurrentLevel.bonusCrateReward + CurrentLevel.levelIndex * 6 + i * 10;
+                    crate?.Configure(health, reward, runManager);
+                    _spawned.Add(crateObject);
+                }
+            }
+
+            if (_bonusEndPrefab != null)
+            {
+                GameObject end = Instantiate(_bonusEndPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength + sectionLength), Quaternion.identity, _levelRoot);
+                _spawned.Add(end);
+            }
         }
 
         private void ClearLevel()

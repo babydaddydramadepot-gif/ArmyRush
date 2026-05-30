@@ -11,6 +11,7 @@ namespace ArmyRush
         [SerializeField] private GameplayUI _gameplayUI;
 
         private int _runCoins;
+        private int _bonusCoins;
         private bool _levelCompleted;
         private EconomyService _economy;
         private ProgressionService _progression;
@@ -76,6 +77,31 @@ namespace ArmyRush
             }
         }
 
+        public void BeginFinishSequence()
+        {
+            if (State != RunState.Running && State != RunState.CombatPaused)
+            {
+                return;
+            }
+
+            SetState(RunState.FinishSequence);
+            if (_crowd != null)
+            {
+                VfxManager.SpawnFloatingText("BONUS RUN", _crowd.transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
+            }
+        }
+
+        public void AddBonusCoins(int amount, Vector3 worldPosition)
+        {
+            if (amount <= 0 || State != RunState.FinishSequence)
+            {
+                return;
+            }
+
+            _bonusCoins += amount;
+            VfxManager.SpawnFloatingText("+" + amount + " COINS", worldPosition + Vector3.up * 0.8f, new Color(1f, 0.78f, 0.12f));
+        }
+
         public void WinRun()
         {
             if (_levelCompleted || State == RunState.Victory || State == RunState.Defeat)
@@ -97,7 +123,7 @@ namespace ArmyRush
             }
             int survivorBonus = (_crowd != null ? _crowd.Count : 0) * (_tuning != null ? _tuning.soldierCoinValue : 2);
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus) * coinMultiplier);
+            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus + _bonusCoins) * coinMultiplier);
 
             _economy?.AddCoins(_runCoins);
             _progression?.CompleteCurrentLevel();

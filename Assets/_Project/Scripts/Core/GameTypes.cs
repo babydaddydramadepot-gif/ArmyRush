@@ -42,7 +42,8 @@ namespace ArmyRush
     {
         Enemy,
         Obstacle,
-        Boss
+        Boss,
+        Bonus
     }
 
     [Serializable]

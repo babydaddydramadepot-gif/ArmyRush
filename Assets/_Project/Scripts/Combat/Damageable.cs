@@ -61,7 +61,8 @@ namespace ArmyRush
             _health = Mathf.Max(0, _health - amount);
             Damaged?.Invoke(this, amount);
             VfxManager.Spawn(VfxCue.HitSpark, AimPoint);
-            VfxManager.SpawnFloatingText("-" + amount, AimPoint + Vector3.up * 0.2f, _kind == CombatTargetKind.Obstacle ? new Color(1f, 0.8f, 0.18f) : new Color(1f, 0.28f, 0.18f));
+            Color damageColor = _kind == CombatTargetKind.Obstacle || _kind == CombatTargetKind.Bonus ? new Color(1f, 0.8f, 0.18f) : new Color(1f, 0.28f, 0.18f);
+            VfxManager.SpawnFloatingText("-" + amount, AimPoint + Vector3.up * 0.2f, damageColor);
             UpdateLabel();
 
             if (_health <= 0)

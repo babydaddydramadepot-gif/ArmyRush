@@ -3,7 +3,7 @@ using UnityEngine;
 namespace ArmyRush
 {
     [RequireComponent(typeof(Collider))]
-    public sealed class FinishLineTrigger : MonoBehaviour
+    public sealed class BonusEndTrigger : MonoBehaviour
     {
         private RunManager _runManager;
         private bool _triggered;
@@ -27,7 +27,7 @@ namespace ArmyRush
             }
 
             _triggered = true;
-            _runManager?.BeginFinishSequence();
+            _runManager?.WinRun();
         }
     }
 }

@@ -40,7 +40,7 @@ namespace ArmyRush
                     continue;
                 }
 
-                float priority = target.Kind == CombatTargetKind.Obstacle ? -8f : 0f;
+                float priority = target.Kind == CombatTargetKind.Obstacle ? -8f : target.Kind == CombatTargetKind.Bonus ? 6f : 0f;
                 float score = offset.z + Mathf.Abs(offset.x) * 1.5f + priority;
                 if (score < bestScore)
                 {

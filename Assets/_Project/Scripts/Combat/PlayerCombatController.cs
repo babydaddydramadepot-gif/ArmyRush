@@ -25,7 +25,7 @@ namespace ArmyRush
 
         private void Update()
         {
-            if (_runManager == null || (_runManager.State != RunState.Running && _runManager.State != RunState.CombatPaused) || _crowd == null || _crowd.Count <= 0 || _tuning == null)
+            if (_runManager == null || (_runManager.State != RunState.Running && _runManager.State != RunState.CombatPaused && _runManager.State != RunState.FinishSequence) || _crowd == null || _crowd.Count <= 0 || _tuning == null)
             {
                 return;
             }

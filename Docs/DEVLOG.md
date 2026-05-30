@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-21%
+22%
 
 Last Updated:
 
@@ -483,11 +483,54 @@ Profile real iPhone frame time, crowd scaling, projectile pooling, VFX pooling, 
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Bonus Run Reward Section
+
+Files:
+
+Assets/_Project/Scripts/Level/BonusCrateController.cs
+Assets/_Project/Scripts/Level/BonusEndTrigger.cs
+Assets/_Project/Scripts/Level/LevelData.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/Level/FinishLineTrigger.cs
+Assets/_Project/Scripts/Combat/Damageable.cs
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Scripts/Combat/TargetRegistry.cs
+Assets/_Project/Scripts/Core/GameTypes.cs
+Assets/_Project/Scripts/Player/PlayerController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/Levels/PF_BonusCrate.prefab
+Assets/_Project/Prefabs/Levels/PF_BonusEnd.prefab
+Assets/_Project/ScriptableObjects/Levels/
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Converted the finish line from immediate victory into a no-fail bonus run. Level data now controls bonus crate count, crate health, crate rewards, and bonus section length. The level builder extends the track beyond the finish, spawns generated reward crates, then resolves victory at a claim trigger. Player movement and shooting continue through `FinishSequence`, bonus crates register as lower-priority combat targets, and destroyed crates add pooled coin VFX/audio plus extra coins into the final payout.
+
+Result:
+
+Unity generation and production validation both pass with no C# compiler errors or warnings. Validation now confirms spawned bonus crates and the bonus end trigger are present in the generated Game scene.
+
+Follow Up:
+
+Manual play-mode QA needs to tune crate health, section pacing, camera framing beyond the finish line, and reward satisfaction on device.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-34%
+36%
 
 UI Systems
 
@@ -495,7 +538,7 @@ UI Systems
 
 Visual Systems
 
-24%
+25%
 
 Audio Systems
 
@@ -503,11 +546,11 @@ Audio Systems
 
 Level Systems
 
-28%
+31%
 
 Progression Systems
 
-38%
+40%
 
 Boss Systems
 
@@ -519,7 +562,7 @@ Optimization
 
 Polish
 
-11%
+12%
 
 Release Readiness
 
@@ -719,7 +762,7 @@ AR-001
 
 Status:
 
-Manual Unity play-mode QA has not been completed yet after generated scene creation.
+Manual Unity play-mode QA has not been completed yet after generated scene creation, including the new finish-line bonus section.
 
 Issue ID:
 
@@ -743,7 +786,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, coin bursts, boss attack telegraphs, and boss explosion bursts are present, but muzzle flashes, obstacle debris, victory effects, defeat fade, and final authored styling remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, coin bursts, bonus crate reward bursts, boss attack telegraphs, and boss explosion bursts are present, but muzzle flashes, obstacle debris, victory effects, defeat fade, and final authored styling remain pending.
 
 Issue ID:
 

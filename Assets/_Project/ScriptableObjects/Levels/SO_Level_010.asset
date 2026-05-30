@@ -20,6 +20,10 @@ MonoBehaviour:
   hasBoss: 1
   bossDefinition: {fileID: 11400000, guid: 2d1280016eb9c4988ba9ee4738b1fcad, type: 2}
   bossHealth: 1548
+  bonusCrateCount: 3
+  bonusCrateHealth: 290
+  bonusCrateReward: 74
+  bonusSectionLength: 34
   gates:
   - z: 16
     x: -1.45

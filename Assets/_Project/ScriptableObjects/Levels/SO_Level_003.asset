@@ -20,6 +20,10 @@ MonoBehaviour:
   hasBoss: 0
   bossDefinition: {fileID: 0}
   bossHealth: 0
+  bonusCrateCount: 2
+  bonusCrateHealth: 136
+  bonusCrateReward: 35
+  bonusSectionLength: 34
   gates:
   - z: 16
     x: -1.45

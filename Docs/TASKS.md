@@ -179,6 +179,7 @@ Implementation Pass 1 Result:
 - Confirmed the generated Xcode project builds successfully with `CODE_SIGNING_ALLOWED=NO` for a Debug `iphoneos` build.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
+- Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
 
 ---
@@ -702,7 +703,7 @@ Acceptance Criteria:
 
 ## 3.2 Level Builder
 
-Status: Functional Pass Implemented; Bonus Section Pending
+Status: Functional Pass Implemented with Bonus Section; Layout QA Pending
 Priority: Critical
 
 Tasks:
@@ -713,7 +714,7 @@ Tasks:
 - Spawn enemies.
 - Spawn obstacles.
 - Spawn finish zone.
-- Spawn bonus section.
+- Spawn bonus section with reward crates and claim trigger.
 
 Acceptance Criteria:
 
@@ -726,7 +727,7 @@ Acceptance Criteria:
 
 ## 3.3 Road and Bridge Visuals
 
-Status: In Progress; Generated Road/Ocean Pass Implemented
+Status: In Progress; Generated Road/Ocean/Bonus Pass Implemented
 Priority: Critical
 
 Tasks:
@@ -935,7 +936,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Functional Pass Implemented; Enemy/Obstacle Bonus Balance Pending
+Status: Functional Pass Implemented; Enemy/Obstacle Reward Balance Pending
 Priority: High
 
 Tasks:
@@ -944,7 +945,7 @@ Tasks:
 - Calculate enemy rewards.
 - Calculate obstacle rewards.
 - Calculate boss rewards.
-- Calculate bonus run rewards.
+- Calculate bonus run crate rewards.
 - Apply coin multipliers.
 
 Acceptance Criteria:
@@ -1052,14 +1053,14 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Functional Pass Implemented; Upgrade Shortcut/Rewarded Architecture Pending
+Status: Functional Pass Implemented with Bonus Reward Total; Upgrade Shortcut/Rewarded Architecture Pending
 Priority: Critical
 
 Tasks:
 
 - Create victory screen.
 - Show coins earned.
-- Show bonus rewards.
+- Show bonus rewards in earned coin total.
 - Add next level button.
 - Add upgrade shortcut.
 - Add optional rewarded ad placeholder architecture.

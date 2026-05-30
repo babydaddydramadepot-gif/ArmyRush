@@ -255,6 +255,8 @@ public static class ArmyRushProjectBuilder
         prefabs.obstacle = CreateObstaclePrefab(materials, meshes);
         prefabs.bossTank = CreateBossTankPrefab(materials, meshes);
         prefabs.finishLine = CreateFinishLinePrefab(materials, meshes);
+        prefabs.bonusCrate = CreateBonusCratePrefab(materials, meshes);
+        prefabs.bonusEnd = CreateBonusEndPrefab(materials, meshes);
         prefabs.floatingText = CreateFloatingTextPrefab();
         prefabs.hitSpark = CreateParticleVfxPrefab("PF_VFX_HitSpark", new Color(1f, 0.84f, 0.18f), 0.38f, 0.28f, 3.4f, 14, 0.14f, 0.18f, materials.vfxParticle);
         prefabs.gatePositiveBurst = CreateParticleVfxPrefab("PF_VFX_GatePositive", new Color(0.16f, 1f, 0.62f), 0.62f, 0.42f, 2.2f, 26, 0.22f, 0.55f, materials.vfxParticle);
@@ -427,6 +429,62 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
+    private static GameObject CreateBonusCratePrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = new GameObject("PF_BonusCrate");
+        BoxCollider collider = root.AddComponent<BoxCollider>();
+        collider.size = new Vector3(1.55f, 1.65f, 1.2f);
+        collider.center = new Vector3(0f, 0.78f, 0f);
+        collider.isTrigger = true;
+
+        Damageable damageable = root.AddComponent<Damageable>();
+        BonusCrateController bonus = root.AddComponent<BonusCrateController>();
+
+        AddMeshPart(root.transform, "BaseCrate", meshes.box, materials.obstacle, new Vector3(0f, 0.4f, 0f), new Vector3(1.35f, 0.78f, 0.95f));
+        AddMeshPart(root.transform, "TopCrate", meshes.box, materials.obstacle, new Vector3(0f, 1.05f, 0f), new Vector3(1.05f, 0.52f, 0.76f));
+        AddMeshPart(root.transform, "GoldBand_Front", meshes.box, materials.coin, new Vector3(0f, 0.79f, -0.5f), new Vector3(1.48f, 0.14f, 0.08f));
+        AddMeshPart(root.transform, "GoldBand_Back", meshes.box, materials.coin, new Vector3(0f, 0.79f, 0.5f), new Vector3(1.48f, 0.14f, 0.08f));
+        AddMeshPart(root.transform, "MetalRim_L", meshes.box, materials.obstacleMetal, new Vector3(-0.74f, 0.73f, 0f), new Vector3(0.08f, 1.3f, 1.02f));
+        AddMeshPart(root.transform, "MetalRim_R", meshes.box, materials.obstacleMetal, new Vector3(0.74f, 0.73f, 0f), new Vector3(0.08f, 1.3f, 1.02f));
+        AddMeshPart(root.transform, "CoinIcon", meshes.cylinder, materials.coin, new Vector3(0f, 1.45f, -0.42f), new Vector3(0.38f, 0.08f, 0.38f));
+
+        TextMesh healthLabel = CreateWorldText("HealthLabel", root.transform, "80", new Vector3(0f, 1.75f, 0f), 0.115f, Color.white);
+        healthLabel.gameObject.AddComponent<Billboard>();
+        TextMesh rewardLabel = CreateWorldText("RewardLabel", root.transform, "+25", new Vector3(0f, 2.05f, 0f), 0.13f, new Color(1f, 0.82f, 0.16f));
+        rewardLabel.gameObject.AddComponent<Billboard>();
+
+        SetObject(damageable, "_label", healthLabel);
+        SetObject(bonus, "_damageable", damageable);
+        SetObject(bonus, "_healthLabel", healthLabel);
+        SetObject(bonus, "_rewardLabel", rewardLabel);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/Levels/PF_BonusCrate.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
+    private static GameObject CreateBonusEndPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = new GameObject("PF_BonusEnd");
+        BoxCollider collider = root.AddComponent<BoxCollider>();
+        collider.size = new Vector3(7f, 3f, 0.7f);
+        collider.center = new Vector3(0f, 1.2f, 0f);
+        collider.isTrigger = true;
+        root.AddComponent<BonusEndTrigger>();
+
+        AddMeshPart(root.transform, "ClaimStrip", meshes.box, materials.coin, new Vector3(0f, 0.05f, 0f), new Vector3(7f, 0.08f, 0.65f));
+        AddMeshPart(root.transform, "LeftPillar", meshes.box, materials.rail, new Vector3(-3.2f, 1.45f, 0f), new Vector3(0.18f, 2.9f, 0.18f));
+        AddMeshPart(root.transform, "RightPillar", meshes.box, materials.rail, new Vector3(3.2f, 1.45f, 0f), new Vector3(0.18f, 2.9f, 0.18f));
+        AddMeshPart(root.transform, "Banner", meshes.box, materials.coin, new Vector3(0f, 2.5f, 0f), new Vector3(6.25f, 0.58f, 0.09f));
+        AddMeshPart(root.transform, "BannerTrim", meshes.box, materials.obstacleMetal, new Vector3(0f, 2.14f, 0f), new Vector3(6.45f, 0.12f, 0.12f));
+        TextMesh label = CreateWorldText("ClaimLabel", root.transform, "CLAIM", new Vector3(0f, 2.51f, -0.08f), 0.14f, Color.white);
+        label.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/Levels/PF_BonusEnd.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
     private static GameObject CreateFloatingTextPrefab()
     {
         GameObject root = new GameObject("PF_FloatingText");
@@ -529,6 +587,10 @@ public static class ArmyRushProjectBuilder
             data.hasBoss = i == 5 || i == 10 || i == 15 || i == 20;
             data.bossDefinition = data.hasBoss ? tankBoss : null;
             data.bossHealth = data.hasBoss && tankBoss != null ? tankBoss.GetHealth(i, 0) : 0;
+            data.bonusCrateCount = i < 4 ? 2 : 3;
+            data.bonusCrateHealth = Mathf.RoundToInt(70f + i * 22f);
+            data.bonusCrateReward = Mathf.RoundToInt(Mathf.Lerp(24f, 130f, (i - 1) / 19f));
+            data.bonusSectionLength = 34f;
             data.gates.Clear();
             data.enemyGroups.Clear();
             data.obstacles.Clear();
@@ -725,7 +787,7 @@ public static class ArmyRushProjectBuilder
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
         vfx.Configure(pool, prefabs.floatingText, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.coinBurst, prefabs.bossExplosion);
 
-        levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, levelRoot.transform);
+        levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
         gameplayUI.Configure(playerController, levelManager);
 
@@ -917,6 +979,14 @@ public static class ArmyRushProjectBuilder
         if (Object.FindAnyObjectByType<FinishLineTrigger>() == null)
         {
             failures.Add("Game scene validation spawned no finish trigger.");
+        }
+        if (Object.FindObjectsByType<BonusCrateController>(FindObjectsInactive.Exclude).Length == 0)
+        {
+            failures.Add("Game scene validation spawned no bonus crates.");
+        }
+        if (Object.FindAnyObjectByType<BonusEndTrigger>() == null)
+        {
+            failures.Add("Game scene validation spawned no bonus end trigger.");
         }
     }
 
@@ -1466,6 +1536,8 @@ public static class ArmyRushProjectBuilder
         public GameObject obstacle;
         public GameObject bossTank;
         public GameObject finishLine;
+        public GameObject bonusCrate;
+        public GameObject bonusEnd;
         public GameObject floatingText;
         public GameObject hitSpark;
         public GameObject gatePositiveBurst;
