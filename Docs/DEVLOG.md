@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-57%
+58%
 
 Last Updated:
 
@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Boss Intro Audio Cue
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a dedicated procedural boss-intro SFX cue to the pooled audio service and play it when a boss encounter engages. The task board now reflects the existing pooled SFX source implementation and the new boss-intro hook.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Boss encounters now combine intro text, warning haptics, boss-intro audio, attack audio, hit audio, and defeat audio.
+
+Follow Up:
+
+Replace procedural boss SFX with authored clips during the final audio pass and verify mix balance on device speakers.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Obstacle Explosion VFX
 
 Files:
@@ -1584,7 +1613,7 @@ Visual Systems
 
 Audio Systems
 
-26%
+27%
 
 Level Systems
 
@@ -1820,7 +1849,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist with pooled procedural SFX playback including boss attack/defeat cues, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback including boss intro/attack/defeat cues, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 

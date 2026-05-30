@@ -1125,7 +1125,7 @@ Acceptance Criteria:
 
 ## 7.1 Audio System
 
-Status: Functional Pass Implemented with Procedural Music; Final Audio Assets Pending
+Status: Functional Pass Implemented with Procedural Music and Pooled SFX Sources; Final Audio Assets Pending
 Priority: High
 
 Tasks:
@@ -1134,7 +1134,7 @@ Tasks:
 - Add SFX categories.
 - [x] Add music support.
 - [x] Add SFX volume settings.
-- Add pooled audio sources.
+- [x] Add pooled audio sources.
 
 Acceptance Criteria:
 
@@ -1146,7 +1146,7 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: Functional Pass Implemented with Procedural Runtime SFX; Final Clips/Music Pending
+Status: Functional Pass Implemented with Procedural Runtime SFX and Boss Intro Cue; Final Clips/Music Pending
 Priority: High
 
 Add SFX for:
@@ -1164,7 +1164,7 @@ Add SFX for:
 - Upgrade purchase
 - Victory
 - Defeat
-- Boss intro
+- [x] Boss intro
 - Boss attack
 - Boss defeat
 

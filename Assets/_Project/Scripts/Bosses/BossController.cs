@@ -173,6 +173,10 @@ namespace ArmyRush
             _nextAttackTime = Time.time + 1.1f;
 
             VfxManager.SpawnFloatingText("BOSS FIGHT", transform.position + Vector3.up * 2.9f, new Color(1f, 0.78f, 0.12f));
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(AudioCue.BossIntro);
+            }
             if (ServiceLocator.TryGet(out HapticsService haptics))
             {
                 haptics.Play(HapticCue.Warning);
