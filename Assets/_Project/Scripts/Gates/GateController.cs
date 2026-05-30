@@ -107,14 +107,11 @@ namespace ArmyRush
             if (_panelRenderer != null)
             {
                 Color color = IsPositive() ? new Color(0.05f, 0.95f, 0.72f, 0.82f) : new Color(1f, 0.24f, 0.12f, 0.82f);
-                if (Application.isPlaying)
-                {
-                    _panelRenderer.material.color = color;
-                }
-                else if (_panelRenderer.sharedMaterial != null)
-                {
-                    _panelRenderer.sharedMaterial.color = color;
-                }
+                MaterialPropertyBlock block = new MaterialPropertyBlock();
+                _panelRenderer.GetPropertyBlock(block);
+                block.SetColor("_BaseColor", color);
+                block.SetColor("_Color", color);
+                _panelRenderer.SetPropertyBlock(block);
                 _baseColor = color;
             }
         }

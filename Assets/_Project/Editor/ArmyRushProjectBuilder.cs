@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using ArmyRush;
 using UnityEditor;
 using UnityEditor.Build;
@@ -41,6 +42,25 @@ public static class ArmyRushProjectBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("ArmyRush production foundation generated.");
+    }
+
+    [MenuItem("ArmyRush/Validate Production Foundation")]
+    public static void ValidateProductionFoundation()
+    {
+        List<string> failures = new List<string>();
+        ValidatePrefabFolder(failures);
+        ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
+        ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
+        ValidateScene(ScenePath + "/Game.unity", failures, ValidateGameScene);
+
+        if (failures.Count > 0)
+        {
+            string message = "ArmyRush validation failed:\n" + string.Join("\n", failures);
+            Debug.LogError(message);
+            throw new System.Exception(message);
+        }
+
+        Debug.Log("ArmyRush production foundation validation passed.");
     }
 
     private static void CreateFolders()
@@ -539,6 +559,133 @@ public static class ArmyRushProjectBuilder
             new EditorBuildSettingsScene(ScenePath + "/MainMenu.unity", true),
             new EditorBuildSettingsScene(ScenePath + "/Game.unity", true)
         };
+    }
+
+    private static void ValidatePrefabFolder(List<string> failures)
+    {
+        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { PrefabPath });
+        foreach (string guid in prefabGuids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+            {
+                failures.Add("Could not load prefab: " + path);
+                continue;
+            }
+
+            int missing = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(prefab);
+            if (missing > 0)
+            {
+                failures.Add($"{path} has {missing} missing scripts.");
+            }
+        }
+    }
+
+    private static void ValidateScene(string path, List<string> failures, System.Action<Scene, List<string>> validate)
+    {
+        if (!System.IO.File.Exists(path))
+        {
+            failures.Add("Missing scene: " + path);
+            return;
+        }
+
+        Scene scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            int missing = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(root);
+            if (missing > 0)
+            {
+                failures.Add($"{path}/{root.name} has {missing} missing scripts.");
+            }
+        }
+        validate(scene, failures);
+        EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+    }
+
+    private static void ValidateBootScene(Scene scene, List<string> failures)
+    {
+        if (Object.FindAnyObjectByType<GameBootstrapper>() == null)
+        {
+            failures.Add("Boot scene is missing GameBootstrapper.");
+        }
+    }
+
+    private static void ValidateMainMenuScene(Scene scene, List<string> failures)
+    {
+        if (Object.FindAnyObjectByType<MainMenuUI>() == null)
+        {
+            failures.Add("MainMenu scene is missing MainMenuUI.");
+        }
+
+        if (Object.FindAnyObjectByType<Canvas>() == null)
+        {
+            failures.Add("MainMenu scene is missing a Canvas.");
+        }
+    }
+
+    private static void ValidateGameScene(Scene scene, List<string> failures)
+    {
+        UpgradeDefinition[] upgrades = AssetDatabase.FindAssets("t:UpgradeDefinition", new[] { UpgradeDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<UpgradeDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+        GameBootstrapper.EnsureServices(upgrades);
+
+        LevelManager levelManager = Object.FindAnyObjectByType<LevelManager>();
+        CrowdManager crowd = Object.FindAnyObjectByType<CrowdManager>();
+        PlayerController player = Object.FindAnyObjectByType<PlayerController>();
+        GameplayUI ui = Object.FindAnyObjectByType<GameplayUI>();
+        PoolManager pool = Object.FindAnyObjectByType<PoolManager>();
+
+        if (levelManager == null)
+        {
+            failures.Add("Game scene is missing LevelManager.");
+            return;
+        }
+        if (crowd == null)
+        {
+            failures.Add("Game scene is missing CrowdManager.");
+        }
+        if (player == null)
+        {
+            failures.Add("Game scene is missing PlayerController.");
+        }
+        if (ui == null)
+        {
+            failures.Add("Game scene is missing GameplayUI.");
+        }
+        if (pool == null)
+        {
+            failures.Add("Game scene is missing PoolManager.");
+        }
+
+        levelManager.BuildCurrentLevel();
+
+        if (levelManager.CurrentLevel == null)
+        {
+            failures.Add("LevelManager did not select a current level.");
+        }
+        if (crowd != null && crowd.Count <= 0)
+        {
+            failures.Add("CrowdManager did not spawn a positive starting count.");
+        }
+        if (Object.FindObjectsByType<GateController>(FindObjectsInactive.Exclude).Length == 0)
+        {
+            failures.Add("Game scene validation spawned no gates.");
+        }
+        if (Object.FindObjectsByType<EnemyGroup>(FindObjectsInactive.Exclude).Length == 0)
+        {
+            failures.Add("Game scene validation spawned no enemy groups.");
+        }
+        if (Object.FindObjectsByType<ObstacleController>(FindObjectsInactive.Exclude).Length == 0)
+        {
+            failures.Add("Game scene validation spawned no obstacles.");
+        }
+        if (Object.FindAnyObjectByType<FinishLineTrigger>() == null)
+        {
+            failures.Add("Game scene validation spawned no finish trigger.");
+        }
     }
 
     private static void ConfigurePlayerSettings()

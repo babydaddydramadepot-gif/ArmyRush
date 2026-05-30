@@ -171,6 +171,35 @@ Run manual play-mode QA in Unity, tune lane/gate collision feel, add boss-specif
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Foundation Validation
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scripts/Gates/GateController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a repeatable editor validation method that checks generated prefabs and Boot/MainMenu/Game scenes for missing scripts, verifies required scene roots, builds the current level in edit-mode validation, and confirms gates, enemy groups, obstacles, finish trigger, pool, UI, player, and starting crowd are present.
+
+Result:
+
+`ArmyRushProjectBuilder.ValidateProductionFoundation` passed in Unity batch mode with no compiler errors or warnings. Gate visual color updates now use `MaterialPropertyBlock` so validation does not dirty shared material assets.
+
+Follow Up:
+
+Manual play-mode QA is still required to validate feel, timing, touch ergonomics, and complete run flow.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems

@@ -171,6 +171,7 @@ Implementation Pass 1 Result:
 - Configured build scene order: Boot, MainMenu, Game.
 - Configured portrait-only orientation and iPhone/iPad target support.
 - Unity batch mode generation completed with no compiler errors or warnings in `/tmp/armyrush_unity_build.log`.
+- Unity batch mode validation completed with no compiler errors or warnings in `/tmp/armyrush_unity_validate.log`.
 - Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
 
 ---
