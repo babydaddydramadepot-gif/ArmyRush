@@ -1148,29 +1148,29 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: Functional Pass Implemented with Procedural Runtime SFX, Start Run Cue, Crowd Gain/Loss Cues, Gate Pass Cue, Boss Intro Cue, Centralized Coin Reward Audio, and Obstacle Damage Cue; Final Clips/Music Pending
+Status: Functional Pass Complete with Procedural Runtime SFX; Final Authored Clips and Music Pending
 Priority: High
 
 Add SFX for:
 
 - [x] Start run
 - [x] Soldier gain/loss
-- Button press
+- [x] Button press
 - [x] Gate pass
-- Positive gate
-- Negative gate
-- Shooting
-- Hit impact
-- Enemy defeat
+- [x] Positive gate
+- [x] Negative gate
+- [x] Shooting
+- [x] Hit impact
+- [x] Enemy defeat
 - [x] Obstacle damage
-- Obstacle destruction
+- [x] Obstacle destruction
 - [x] Coin collect
-- Upgrade purchase
-- Victory
-- Defeat
+- [x] Upgrade purchase
+- [x] Victory
+- [x] Defeat
 - [x] Boss intro
-- Boss attack
-- Boss defeat
+- [x] Boss attack
+- [x] Boss defeat
 
 Acceptance Criteria:
 

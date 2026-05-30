@@ -1487,6 +1487,33 @@ Date:
 
 System:
 
+Required SFX Checklist Sync
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Audited the required SFX checklist against the current `AudioCue` library and runtime play sites. Button presses, gate outcomes, shooting, impacts, enemy defeats, obstacle destruction, coin rewards, upgrade purchases, victory, defeat, boss intro, boss attacks, and boss defeat all have procedural functional-pass coverage.
+
+Result:
+
+Updated the task checklist to reflect implemented audio coverage. No runtime code changed in this documentation-only pass.
+
+Follow Up:
+
+Replace procedural clips with final authored mobile-ready audio assets and complete device-speaker mix QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Gate Pass Audio Cue
 
 Files:
