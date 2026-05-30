@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-39%
+40%
 
 Last Updated:
 
@@ -833,6 +833,36 @@ Date:
 
 System:
 
+Victory Celebration Animation Polish
+
+Files:
+
+Assets/_Project/Scripts/Crowd/SoldierUnitVisual.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Connected victory animation feedback to the real win flow. `RunManager.WinRun` now asks the crowd to celebrate when the run reaches victory, `CrowdManager` fans that request across active pooled soldiers, and soldier visuals play short staggered cheer hops with raised weapon motion while preserving their existing formation and pooling behavior.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Victory now has crowd character motion in addition to coins, VFX, audio, haptics, and camera shake.
+
+Follow Up:
+
+Tune the celebration against the victory panel framing on phone and iPad, then replace procedural cheer motion with authored clips if final character animation assets become available.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Safe Area Fitter Hardening
 
 Files:
@@ -1047,7 +1077,7 @@ UI Systems
 
 Visual Systems
 
-38%
+39%
 
 Audio Systems
 
@@ -1071,7 +1101,7 @@ Optimization
 
 Polish
 
-28%
+30%
 
 Release Readiness
 
@@ -1183,7 +1213,7 @@ All visual changes belong here.
 
 ## Initial State
 
-Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, finish line, procedural unit spawn/shoot/death motion, and procedural boss defeat motion. Final art polish and VFX pass remain pending.
+Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, finish line, procedural unit spawn/shoot/death/victory motion, and procedural boss defeat motion. Final art polish and VFX pass remain pending.
 
 ---
 

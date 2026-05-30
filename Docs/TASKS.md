@@ -1310,7 +1310,7 @@ Acceptance Criteria:
 
 ## 8.4 Animation Polish Pass
 
-Status: In Progress; Button/Reward/Unit/Gate/Boss Defeat Animation Pass Implemented
+Status: Functional Animation Polish Pass Implemented; Device QA/Authored Polish Pending
 Priority: High
 
 Tasks:
@@ -1321,7 +1321,7 @@ Tasks:
 - [x] Add unit spawn animation.
 - [x] Add unit death animation.
 - [x] Add boss defeat animation.
-- Add victory celebration animation.
+- [x] Add victory celebration animation.
 
 Acceptance Criteria:
 

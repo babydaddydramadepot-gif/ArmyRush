@@ -112,6 +112,20 @@ namespace ArmyRush
             _shootFeedbackCursor = (_shootFeedbackCursor + 1) % _soldiers.Count;
         }
 
+        public void PlayVictoryCelebration()
+        {
+            if (_soldiers.Count == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _soldiers.Count; i++)
+            {
+                float duration = 2.4f + (i % 5) * 0.08f;
+                _soldiers[i].PlayVictoryCheer(duration, i * 0.53f);
+            }
+        }
+
         private void SyncVisualCount()
         {
             if (_soldierPrefab == null || _poolManager == null)

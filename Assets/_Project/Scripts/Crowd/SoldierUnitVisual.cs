@@ -20,6 +20,9 @@ namespace ArmyRush
         private float _shootKickTimer;
         private float _deathTimer;
         private float _deathSpin;
+        private float _victoryTimer;
+        private float _victoryDuration;
+        private float _victoryPhase;
         private bool _isDespawning;
 
         private void Awake()
@@ -44,17 +47,24 @@ namespace ArmyRush
             float scale = Mathf.MoveTowards(transform.localScale.x, _spawnScale, Time.deltaTime * 7f);
             transform.localScale = Vector3.one * scale;
             _shootKickTimer = Mathf.Max(0f, _shootKickTimer - Time.deltaTime);
+            _victoryTimer = Mathf.Max(0f, _victoryTimer - Time.deltaTime);
             float shootKick = _shootKickTimer > 0f ? Mathf.Sin((_shootKickTimer / 0.16f) * Mathf.PI) : 0f;
+            float victoryWeight = GetVictoryWeight();
+            float cheerHop = Mathf.Abs(Mathf.Sin(Time.time * 7.4f + _victoryPhase)) * 0.13f * victoryWeight;
+            float cheerSway = Mathf.Sin(Time.time * 6.2f + _victoryPhase) * 9f * victoryWeight;
 
             if (_bodyRoot != null)
             {
-                _bodyRoot.localPosition = new Vector3(0f, bob, -shootKick * 0.035f);
-                _bodyRoot.localRotation = Quaternion.Euler(Mathf.Sin(Time.time * _bobSpeed + _formationIndex) * 4f - shootKick * 4f, 0f, 0f);
+                _bodyRoot.localPosition = new Vector3(0f, bob + cheerHop, -shootKick * 0.035f);
+                _bodyRoot.localRotation = Quaternion.Euler(Mathf.Sin(Time.time * _bobSpeed + _formationIndex) * 4f - shootKick * 4f, 0f, cheerSway);
             }
 
             if (_weaponRoot != null)
             {
-                _weaponRoot.localRotation = Quaternion.Euler(-4f + Mathf.Sin(Time.time * 11f + _formationIndex) * 2f - shootKick * 13f, 0f, 0f);
+                float basePitch = -4f + Mathf.Sin(Time.time * 11f + _formationIndex) * 2f - shootKick * 13f;
+                float cheerPitch = -48f + Mathf.Sin(Time.time * 8.5f + _victoryPhase) * 10f;
+                float cheerYaw = Mathf.Sin(Time.time * 6.2f + _victoryPhase) * 12f * victoryWeight;
+                _weaponRoot.localRotation = Quaternion.Euler(Mathf.Lerp(basePitch, cheerPitch, victoryWeight), cheerYaw, 0f);
             }
         }
 
@@ -69,6 +79,8 @@ namespace ArmyRush
             _isDespawning = false;
             _deathTimer = 0f;
             _shootKickTimer = 0f;
+            _victoryTimer = 0f;
+            _victoryDuration = 0f;
             _spawnScale = 1f;
             transform.localScale = Vector3.one * 0.2f;
             if (_bodyRoot != null)
@@ -91,6 +103,18 @@ namespace ArmyRush
             }
         }
 
+        public void PlayVictoryCheer(float duration, float phase)
+        {
+            if (_isDespawning)
+            {
+                return;
+            }
+
+            _victoryDuration = Mathf.Max(0.25f, duration);
+            _victoryTimer = _victoryDuration;
+            _victoryPhase = phase;
+        }
+
         public void Despawn(bool animated = true)
         {
             if (!animated || !gameObject.activeInHierarchy)
@@ -106,6 +130,7 @@ namespace ArmyRush
 
             _isDespawning = true;
             _deathTimer = 0f;
+            _victoryTimer = 0f;
             _spawnScale = 0f;
             _deathStartPosition = transform.position;
             float side = (_formationIndex % 2 == 0 ? 1f : -1f) * (0.35f + (_formationIndex % 5) * 0.04f);
@@ -138,6 +163,7 @@ namespace ArmyRush
         private void Release()
         {
             _isDespawning = false;
+            _victoryTimer = 0f;
             if (_pooledObject != null)
             {
                 _pooledObject.Release();
@@ -146,6 +172,19 @@ namespace ArmyRush
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        private float GetVictoryWeight()
+        {
+            if (_victoryTimer <= 0f || _victoryDuration <= 0f)
+            {
+                return 0f;
+            }
+
+            float elapsed = _victoryDuration - _victoryTimer;
+            float fadeIn = Mathf.Clamp01(elapsed / 0.18f);
+            float fadeOut = Mathf.Clamp01(_victoryTimer / 0.34f);
+            return Mathf.Min(fadeIn, fadeOut);
         }
     }
 }
