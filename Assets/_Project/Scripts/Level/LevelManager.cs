@@ -9,6 +9,7 @@ namespace ArmyRush
         [SerializeField] private LevelData[] _levels;
         [SerializeField] private PoolManager _poolManager;
         [SerializeField] private CrowdManager _crowd;
+        [SerializeField] private RunManager _runManager;
         [SerializeField] private GameObject _trackSegmentPrefab;
         [SerializeField] private GameObject _gatePrefab;
         [SerializeField] private GameObject _enemyGroupPrefab;
@@ -43,6 +44,7 @@ namespace ArmyRush
             LevelData[] levels,
             PoolManager poolManager,
             CrowdManager crowd,
+            RunManager runManager,
             GameObject trackSegmentPrefab,
             GameObject gatePrefab,
             GameObject enemyGroupPrefab,
@@ -58,6 +60,7 @@ namespace ArmyRush
             _levels = levels;
             _poolManager = poolManager;
             _crowd = crowd;
+            _runManager = runManager;
             _trackSegmentPrefab = trackSegmentPrefab;
             _gatePrefab = gatePrefab;
             _enemyGroupPrefab = enemyGroupPrefab;
@@ -82,6 +85,7 @@ namespace ArmyRush
                 return;
             }
             ResolveCurrentLevelSpawnData();
+            CacheRuntimeReferences();
 
             int startingSoldiers = CurrentLevel.startingSoldiersOverride > 0 ? CurrentLevel.startingSoldiersOverride : (_tuning != null ? _tuning.defaultStartingSoldiers : 10);
             if (_upgrades != null)
@@ -574,6 +578,18 @@ namespace ArmyRush
             }
         }
 
+        private void CacheRuntimeReferences()
+        {
+            if (_runManager == null)
+            {
+                _runManager = GetComponent<RunManager>();
+            }
+            if (_runManager == null && _levelRoot != null)
+            {
+                _runManager = _levelRoot.GetComponentInParent<RunManager>();
+            }
+        }
+
         private static int ScaleGateValue(GateSpawnData gate, float multiplier)
         {
             if (gate.operation == GateOperation.Multiply || gate.operation == GateOperation.Divide)
@@ -623,21 +639,19 @@ namespace ArmyRush
                 return;
             }
 
-            RunManager runManager = FindAnyObjectByType<RunManager>();
             foreach (EnemyGroupSpawnData data in _resolvedEnemyGroups)
             {
                 GameObject enemyObject = Instantiate(_enemyGroupPrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
                 EnemyGroup enemy = enemyObject.GetComponent<EnemyGroup>();
                 float rewardPerEnemy = (_tuning != null ? _tuning.enemyCoinValue : 2) + Mathf.Max(0, CurrentLevel.levelIndex - 1) * 0.25f;
                 int reward = Mathf.RoundToInt(data.count * rewardPerEnemy);
-                enemy?.Configure(data.count, data.healthPerUnit, _enemyUnitPrefab, _poolManager, reward, runManager);
+                enemy?.Configure(data.count, data.healthPerUnit, _enemyUnitPrefab, _poolManager, reward, _runManager);
                 _spawned.Add(enemyObject);
             }
         }
 
         private void SpawnObstacles()
         {
-            RunManager runManager = FindAnyObjectByType<RunManager>();
             foreach (ObstacleSpawnData data in _resolvedObstacles)
             {
                 ObstacleDefinition definition = data.definition;
@@ -652,7 +666,7 @@ namespace ArmyRush
                 int health = definition != null ? definition.GetHealth(CurrentLevel.levelIndex, data.health) : Mathf.Max(1, data.health);
                 int penalty = definition != null ? definition.GetCollisionPenalty(data.collisionPenalty) : Mathf.Max(0, data.collisionPenalty);
                 int reward = definition != null ? definition.GetCoinReward(CurrentLevel.levelIndex, data.coinReward) : (_tuning != null ? _tuning.obstacleCoinValue : 12) + Mathf.Max(0, CurrentLevel.levelIndex - 1);
-                obstacle?.Configure(health, penalty, reward, runManager);
+                obstacle?.Configure(health, penalty, reward, _runManager);
                 _spawned.Add(obstacleObject);
             }
         }
@@ -669,7 +683,7 @@ namespace ArmyRush
 
             GameObject bossObject = Instantiate(bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f), Quaternion.identity, _levelRoot);
             BossController boss = bossObject.GetComponent<BossController>();
-            boss?.Configure(CurrentLevel.bossDefinition, CurrentLevel.levelIndex, CurrentLevel.bossHealth, _crowd);
+            boss?.Configure(CurrentLevel.bossDefinition, CurrentLevel.levelIndex, CurrentLevel.bossHealth, _crowd, _runManager);
             ActiveBoss = boss;
             _spawned.Add(bossObject);
         }
@@ -682,6 +696,8 @@ namespace ArmyRush
             }
 
             GameObject finish = Instantiate(_finishLinePrefab, new Vector3(0f, 0f, CurrentLevel.trackLength), Quaternion.identity, _levelRoot);
+            FinishLineTrigger trigger = finish.GetComponent<FinishLineTrigger>();
+            trigger?.Configure(_runManager);
             _spawned.Add(finish);
         }
 
@@ -697,7 +713,6 @@ namespace ArmyRush
             if (_bonusCratePrefab != null && crateCount > 0)
             {
                 float spacing = sectionLength / (crateCount + 1f);
-                RunManager runManager = FindAnyObjectByType<RunManager>();
                 for (int i = 0; i < crateCount; i++)
                 {
                     float laneX = i % 3 == 0 ? 0f : i % 3 == 1 ? -1.45f : 1.45f;
@@ -706,7 +721,7 @@ namespace ArmyRush
                     BonusCrateController crate = crateObject.GetComponent<BonusCrateController>();
                     int health = CurrentLevel.bonusCrateHealth + CurrentLevel.levelIndex * 12 + i * 18;
                     int reward = CurrentLevel.bonusCrateReward + CurrentLevel.levelIndex * 6 + i * 10;
-                    crate?.Configure(health, reward, runManager);
+                    crate?.Configure(health, reward, _runManager);
                     _spawned.Add(crateObject);
                 }
             }
@@ -714,6 +729,8 @@ namespace ArmyRush
             if (_bonusEndPrefab != null)
             {
                 GameObject end = Instantiate(_bonusEndPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength + sectionLength), Quaternion.identity, _levelRoot);
+                BonusEndTrigger trigger = end.GetComponent<BonusEndTrigger>();
+                trigger?.Configure(_runManager);
                 _spawned.Add(end);
             }
         }

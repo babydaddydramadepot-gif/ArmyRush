@@ -2372,6 +2372,39 @@ Manual economy QA still needs to compare actual player performance, deaths, miss
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Runtime Dependency Wiring Optimization
+
+Files:
+
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Scripts/Level/BonusCrateController.cs
+Assets/_Project/Scripts/Level/FinishLineTrigger.cs
+Assets/_Project/Scripts/Level/BonusEndTrigger.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Changed level-spawned gameplay objects to receive the active `RunManager` reference from `LevelManager` during construction. Enemy groups, obstacles, bonus crates, finish triggers, bonus-end triggers, and bosses now use the cached runtime dependency instead of repeatedly searching the scene while each level is built. Production validation now also checks that `RunManager` exists on the same `GameRoot` as `LevelManager`.
+
+Result:
+
+Unity foundation generation and production validation passed. Level construction has fewer avoidable scene-wide lookups and the generated Game scene keeps its runtime dependency graph explicit.
+
+Follow Up:
+
+Retry the iOS simulator export after the active Unity editor releases the project lock, then continue profiling crowd, projectile, and VFX hot paths.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2404,7 +2437,7 @@ Boss Systems
 
 Optimization
 
-25%
+28%
 
 Polish
 

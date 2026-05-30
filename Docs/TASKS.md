@@ -1368,7 +1368,7 @@ Acceptance Criteria:
 
 ## 9.1 Mobile Performance Pass
 
-Status: In Progress; Runtime Frame Pacing, Pool Prewarm, Formation Update, Instanced Material, and Pool Validation Baseline Implemented
+Status: In Progress; Runtime Frame Pacing, Pool Prewarm, Formation Update, Runtime Dependency Wiring, Instanced Material, and Pool Validation Baseline Implemented
 Priority: Critical
 
 Tasks:
@@ -1385,12 +1385,14 @@ Tasks:
 - [x] Use shared generated materials.
 - [x] Verify object pooling through production validation checks.
 - [x] Avoid excessive player-crowd formation Update loops.
+- [x] Wire level-spawned combat, finish, and bonus objects with cached `RunManager` references instead of repeated runtime scene searches.
 
 Acceptance Criteria:
 
 - Game targets 60 FPS.
 - No major frame spikes.
 - Large crowds remain playable.
+- Level object spawning avoids avoidable scene-wide dependency lookups during level construction.
 
 ---
 

@@ -43,7 +43,7 @@ namespace ArmyRush
         public void Configure(int health, int coinReward, RunManager runManager)
         {
             _coinReward = Mathf.Max(0, coinReward);
-            _runManager = runManager != null ? runManager : FindAnyObjectByType<RunManager>();
+            _runManager = runManager;
             if (_damageable == null)
             {
                 _damageable = GetComponent<Damageable>();

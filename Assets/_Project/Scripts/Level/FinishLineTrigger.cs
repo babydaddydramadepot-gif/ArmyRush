@@ -14,9 +14,9 @@ namespace ArmyRush
             trigger.isTrigger = true;
         }
 
-        private void Start()
+        public void Configure(RunManager runManager)
         {
-            _runManager = FindAnyObjectByType<RunManager>();
+            _runManager = runManager;
         }
 
         private void OnTriggerEnter(Collider other)

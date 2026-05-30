@@ -97,24 +97,24 @@ namespace ArmyRush
             RestoreRestPose();
         }
 
-        public void Configure(int health, int collisionPenalty, string displayName)
+        public void Configure(int health, int collisionPenalty, string displayName, RunManager runManager = null)
         {
             _definition = null;
             _levelIndex = 1;
             _targetCrowd = null;
-            _runManager = FindAnyObjectByType<RunManager>();
+            _runManager = runManager;
             MaxHealth = Mathf.Max(1, health);
             _collisionPenalty = Mathf.Max(0, collisionPenalty);
             _displayName = string.IsNullOrWhiteSpace(displayName) ? "TANK BOSS" : displayName;
             ApplyRuntimeConfig();
         }
 
-        public void Configure(BossDefinition definition, int levelIndex, int healthOverride, CrowdManager targetCrowd)
+        public void Configure(BossDefinition definition, int levelIndex, int healthOverride, CrowdManager targetCrowd, RunManager runManager = null)
         {
             _definition = definition;
             _levelIndex = Mathf.Max(1, levelIndex);
             _targetCrowd = targetCrowd;
-            _runManager = FindAnyObjectByType<RunManager>();
+            _runManager = runManager;
 
             MaxHealth = _definition != null ? _definition.GetHealth(_levelIndex, healthOverride) : Mathf.Max(1, healthOverride);
             _collisionPenalty = _definition != null ? Mathf.Max(0, _definition.collisionPenalty) : _collisionPenalty;
@@ -174,10 +174,6 @@ namespace ArmyRush
         {
             _engaged = true;
             _targetCrowd = crowd;
-            if (_runManager == null)
-            {
-                _runManager = FindAnyObjectByType<RunManager>();
-            }
             _runManager?.PauseForCombat();
             _nextAttackTime = Time.time + 1.1f;
 

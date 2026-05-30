@@ -2162,7 +2162,7 @@ public static class ArmyRushProjectBuilder
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
         vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.obstacleExplosion, prefabs.victoryBurst, prefabs.bossExplosion, prefabs.smokePuff, prefabs.heavySmoke);
 
-        levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
+        levelManager.Configure(tuning, levels, pool, crowd, run, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
         gameplayUI.Configure(playerController, levelManager);
 
@@ -3146,6 +3146,7 @@ public static class ArmyRushProjectBuilder
         GameBootstrapper.EnsureServices(upgrades);
 
         LevelManager levelManager = Object.FindAnyObjectByType<LevelManager>();
+        RunManager runManager = Object.FindAnyObjectByType<RunManager>();
         CrowdManager crowd = Object.FindAnyObjectByType<CrowdManager>();
         PlayerController player = Object.FindAnyObjectByType<PlayerController>();
         GameplayUI ui = Object.FindAnyObjectByType<GameplayUI>();
@@ -3157,6 +3158,14 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Game scene is missing LevelManager.");
             return;
+        }
+        if (runManager == null)
+        {
+            failures.Add("Game scene is missing RunManager.");
+        }
+        else if (levelManager.GetComponent<RunManager>() != runManager)
+        {
+            failures.Add("LevelManager and RunManager should share GameRoot so level-spawned content can be wired without scene searches.");
         }
         if (crowd == null)
         {
