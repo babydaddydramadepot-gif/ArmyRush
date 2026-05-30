@@ -178,6 +178,7 @@ Implementation Pass 1 Result:
 - Added repeatable iOS development export command and successfully generated an Xcode project at `ArmyRush_iOSBuild`.
 - Confirmed the generated Xcode project builds successfully with `CODE_SIGNING_ALLOWED=NO` for a Debug `iphoneos` build.
 - Added a generated branded ArmyRush iOS app icon, assigned all Unity iOS icon slots, and confirmed the simulator Xcode build no longer reports the missing 1024x1024 App Store icon warning.
+- Polished the main-menu upgrade tile layout for simulator-sized portrait screens, corrected the play icon direction, and added validation coverage for upgrade icon/text overlap.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
@@ -1294,7 +1295,7 @@ Acceptance Criteria:
 
 ## 8.3 UI Art Pass
 
-Status: In Progress; Generated Sprite UI Art Pass and Branded iOS App Icon Implemented; Final Font/Layout/Brand Polish Pending
+Status: In Progress; Generated Sprite UI Art Pass, Branded iOS App Icon, and Main Menu Layout Polish Implemented; Final Font/Brand Polish Pending
 Priority: Critical
 
 Tasks:
@@ -1307,7 +1308,8 @@ Tasks:
 - [x] Add upgrade icons.
 - [x] Add settings icons.
 - [x] Add branded iOS app icon.
-- [ ] Fix upgrade tile text/icon crowding on simulator-sized portrait screens.
+- [x] Fix upgrade tile text/icon crowding on simulator-sized portrait screens.
+- [x] Correct play button icon direction.
 
 Acceptance Criteria:
 
@@ -1442,13 +1444,15 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; UI Crowding Pending
+Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; Main Menu UI Crowding Fixed
 Priority: Critical
 
 Tasks:
 
 - [x] Fix simulator launch `StandaloneInputModule` exception under Input System-only player settings.
 - [x] Fix missing 1024x1024 iOS App Store icon warning in simulator Xcode build.
+- [x] Fix main-menu upgrade tile text/icon crowding on simulator-sized portrait screens.
+- [x] Correct reversed play icon sprite.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

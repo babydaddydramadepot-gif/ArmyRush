@@ -656,7 +656,8 @@ public static class ArmyRushProjectBuilder
             }
             else if (button.name.StartsWith("Upgrade_"))
             {
-                UpsertUiImage(button.transform, "UpgradeIcon", sprites.upgradeIcon, new Vector2(0.13f, 0.5f), new Vector2(50f, 50f), Color.white);
+                UpsertUiImage(button.transform, "UpgradeIcon", sprites.upgradeIcon, new Vector2(0.17f, 0.52f), new Vector2(42f, 42f), Color.white);
+                PlaceUpgradeButtonContent(button.transform);
             }
         }
 
@@ -733,7 +734,7 @@ public static class ArmyRushProjectBuilder
 
         if (kind == "play")
         {
-            bool inside = x > -0.34f && x < 0.48f && Mathf.Abs(y) < (x + 0.45f) * 0.62f;
+            bool inside = x > -0.48f && x < 0.34f && Mathf.Abs(y) < (0.45f - x) * 0.62f;
             return inside ? Color.white : Color.clear;
         }
 
@@ -932,6 +933,31 @@ public static class ArmyRushProjectBuilder
         rect.pivot = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = size;
         rect.anchoredPosition = Vector2.zero;
+    }
+
+    private static void PlaceUpgradeButtonContent(Transform buttonTransform)
+    {
+        PlaceChildText(buttonTransform, "Title", new Vector2(0.58f, 0.66f), new Vector2(245f, 32f));
+        PlaceChildText(buttonTransform, "Level", new Vector2(0.43f, 0.29f), new Vector2(140f, 26f));
+        PlaceChildText(buttonTransform, "Cost", new Vector2(0.82f, 0.29f), new Vector2(118f, 30f));
+        ConfigureMenuText(buttonTransform, "Title", 21, TextAnchor.MiddleLeft, Color.white);
+        ConfigureMenuText(buttonTransform, "Level", 18, TextAnchor.MiddleLeft, Color.white);
+        ConfigureMenuText(buttonTransform, "Cost", 22, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f));
+    }
+
+    private static void ConfigureMenuText(Transform parent, string name, int fontSize, TextAnchor alignment, Color color)
+    {
+        Transform child = parent.Find(name);
+        if (child == null || !child.TryGetComponent(out Text text))
+        {
+            return;
+        }
+
+        text.fontSize = fontSize;
+        text.resizeTextMaxSize = fontSize;
+        text.resizeTextMinSize = Mathf.Max(11, Mathf.RoundToInt(fontSize * 0.58f));
+        text.alignment = alignment;
+        text.color = color;
     }
 
     private static void AddPanelAccent(string panelName, Sprite sprite, Color color)
@@ -1379,12 +1405,12 @@ public static class ArmyRushProjectBuilder
         {
             int row = i / 2;
             int column = i % 2;
-            Vector2 anchor = new Vector2(column == 0 ? 0.31f : 0.69f, 0.64f - row * 0.098f);
-            Button button = CreateButton("Upgrade_" + types[i], safe.transform, string.Empty, anchor, new Vector2(360f, 84f), new Color(0.08f, 0.28f, 0.95f));
+            Vector2 anchor = new Vector2(column == 0 ? 0.29f : 0.71f, 0.64f - row * 0.098f);
+            Button button = CreateButton("Upgrade_" + types[i], safe.transform, string.Empty, anchor, new Vector2(392f, 88f), new Color(0.08f, 0.28f, 0.95f));
             UpgradeButtonView view = button.gameObject.AddComponent<UpgradeButtonView>();
-            Text titleText = CreateUIText("Title", button.transform, types[i].ToString().ToUpperInvariant(), 23, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.36f, 0.62f), new Vector2(220f, 34f));
-            Text levelText = CreateUIText("Level", button.transform, "Lv. 0", 20, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.28f), new Vector2(130f, 30f));
-            Text costText = CreateUIText("Cost", button.transform, "100", 24, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f), new Vector2(0.77f, 0.3f), new Vector2(150f, 36f));
+            Text titleText = CreateUIText("Title", button.transform, types[i].ToString().ToUpperInvariant(), 21, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.58f, 0.66f), new Vector2(245f, 32f));
+            Text levelText = CreateUIText("Level", button.transform, "Lv. 0", 18, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.43f, 0.29f), new Vector2(140f, 26f));
+            Text costText = CreateUIText("Cost", button.transform, "100", 22, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f), new Vector2(0.82f, 0.29f), new Vector2(118f, 30f));
             view.Configure(types[i]);
             SetObject(view, "_titleText", titleText);
             SetObject(view, "_levelText", levelText);
@@ -1667,6 +1693,65 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add($"MainMenu exposes {upgradeButtonCount} upgrade buttons, but {requiredUpgradeCount} upgrade types exist.");
         }
+
+        ValidateMainMenuUpgradeLayout(failures);
+    }
+
+    private static void ValidateMainMenuUpgradeLayout(List<string> failures)
+    {
+        foreach (UpgradeButtonView view in Object.FindObjectsByType<UpgradeButtonView>(FindObjectsInactive.Include))
+        {
+            Transform root = view.transform;
+            if (!TryGetChildRect(root, "UpgradeIcon", out RectTransform iconRect))
+            {
+                failures.Add(root.name + " is missing its upgrade icon.");
+                continue;
+            }
+
+            if (!TryGetChildRect(root, "Title", out RectTransform titleRect) ||
+                !TryGetChildRect(root, "Level", out RectTransform levelRect) ||
+                !TryGetChildRect(root, "Cost", out RectTransform costRect))
+            {
+                failures.Add(root.name + " is missing required upgrade text labels.");
+                continue;
+            }
+
+            if (RectTransformsOverlap(iconRect, titleRect) || RectTransformsOverlap(iconRect, levelRect))
+            {
+                failures.Add(root.name + " upgrade icon overlaps its text labels.");
+            }
+
+            if (RectTransformsOverlap(levelRect, costRect))
+            {
+                failures.Add(root.name + " upgrade level and cost labels overlap.");
+            }
+        }
+    }
+
+    private static bool TryGetChildRect(Transform parent, string childName, out RectTransform rect)
+    {
+        Transform child = parent.Find(childName);
+        if (child != null && child.TryGetComponent(out rect))
+        {
+            return true;
+        }
+
+        rect = null;
+        return false;
+    }
+
+    private static bool RectTransformsOverlap(RectTransform first, RectTransform second)
+    {
+        Rect firstRect = GetWorldRect(first);
+        Rect secondRect = GetWorldRect(second);
+        return firstRect.Overlaps(secondRect, true);
+    }
+
+    private static Rect GetWorldRect(RectTransform rectTransform)
+    {
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
     }
 
     private static void ValidateLevelDataAssets(List<string> failures)

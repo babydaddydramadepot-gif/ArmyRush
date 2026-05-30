@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-71%
+72%
 
 Last Updated:
 
@@ -1602,6 +1602,36 @@ Date:
 
 System:
 
+Main Menu UI Layout Polish
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/MainMenu.unity
+Assets/_Project/Art/UI/Generated/SPR_UI_PlayIcon.png
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Reworked the generated main-menu upgrade card layout with wider cards, smaller upgrade icons, clearer label/cost placement, and tighter font sizing for portrait phone screens. Corrected the generated play icon so it points forward, and added validation coverage that fails if upgrade icons overlap the title/level text or if level/cost labels collide.
+
+Result:
+
+Unity production validation passed. The refreshed iOS simulator export and signing-independent Xcode simulator build completed successfully. The app installed and launched on the iPhone 17 Pro simulator, the screenshot confirmed readable upgrade tiles and a right-facing play glyph, and a targeted simulator log scan found no Unity exception strings.
+
+Follow Up:
+
+Continue the broader final UI pass for font/brand treatment, menu background richness, and character showcase polish.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Silhouette Polish
 
 Files:
@@ -2096,11 +2126,11 @@ Optimization
 
 Polish
 
-37%
+38%
 
 Release Readiness
 
-19%
+20%
 
 ---
 
@@ -2344,7 +2374,7 @@ AR-007
 
 Status:
 
-Simulator visual QA shows main-menu upgrade tiles are crowded, with upgrade arrows competing with label text on portrait phone layout. This is tracked for the next UI polish pass.
+Resolved. Main-menu upgrade tiles were widened and relaid out, icon/text overlap validation was added, and simulator visual QA confirms readable portrait phone layout.
 
 ---
 
