@@ -1230,11 +1230,11 @@ Priority: Medium
 
 Tasks:
 
-- Add haptic wrapper.
-- Add haptics for gate pass.
-- Add haptics for upgrade purchase.
-- Add haptics for boss defeat.
-- Add haptics for major explosions.
+- [x] Add haptic wrapper.
+- [x] Add haptics for gate pass.
+- [x] Add haptics for upgrade purchase.
+- [x] Add haptics for boss defeat.
+- [x] Add haptics for major explosions.
 - [x] Respect haptics setting.
 
 Acceptance Criteria:

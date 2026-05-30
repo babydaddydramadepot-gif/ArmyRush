@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-46%
+47%
 
 Last Updated:
 
@@ -934,6 +934,34 @@ Date:
 
 System:
 
+Obstacle Destruction Haptics
+
+Files:
+
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Connected obstacle destruction to the existing haptics service with a medium-impact cue. This completes the documented haptic coverage pass across gate pass, upgrade purchase, boss defeat, major explosions, and the settings-controlled enable/disable path.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Haptics remain device-QA pending because iOS vibration behavior cannot be confirmed from batch-mode validation.
+
+Follow Up:
+
+Verify haptic strength and throttling on a physical iPhone during obstacle-heavy levels.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1268,7 +1296,7 @@ Visual Systems
 
 Audio Systems
 
-25%
+26%
 
 Level Systems
 
@@ -1288,7 +1316,7 @@ Optimization
 
 Polish
 
-32%
+33%
 
 Release Readiness
 

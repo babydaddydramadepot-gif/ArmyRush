@@ -73,6 +73,10 @@ namespace ArmyRush
             {
                 audio.Play(AudioCue.ObstacleDestroyed);
             }
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Medium);
+            }
 
             gameObject.SetActive(false);
         }
