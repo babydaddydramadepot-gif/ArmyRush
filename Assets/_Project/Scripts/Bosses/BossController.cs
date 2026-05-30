@@ -34,6 +34,7 @@ namespace ArmyRush
         private Quaternion _restLocalRotation;
         private Vector3 _restLocalScale;
         private Coroutine _defeatRoutine;
+        private int _damageState;
 
         private void Awake()
         {
@@ -122,6 +123,7 @@ namespace ArmyRush
             _engaged = false;
             _attackWarningActive = false;
             _nextAttackTime = Time.time + 0.75f;
+            _damageState = 0;
             if (_triggerCollider != null)
             {
                 _triggerCollider.enabled = true;
@@ -250,7 +252,30 @@ namespace ArmyRush
         private void OnDamaged(Damageable damageable, int amount)
         {
             UpdateLabel();
-            BossHealthChanged?.Invoke(this, Mathf.Clamp01(damageable.Health / (float)Mathf.Max(1, MaxHealth)));
+            float healthPercent = Mathf.Clamp01(damageable.Health / (float)Mathf.Max(1, MaxHealth));
+            BossHealthChanged?.Invoke(this, healthPercent);
+            UpdateDamageState(healthPercent);
+        }
+
+        private void UpdateDamageState(float healthPercent)
+        {
+            int nextState = healthPercent <= 0.33f ? 2 : healthPercent <= 0.66f ? 1 : 0;
+            if (nextState <= _damageState)
+            {
+                return;
+            }
+
+            _damageState = nextState;
+            Vector3 smokePosition = transform.position + Vector3.up * (nextState == 1 ? 1.25f : 1.55f);
+            VfxManager.Spawn(nextState == 1 ? VfxCue.SmokePuff : VfxCue.HeavySmoke, smokePosition);
+            VfxManager.Spawn(VfxCue.HitSpark, smokePosition + Vector3.forward * 0.35f);
+            VfxManager.SpawnFloatingText(nextState == 1 ? "ARMOR CRACKED" : "CRITICAL DAMAGE", transform.position + Vector3.up * 2.75f, new Color(1f, 0.62f, 0.16f));
+            CameraFollowRig.Shake(CameraShakeCue.BossHit);
+
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Medium);
+            }
         }
 
         private void OnDied(Damageable damageable)

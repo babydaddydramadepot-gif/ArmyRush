@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-49%
+50%
 
 Last Updated:
 
@@ -1020,6 +1020,34 @@ Date:
 
 System:
 
+Tank Boss Damage States
+
+Files:
+
+Assets/_Project/Scripts/Bosses/BossController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added two mid-fight boss damage thresholds at roughly two-thirds and one-third health. The tank now emits smoke, hit sparks, floating state callouts, a restrained impact shake, and medium haptic feedback when its armor cracks and when it enters critical damage.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Tank boss combat now has readable damage-state escalation before the existing defeat animation and explosion sequence.
+
+Follow Up:
+
+Tune threshold feedback during boss balance QA so the callouts remain visible during dense projectile volleys.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1366,7 +1394,7 @@ Progression Systems
 
 Boss Systems
 
-30%
+32%
 
 Optimization
 

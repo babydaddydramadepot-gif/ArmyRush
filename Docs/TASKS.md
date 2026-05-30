@@ -831,7 +831,7 @@ Acceptance Criteria:
 
 ## 4.2 Tank Boss
 
-Status: In Progress; Data-Driven Combat and Defeat Animation Pass Implemented
+Status: Functional Pass Implemented with Damage States and Defeat Animation; Balance QA Pending
 Priority: High
 
 Tasks:
@@ -839,7 +839,7 @@ Tasks:
 - Create production tank boss model/prefab.
 - [x] Add movement or idle combat behavior.
 - [x] Add cannon attack behavior.
-- Add damage states.
+- [x] Add damage states.
 - [x] Add destruction animation.
 - [x] Add explosion VFX.
 
