@@ -6,6 +6,7 @@ namespace ArmyRush
     public enum AudioCue
     {
         Button,
+        RunStart,
         GatePositive,
         GateNegative,
         Shoot,
@@ -177,6 +178,7 @@ namespace ArmyRush
             _musicSource.pitch = 1f;
 
             _clips[AudioCue.Button] = CreateTone("SFX_Button", 620f, 0.055f, 0.18f, 0.04f);
+            _clips[AudioCue.RunStart] = CreateArpeggio("SFX_RunStart", 460f, 820f, 0.24f, 0.24f);
             _clips[AudioCue.GatePositive] = CreateArpeggio("SFX_GatePositive", 520f, 780f, 0.18f, 0.28f);
             _clips[AudioCue.GateNegative] = CreateTone("SFX_GateNegative", 170f, 0.18f, 0.24f, 0.02f);
             _clips[AudioCue.Shoot] = CreateNoiseBurst("SFX_Shoot", 0.045f, 0.09f, 0.45f);

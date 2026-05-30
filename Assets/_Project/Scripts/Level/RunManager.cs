@@ -59,6 +59,10 @@ namespace ArmyRush
             }
 
             SetState(RunState.Running);
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(AudioCue.RunStart);
+            }
         }
 
         public void PauseForCombat()

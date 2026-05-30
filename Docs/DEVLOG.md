@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-62%
+63%
 
 Last Updated:
 
@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Start Run Audio Cue
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a dedicated start-run procedural SFX cue and play it when `RunManager.BeginRun` transitions from pre-run into active running. This gives the first movement beat its own launch feedback instead of relying only on generic button audio.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Required gameplay audio now includes explicit start-run feedback.
+
+Follow Up:
+
+Tune the launch cue against menu button audio and music once authored audio assets are available.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Obstacle Damage Audio Cue
 
 Files:
@@ -1728,7 +1757,7 @@ Visual Systems
 
 Audio Systems
 
-29%
+30%
 
 Level Systems
 
