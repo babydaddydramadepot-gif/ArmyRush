@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-26%
+27%
 
 Last Updated:
 
@@ -652,6 +652,36 @@ Device-test density and readability during large gate multipliers and heavy comb
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Result Panel Reveal
+
+Files:
+
+Assets/_Project/Scripts/UI/ResultPanelAnimator.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a reusable `ResultPanelAnimator` that gives victory and defeat panels a short unscaled-time fade and scale reveal. The generated Game scene now attaches it to both result panels through the editor builder.
+
+Result:
+
+Unity generation and production validation both pass with no C# compiler errors or warnings. End-of-run panels no longer appear as abrupt static overlays.
+
+Follow Up:
+
+Add reward count-up timing and richer defeat transition polish after device UI fit checks.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -660,7 +690,7 @@ Gameplay Systems
 
 UI Systems
 
-30%
+31%
 
 Visual Systems
 
@@ -688,7 +718,7 @@ Optimization
 
 Polish
 
-15%
+16%
 
 Release Readiness
 

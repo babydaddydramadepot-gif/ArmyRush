@@ -1055,7 +1055,7 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Functional Pass Implemented with Bonus Reward Total; Upgrade Shortcut/Rewarded Architecture Pending
+Status: Functional Pass Implemented with Animated Reveal; Upgrade Shortcut/Rewarded Architecture Pending
 Priority: Critical
 
 Tasks:
@@ -1077,7 +1077,7 @@ Acceptance Criteria:
 
 ## 6.5 Defeat Screen
 
-Status: Functional Pass Implemented; Upgrade/Revive Options Pending
+Status: Functional Pass Implemented with Animated Reveal; Upgrade/Revive Options Pending
 Priority: High
 
 Tasks:

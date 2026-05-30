@@ -1182,6 +1182,7 @@ public static class ArmyRushProjectBuilder
     private static GameObject CreateResultPanel(string name, Transform parent, string header, out Text coinsText, out Button actionButton)
     {
         GameObject panel = CreatePanel(name, parent, new Vector2(0.5f, 0.48f), new Vector2(720f, 520f), new Color(0.04f, 0.11f, 0.22f, 0.94f));
+        panel.AddComponent<ResultPanelAnimator>();
         CreateUIText("Header", panel.transform, header, 68, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.78f), new Vector2(620f, 100f));
         coinsText = CreateUIText("Coins", panel.transform, "+0 COINS", 44, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(1f, 0.78f, 0.12f), new Vector2(0.5f, 0.55f), new Vector2(620f, 80f));
         actionButton = CreateButton("ActionButton", panel.transform, header == "VICTORY" ? "NEXT" : "RETRY", new Vector2(0.5f, 0.22f), new Vector2(430f, 105f), new Color(0.05f, 0.75f, 0.35f));
