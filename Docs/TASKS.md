@@ -176,7 +176,8 @@ Implementation Pass 1 Result:
 - Added first tank boss pass with generated boss prefab, boss spawning on levels 5/10/15/20, damageable boss health, collision pressure, world label, and HUD boss health bar.
 - Added runtime procedural SFX playback through pooled AudioSources for buttons, gates, shooting, hits, clears, destruction, coin rewards, upgrades, victory, and defeat.
 - Added repeatable iOS development export command and successfully generated an Xcode project at `ArmyRush_iOSBuild`.
-- Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
+- Confirmed the generated Xcode project builds successfully with `CODE_SIGNING_ALLOWED=NO` for a Debug `iphoneos` build.
+- Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
 
 ---
 
@@ -205,7 +206,7 @@ Acceptance Criteria:
 
 ## 0.2 Unity Project Validation
 
-Status: Completed for Editor Foundation; iOS/Xcode Validation Pending in Phase 9
+Status: Completed for Editor Foundation; Signing-Independent Xcode Build Passed; Device QA Pending
 Priority: Critical
 
 Tasks:
@@ -1369,20 +1370,20 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Unity Xcode Export Passed; Xcode Build/Device Signing Pending
+Status: Unity Xcode Export and Signing-Independent Xcode Build Passed; Simulator/Device Launch Pending
 Priority: Critical
 
 Tasks:
 
-- Export Unity project to Xcode.
-- Confirm Xcode project builds.
+- [x] Export Unity project to Xcode.
+- [x] Confirm Xcode project builds without signing requirements.
 - Confirm app launches in simulator if available.
 - Confirm app launches on device if available.
 - Fix iOS build errors.
 
 Acceptance Criteria:
 
-- Xcode project builds without errors.
+- Xcode project builds without signing-independent errors.
 - App launches successfully.
 - No missing signing-independent build issues.
 

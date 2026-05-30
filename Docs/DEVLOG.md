@@ -91,11 +91,11 @@ Production Vertical Slice Foundation
 
 Current Focus:
 
-Project structure, core gameplay architecture, generated scenes, and first playable runner loop
+Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-14%
+16%
 
 Last Updated:
 
@@ -320,6 +320,34 @@ Unity successfully exported the iOS Xcode project to `ArmyRush_iOSBuild` with bu
 Follow Up:
 
 Open/build the generated Xcode project with signing configured, then test on a physical iPhone.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
+Xcode Build Validation
+
+Files:
+
+ArmyRush_iOSBuild/
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Built the generated Xcode project with `xcodebuild -project ArmyRush_iOSBuild/Unity-iPhone.xcodeproj -scheme Unity-iPhone -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build`. Xcode selected the iPhoneOS SDK/destination from the Unity export and compiled the IL2CPP output, UnityFramework, and app target.
+
+Result:
+
+The Xcode build completed with `** BUILD SUCCEEDED **`. Unity symbol upload reported missing Unity Cloud Diagnostics credentials because `USYM_UPLOAD_AUTH_TOKEN` is not present, but this did not fail the app build.
+
+Follow Up:
+
+Run simulator launch if a compatible simulator destination is available, configure Apple signing for physical-device deployment, and perform a real iPhone playthrough.
 
 ---
 
@@ -581,6 +609,22 @@ Status:
 
 Final VFX assets are not complete; projectile tracers and simple gate/animation feedback are present, but hit sparks, coin bursts, debris, victory effects, and boss explosions remain pending.
 
+Issue ID:
+
+AR-005
+
+Status:
+
+Generated Xcode project builds successfully with signing disabled, but simulator/device launch QA and physical iPhone deployment are still pending.
+
+Issue ID:
+
+AR-006
+
+Status:
+
+Unity Cloud Diagnostics symbol upload reports missing `USYM_UPLOAD_AUTH_TOKEN`; this is optional for local development builds and only needs configuration if cloud symbol upload is enabled.
+
 ---
 
 # Technical Debt
@@ -601,9 +645,13 @@ Any issue preventing release must be listed here.
 
 ---
 
-## Initial State
+Release Blocker ID:
 
-No release blockers.
+RB-001
+
+Status:
+
+Physical iPhone deployment and full-device playthrough have not been completed yet.
 
 ---
 
