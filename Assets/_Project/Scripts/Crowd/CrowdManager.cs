@@ -14,6 +14,7 @@ namespace ArmyRush
 
         private readonly List<SoldierUnitVisual> _soldiers = new List<SoldierUnitVisual>();
         private int _logicalCount;
+        private bool _hasInitializedCount;
 
         public event Action<int> CountChanged;
         public int Count => _logicalCount;
@@ -43,9 +44,11 @@ namespace ArmyRush
         public void SetCount(int count)
         {
             int hardCap = _tuning != null ? _tuning.hardSoldierCap : 300;
+            int previousCount = _logicalCount;
             _logicalCount = Mathf.Clamp(count, 0, hardCap);
             SyncVisualCount();
             UpdateLabel();
+            SpawnCountChangeVfx(previousCount, _logicalCount);
             CountChanged?.Invoke(_logicalCount);
         }
 
@@ -135,6 +138,24 @@ namespace ArmyRush
                 _countLabel.text = _logicalCount.ToString();
                 _countLabel.color = _logicalCount <= 5 ? new Color(1f, 0.35f, 0.25f) : Color.white;
             }
+        }
+
+        private void SpawnCountChangeVfx(int previousCount, int nextCount)
+        {
+            if (!_hasInitializedCount)
+            {
+                _hasInitializedCount = true;
+                return;
+            }
+
+            if (previousCount == nextCount)
+            {
+                return;
+            }
+
+            VfxCue cue = nextCount > previousCount ? VfxCue.CrowdGain : VfxCue.CrowdLoss;
+            Vector3 position = Anchor.position + Vector3.up * 1.05f;
+            VfxManager.Spawn(cue, position);
         }
     }
 }

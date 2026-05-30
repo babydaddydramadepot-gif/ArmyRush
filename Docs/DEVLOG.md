@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-25%
+26%
 
 Last Updated:
 
@@ -619,6 +619,39 @@ Add crowd add/loss bursts, upgrade glow, defeat fade, smoke variants, and final 
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Crowd Count VFX
+
+Files:
+
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/VFX/PF_VFX_CrowdGain.prefab
+Assets/_Project/Prefabs/VFX/PF_VFX_CrowdLoss.prefab
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added dedicated pooled VFX cues and generated prefabs for crowd gain and crowd loss. `CrowdManager` now suppresses effects for the initial level spawn count, then emits green or red bursts on later count changes from gates, combat, obstacles, and boss attacks.
+
+Result:
+
+Unity generation and production validation both pass with no C# compiler errors or warnings. The validator now requires the crowd gain/loss VFX prefabs.
+
+Follow Up:
+
+Device-test density and readability during large gate multipliers and heavy combat, then add upgrade glow and defeat fade.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -631,7 +664,7 @@ UI Systems
 
 Visual Systems
 
-29%
+31%
 
 Audio Systems
 
@@ -791,7 +824,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, obstacle debris, coin reward bursts, and victory bursts implemented. Final authored particle styling remains pending.
+Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin reward bursts, and victory bursts implemented. Final authored particle styling remains pending.
 
 ---
 
@@ -879,7 +912,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, and boss explosion bursts are present, but crowd add/loss bursts, upgrade glow, defeat fade, smoke variants, and final authored styling remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, and boss explosion bursts are present, but upgrade glow, defeat fade, smoke variants, and final authored styling remain pending.
 
 Issue ID:
 

@@ -181,6 +181,7 @@ Implementation Pass 1 Result:
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
+- Added pooled crowd gain/loss VFX bursts for army count changes after the initial spawn count.
 - Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
 
 ---
@@ -1192,7 +1193,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: In Progress; Core Combat/Reward Bursts Implemented
+Status: In Progress; Core Combat/Crowd/Reward Bursts Implemented
 Priority: High
 
 Add VFX for:

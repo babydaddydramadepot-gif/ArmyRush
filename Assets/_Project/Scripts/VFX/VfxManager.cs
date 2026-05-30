@@ -8,6 +8,8 @@ namespace ArmyRush
         HitSpark,
         GatePositive,
         GateNegative,
+        CrowdGain,
+        CrowdLoss,
         CoinBurst,
         ObstacleDebris,
         VictoryBurst,
@@ -22,6 +24,8 @@ namespace ArmyRush
         [SerializeField] private GameObject _hitSparkPrefab;
         [SerializeField] private GameObject _gatePositivePrefab;
         [SerializeField] private GameObject _gateNegativePrefab;
+        [SerializeField] private GameObject _crowdGainPrefab;
+        [SerializeField] private GameObject _crowdLossPrefab;
         [SerializeField] private GameObject _coinBurstPrefab;
         [SerializeField] private GameObject _obstacleDebrisPrefab;
         [SerializeField] private GameObject _victoryBurstPrefab;
@@ -40,6 +44,8 @@ namespace ArmyRush
             Prewarm(_hitSparkPrefab, 32);
             Prewarm(_gatePositivePrefab, 8);
             Prewarm(_gateNegativePrefab, 8);
+            Prewarm(_crowdGainPrefab, 10);
+            Prewarm(_crowdLossPrefab, 10);
             Prewarm(_coinBurstPrefab, 8);
             Prewarm(_obstacleDebrisPrefab, 8);
             Prewarm(_victoryBurstPrefab, 4);
@@ -61,6 +67,8 @@ namespace ArmyRush
             GameObject hitSparkPrefab,
             GameObject gatePositivePrefab,
             GameObject gateNegativePrefab,
+            GameObject crowdGainPrefab,
+            GameObject crowdLossPrefab,
             GameObject coinBurstPrefab,
             GameObject obstacleDebrisPrefab,
             GameObject victoryBurstPrefab,
@@ -72,6 +80,8 @@ namespace ArmyRush
             _hitSparkPrefab = hitSparkPrefab;
             _gatePositivePrefab = gatePositivePrefab;
             _gateNegativePrefab = gateNegativePrefab;
+            _crowdGainPrefab = crowdGainPrefab;
+            _crowdLossPrefab = crowdLossPrefab;
             _coinBurstPrefab = coinBurstPrefab;
             _obstacleDebrisPrefab = obstacleDebrisPrefab;
             _victoryBurstPrefab = victoryBurstPrefab;
@@ -136,6 +146,10 @@ namespace ArmyRush
                     return _gatePositivePrefab;
                 case VfxCue.GateNegative:
                     return _gateNegativePrefab;
+                case VfxCue.CrowdGain:
+                    return _crowdGainPrefab;
+                case VfxCue.CrowdLoss:
+                    return _crowdLossPrefab;
                 case VfxCue.CoinBurst:
                     return _coinBurstPrefab;
                 case VfxCue.ObstacleDebris:
