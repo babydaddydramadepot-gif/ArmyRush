@@ -1100,7 +1100,7 @@ Acceptance Criteria:
 
 ## 6.6 Settings Screen
 
-Status: Functional Pass Implemented with Music/SFX Sliders and Haptics Toggle; Legal Links Pending
+Status: Functional Pass Implemented with Audio, Haptics, Legal Link, and Restore Placeholder Controls; Final Legal URLs Pending
 Priority: Medium
 
 Tasks:
@@ -1108,9 +1108,9 @@ Tasks:
 - [x] Add music toggle/slider.
 - [x] Add SFX toggle/slider.
 - [x] Add haptics toggle.
-- Add privacy policy placeholder link.
-- Add terms placeholder link.
-- Add restore purchases placeholder.
+- [x] Add privacy policy placeholder link.
+- [x] Add terms placeholder link.
+- [x] Add restore purchases placeholder.
 
 Acceptance Criteria:
 
@@ -1224,7 +1224,7 @@ Acceptance Criteria:
 
 ## 7.5 Haptics
 
-Status: Functional Pass Implemented; Device QA/Settings Toggle Pending
+Status: Functional Pass Implemented with Settings Toggle; Device QA Pending
 Priority: Medium
 
 Tasks:
@@ -1234,7 +1234,7 @@ Tasks:
 - Add haptics for upgrade purchase.
 - Add haptics for boss defeat.
 - Add haptics for major explosions.
-- Respect haptics setting.
+- [x] Respect haptics setting.
 
 Acceptance Criteria:
 

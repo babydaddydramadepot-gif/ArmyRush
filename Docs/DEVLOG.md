@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-43%
+44%
 
 Last Updated:
 
@@ -847,6 +847,35 @@ Date:
 
 System:
 
+Settings Legal and Restore Placeholders
+
+Files:
+
+Assets/_Project/Scripts/UI/SettingsPanelUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added the remaining settings-screen placeholder controls required by the UI/UX and monetization docs. The settings panel now exposes Privacy and Terms buttons that open configurable placeholder URLs, plus a Restore Purchases placeholder that provides immediate button/audio/haptic feedback. Existing generated scenes create the controls at runtime when serialized references are absent, while future generated scenes receive wired controls from the project builder.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Settings now cover audio, haptics, legal link placeholders, and restore placeholder architecture.
+
+Follow Up:
+
+Replace placeholder legal URLs with live production policy URLs and connect Restore Purchases to a real IAP service if monetization integration is added.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1173,7 +1202,7 @@ Gameplay Systems
 
 UI Systems
 
-37%
+38%
 
 Visual Systems
 
@@ -1205,7 +1234,7 @@ Polish
 
 Release Readiness
 
-9%
+10%
 
 ---
 
@@ -1301,7 +1330,7 @@ All interface-related changes belong here.
 
 ## Initial State
 
-First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel with upgrade shortcut, defeat panel with fade overlay and upgrade shortcut, and hardened safe-area fitting.
+First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel with upgrade shortcut, defeat panel with fade overlay and upgrade shortcut, hardened safe-area fitting, and settings legal/restore placeholder controls.
 
 ---
 

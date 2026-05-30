@@ -1302,14 +1302,18 @@ public static class ArmyRushProjectBuilder
 
     private static void CreateSettingsPanel(Transform parent, SettingsPanelUI settings)
     {
-        GameObject panel = CreatePanel("SettingsPanel", parent, new Vector2(0.5f, 0.52f), new Vector2(720f, 560f), new Color(0.04f, 0.11f, 0.22f, 0.96f));
-        CreateUIText("Header", panel.transform, "SETTINGS", 58, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.82f), new Vector2(620f, 90f));
-        CreateUIText("MusicLabel", panel.transform, "MUSIC", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.68f), new Vector2(220f, 58f));
-        Slider musicSlider = CreateInteractiveSlider("MusicSlider", panel.transform, new Vector2(0.62f, 0.68f), new Vector2(390f, 34f));
-        CreateUIText("SfxLabel", panel.transform, "SFX", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.54f), new Vector2(220f, 58f));
-        Slider sfxSlider = CreateInteractiveSlider("SfxSlider", panel.transform, new Vector2(0.62f, 0.54f), new Vector2(390f, 34f));
-        Toggle hapticsToggle = CreateToggle("HapticsToggle", panel.transform, "HAPTICS", new Vector2(0.5f, 0.39f), new Vector2(540f, 78f));
-        Button close = CreateButton("CloseButton", panel.transform, "CLOSE", new Vector2(0.5f, 0.17f), new Vector2(390f, 96f), new Color(0.08f, 0.28f, 0.95f));
+        GameObject panel = CreatePanel("SettingsPanel", parent, new Vector2(0.5f, 0.52f), new Vector2(720f, 680f), new Color(0.04f, 0.11f, 0.22f, 0.96f));
+        CreateUIText("Header", panel.transform, "SETTINGS", 58, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.86f), new Vector2(620f, 90f));
+        CreateUIText("MusicLabel", panel.transform, "MUSIC", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.72f), new Vector2(220f, 58f));
+        Slider musicSlider = CreateInteractiveSlider("MusicSlider", panel.transform, new Vector2(0.62f, 0.72f), new Vector2(390f, 34f));
+        CreateUIText("SfxLabel", panel.transform, "SFX", 34, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.24f, 0.58f), new Vector2(220f, 58f));
+        Slider sfxSlider = CreateInteractiveSlider("SfxSlider", panel.transform, new Vector2(0.62f, 0.58f), new Vector2(390f, 34f));
+        Toggle hapticsToggle = CreateToggle("HapticsToggle", panel.transform, "HAPTICS", new Vector2(0.5f, 0.44f), new Vector2(540f, 78f));
+        Button privacy = CreateButton("PrivacyButton", panel.transform, "PRIVACY", new Vector2(0.33f, 0.29f), new Vector2(250f, 56f), new Color(0.05f, 0.13f, 0.24f));
+        Button terms = CreateButton("TermsButton", panel.transform, "TERMS", new Vector2(0.67f, 0.29f), new Vector2(250f, 56f), new Color(0.05f, 0.13f, 0.24f));
+        Button restore = CreateButton("RestoreButton", panel.transform, "RESTORE PURCHASES", new Vector2(0.5f, 0.2f), new Vector2(540f, 62f), new Color(0.08f, 0.28f, 0.95f));
+        Text restoreStatus = CreateUIText("RestoreStatusText", panel.transform, string.Empty, 24, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.125f), new Vector2(560f, 42f));
+        Button close = CreateButton("CloseButton", panel.transform, "CLOSE", new Vector2(0.5f, 0.065f), new Vector2(360f, 76f), new Color(0.08f, 0.28f, 0.95f));
         UnityEventTools.AddPersistentListener(close.onClick, settings.Close);
         panel.SetActive(false);
 
@@ -1317,6 +1321,10 @@ public static class ArmyRushProjectBuilder
         SetObject(settings, "_musicSlider", musicSlider);
         SetObject(settings, "_sfxSlider", sfxSlider);
         SetObject(settings, "_hapticsToggle", hapticsToggle);
+        SetObject(settings, "_privacyButton", privacy);
+        SetObject(settings, "_termsButton", terms);
+        SetObject(settings, "_restoreButton", restore);
+        SetObject(settings, "_restoreStatusText", restoreStatus);
         SetObject(settings, "_closeButton", close);
     }
 
