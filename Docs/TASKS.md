@@ -468,7 +468,7 @@ Acceptance Criteria:
 
 ## 1.5 Gate System
 
-Status: Functional Pass Implemented; Feedback Polish Pending
+Status: Functional Pass Implemented with Activation Animation; Feedback QA Pending
 Priority: Critical
 
 Tasks:
@@ -479,8 +479,8 @@ Tasks:
 - Implement subtraction gates.
 - Implement division gates for later levels.
 - Implement gate trigger detection.
-- Implement gate visual activation.
-- Implement floating result feedback.
+- [x] Implement gate visual activation.
+- [x] Implement floating result feedback.
 
 Acceptance Criteria:
 
@@ -494,7 +494,7 @@ Acceptance Criteria:
 
 ## 1.6 Gate Visuals
 
-Status: In Progress; Generated Visual Pass Implemented
+Status: In Progress; Generated Visual and Activation Animation Pass Implemented
 Priority: Critical
 
 Tasks:
@@ -503,7 +503,7 @@ Tasks:
 - Use bright translucent panels.
 - Use bold readable text.
 - Add glow effects.
-- Add activation animation.
+- [x] Add activation animation.
 - Add positive and negative variants.
 
 Acceptance Criteria:
@@ -1310,14 +1310,14 @@ Acceptance Criteria:
 
 ## 8.4 Animation Polish Pass
 
-Status: In Progress; Button/Reward/Unit Animation Pass Implemented
+Status: In Progress; Button/Reward/Unit/Gate Animation Pass Implemented
 Priority: High
 
 Tasks:
 
 - [x] Add button bounce animations.
 - [x] Add reward count-up animation.
-- Add gate punch animation.
+- [x] Add gate punch animation.
 - [x] Add unit spawn animation.
 - [x] Add unit death animation.
 - Add boss defeat animation.

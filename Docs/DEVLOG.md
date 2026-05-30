@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-37%
+38%
 
 Last Updated:
 
@@ -777,6 +777,34 @@ Date:
 
 System:
 
+Gate Punch Animation Polish
+
+Files:
+
+Assets/_Project/Scripts/Gates/GateController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added production-safe gate activation animation. Gates now use a cached `MaterialPropertyBlock` for activation color fades instead of runtime material instancing, pulse briefly when triggered, fade their panel and label into a used state, and reset transform/label state cleanly when reused or disabled.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Gate interactions now provide the documented punch animation without creating per-hit renderer materials.
+
+Follow Up:
+
+Tune gate punch amplitude during device QA and add authored glow/VFX styling in the final visual polish pass.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Safe Area Fitter Hardening
 
 Files:
@@ -983,7 +1011,7 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 Gameplay Systems
 
-38%
+39%
 
 UI Systems
 
@@ -991,7 +1019,7 @@ UI Systems
 
 Visual Systems
 
-36%
+37%
 
 Audio Systems
 
@@ -1015,7 +1043,7 @@ Optimization
 
 Polish
 
-26%
+27%
 
 Release Readiness
 

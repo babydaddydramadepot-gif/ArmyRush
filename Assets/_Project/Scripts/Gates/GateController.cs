@@ -14,11 +14,16 @@ namespace ArmyRush
 
         private bool _used;
         private Color _baseColor;
+        private Vector3 _baseScale;
+        private MaterialPropertyBlock _propertyBlock;
+        private Coroutine _animationRoutine;
 
         private void Awake()
         {
             Collider trigger = GetComponent<Collider>();
             trigger.isTrigger = true;
+            _baseScale = transform.localScale;
+            _propertyBlock = new MaterialPropertyBlock();
             if (_panelRenderer != null)
             {
                 _baseColor = _panelRenderer.sharedMaterial != null ? _panelRenderer.sharedMaterial.color : Color.white;
@@ -30,13 +35,21 @@ namespace ArmyRush
             _operation = operation;
             _value = value;
             _used = false;
+            ResetAnimationState();
             UpdateVisuals();
         }
 
         private void OnEnable()
         {
             _used = false;
+            ResetAnimationState();
             UpdateVisuals();
+        }
+
+        private void OnDisable()
+        {
+            StopActivationAnimation();
+            transform.localScale = _baseScale;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -76,7 +89,8 @@ namespace ArmyRush
                 haptics.Play(positive ? HapticCue.Light : HapticCue.Warning);
             }
 
-            StartCoroutine(AnimateUsed());
+            StopActivationAnimation();
+            _animationRoutine = StartCoroutine(AnimateUsed(positive));
         }
 
         private void Apply(CrowdManager crowd)
@@ -109,11 +123,7 @@ namespace ArmyRush
             if (_panelRenderer != null)
             {
                 Color color = IsPositive() ? new Color(0.05f, 0.95f, 0.72f, 0.82f) : new Color(1f, 0.24f, 0.12f, 0.82f);
-                MaterialPropertyBlock block = new MaterialPropertyBlock();
-                _panelRenderer.GetPropertyBlock(block);
-                block.SetColor("_BaseColor", color);
-                block.SetColor("_Color", color);
-                _panelRenderer.SetPropertyBlock(block);
+                SetPanelColor(color);
                 _baseColor = color;
             }
         }
@@ -140,25 +150,86 @@ namespace ArmyRush
             return _operation == GateOperation.Add || _operation == GateOperation.Multiply || _operation == GateOperation.DamageBoost || _operation == GateOperation.FireRateBoost || _operation == GateOperation.CoinBoost;
         }
 
-        private System.Collections.IEnumerator AnimateUsed()
+        private void SetPanelColor(Color color)
         {
+            if (_panelRenderer == null)
+            {
+                return;
+            }
+
+            if (_propertyBlock == null)
+            {
+                _propertyBlock = new MaterialPropertyBlock();
+            }
+
+            _panelRenderer.GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor("_BaseColor", color);
+            _propertyBlock.SetColor("_Color", color);
+            _panelRenderer.SetPropertyBlock(_propertyBlock);
+        }
+
+        private void ResetAnimationState()
+        {
+            StopActivationAnimation();
+            transform.localScale = _baseScale;
+            if (_label != null)
+            {
+                _label.color = Color.white;
+            }
+        }
+
+        private void StopActivationAnimation()
+        {
+            if (_animationRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(_animationRoutine);
+            _animationRoutine = null;
+        }
+
+        private System.Collections.IEnumerator AnimateUsed(bool positive)
+        {
+            const float duration = 0.24f;
             float t = 0f;
-            Vector3 startScale = transform.localScale;
-            while (t < 0.18f)
+            Vector3 startScale = _baseScale;
+            Color hitColor = positive ? Color.Lerp(_baseColor, Color.white, 0.55f) : new Color(1f, 0.62f, 0.24f, _baseColor.a);
+            Color usedColor = _baseColor;
+            usedColor.a = 0.35f;
+
+            while (t < duration)
             {
                 t += Time.deltaTime;
-                float pulse = 1f + Mathf.Sin(t / 0.18f * Mathf.PI) * 0.18f;
+                float normalized = Mathf.Clamp01(t / duration);
+                float eased = EaseOutCubic(normalized);
+                float pulse = 1f + Mathf.Sin(normalized * Mathf.PI) * 0.14f;
                 transform.localScale = startScale * pulse;
+                SetPanelColor(Color.Lerp(hitColor, usedColor, eased));
+                if (_label != null)
+                {
+                    Color labelColor = Color.white;
+                    labelColor.a = Mathf.Lerp(1f, 0.45f, eased);
+                    _label.color = labelColor;
+                }
                 yield return null;
             }
-            transform.localScale = startScale;
 
-            if (_panelRenderer != null && _panelRenderer.material != null)
+            transform.localScale = startScale;
+            SetPanelColor(usedColor);
+            if (_label != null)
             {
-                Color color = _baseColor;
-                color.a = 0.35f;
-                _panelRenderer.material.color = color;
+                Color labelColor = Color.white;
+                labelColor.a = 0.45f;
+                _label.color = labelColor;
             }
+            _animationRoutine = null;
+        }
+
+        private static float EaseOutCubic(float value)
+        {
+            float inverse = 1f - value;
+            return 1f - inverse * inverse * inverse;
         }
     }
 }
