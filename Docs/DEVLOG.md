@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-76%
+77%
 
 Last Updated:
 
@@ -2221,6 +2221,35 @@ Run device framing QA on iPhone and iPad sizes to tune final offset, field of vi
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Gameplay HUD Icon Polish
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Converted the in-run settings control from a wide text button to a compact icon-led HUD button while preserving the full text treatment on the main menu. UI art polishing now centers the generated settings icon for icon-only buttons, and game-scene validation checks the settings button remains compact, has its icon, and does not overlap the level label, progress bar, or coin counter.
+
+Result:
+
+Unity foundation generation and production validation passed. The runtime HUD now reserves more horizontal room for level/progress/coin information on portrait screens.
+
+Follow Up:
+
+Run visual QA on small iPhone and iPad layouts to tune final HUD spacing and icon sizing.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2229,7 +2258,7 @@ Gameplay Systems
 
 UI Systems
 
-44%
+45%
 
 Visual Systems
 
@@ -2257,7 +2286,7 @@ Optimization
 
 Polish
 
-42%
+43%
 
 Release Readiness
 

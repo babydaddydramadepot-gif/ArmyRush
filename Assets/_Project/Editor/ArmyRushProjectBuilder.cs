@@ -777,8 +777,12 @@ public static class ArmyRushProjectBuilder
 
             if (button.name.Contains("Settings"))
             {
-                UpsertUiImage(button.transform, "SettingsIcon", sprites.settingsIcon, new Vector2(0.18f, 0.5f), new Vector2(34f, 34f), Color.white);
-                PlaceChildText(button.transform, "Text", new Vector2(0.62f, 0.5f), new Vector2(150f, 52f));
+                bool iconOnly = button.transform.Find("Text") == null;
+                UpsertUiImage(button.transform, "SettingsIcon", sprites.settingsIcon, iconOnly ? new Vector2(0.5f, 0.5f) : new Vector2(0.18f, 0.5f), iconOnly ? new Vector2(38f, 38f) : new Vector2(34f, 34f), Color.white);
+                if (!iconOnly)
+                {
+                    PlaceChildText(button.transform, "Text", new Vector2(0.62f, 0.5f), new Vector2(150f, 52f));
+                }
             }
             else if (button.name == "PlayButton")
             {
@@ -1823,7 +1827,7 @@ public static class ArmyRushProjectBuilder
         SettingsPanelUI settings = canvas.gameObject.AddComponent<SettingsPanelUI>();
         Text levelText = CreateUIText("LevelText", safe.transform, "Level 1", 36, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.965f), new Vector2(360f, 60f));
         Text coinText = CreateUIText("CoinText", safe.transform, "0", 34, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.78f, 0.12f), new Vector2(0.84f, 0.965f), new Vector2(220f, 60f));
-        Button settingsButton = CreateButton("SettingsButton", safe.transform, "SETTINGS", new Vector2(0.16f, 0.965f), new Vector2(230f, 58f), new Color(0.05f, 0.13f, 0.24f));
+        Button settingsButton = CreateButton("SettingsButton", safe.transform, string.Empty, new Vector2(0.075f, 0.965f), new Vector2(68f, 58f), new Color(0.05f, 0.13f, 0.24f));
         UnityEventTools.AddPersistentListener(settingsButton.onClick, settings.Open);
         Slider progress = CreateProgressBar("ProgressBar", safe.transform, new Vector2(0.5f, 0.925f), new Vector2(520f, 26f));
         GameObject bossPanel = CreatePanel("BossPanel", safe.transform, new Vector2(0.5f, 0.875f), new Vector2(660f, 74f), new Color(0.24f, 0.03f, 0.05f, 0.86f));
@@ -2655,6 +2659,45 @@ public static class ArmyRushProjectBuilder
         if (Object.FindAnyObjectByType<BonusEndTrigger>() == null)
         {
             failures.Add("Game scene validation spawned no bonus end trigger.");
+        }
+        ValidateGameplayHudLayout(failures);
+    }
+
+    private static void ValidateGameplayHudLayout(List<string> failures)
+    {
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        Transform safe = canvas != null ? FindDeepChild(canvas.transform, "SafeArea") : null;
+        if (safe == null)
+        {
+            failures.Add("Game scene UI is missing SafeArea.");
+            return;
+        }
+
+        if (!TryGetChildRect(safe, "SettingsButton", out RectTransform settingsRect))
+        {
+            failures.Add("Gameplay HUD is missing SettingsButton.");
+            return;
+        }
+        if (FindDeepChild(settingsRect.transform, "SettingsIcon") == null)
+        {
+            failures.Add("Gameplay HUD SettingsButton is missing SettingsIcon.");
+        }
+        if (settingsRect.sizeDelta.x > 90f)
+        {
+            failures.Add("Gameplay HUD SettingsButton should remain compact and icon-led.");
+        }
+
+        if (TryGetChildRect(safe, "LevelText", out RectTransform levelRect) && RectTransformsOverlap(settingsRect, levelRect))
+        {
+            failures.Add("Gameplay HUD SettingsButton overlaps the level label.");
+        }
+        if (TryGetChildRect(safe, "ProgressBar", out RectTransform progressRect) && RectTransformsOverlap(settingsRect, progressRect))
+        {
+            failures.Add("Gameplay HUD SettingsButton overlaps the progress bar.");
+        }
+        if (TryGetChildRect(safe, "CoinText", out RectTransform coinRect) && RectTransformsOverlap(settingsRect, coinRect))
+        {
+            failures.Add("Gameplay HUD SettingsButton overlaps the coin counter.");
         }
     }
 

@@ -184,6 +184,7 @@ Implementation Pass 1 Result:
 - Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, and validation coverage for all boss prefabs.
 - Added data-driven obstacle definitions, generated obstacle variant prefabs, authored-level obstacle variant coverage, endless obstacle variant reuse, boss-approach layout guardrails, and validation for obstacle prefabs/definitions.
 - Corrected gameplay camera rig double-offset, added speed-based camera look-ahead, and added validation for local-zero camera child framing under the follow rig.
+- Converted the in-run HUD settings control to a compact icon-led button and added validation for top-HUD overlap/readability.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
@@ -1004,7 +1005,7 @@ Acceptance Criteria:
 
 ## 6.1 HUD
 
-Status: Functional Pass Implemented; Device Layout QA Pending
+Status: Functional Pass Implemented with Compact Icon Settings Control; Device Layout QA Pending
 Priority: Critical
 
 Tasks:
@@ -1015,6 +1016,8 @@ Tasks:
 - Add soldier count indicator.
 - Add settings button.
 - Respect safe areas.
+- [x] Use compact icon-led settings control during gameplay.
+- [x] Validate top-HUD settings/progress/coin/level overlap.
 
 Acceptance Criteria:
 
@@ -1304,7 +1307,7 @@ Acceptance Criteria:
 
 ## 8.3 UI Art Pass
 
-Status: In Progress; Generated Sprite UI Art Pass, Branded iOS App Icon, Main Menu Layout Polish, and Animated Character Showcase Implemented; Final Font/Brand Polish Pending
+Status: In Progress; Generated Sprite UI Art Pass, Branded iOS App Icon, HUD Icon Polish, Main Menu Layout Polish, and Animated Character Showcase Implemented; Final Font/Brand Polish Pending
 Priority: Critical
 
 Tasks:
@@ -1320,6 +1323,7 @@ Tasks:
 - [x] Fix upgrade tile text/icon crowding on simulator-sized portrait screens.
 - [x] Correct play button icon direction.
 - [x] Add animated main-menu character showcase/background.
+- [x] Add compact icon-led gameplay HUD settings button.
 
 Acceptance Criteria:
 
