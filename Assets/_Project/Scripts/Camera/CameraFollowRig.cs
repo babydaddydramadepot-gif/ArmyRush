@@ -118,11 +118,6 @@ namespace ArmyRush
         {
             if (_active == null)
             {
-                _active = FindAnyObjectByType<CameraFollowRig>();
-            }
-
-            if (_active == null)
-            {
                 return;
             }
 

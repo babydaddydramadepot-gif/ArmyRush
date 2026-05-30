@@ -2405,6 +2405,35 @@ Retry the iOS simulator export after the active Unity editor releases the projec
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Static Runtime Lookup Cleanup
+
+Files:
+
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/Camera/CameraFollowRig.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Removed the remaining runtime scene-search fallbacks from static VFX spawning and camera shake dispatch. Both managers already register their active instance during `Awake`, so normal gameplay now routes floating text, particle cues, and shake cues through explicit lifecycle registration instead of first-use scene queries.
+
+Result:
+
+Runtime gameplay scripts no longer contain `FindAnyObjectByType` or `FindObjectsByType` calls. This reduces hidden lookup spikes and makes dependency ownership easier to validate.
+
+Follow Up:
+
+Retry Unity validation and the iOS simulator export after the active Unity editor releases the project lock.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2437,7 +2466,7 @@ Boss Systems
 
 Optimization
 
-28%
+30%
 
 Polish
 

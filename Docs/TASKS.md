@@ -1386,6 +1386,7 @@ Tasks:
 - [x] Verify object pooling through production validation checks.
 - [x] Avoid excessive player-crowd formation Update loops.
 - [x] Wire level-spawned combat, finish, and bonus objects with cached `RunManager` references instead of repeated runtime scene searches.
+- [x] Remove runtime scene-search fallbacks from static VFX and camera shake dispatch.
 
 Acceptance Criteria:
 
@@ -1393,6 +1394,7 @@ Acceptance Criteria:
 - No major frame spikes.
 - Large crowds remain playable.
 - Level object spawning avoids avoidable scene-wide dependency lookups during level construction.
+- Runtime gameplay scripts avoid scene-wide object searches in normal play.
 
 ---
 

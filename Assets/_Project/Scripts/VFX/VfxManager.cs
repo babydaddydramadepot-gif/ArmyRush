@@ -108,11 +108,6 @@ namespace ArmyRush
 
         public static void SpawnFloatingText(string text, Vector3 position, Color color)
         {
-            if (_active == null)
-            {
-                _active = FindAnyObjectByType<VfxManager>();
-            }
-
             if (_active == null || _active._poolManager == null || _active._floatingTextPrefab == null)
             {
                 return;
@@ -124,11 +119,6 @@ namespace ArmyRush
 
         public static void Spawn(VfxCue cue, Vector3 position)
         {
-            if (_active == null)
-            {
-                _active = FindAnyObjectByType<VfxManager>();
-            }
-
             if (_active == null || _active._poolManager == null)
             {
                 return;
