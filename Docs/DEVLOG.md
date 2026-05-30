@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-35%
+36%
 
 Last Updated:
 
@@ -747,6 +747,34 @@ Date:
 
 System:
 
+Safe Area Fitter Hardening
+
+Files:
+
+Assets/_Project/Scripts/UI/SafeAreaFitter.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Hardened the runtime safe-area fitter for iPhone and iPad layouts. The fitter now reapplies when screen dimensions change, clamps normalized safe-area anchors, handles zero-size startup frames defensively, and resets offsets after applying anchors.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Generated UI roots remain better prepared for notch, Dynamic Island, home indicator, and iPad safe-area changes.
+
+Follow Up:
+
+Run the documented device/simulator safe-area matrix to verify layout on actual target aspect ratios.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Result Screen Upgrade Shortcuts
 
 Files:
@@ -929,7 +957,7 @@ Gameplay Systems
 
 UI Systems
 
-36%
+37%
 
 Visual Systems
 
@@ -957,11 +985,11 @@ Optimization
 
 Polish
 
-23%
+24%
 
 Release Readiness
 
-8%
+9%
 
 ---
 
@@ -1057,7 +1085,7 @@ All interface-related changes belong here.
 
 ## Initial State
 
-First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel with upgrade shortcut, defeat panel with fade overlay and upgrade shortcut, and safe-area fitting.
+First functional pass implemented for main menu, upgrade buttons with purchase feedback, gameplay HUD, victory panel with upgrade shortcut, defeat panel with fade overlay and upgrade shortcut, and hardened safe-area fitting.
 
 ---
 

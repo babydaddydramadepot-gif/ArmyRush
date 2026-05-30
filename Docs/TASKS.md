@@ -782,7 +782,7 @@ Acceptance Criteria:
 
 ## 3.5 Endless Level Support
 
-Status: Not Started
+Status: Functional Pass Implemented; Device Matrix QA Pending
 Priority: Medium
 
 Tasks:
@@ -1370,7 +1370,7 @@ Tasks:
 - Test Dynamic Island layout.
 - Test Home Indicator layout.
 - Test iPad layout.
-- Ensure all UI remains usable.
+- [x] Ensure all UI remains anchored inside the runtime safe-area fitter.
 
 Acceptance Criteria:
 
