@@ -735,18 +735,18 @@ Acceptance Criteria:
 
 ## 3.3 Road and Bridge Visuals
 
-Status: In Progress; Generated Road/Ocean/Bonus Pass Implemented
+Status: Functional Environment Asset Pass Implemented with Road, Ocean, Harbor Background Details, Finish, and Bonus Platforms; Device Readability QA Pending
 Priority: Critical
 
 Tasks:
 
-- Create production road chunks.
-- Create bridge segments.
-- Create side rails.
-- Create ocean environment.
-- Create military coastline background.
-- Create finish platform.
-- Create bonus run platform.
+- [x] Create production road chunks.
+- [x] Create bridge segments.
+- [x] Create side rails.
+- [x] Create ocean environment.
+- [x] Create military coastline background.
+- [x] Create finish platform.
+- [x] Create bonus run platform.
 
 Acceptance Criteria:
 
@@ -1272,17 +1272,17 @@ Acceptance Criteria:
 
 ## 8.2 Environment Asset Pass
 
-Status: Not Started
+Status: Functional Pass Implemented with Road, Bridge, Ocean, Harbor Background, Finish, and Bonus Platform Assets; Device QA Pending
 Priority: Critical
 
 Tasks:
 
-- Replace placeholder roads.
-- Replace placeholder bridges.
-- Replace placeholder ocean.
-- Add background details.
-- Add finish platform.
-- Add bonus platform.
+- [x] Replace placeholder roads.
+- [x] Replace placeholder bridges.
+- [x] Replace placeholder ocean.
+- [x] Add background details.
+- [x] Add finish platform.
+- [x] Add bonus platform.
 
 Acceptance Criteria:
 

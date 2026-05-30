@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-65%
+66%
 
 Last Updated:
 
@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Environment Harbor Polish Pass
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added an idempotent game-environment polish pass and applied it to the Game scene. The playable bridge now sits in a brighter military-ocean setting with side breakwaters, stylized water highlights, coastline pads, harbor containers, beacon posts, and beacon lights placed outside the playable lane.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. The environment now has functional road, bridge, ocean, coastline, finish platform, and bonus platform coverage without adding gameplay-lane clutter.
+
+Follow Up:
+
+Review on device for portrait readability and trim distant background pieces if low-end frame pacing needs more headroom.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Character Prefab Equipment Polish
 
 Files:
@@ -1868,7 +1897,7 @@ UI Systems
 
 Visual Systems
 
-49%
+52%
 
 Audio Systems
 

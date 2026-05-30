@@ -38,7 +38,7 @@ public static class ArmyRushProjectBuilder
 
         CreateBootScene(upgrades);
         CreateMainMenuScene(upgrades);
-        CreateGameScene(tuning, upgrades, prefabs, levels);
+        CreateGameScene(tuning, upgrades, prefabs, levels, materials, meshes);
         ConfigureBuildSettings();
         ConfigurePlayerSettings();
 
@@ -108,6 +108,26 @@ public static class ArmyRushProjectBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("ArmyRush character prefab polish applied.");
+    }
+
+    [MenuItem("ArmyRush/Polish Game Environment")]
+    public static void PolishGameEnvironment()
+    {
+        MaterialSet materials = LoadMaterialSet();
+        MeshSet meshes = LoadMeshSet();
+        Scene scene = EditorSceneManager.OpenScene(ScenePath + "/Game.unity", OpenSceneMode.Single);
+        GameObject environment = GameObject.Find("EnvironmentRoot");
+        if (environment == null)
+        {
+            environment = new GameObject("EnvironmentRoot");
+        }
+
+        BuildEnvironmentSet(environment.transform, materials, meshes);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("ArmyRush game environment polish applied.");
     }
 
     private static void CreateFolders()
@@ -449,6 +469,39 @@ public static class ArmyRushProjectBuilder
         GameObject prefab = SavePrefab(root, PrefabPath + "/Levels/PF_TrackSegment.prefab");
         Object.DestroyImmediate(root);
         return prefab;
+    }
+
+    private static void BuildEnvironmentSet(Transform environment, MaterialSet materials, MeshSet meshes)
+    {
+        UpsertMeshPart(environment, "OceanPlane", meshes.box, materials.ocean, new Vector3(0f, -0.24f, 105f), new Vector3(32f, 0.08f, 250f));
+
+        for (int i = 0; i < 9; i++)
+        {
+            float z = 8f + i * 23f;
+            UpsertMeshPart(environment, $"Breakwater_L_{i:00}", meshes.box, materials.obstacleMetal, new Vector3(-5.25f, -0.02f, z), new Vector3(0.62f, 0.28f, 8.4f));
+            UpsertMeshPart(environment, $"Breakwater_R_{i:00}", meshes.box, materials.obstacleMetal, new Vector3(5.25f, -0.02f, z), new Vector3(0.62f, 0.28f, 8.4f));
+            UpsertMeshPart(environment, $"WaterHighlight_L_{i:00}", meshes.box, materials.rail, new Vector3(-11.2f, -0.18f, z + 3.8f), new Vector3(2.6f, 0.012f, 0.1f));
+            UpsertMeshPart(environment, $"WaterHighlight_R_{i:00}", meshes.box, materials.rail, new Vector3(11.2f, -0.18f, z + 1.2f), new Vector3(2.6f, 0.012f, 0.1f));
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            float z = 28f + i * 46f;
+            AddHarborPad(environment, meshes, materials, -1f, z, i);
+            AddHarborPad(environment, meshes, materials, 1f, z + 16f, i);
+        }
+    }
+
+    private static void AddHarborPad(Transform environment, MeshSet meshes, MaterialSet materials, float side, float z, int index)
+    {
+        string prefix = side < 0f ? "Left" : "Right";
+        float x = side * 9.1f;
+        UpsertMeshPart(environment, $"{prefix}CoastPad_{index:00}", meshes.box, materials.track, new Vector3(x, -0.08f, z), new Vector3(4.4f, 0.18f, 18f));
+        UpsertMeshPart(environment, $"{prefix}CoastEdge_{index:00}", meshes.box, materials.rail, new Vector3(side * 6.8f, 0.05f, z), new Vector3(0.18f, 0.3f, 18.4f));
+        UpsertMeshPart(environment, $"{prefix}Container_A_{index:00}", meshes.box, materials.obstacle, new Vector3(x - side * 0.7f, 0.34f, z - 4.6f), new Vector3(1.45f, 0.62f, 1.15f));
+        UpsertMeshPart(environment, $"{prefix}Container_B_{index:00}", meshes.box, materials.obstacleMetal, new Vector3(x + side * 0.85f, 0.29f, z + 1.8f), new Vector3(1.25f, 0.52f, 1.05f));
+        UpsertMeshPart(environment, $"{prefix}BeaconPost_{index:00}", meshes.box, materials.rail, new Vector3(side * 6.15f, 1.05f, z + 6.2f), new Vector3(0.16f, 2.1f, 0.16f));
+        UpsertMeshPart(environment, $"{prefix}BeaconLight_{index:00}", meshes.box, materials.coin, new Vector3(side * 6.15f, 2.18f, z + 6.2f), new Vector3(0.42f, 0.22f, 0.42f));
     }
 
     private static GameObject CreateGatePrefab(MaterialSet materials, MeshSet meshes)
@@ -871,7 +924,7 @@ public static class ArmyRushProjectBuilder
         EditorSceneManager.SaveScene(scene, ScenePath + "/MainMenu.unity");
     }
 
-    private static void CreateGameScene(GlobalTuning tuning, UpgradeDefinition[] upgrades, PrefabSet prefabs, LevelData[] levels)
+    private static void CreateGameScene(GlobalTuning tuning, UpgradeDefinition[] upgrades, PrefabSet prefabs, LevelData[] levels, MaterialSet materials, MeshSet meshes)
     {
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CreateLighting();
@@ -882,7 +935,7 @@ public static class ArmyRushProjectBuilder
         SetBool(bootstrapper, "_loadMainMenuOnStart", false);
 
         GameObject environment = new GameObject("EnvironmentRoot");
-        AddMeshPart(environment.transform, "OceanPlane", AssetDatabase.LoadAssetAtPath<Mesh>(MeshPath + "/MSH_Box.asset"), AssetDatabase.LoadAssetAtPath<Material>(MaterialPath + "/MAT_OceanBlue.mat"), new Vector3(0f, -0.24f, 105f), new Vector3(28f, 0.08f, 250f));
+        BuildEnvironmentSet(environment.transform, materials, meshes);
 
         GameObject levelRoot = new GameObject("LevelRoot");
         GameObject poolRoot = new GameObject("PoolRoot");
