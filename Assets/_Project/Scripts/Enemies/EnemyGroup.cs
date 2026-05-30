@@ -101,6 +101,7 @@ namespace ArmyRush
                 SyncUnits(remainingUnits);
                 _lastDisplayedUnitCount = remainingUnits;
             }
+            PlayHitFeedback(amount);
             UpdateLabel();
         }
 
@@ -156,6 +157,23 @@ namespace ArmyRush
             if (_countLabel != null && _damageable != null)
             {
                 _countLabel.text = Mathf.CeilToInt(_damageable.Health / (float)_healthPerUnit).ToString();
+            }
+        }
+
+        private void PlayHitFeedback(int damageAmount)
+        {
+            if (_units.Count == 0 || damageAmount <= 0)
+            {
+                return;
+            }
+
+            int feedbackCount = Mathf.Min(_units.Count, Mathf.Max(1, Mathf.CeilToInt(damageAmount / (float)Mathf.Max(1, _healthPerUnit))));
+            feedbackCount = Mathf.Min(feedbackCount, 18);
+            int step = Mathf.Max(1, _units.Count / feedbackCount);
+            for (int i = 0; i < feedbackCount; i++)
+            {
+                int index = (i * step) % _units.Count;
+                _units[index].PlayHitReaction(1f + (i % 2) * 0.18f);
             }
         }
     }

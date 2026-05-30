@@ -90,7 +90,9 @@ namespace ArmyRush
                 return;
             }
 
+            int previousCount = _logicalCount;
             SetCount(_logicalCount - amount);
+            PlayHitFeedback(previousCount - _logicalCount);
         }
 
         public void PlayShootFeedback(int requestedUnits)
@@ -109,6 +111,23 @@ namespace ArmyRush
             }
 
             _shootFeedbackCursor = (_shootFeedbackCursor + 1) % _soldiers.Count;
+        }
+
+        public void PlayHitFeedback(int requestedUnits)
+        {
+            if (_soldiers.Count == 0 || requestedUnits <= 0)
+            {
+                return;
+            }
+
+            int feedbackCount = Mathf.Min(requestedUnits, _soldiers.Count, 24);
+            int step = Mathf.Max(1, _soldiers.Count / feedbackCount);
+            for (int i = 0; i < feedbackCount; i++)
+            {
+                int index = (_shootFeedbackCursor + i * step) % _soldiers.Count;
+                float intensity = 1f + (i % 3) * 0.12f;
+                _soldiers[index].PlayHitReaction(intensity);
+            }
         }
 
         public void PlayVictoryCelebration()

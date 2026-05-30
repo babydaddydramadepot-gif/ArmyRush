@@ -9,6 +9,7 @@ namespace ArmyRush
         [SerializeField] private float _moveLerp = 18f;
         [SerializeField] private float _bobAmplitude = 0.045f;
         [SerializeField] private float _bobSpeed = 9f;
+        [SerializeField] private float _hitReactionDuration = 0.2f;
         [SerializeField] private float _deathDuration = 0.34f;
 
         private Vector3 _targetLocalPosition;
@@ -18,6 +19,9 @@ namespace ArmyRush
         private PooledObject _pooledObject;
         private float _spawnScale;
         private float _shootKickTimer;
+        private float _hitReactionTimer;
+        private float _hitReactionDirection = 1f;
+        private float _hitReactionIntensity = 1f;
         private float _deathTimer;
         private float _deathSpin;
         private float _victoryTimer;
@@ -47,16 +51,20 @@ namespace ArmyRush
             float scale = Mathf.MoveTowards(transform.localScale.x, _spawnScale, Time.deltaTime * 7f);
             transform.localScale = Vector3.one * scale;
             _shootKickTimer = Mathf.Max(0f, _shootKickTimer - Time.deltaTime);
+            _hitReactionTimer = Mathf.Max(0f, _hitReactionTimer - Time.deltaTime);
             _victoryTimer = Mathf.Max(0f, _victoryTimer - Time.deltaTime);
             float shootKick = _shootKickTimer > 0f ? Mathf.Sin((_shootKickTimer / 0.16f) * Mathf.PI) : 0f;
+            float hitReaction = GetHitReactionWeight() * _hitReactionIntensity;
+            float hitSide = _hitReactionDirection * hitReaction;
             float victoryWeight = GetVictoryWeight();
             float cheerHop = Mathf.Abs(Mathf.Sin(Time.time * 7.4f + _victoryPhase)) * 0.13f * victoryWeight;
             float cheerSway = Mathf.Sin(Time.time * 6.2f + _victoryPhase) * 9f * victoryWeight;
 
             if (_bodyRoot != null)
             {
-                _bodyRoot.localPosition = new Vector3(0f, bob + cheerHop, -shootKick * 0.035f);
-                _bodyRoot.localRotation = Quaternion.Euler(Mathf.Sin(Time.time * _bobSpeed + _formationIndex) * 4f - shootKick * 4f, 0f, cheerSway);
+                float hitLift = hitReaction * 0.025f;
+                _bodyRoot.localPosition = new Vector3(hitSide * 0.045f, bob + cheerHop + hitLift, -shootKick * 0.035f - hitReaction * 0.055f);
+                _bodyRoot.localRotation = Quaternion.Euler(Mathf.Sin(Time.time * _bobSpeed + _formationIndex) * 4f - shootKick * 4f - hitReaction * 7f, 0f, cheerSway + hitSide * 16f);
             }
 
             if (_weaponRoot != null)
@@ -64,7 +72,7 @@ namespace ArmyRush
                 float basePitch = -4f + Mathf.Sin(Time.time * 11f + _formationIndex) * 2f - shootKick * 13f;
                 float cheerPitch = -48f + Mathf.Sin(Time.time * 8.5f + _victoryPhase) * 10f;
                 float cheerYaw = Mathf.Sin(Time.time * 6.2f + _victoryPhase) * 12f * victoryWeight;
-                _weaponRoot.localRotation = Quaternion.Euler(Mathf.Lerp(basePitch, cheerPitch, victoryWeight), cheerYaw, 0f);
+                _weaponRoot.localRotation = Quaternion.Euler(Mathf.Lerp(basePitch + hitReaction * 18f, cheerPitch, victoryWeight), cheerYaw + hitSide * 10f, 0f);
             }
         }
 
@@ -79,6 +87,8 @@ namespace ArmyRush
             _isDespawning = false;
             _deathTimer = 0f;
             _shootKickTimer = 0f;
+            _hitReactionTimer = 0f;
+            _hitReactionIntensity = 1f;
             _victoryTimer = 0f;
             _victoryDuration = 0f;
             _spawnScale = 1f;
@@ -101,6 +111,19 @@ namespace ArmyRush
             {
                 _shootKickTimer = 0.16f;
             }
+        }
+
+        public void PlayHitReaction(float intensity = 1f)
+        {
+            if (_isDespawning)
+            {
+                return;
+            }
+
+            float duration = Mathf.Max(0.06f, _hitReactionDuration);
+            _hitReactionTimer = duration;
+            _hitReactionIntensity = Mathf.Clamp(intensity, 0.6f, 1.4f);
+            _hitReactionDirection = _formationIndex % 2 == 0 ? 1f : -1f;
         }
 
         public void PlayVictoryCheer(float duration, float phase)
@@ -130,6 +153,8 @@ namespace ArmyRush
 
             _isDespawning = true;
             _deathTimer = 0f;
+            _hitReactionTimer = 0f;
+            _hitReactionIntensity = 1f;
             _victoryTimer = 0f;
             _spawnScale = 0f;
             _deathStartPosition = transform.position;
@@ -163,6 +188,8 @@ namespace ArmyRush
         private void Release()
         {
             _isDespawning = false;
+            _hitReactionTimer = 0f;
+            _hitReactionIntensity = 1f;
             _victoryTimer = 0f;
             if (_pooledObject != null)
             {
@@ -185,6 +212,18 @@ namespace ArmyRush
             float fadeIn = Mathf.Clamp01(elapsed / 0.18f);
             float fadeOut = Mathf.Clamp01(_victoryTimer / 0.34f);
             return Mathf.Min(fadeIn, fadeOut);
+        }
+
+        private float GetHitReactionWeight()
+        {
+            float duration = Mathf.Max(0.06f, _hitReactionDuration);
+            if (_hitReactionTimer <= 0f)
+            {
+                return 0f;
+            }
+
+            float normalized = Mathf.Clamp01(_hitReactionTimer / duration);
+            return Mathf.Sin(normalized * Mathf.PI);
         }
     }
 }

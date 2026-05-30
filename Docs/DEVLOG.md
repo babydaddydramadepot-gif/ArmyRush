@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-44%
+45%
 
 Last Updated:
 
@@ -876,6 +876,36 @@ Date:
 
 System:
 
+Soldier and Enemy Hit Reactions
+
+Files:
+
+Assets/_Project/Scripts/Crowd/SoldierUnitVisual.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Assets/_Project/Scripts/Enemies/EnemyGroup.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added procedural hit flinch feedback to reusable soldier visuals. Crowd losses now trigger readable survivor reactions, and enemy groups play hit reactions on damaged units after health changes resolve. The implementation stays pool-safe, allocation-free during reactions, and shares the existing stylized unit visual path for player and enemy teams.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Soldier visuals now include run, shoot, hit, death, spawn, and victory gameplay animation coverage; enemy visuals now include hit reaction coverage.
+
+Follow Up:
+
+Add distinct enemy shoot animation behavior if ranged enemy attacks are introduced, and tune hit amplitude on device for readability.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1198,7 +1228,7 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 Gameplay Systems
 
-39%
+40%
 
 UI Systems
 
@@ -1206,7 +1236,7 @@ UI Systems
 
 Visual Systems
 
-39%
+40%
 
 Audio Systems
 
@@ -1230,7 +1260,7 @@ Optimization
 
 Polish
 
-30%
+31%
 
 Release Readiness
 

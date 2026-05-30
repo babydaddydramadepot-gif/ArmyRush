@@ -442,7 +442,7 @@ Acceptance Criteria:
 
 ## 1.4 Production Soldier Visuals
 
-Status: In Progress; Procedural Low-Poly Visual and Spawn/Shoot/Death Animation Pass Implemented
+Status: In Progress; Procedural Low-Poly Visual and Full Gameplay Animation Pass Implemented; Final Authored Polish Pending
 Priority: Critical
 
 Tasks:
@@ -451,10 +451,10 @@ Tasks:
 - Soldier must include body, head, helmet, vest, weapon, boots, and team color material.
 - [x] Add run animation.
 - [x] Add shooting animation.
-- Add hit reaction animation.
+- [x] Add hit reaction animation.
 - [x] Add death animation.
 - [x] Add spawn animation.
-- Add victory animation.
+- [x] Add victory animation.
 
 Acceptance Criteria:
 
@@ -541,14 +541,15 @@ Acceptance Criteria:
 
 ## 1.8 Production Enemy Visuals
 
-Status: In Progress; Procedural Low-Poly Visual and Run/Death Animation Pass Implemented
+Status: In Progress; Procedural Low-Poly Visual and Run/Death/Hit Animation Pass Implemented
 Priority: Critical
 
 Tasks:
 
 - Create stylized red enemy soldier prefab.
 - [x] Add enemy run and death animations.
-- Add enemy shoot and hit reaction animations.
+- Add enemy shoot animation.
+- [x] Add enemy hit reaction animation.
 - Add team color material.
 - Ensure enemy silhouette differs from player.
 
