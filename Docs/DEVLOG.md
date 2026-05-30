@@ -2434,6 +2434,35 @@ Retry Unity validation and the iOS simulator export after the active Unity edito
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Pooled Component Lookup Optimization
+
+Files:
+
+Assets/_Project/Scripts/Utility/PooledObject.cs
+Assets/_Project/Scripts/Utility/PoolManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a per-object component cache to `PooledObject` and routed typed pool checkouts through it. Reused projectiles, soldiers, floating text, and pooled particle effects now resolve their requested component once per pooled instance instead of calling `GetComponent<T>()` on every spawn.
+
+Result:
+
+Pool-heavy gameplay paths have less repeated native component lookup work during combat, crowd spawning, and VFX bursts.
+
+Follow Up:
+
+Retry Unity validation and the iOS simulator export after the active Unity editor releases the project lock, then profile pool miss rates during dense combat.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2466,7 +2495,7 @@ Boss Systems
 
 Optimization
 
-30%
+31%
 
 Polish
 

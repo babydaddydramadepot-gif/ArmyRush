@@ -27,7 +27,7 @@ namespace ArmyRush
         public T Get<T>(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null) where T : Component
         {
             PooledObject pooled = Get(prefab, position, rotation, parent);
-            return pooled.GetComponent<T>();
+            return pooled.GetCachedComponent<T>();
         }
 
         public PooledObject Get(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null)
