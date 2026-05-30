@@ -52,6 +52,7 @@ public static class ArmyRushProjectBuilder
     {
         List<string> failures = new List<string>();
         ValidatePrefabFolder(failures);
+        ValidatePoolingSetup(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
         ValidateScene(ScenePath + "/Game.unity", failures, ValidateGameScene);
@@ -892,6 +893,56 @@ public static class ArmyRushProjectBuilder
         }
     }
 
+    private static void ValidatePoolingSetup(List<string> failures)
+    {
+        ValidatePooledPrefab(failures, PrefabPath + "/Player/PF_SoldierUnit_Blue.prefab", typeof(SoldierUnitVisual));
+        ValidatePooledPrefab(failures, PrefabPath + "/Enemies/PF_EnemyUnit_Red.prefab", typeof(SoldierUnitVisual));
+        ValidatePooledPrefab(failures, PrefabPath + "/VFX/PF_ProjectileTracer.prefab", typeof(Projectile));
+        ValidatePooledPrefab(failures, PrefabPath + "/VFX/PF_FloatingText.prefab", typeof(FloatingText));
+
+        string[] particleVfxPrefabs =
+        {
+            PrefabPath + "/VFX/PF_VFX_MuzzleFlash.prefab",
+            PrefabPath + "/VFX/PF_VFX_HitSpark.prefab",
+            PrefabPath + "/VFX/PF_VFX_GatePositive.prefab",
+            PrefabPath + "/VFX/PF_VFX_GateNegative.prefab",
+            PrefabPath + "/VFX/PF_VFX_CrowdGain.prefab",
+            PrefabPath + "/VFX/PF_VFX_CrowdLoss.prefab",
+            PrefabPath + "/VFX/PF_VFX_CoinBurst.prefab",
+            PrefabPath + "/VFX/PF_VFX_ObstacleDebris.prefab",
+            PrefabPath + "/VFX/PF_VFX_VictoryBurst.prefab",
+            PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab"
+        };
+
+        foreach (string path in particleVfxPrefabs)
+        {
+            ValidatePooledPrefab(failures, path, typeof(PooledParticleVfx));
+        }
+    }
+
+    private static void ValidatePooledPrefab(List<string> failures, string path, params System.Type[] requiredComponents)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null)
+        {
+            failures.Add("Missing pooled prefab: " + path);
+            return;
+        }
+
+        if (prefab.GetComponent<PooledObject>() == null)
+        {
+            failures.Add(path + " is missing PooledObject.");
+        }
+
+        foreach (System.Type requiredComponent in requiredComponents)
+        {
+            if (prefab.GetComponent(requiredComponent) == null)
+            {
+                failures.Add(path + " is missing required pooled component " + requiredComponent.Name + ".");
+            }
+        }
+    }
+
     private static void ValidateScene(string path, List<string> failures, System.Action<Scene, List<string>> validate)
     {
         if (!System.IO.File.Exists(path))
@@ -1002,6 +1053,17 @@ public static class ArmyRushProjectBuilder
         }
 
         levelManager.BuildCurrentLevel();
+        if (pool != null)
+        {
+            PooledObject[] activePooledObjects = Object.FindObjectsByType<PooledObject>(FindObjectsInactive.Exclude);
+            foreach (PooledObject pooledObject in activePooledObjects)
+            {
+                if (pooledObject.Owner == null)
+                {
+                    failures.Add(pooledObject.name + " is active without a PoolManager owner.");
+                }
+            }
+        }
 
         if (levelManager.CurrentLevel == null)
         {

@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-42%
+43%
 
 Last Updated:
 
@@ -819,6 +819,34 @@ Date:
 
 System:
 
+Pooling Validation Coverage
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Expanded the production validator to verify pooling-critical prefabs and scene instances. Validation now checks pooled soldier, projectile, floating text, and serialized particle VFX prefabs for `PooledObject` plus their required runtime components, and checks spawned active pooled instances for a valid `PoolManager` owner after level construction.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Object-pooling verification is now codified in the Unity validation path.
+
+Follow Up:
+
+Add device profiler captures for pool growth under large crowd, projectile, VFX, and bonus-crate reward scenarios.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1169,7 +1197,7 @@ Boss Systems
 
 Optimization
 
-22%
+24%
 
 Polish
 
@@ -1345,7 +1373,7 @@ All performance improvements belong here.
 
 ## Initial State
 
-Runtime frame pacing setup, pool prewarm top-ups, player-crowd formation update reduction, and generated material instancing are implemented. Device profiling remains pending.
+Runtime frame pacing setup, pool prewarm top-ups, player-crowd formation update reduction, generated material instancing, and pooling validation coverage are implemented. Device profiling remains pending.
 
 ---
 
