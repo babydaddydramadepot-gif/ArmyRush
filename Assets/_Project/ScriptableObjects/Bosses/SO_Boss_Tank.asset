@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SO_Boss_Tank
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.BossDefinition
   displayName: TANK BOSS
+  bossPrefab: {fileID: 8112592861028818275, guid: e2c7dbfc310fb4f0093bf91b4d8ab96a, type: 3}
   attackPattern: 0
   baseHealth: 900
   healthPerLevel: 72

@@ -35,6 +35,7 @@ namespace ArmyRush
         private Vector3 _restLocalScale;
         private Coroutine _defeatRoutine;
         private int _damageState;
+        private float _motionTimeOffset;
 
         private void Awake()
         {
@@ -49,7 +50,14 @@ namespace ArmyRush
 
         private void Update()
         {
-            if (!_engaged || _targetCrowd == null || _targetCrowd.Count <= 0 || _damageable == null || !_damageable.IsAlive)
+            if (_damageable == null || !_damageable.IsAlive)
+            {
+                return;
+            }
+
+            UpdatePatternMotion();
+
+            if (!_engaged || _targetCrowd == null || _targetCrowd.Count <= 0)
             {
                 return;
             }
@@ -124,6 +132,7 @@ namespace ArmyRush
             _attackWarningActive = false;
             _nextAttackTime = Time.time + 0.75f;
             _damageState = 0;
+            _motionTimeOffset = _levelIndex * 0.37f;
             if (_triggerCollider != null)
             {
                 _triggerCollider.enabled = true;
@@ -188,7 +197,7 @@ namespace ArmyRush
             float warningDuration = _definition != null ? Mathf.Max(0.25f, _definition.warningDuration) : 0.7f;
             _attackWarningActive = true;
             _attackResolveTime = Time.time + warningDuration;
-            _attackMarker = _targetCrowd.transform.position;
+            _attackMarker = GetAttackMarker();
             _nextAttackTime = Time.time + (_definition != null ? Mathf.Max(0.8f, _definition.attackInterval) : 2.35f);
 
             string warning = _definition != null && !string.IsNullOrWhiteSpace(_definition.warningText) ? _definition.warningText : "CANNON";
@@ -223,6 +232,7 @@ namespace ArmyRush
                 int damage = _definition != null ? _definition.GetAttackDamage(_levelIndex) : 8;
                 _targetCrowd.Remove(damage);
                 VfxManager.SpawnFloatingText("HIT -" + damage, current + Vector3.up * 2.5f, new Color(1f, 0.18f, 0.1f));
+                SpawnAttackImpactFeedback(_attackMarker, true);
                 CameraFollowRig.Shake(CameraShakeCue.BossHit);
                 if (ServiceLocator.TryGet(out AudioService audio))
                 {
@@ -235,7 +245,57 @@ namespace ArmyRush
             }
             else
             {
+                SpawnAttackImpactFeedback(_attackMarker, false);
                 VfxManager.SpawnFloatingText("DODGED", current + Vector3.up * 2.4f, new Color(0.35f, 1f, 0.65f));
+            }
+        }
+
+        private Vector3 GetAttackMarker()
+        {
+            Vector3 current = _targetCrowd != null ? _targetCrowd.transform.position : transform.position;
+            BossAttackPattern pattern = _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+            switch (pattern)
+            {
+                case BossAttackPattern.MissileStrike:
+                    float leadDirection = Mathf.Abs(current.x) < 0.2f ? Mathf.Sign(Mathf.Sin(Time.time + _motionTimeOffset)) : -Mathf.Sign(current.x);
+                    return current + Vector3.right * (leadDirection * 0.35f);
+
+                case BossAttackPattern.ShockwaveSlam:
+                    return new Vector3(transform.position.x, current.y, current.z + 0.45f);
+
+                case BossAttackPattern.SuppressionBurst:
+                    return current + Vector3.right * (Mathf.Sin(Time.time * 1.7f + _motionTimeOffset) * 0.25f);
+
+                default:
+                    return current;
+            }
+        }
+
+        private void SpawnAttackImpactFeedback(Vector3 position, bool hit)
+        {
+            BossAttackPattern pattern = _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+            Vector3 impact = position + Vector3.up * 0.35f;
+            switch (pattern)
+            {
+                case BossAttackPattern.MissileStrike:
+                    VfxManager.Spawn(VfxCue.ObstacleExplosion, impact);
+                    VfxManager.Spawn(VfxCue.SmokePuff, impact + Vector3.up * 0.25f);
+                    break;
+
+                case BossAttackPattern.ShockwaveSlam:
+                    VfxManager.Spawn(VfxCue.HeavySmoke, impact);
+                    VfxManager.Spawn(VfxCue.HitSpark, impact + Vector3.up * 0.35f);
+                    CameraFollowRig.Shake(hit ? CameraShakeCue.BossHit : CameraShakeCue.ObstacleBreak);
+                    break;
+
+                case BossAttackPattern.SuppressionBurst:
+                    VfxManager.Spawn(VfxCue.HitSpark, impact + Vector3.up * 0.3f);
+                    VfxManager.Spawn(VfxCue.SmokePuff, impact);
+                    break;
+
+                default:
+                    VfxManager.Spawn(VfxCue.HitSpark, impact + Vector3.up * 0.35f);
+                    break;
             }
         }
 
@@ -395,6 +455,41 @@ namespace ArmyRush
             transform.localPosition = _restLocalPosition;
             transform.localRotation = _restLocalRotation;
             transform.localScale = _restLocalScale;
+        }
+
+        private void UpdatePatternMotion()
+        {
+            if (_defeatRoutine != null)
+            {
+                return;
+            }
+
+            BossAttackPattern pattern = _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+            float time = Time.time + _motionTimeOffset;
+            switch (pattern)
+            {
+                case BossAttackPattern.MissileStrike:
+                    float strafe = Mathf.Sin(time * 1.35f) * 1.15f;
+                    float hover = Mathf.Sin(time * 3.4f) * 0.08f;
+                    transform.localPosition = _restLocalPosition + new Vector3(strafe, hover, 0f);
+                    transform.localRotation = _restLocalRotation * Quaternion.Euler(0f, 0f, -strafe * 4.5f);
+                    break;
+
+                case BossAttackPattern.ShockwaveSlam:
+                    float stomp = Mathf.Abs(Mathf.Sin(time * 1.55f));
+                    float eased = stomp * stomp;
+                    transform.localPosition = _restLocalPosition + Vector3.up * Mathf.Lerp(0.03f, -0.04f, eased);
+                    transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Sin(time * 1.1f) * 1.8f, 0f, Mathf.Sin(time * 0.9f) * 1.3f);
+                    break;
+
+                case BossAttackPattern.SuppressionBurst:
+                    transform.localRotation = _restLocalRotation * Quaternion.Euler(0f, Mathf.Sin(time * 1.8f) * 5f, 0f);
+                    break;
+
+                default:
+                    transform.localRotation = _restLocalRotation * Quaternion.Euler(0f, Mathf.Sin(time * 0.9f) * 1.6f, 0f);
+                    break;
+            }
         }
 
         private void StopDefeatAnimation()

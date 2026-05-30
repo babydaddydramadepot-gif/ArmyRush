@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-73%
+74%
 
 Last Updated:
 
@@ -2120,6 +2120,43 @@ Balance enemy reward values against enemy density and early upgrade costs during
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Boss Variant Rotation
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scripts/Bosses/BossDefinition.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Prefabs/Bosses/PF_Boss_Helicopter.prefab
+Assets/_Project/Prefabs/Bosses/PF_Boss_Mech.prefab
+Assets/_Project/ScriptableObjects/Bosses/SO_Boss_Helicopter.asset
+Assets/_Project/ScriptableObjects/Bosses/SO_Boss_Mech.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_010.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_015.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added prefab-backed boss variants and rotated authored boss levels across tank, helicopter, and mech encounters. Boss definitions now carry their own prefab references, `LevelManager` spawns the definition-specific prefab, generated levels 5/10/15/20 rotate through the available boss set, and `BossController` applies pattern-specific motion, target markers, impact feedback, pooled VFX, audio, and haptic cues.
+
+Result:
+
+Unity foundation generation, production validation, iOS simulator export, Xcode simulator build, simulator install, and simulator launch all completed successfully. The refreshed app reached the main menu on the simulator, and a targeted runtime log scan found no Unity exception strings.
+
+Follow Up:
+
+Manually play and balance boss levels 5, 10, 15, and 20 on device. Add authored helicopter crash polish, mech multi-phase behavior, unique mech defeat animation, final boss VFX styling, and physical iPhone QA.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2132,7 +2169,7 @@ UI Systems
 
 Visual Systems
 
-54%
+55%
 
 Audio Systems
 
@@ -2148,7 +2185,7 @@ Progression Systems
 
 Boss Systems
 
-32%
+38%
 
 Optimization
 
@@ -2156,11 +2193,11 @@ Optimization
 
 Polish
 
-39%
+40%
 
 Release Readiness
 
-21%
+22%
 
 ---
 
@@ -2364,7 +2401,7 @@ AR-002
 
 Status:
 
-Boss levels now have a data-driven tank boss, combat pause, telegraphed cannon attacks, boss rewards, boss audio/haptics, and procedural defeat motion, but damage-state reactions, tuned boss balance, final authored boss VFX, and additional boss variants are still pending.
+Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, impact behavior, boss rewards, audio/haptics, and procedural defeat motion. Remaining work includes balance, authored helicopter crash polish, true mech multi-phase behavior, unique mech defeat animation, final boss VFX styling, and physical device QA.
 
 Issue ID:
 

@@ -34,8 +34,8 @@ public static class ArmyRushProjectBuilder
         MeshSet meshes = CreateMeshes();
         GlobalTuning tuning = CreateTuning();
         UpgradeDefinition[] upgrades = CreateUpgrades();
-        BossDefinition[] bosses = CreateBossDefinitions();
         PrefabSet prefabs = CreatePrefabs(materials, meshes);
+        BossDefinition[] bosses = CreateBossDefinitions(prefabs);
         LevelData[] levels = CreateLevels(bosses);
 
         CreateBootScene(upgrades);
@@ -57,6 +57,7 @@ public static class ArmyRushProjectBuilder
         List<string> failures = new List<string>();
         ValidatePrefabFolder(failures);
         ValidatePoolingSetup(failures);
+        ValidateBossPrefabs(failures);
         ValidateLevelDataAssets(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
@@ -368,11 +369,12 @@ public static class ArmyRushProjectBuilder
         };
     }
 
-    private static BossDefinition[] CreateBossDefinitions()
+    private static BossDefinition[] CreateBossDefinitions(PrefabSet prefabs)
     {
         BossDefinition tank = CreateBossDefinition(
             "SO_Boss_Tank",
             "TANK BOSS",
+            prefabs.bossTank,
             BossAttackPattern.CannonVolley,
             900,
             72,
@@ -389,7 +391,47 @@ public static class ArmyRushProjectBuilder
             "CANNON",
             new Color(1f, 0.28f, 0.1f));
 
-        return new[] { tank };
+        BossDefinition helicopter = CreateBossDefinition(
+            "SO_Boss_Helicopter",
+            "HELI BOSS",
+            prefabs.bossHelicopter,
+            BossAttackPattern.MissileStrike,
+            780,
+            68,
+            18,
+            310,
+            22,
+            20f,
+            1.9f,
+            0.64f,
+            1.1f,
+            4.0f,
+            6,
+            1,
+            "MISSILES",
+            new Color(1f, 0.72f, 0.12f));
+
+        BossDefinition mech = CreateBossDefinition(
+            "SO_Boss_Mech",
+            "MECH BOSS",
+            prefabs.bossMech,
+            BossAttackPattern.ShockwaveSlam,
+            1120,
+            92,
+            26,
+            370,
+            26,
+            17f,
+            2.75f,
+            0.82f,
+            1.75f,
+            3.4f,
+            9,
+            1,
+            "SHOCKWAVE",
+            new Color(1f, 0.34f, 0.1f));
+
+        return new[] { tank, helicopter, mech };
     }
 
     private static PrefabSet CreatePrefabs(MaterialSet materials, MeshSet meshes)
@@ -403,6 +445,8 @@ public static class ArmyRushProjectBuilder
         prefabs.enemyGroup = CreateEnemyGroupPrefab(materials, meshes);
         prefabs.obstacle = CreateObstaclePrefab(materials, meshes);
         prefabs.bossTank = CreateBossTankPrefab(materials, meshes);
+        prefabs.bossHelicopter = CreateBossHelicopterPrefab(materials, meshes);
+        prefabs.bossMech = CreateBossMechPrefab(materials, meshes);
         prefabs.finishLine = CreateFinishLinePrefab(materials, meshes);
         prefabs.bonusCrate = CreateBonusCratePrefab(materials, meshes);
         prefabs.bonusEnd = CreateBonusEndPrefab(materials, meshes);
@@ -1151,6 +1195,77 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
+    private static GameObject CreateBossHelicopterPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = new GameObject("PF_Boss_Helicopter");
+        BoxCollider collider = root.AddComponent<BoxCollider>();
+        collider.size = new Vector3(3.6f, 2.2f, 3.4f);
+        collider.center = new Vector3(0f, 1.25f, 0f);
+        collider.isTrigger = true;
+        Damageable damageable = root.AddComponent<Damageable>();
+        BossController boss = root.AddComponent<BossController>();
+
+        AddMeshPart(root.transform, "Shadow", meshes.cylinder, materials.obstacleMetal, new Vector3(0f, 0.04f, 0.2f), new Vector3(1.45f, 0.02f, 0.72f));
+        AddMeshPart(root.transform, "Fuselage", meshes.box, materials.enemyRed, new Vector3(0f, 1.34f, 0f), new Vector3(1.75f, 0.62f, 1.45f));
+        AddMeshPart(root.transform, "Cockpit", meshes.wedge, materials.enemyCrimson, new Vector3(0f, 1.42f, -0.82f), new Vector3(1.1f, 0.48f, 0.8f));
+        AddMeshPart(root.transform, "TailBoom", meshes.box, materials.obstacleMetal, new Vector3(0f, 1.34f, 1.34f), new Vector3(0.34f, 0.28f, 1.9f));
+        AddMeshPart(root.transform, "TailRotor", meshes.box, materials.rail, new Vector3(0f, 1.38f, 2.42f), new Vector3(0.08f, 0.95f, 0.08f));
+        AddMeshPart(root.transform, "TailFin", meshes.wedge, materials.enemyCrimson, new Vector3(0f, 1.8f, 2.02f), new Vector3(0.12f, 0.78f, 0.62f));
+        AddMeshPart(root.transform, "MainRotor_A", meshes.box, materials.rail, new Vector3(0f, 1.94f, 0f), new Vector3(4.2f, 0.05f, 0.14f));
+        AddMeshPart(root.transform, "MainRotor_B", meshes.box, materials.rail, new Vector3(0f, 1.95f, 0f), new Vector3(0.14f, 0.05f, 4.2f));
+        AddMeshPart(root.transform, "MissilePod_L", meshes.box, materials.obstacleMetal, new Vector3(-1.2f, 1.04f, -0.34f), new Vector3(0.28f, 0.3f, 0.9f));
+        AddMeshPart(root.transform, "MissilePod_R", meshes.box, materials.obstacleMetal, new Vector3(1.2f, 1.04f, -0.34f), new Vector3(0.28f, 0.3f, 0.9f));
+        AddMeshPart(root.transform, "MissileTip_L", meshes.cylinder, materials.projectile, new Vector3(-1.2f, 1.04f, -0.9f), new Vector3(0.18f, 0.18f, 0.18f));
+        AddMeshPart(root.transform, "MissileTip_R", meshes.cylinder, materials.projectile, new Vector3(1.2f, 1.04f, -0.9f), new Vector3(0.18f, 0.18f, 0.18f));
+
+        TextMesh label = CreateWorldText("BossHealthLabel", root.transform, "HELI BOSS\n1000", new Vector3(0f, 2.45f, 0f), 0.12f, Color.white);
+        label.gameObject.AddComponent<Billboard>();
+        SetObject(damageable, "_label", label);
+        SetObject(boss, "_damageable", damageable);
+        SetObject(boss, "_healthLabel", label);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/Bosses/PF_Boss_Helicopter.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
+    private static GameObject CreateBossMechPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = new GameObject("PF_Boss_Mech");
+        BoxCollider collider = root.AddComponent<BoxCollider>();
+        collider.size = new Vector3(3.2f, 3.0f, 2.6f);
+        collider.center = new Vector3(0f, 1.45f, 0f);
+        collider.isTrigger = true;
+        Damageable damageable = root.AddComponent<Damageable>();
+        BossController boss = root.AddComponent<BossController>();
+
+        AddMeshPart(root.transform, "Foot_L", meshes.box, materials.obstacleMetal, new Vector3(-0.62f, 0.18f, -0.18f), new Vector3(0.72f, 0.28f, 1.1f));
+        AddMeshPart(root.transform, "Foot_R", meshes.box, materials.obstacleMetal, new Vector3(0.62f, 0.18f, -0.18f), new Vector3(0.72f, 0.28f, 1.1f));
+        AddMeshPart(root.transform, "Leg_L", meshes.box, materials.enemyCrimson, new Vector3(-0.62f, 0.72f, 0f), new Vector3(0.38f, 0.9f, 0.42f));
+        AddMeshPart(root.transform, "Leg_R", meshes.box, materials.enemyCrimson, new Vector3(0.62f, 0.72f, 0f), new Vector3(0.38f, 0.9f, 0.42f));
+        AddMeshPart(root.transform, "Pelvis", meshes.box, materials.obstacleMetal, new Vector3(0f, 1.18f, 0f), new Vector3(1.55f, 0.38f, 0.86f));
+        AddMeshPart(root.transform, "Torso", meshes.wedge, materials.enemyRed, new Vector3(0f, 1.78f, 0f), new Vector3(1.85f, 1.05f, 1.2f));
+        AddMeshPart(root.transform, "CoreGlow", meshes.box, materials.projectile, new Vector3(0f, 1.76f, -0.64f), new Vector3(0.64f, 0.18f, 0.08f));
+        AddMeshPart(root.transform, "Head", meshes.box, materials.enemyCrimson, new Vector3(0f, 2.5f, -0.05f), new Vector3(0.92f, 0.48f, 0.72f));
+        AddMeshPart(root.transform, "EyeGlow", meshes.box, materials.projectile, new Vector3(0f, 2.53f, -0.44f), new Vector3(0.62f, 0.1f, 0.08f));
+        AddMeshPart(root.transform, "Arm_L", meshes.box, materials.obstacleMetal, new Vector3(-1.32f, 1.65f, -0.04f), new Vector3(0.38f, 1.1f, 0.42f));
+        AddMeshPart(root.transform, "Arm_R", meshes.box, materials.obstacleMetal, new Vector3(1.32f, 1.65f, -0.04f), new Vector3(0.38f, 1.1f, 0.42f));
+        AddMeshPart(root.transform, "Cannon_L", meshes.box, materials.rail, new Vector3(-1.32f, 1.12f, -0.48f), new Vector3(0.28f, 0.24f, 0.95f));
+        AddMeshPart(root.transform, "Cannon_R", meshes.box, materials.rail, new Vector3(1.32f, 1.12f, -0.48f), new Vector3(0.28f, 0.24f, 0.95f));
+        AddMeshPart(root.transform, "Shoulder_L", meshes.box, materials.enemyCrimson, new Vector3(-1.14f, 2.1f, 0.04f), new Vector3(0.62f, 0.42f, 0.82f));
+        AddMeshPart(root.transform, "Shoulder_R", meshes.box, materials.enemyCrimson, new Vector3(1.14f, 2.1f, 0.04f), new Vector3(0.62f, 0.42f, 0.82f));
+
+        TextMesh label = CreateWorldText("BossHealthLabel", root.transform, "MECH BOSS\n1000", new Vector3(0f, 3.25f, 0f), 0.12f, Color.white);
+        label.gameObject.AddComponent<Billboard>();
+        SetObject(damageable, "_label", label);
+        SetObject(boss, "_damageable", damageable);
+        SetObject(boss, "_healthLabel", label);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/Bosses/PF_Boss_Mech.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
     private static GameObject CreateFinishLinePrefab(MaterialSet materials, MeshSet meshes)
     {
         GameObject root = new GameObject("PF_FinishLine");
@@ -1334,7 +1449,7 @@ public static class ArmyRushProjectBuilder
     private static LevelData[] CreateLevels(BossDefinition[] bosses)
     {
         List<LevelData> levels = new List<LevelData>();
-        BossDefinition tankBoss = bosses != null && bosses.Length > 0 ? bosses[0] : null;
+        BossDefinition fallbackBoss = bosses != null && bosses.Length > 0 ? bosses[0] : null;
         for (int i = 1; i <= 20; i++)
         {
             string path = $"{LevelDataPath}/SO_Level_{i:000}.asset";
@@ -1351,8 +1466,9 @@ public static class ArmyRushProjectBuilder
             data.baseCoinReward = Mathf.RoundToInt(Mathf.Lerp(100f, 1200f, (i - 1) / 19f));
             data.difficultyRating = i;
             data.hasBoss = i == 5 || i == 10 || i == 15 || i == 20;
-            data.bossDefinition = data.hasBoss ? tankBoss : null;
-            data.bossHealth = data.hasBoss && tankBoss != null ? tankBoss.GetHealth(i, 0) : 0;
+            BossDefinition bossDefinition = data.hasBoss && bosses != null && bosses.Length > 0 ? bosses[((i / 5) - 1) % bosses.Length] : fallbackBoss;
+            data.bossDefinition = data.hasBoss ? bossDefinition : null;
+            data.bossHealth = data.hasBoss && bossDefinition != null ? bossDefinition.GetHealth(i, 0) : 0;
             data.bonusCrateCount = i < 4 ? 2 : 3;
             data.bonusCrateHealth = Mathf.RoundToInt(70f + i * 22f);
             data.bonusCrateReward = Mathf.RoundToInt(Mathf.Lerp(24f, 130f, (i - 1) / 19f));
@@ -1648,13 +1764,55 @@ public static class ArmyRushProjectBuilder
             PrefabPath + "/VFX/PF_VFX_CrowdLoss.prefab",
             PrefabPath + "/VFX/PF_VFX_CoinBurst.prefab",
             PrefabPath + "/VFX/PF_VFX_ObstacleDebris.prefab",
+            PrefabPath + "/VFX/PF_VFX_ObstacleExplosion.prefab",
             PrefabPath + "/VFX/PF_VFX_VictoryBurst.prefab",
-            PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab"
+            PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab",
+            PrefabPath + "/VFX/PF_VFX_SmokePuff.prefab",
+            PrefabPath + "/VFX/PF_VFX_HeavySmoke.prefab"
         };
 
         foreach (string path in particleVfxPrefabs)
         {
             ValidatePooledPrefab(failures, path, typeof(PooledParticleVfx));
+        }
+    }
+
+    private static void ValidateBossPrefabs(List<string> failures)
+    {
+        ValidateBossPrefab(failures, PrefabPath + "/Bosses/PF_Boss_Tank.prefab", 6);
+        ValidateBossPrefab(failures, PrefabPath + "/Bosses/PF_Boss_Helicopter.prefab", 10);
+        ValidateBossPrefab(failures, PrefabPath + "/Bosses/PF_Boss_Mech.prefab", 12);
+    }
+
+    private static void ValidateBossPrefab(List<string> failures, string path, int minimumMeshRenderers)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null)
+        {
+            failures.Add("Missing boss prefab: " + path);
+            return;
+        }
+
+        if (prefab.GetComponent<BossController>() == null)
+        {
+            failures.Add(path + " is missing BossController.");
+        }
+        if (prefab.GetComponent<Damageable>() == null)
+        {
+            failures.Add(path + " is missing Damageable.");
+        }
+        Collider collider = prefab.GetComponent<Collider>();
+        if (collider == null || !collider.isTrigger)
+        {
+            failures.Add(path + " is missing a trigger collider.");
+        }
+        if (prefab.GetComponentsInChildren<MeshRenderer>(true).Length < minimumMeshRenderers)
+        {
+            failures.Add(path + " does not contain enough visual mesh parts.");
+        }
+        if (prefab.GetComponentInChildren<TextMesh>(true) == null)
+        {
+            failures.Add(path + " is missing a boss health label.");
         }
     }
 
@@ -2151,9 +2309,25 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Missing tank boss prefab.");
         }
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath + "/Bosses/PF_Boss_Helicopter.prefab") == null)
+        {
+            failures.Add("Missing helicopter boss prefab.");
+        }
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath + "/Bosses/PF_Boss_Mech.prefab") == null)
+        {
+            failures.Add("Missing mech boss prefab.");
+        }
         if (AssetDatabase.LoadAssetAtPath<BossDefinition>(BossDataPath + "/SO_Boss_Tank.asset") == null)
         {
             failures.Add("Missing tank boss definition.");
+        }
+        if (AssetDatabase.LoadAssetAtPath<BossDefinition>(BossDataPath + "/SO_Boss_Helicopter.asset") == null)
+        {
+            failures.Add("Missing helicopter boss definition.");
+        }
+        if (AssetDatabase.LoadAssetAtPath<BossDefinition>(BossDataPath + "/SO_Boss_Mech.asset") == null)
+        {
+            failures.Add("Missing mech boss definition.");
         }
         LevelData[] levelAssets = AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
             .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
@@ -2172,6 +2346,14 @@ public static class ArmyRushProjectBuilder
         if (levelAssets.Any(level => level.hasBoss && level.bossDefinition == null))
         {
             failures.Add("One or more boss levels are missing a BossDefinition reference.");
+        }
+        if (levelAssets.Where(level => level.hasBoss && level.bossDefinition != null).Select(level => level.bossDefinition).Distinct().Count() < 3)
+        {
+            failures.Add("Authored boss levels do not rotate across all three boss definitions.");
+        }
+        if (levelAssets.Any(level => level.hasBoss && level.bossDefinition != null && level.bossDefinition.bossPrefab == null))
+        {
+            failures.Add("One or more boss definitions is missing its visual prefab reference.");
         }
         if (Object.FindAnyObjectByType<FinishLineTrigger>() == null)
         {
@@ -2694,6 +2876,7 @@ public static class ArmyRushProjectBuilder
     private static BossDefinition CreateBossDefinition(
         string assetName,
         string displayName,
+        GameObject bossPrefab,
         BossAttackPattern attackPattern,
         int baseHealth,
         int healthPerLevel,
@@ -2719,6 +2902,7 @@ public static class ArmyRushProjectBuilder
         }
 
         definition.displayName = displayName;
+        definition.bossPrefab = bossPrefab;
         definition.attackPattern = attackPattern;
         definition.baseHealth = baseHealth;
         definition.healthPerLevel = healthPerLevel;
@@ -2846,6 +3030,8 @@ public static class ArmyRushProjectBuilder
         public GameObject enemyGroup;
         public GameObject obstacle;
         public GameObject bossTank;
+        public GameObject bossHelicopter;
+        public GameObject bossMech;
         public GameObject finishLine;
         public GameObject bonusCrate;
         public GameObject bonusEnd;

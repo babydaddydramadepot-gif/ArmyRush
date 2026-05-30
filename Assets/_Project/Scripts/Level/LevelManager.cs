@@ -307,12 +307,15 @@ namespace ArmyRush
 
         private void SpawnBoss()
         {
-            if (_bossPrefab == null || !CurrentLevel.hasBoss)
+            GameObject bossPrefab = CurrentLevel.bossDefinition != null && CurrentLevel.bossDefinition.bossPrefab != null
+                ? CurrentLevel.bossDefinition.bossPrefab
+                : _bossPrefab;
+            if (bossPrefab == null || !CurrentLevel.hasBoss)
             {
                 return;
             }
 
-            GameObject bossObject = Instantiate(_bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f), Quaternion.identity, _levelRoot);
+            GameObject bossObject = Instantiate(bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f), Quaternion.identity, _levelRoot);
             BossController boss = bossObject.GetComponent<BossController>();
             boss?.Configure(CurrentLevel.bossDefinition, CurrentLevel.levelIndex, CurrentLevel.bossHealth, _crowd);
             ActiveBoss = boss;

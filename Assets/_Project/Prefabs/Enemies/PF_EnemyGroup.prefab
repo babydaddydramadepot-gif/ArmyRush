@@ -87,6 +87,7 @@ MonoBehaviour:
   _poolManager: {fileID: 0}
   _countLabel: {fileID: 5763392279346874005}
   _damageable: {fileID: 8743030047249825465}
+  _coinReward: 10
 --- !u!1 &8547611525640068793
 GameObject:
   m_ObjectHideFlags: 0

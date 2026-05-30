@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1eaf2240c2b24fa28f6ea09b26f6f89, type: 3}
+  m_Name: SO_Boss_Helicopter
+  m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.BossDefinition
+  displayName: HELI BOSS
+  bossPrefab: {fileID: 6837767540105961154, guid: fe1b8621b8ac24932bc659c9ec8131db, type: 3}
+  attackPattern: 2
+  baseHealth: 780
+  healthPerLevel: 68
+  collisionPenalty: 18
+  coinReward: 310
+  coinRewardPerLevel: 22
+  activationDistance: 20
+  attackInterval: 1.9
+  warningDuration: 0.64
+  attackRadius: 1.1
+  lateralRange: 4
+  attackDamage: 6
+  attackDamagePerLevel: 1
+  warningText: MISSILES
+  warningColor: {r: 1, g: 0.72, b: 0.12, a: 1}

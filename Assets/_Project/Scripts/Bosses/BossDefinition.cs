@@ -5,13 +5,16 @@ namespace ArmyRush
     public enum BossAttackPattern
     {
         CannonVolley,
-        SuppressionBurst
+        SuppressionBurst,
+        MissileStrike,
+        ShockwaveSlam
     }
 
     [CreateAssetMenu(menuName = "ArmyRush/Bosses/Boss Definition", fileName = "SO_BossDefinition")]
     public sealed class BossDefinition : ScriptableObject
     {
         public string displayName = "TANK BOSS";
+        public GameObject bossPrefab;
         public BossAttackPattern attackPattern = BossAttackPattern.CannonVolley;
         public int baseHealth = 1000;
         public int healthPerLevel = 80;

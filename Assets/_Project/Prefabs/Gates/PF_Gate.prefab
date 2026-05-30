@@ -360,6 +360,9 @@ MonoBehaviour:
   _panelRenderer: {fileID: 6731531623895876989}
   _burst: {fileID: 0}
   _activationHalfWidth: 1.05
+  _idleGlowSpeed: 4.2
+  _idleGlowStrength: 0.18
+  _emissionStrength: 0.85
 --- !u!1 &8312774373955653445
 GameObject:
   m_ObjectHideFlags: 0

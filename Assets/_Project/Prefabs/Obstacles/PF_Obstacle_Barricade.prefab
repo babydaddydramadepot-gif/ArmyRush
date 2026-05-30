@@ -386,6 +386,7 @@ MonoBehaviour:
   _damageable: {fileID: 8297635261933759801}
   _healthLabel: {fileID: 8993142361117278140}
   _collisionPenalty: 8
+  _coinReward: 12
   _destroyEffect: {fileID: 0}
 --- !u!1 &8618836369165710933
 GameObject:

@@ -18,8 +18,8 @@ MonoBehaviour:
   baseCoinReward: 911
   difficultyRating: 15
   hasBoss: 1
-  bossDefinition: {fileID: 11400000, guid: 2d1280016eb9c4988ba9ee4738b1fcad, type: 2}
-  bossHealth: 1908
+  bossDefinition: {fileID: 11400000, guid: 6ad10c8d743df4206b5b3fc689e3da60, type: 2}
+  bossHealth: 2408
   bonusCrateCount: 3
   bonusCrateHealth: 400
   bonusCrateReward: 102

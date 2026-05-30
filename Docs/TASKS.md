@@ -181,6 +181,7 @@ Implementation Pass 1 Result:
 - Polished the main-menu upgrade tile layout for simulator-sized portrait screens, corrected the play icon direction, and added validation coverage for upgrade icon/text overlap.
 - Added an animated generated 3D main-menu character showcase with hero squad, runway, gate, coin medal, and validation coverage for showcase wiring/content.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
+- Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, and validation coverage for all boss prefabs.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
@@ -790,7 +791,7 @@ Acceptance Criteria:
 
 ## 3.5 Endless Level Support
 
-Status: Functional Deterministic Runtime Generation Implemented; Boss Variant Rotation Pending
+Status: Functional Deterministic Runtime Generation Implemented with Boss Variant Rotation; Manual Endless QA Pending
 Priority: Medium
 
 Tasks:
@@ -798,7 +799,7 @@ Tasks:
 - [x] Add procedural level generation after authored levels.
 - [x] Use chunk system.
 - [x] Scale difficulty.
-- Rotate boss types.
+- [x] Rotate boss types.
 - [x] Scale rewards.
 
 Acceptance Criteria:
@@ -813,7 +814,7 @@ Acceptance Criteria:
 
 ## 4.1 Boss Architecture
 
-Status: Functional Combat and Defeat Animation Pass Implemented; Balance/Variants Pending
+Status: Functional Combat and Defeat Animation Pass Implemented with Prefab-Backed Variants; Balance QA Pending
 Priority: High
 
 Tasks:
@@ -825,6 +826,8 @@ Tasks:
 - [x] Add boss damage receiving.
 - [x] Add boss defeat state.
 - [x] Add boss reward flow.
+- [x] Add prefab-backed boss variant definitions.
+- [x] Validate boss prefab controller, health, trigger, label, and mesh content.
 
 Acceptance Criteria:
 
@@ -841,7 +844,7 @@ Priority: High
 
 Tasks:
 
-- Create production tank boss model/prefab.
+- [x] Create production tank boss model/prefab.
 - [x] Add movement or idle combat behavior.
 - [x] Add cannon attack behavior.
 - [x] Add damage states.
@@ -858,16 +861,16 @@ Acceptance Criteria:
 
 ## 4.3 Helicopter Boss
 
-Status: Not Started
+Status: Functional Visual and Attack Pass Implemented; Authored Crash Polish and Balance QA Pending
 Priority: Medium
 
 Tasks:
 
-- Create helicopter boss prefab.
-- Add lateral movement.
-- Add missile attack.
-- Add hit effects.
-- Add crash/destruction animation.
+- [x] Create helicopter boss prefab.
+- [x] Add lateral movement.
+- [x] Add missile attack.
+- [x] Add hit effects.
+- Add authored crash/destruction animation.
 
 Acceptance Criteria:
 
@@ -878,14 +881,14 @@ Acceptance Criteria:
 
 ## 4.4 Mech Boss
 
-Status: Not Started
+Status: Functional Visual and Shockwave Pass Implemented; Multi-Phase/Authored Defeat Polish Pending
 Priority: Medium
 
 Tasks:
 
-- Create mech boss prefab.
+- [x] Create mech boss prefab.
 - Add multi-phase attack behavior.
-- Add heavy impact VFX.
+- [x] Add heavy impact VFX.
 - Add unique defeat animation.
 
 Acceptance Criteria:
