@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-75%
+76%
 
 Last Updated:
 
@@ -2191,11 +2191,41 @@ Run device readability and balance QA for obstacle silhouettes, health values, c
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Camera Framing Correction
+
+Files:
+
+Assets/_Project/Scripts/Camera/CameraFollowRig.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Corrected the generated gameplay camera rig so the main camera is local-zero under `CameraRig` instead of inheriting a second copy of the gameplay camera offset. `CameraFollowRig` now normalizes child camera transforms at runtime and adds speed-based forward look-ahead so the runner keeps more upcoming gates, enemies, and obstacles in view while moving.
+
+Result:
+
+Unity foundation generation and production validation passed. The validator now checks that the game scene has a `CameraFollowRig`, a tagged main camera, the main camera parented under the rig, and a local-zero child transform to prevent double-offset framing regressions.
+
+Follow Up:
+
+Run device framing QA on iPhone and iPad sizes to tune final offset, field of view, and look-ahead amount against real touch play.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-45%
+46%
 
 UI Systems
 
@@ -2227,11 +2257,11 @@ Optimization
 
 Polish
 
-41%
+42%
 
 Release Readiness
 
-22%
+23%
 
 ---
 

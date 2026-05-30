@@ -1807,7 +1807,10 @@ public static class ArmyRushProjectBuilder
         camera.name = "Main Camera";
         camera.tag = "MainCamera";
         GameObject cameraRig = new GameObject("CameraRig");
-        camera.transform.SetParent(cameraRig.transform, true);
+        cameraRig.transform.SetPositionAndRotation(tuning.cameraOffset + Vector3.forward * tuning.cameraLookAhead, Quaternion.Euler(tuning.cameraEuler));
+        camera.transform.SetParent(cameraRig.transform, false);
+        camera.transform.localPosition = Vector3.zero;
+        camera.transform.localRotation = Quaternion.identity;
         CameraFollowRig follow = cameraRig.AddComponent<CameraFollowRig>();
         follow.Configure(tuning, player.transform);
 
@@ -2490,6 +2493,8 @@ public static class ArmyRushProjectBuilder
         PlayerController player = Object.FindAnyObjectByType<PlayerController>();
         GameplayUI ui = Object.FindAnyObjectByType<GameplayUI>();
         PoolManager pool = Object.FindAnyObjectByType<PoolManager>();
+        CameraFollowRig cameraRig = Object.FindAnyObjectByType<CameraFollowRig>();
+        Camera mainCamera = Camera.main;
 
         if (levelManager == null)
         {
@@ -2511,6 +2516,25 @@ public static class ArmyRushProjectBuilder
         if (Object.FindAnyObjectByType<VfxManager>() == null)
         {
             failures.Add("Game scene is missing VfxManager.");
+        }
+        if (cameraRig == null)
+        {
+            failures.Add("Game scene is missing CameraFollowRig.");
+        }
+        if (mainCamera == null)
+        {
+            failures.Add("Game scene is missing a tagged main camera.");
+        }
+        else if (cameraRig != null)
+        {
+            if (mainCamera.transform.parent != cameraRig.transform)
+            {
+                failures.Add("Main camera is not parented to the camera follow rig.");
+            }
+            if (mainCamera.transform.localPosition.sqrMagnitude > 0.001f || Quaternion.Angle(mainCamera.transform.localRotation, Quaternion.identity) > 0.1f)
+            {
+                failures.Add("Main camera child transform must be local-zero under the follow rig to avoid double-offset framing.");
+            }
         }
         string[] requiredVfx =
         {

@@ -183,6 +183,7 @@ Implementation Pass 1 Result:
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
 - Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, and validation coverage for all boss prefabs.
 - Added data-driven obstacle definitions, generated obstacle variant prefabs, authored-level obstacle variant coverage, endless obstacle variant reuse, boss-approach layout guardrails, and validation for obstacle prefabs/definitions.
+- Corrected gameplay camera rig double-offset, added speed-based camera look-ahead, and added validation for local-zero camera child framing under the follow rig.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
@@ -397,7 +398,7 @@ Acceptance Criteria:
 
 ## 1.2 Follow Camera
 
-Status: Functional Pass Implemented with Impact Shake; Framing QA Pending
+Status: Functional Pass Implemented with Corrected Rig Framing, Dynamic Look-Ahead, and Impact Shake; Device Framing QA Pending
 Priority: Critical
 
 Tasks:
@@ -409,6 +410,9 @@ Tasks:
 - Camera does not rotate freely.
 - Camera avoids jitter.
 - Add camera shake for obstacle, boss, and victory moments.
+- [x] Correct generated camera rig double-offset.
+- [x] Validate camera child local-zero framing under the follow rig.
+- [x] Add speed-based forward look-ahead during movement.
 
 Acceptance Criteria:
 

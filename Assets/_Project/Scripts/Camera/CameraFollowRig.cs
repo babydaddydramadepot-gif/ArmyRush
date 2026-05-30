@@ -17,8 +17,10 @@ namespace ArmyRush
         [SerializeField] private Camera _camera;
 
         private Vector3 _velocity;
+        private Vector3 _lastTargetPosition;
         private float _shakeTime;
         private float _shakeAmplitude;
+        private bool _hasTargetSample;
 
         private static CameraFollowRig _active;
 
@@ -29,6 +31,7 @@ namespace ArmyRush
             {
                 _camera = GetComponentInChildren<Camera>();
             }
+            NormalizeCameraChild();
         }
 
         private void OnDestroy()
@@ -46,7 +49,8 @@ namespace ArmyRush
                 return;
             }
 
-            Vector3 desired = _target.position + _tuning.cameraOffset + Vector3.forward * _tuning.cameraLookAhead;
+            float dynamicLookAhead = GetDynamicLookAhead();
+            Vector3 desired = _target.position + _tuning.cameraOffset + Vector3.forward * dynamicLookAhead;
             Vector3 position = Vector3.SmoothDamp(transform.position, desired, ref _velocity, 1f / Mathf.Max(0.01f, _tuning.cameraSmooth));
 
             if (_shakeTime > 0f)
@@ -69,12 +73,45 @@ namespace ArmyRush
         {
             _tuning = tuning;
             _target = target;
+            _hasTargetSample = false;
+            NormalizeCameraChild();
         }
 
         public void Shake(float amplitude, float duration)
         {
             _shakeAmplitude = Mathf.Max(_shakeAmplitude, amplitude);
             _shakeTime = Mathf.Max(_shakeTime, duration);
+        }
+
+        private float GetDynamicLookAhead()
+        {
+            float lookAhead = _tuning.cameraLookAhead;
+            if (_target == null || Time.deltaTime <= 0f)
+            {
+                return lookAhead;
+            }
+
+            if (!_hasTargetSample)
+            {
+                _lastTargetPosition = _target.position;
+                _hasTargetSample = true;
+                return lookAhead;
+            }
+
+            float forwardSpeed = Mathf.Max(0f, (_target.position.z - _lastTargetPosition.z) / Time.deltaTime);
+            _lastTargetPosition = _target.position;
+            return lookAhead + Mathf.Clamp(forwardSpeed * 0.28f, 0f, 3.25f);
+        }
+
+        private void NormalizeCameraChild()
+        {
+            if (_camera == null || _camera.transform == transform)
+            {
+                return;
+            }
+
+            _camera.transform.localPosition = Vector3.zero;
+            _camera.transform.localRotation = Quaternion.identity;
         }
 
         public static void Shake(CameraShakeCue cue)
