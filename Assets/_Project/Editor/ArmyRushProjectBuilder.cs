@@ -189,6 +189,7 @@ public static class ArmyRushProjectBuilder
         prefabs.gate = CreateGatePrefab(materials, meshes);
         prefabs.enemyGroup = CreateEnemyGroupPrefab(materials, meshes);
         prefabs.obstacle = CreateObstaclePrefab(materials, meshes);
+        prefabs.bossTank = CreateBossTankPrefab(materials, meshes);
         prefabs.finishLine = CreateFinishLinePrefab(materials, meshes);
         prefabs.floatingText = CreateFloatingTextPrefab();
         return prefabs;
@@ -310,6 +311,34 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
+    private static GameObject CreateBossTankPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = new GameObject("PF_Boss_Tank");
+        BoxCollider collider = root.AddComponent<BoxCollider>();
+        collider.size = new Vector3(3.4f, 2.1f, 3.2f);
+        collider.center = new Vector3(0f, 0.95f, 0f);
+        collider.isTrigger = true;
+        Damageable damageable = root.AddComponent<Damageable>();
+        BossController boss = root.AddComponent<BossController>();
+
+        AddMeshPart(root.transform, "LeftTread", meshes.box, materials.obstacleMetal, new Vector3(-0.92f, 0.34f, 0f), new Vector3(0.62f, 0.45f, 2.55f));
+        AddMeshPart(root.transform, "RightTread", meshes.box, materials.obstacleMetal, new Vector3(0.92f, 0.34f, 0f), new Vector3(0.62f, 0.45f, 2.55f));
+        AddMeshPart(root.transform, "Hull", meshes.box, materials.enemyCrimson, new Vector3(0f, 0.82f, 0f), new Vector3(2.35f, 0.72f, 2.15f));
+        AddMeshPart(root.transform, "Turret", meshes.wedge, materials.enemyRed, new Vector3(0f, 1.34f, 0.16f), new Vector3(1.35f, 0.58f, 1.25f));
+        AddMeshPart(root.transform, "Cannon", meshes.box, materials.obstacleMetal, new Vector3(0f, 1.35f, -1.22f), new Vector3(0.22f, 0.22f, 1.7f));
+        AddMeshPart(root.transform, "Antenna", meshes.box, materials.rail, new Vector3(0.62f, 1.85f, 0.32f), new Vector3(0.08f, 0.75f, 0.08f));
+
+        TextMesh label = CreateWorldText("BossHealthLabel", root.transform, "TANK BOSS\n1000", new Vector3(0f, 2.25f, 0f), 0.12f, Color.white);
+        label.gameObject.AddComponent<Billboard>();
+        SetObject(damageable, "_label", label);
+        SetObject(boss, "_damageable", damageable);
+        SetObject(boss, "_healthLabel", label);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/Bosses/PF_Boss_Tank.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
     private static GameObject CreateFinishLinePrefab(MaterialSet materials, MeshSet meshes)
     {
         GameObject root = new GameObject("PF_FinishLine");
@@ -391,7 +420,6 @@ public static class ArmyRushProjectBuilder
         if (data.hasBoss)
         {
             AddGatePair(data, data.trackLength - 46f, GateOperation.Add, 30 + level * 3, GateOperation.Multiply, level >= 10 ? 3 : 2);
-            AddEnemy(data, data.trackLength - 25f, 0f, 40 + level * 8, 18 + level * 3);
         }
         else
         {
@@ -527,6 +555,10 @@ public static class ArmyRushProjectBuilder
         Text levelText = CreateUIText("LevelText", safe.transform, "Level 1", 36, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.965f), new Vector2(360f, 60f));
         Text coinText = CreateUIText("CoinText", safe.transform, "0", 34, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.78f, 0.12f), new Vector2(0.84f, 0.965f), new Vector2(220f, 60f));
         Slider progress = CreateProgressBar("ProgressBar", safe.transform, new Vector2(0.5f, 0.925f), new Vector2(520f, 26f));
+        GameObject bossPanel = CreatePanel("BossPanel", safe.transform, new Vector2(0.5f, 0.875f), new Vector2(660f, 74f), new Color(0.24f, 0.03f, 0.05f, 0.86f));
+        Text bossText = CreateUIText("BossText", bossPanel.transform, "TANK BOSS", 24, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.68f), new Vector2(560f, 32f));
+        Slider bossSlider = CreateProgressBar("BossHealth", bossPanel.transform, new Vector2(0.5f, 0.28f), new Vector2(560f, 22f));
+        bossPanel.SetActive(false);
         GameObject prompt = CreatePanel("StartPrompt", safe.transform, new Vector2(0.5f, 0.36f), new Vector2(530f, 98f), new Color(0.05f, 0.13f, 0.24f, 0.82f));
         Text promptText = CreateUIText("PromptText", prompt.transform, "DRAG TO START", 38, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(480f, 80f));
         GameObject victoryPanel = CreateResultPanel("VictoryPanel", safe.transform, "VICTORY", out Text victoryCoins, out Button nextButton);
@@ -547,7 +579,7 @@ public static class ArmyRushProjectBuilder
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
         vfx.Configure(pool, prefabs.floatingText);
 
-        levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.finishLine, levelRoot.transform);
+        levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
         gameplayUI.Configure(playerController, levelManager);
 
@@ -555,6 +587,9 @@ public static class ArmyRushProjectBuilder
         SetObject(gameplayUI, "_coinText", coinText);
         SetObject(gameplayUI, "_stateText", promptText);
         SetObject(gameplayUI, "_progressSlider", progress);
+        SetObject(gameplayUI, "_bossPanel", bossPanel);
+        SetObject(gameplayUI, "_bossSlider", bossSlider);
+        SetObject(gameplayUI, "_bossText", bossText);
         SetObject(gameplayUI, "_startPrompt", prompt);
         SetObject(gameplayUI, "_victoryPanel", victoryPanel);
         SetObject(gameplayUI, "_victoryCoinsText", victoryCoins);
@@ -700,6 +735,10 @@ public static class ArmyRushProjectBuilder
         if (Object.FindObjectsByType<ObstacleController>(FindObjectsInactive.Exclude).Length == 0)
         {
             failures.Add("Game scene validation spawned no obstacles.");
+        }
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath + "/Bosses/PF_Boss_Tank.prefab") == null)
+        {
+            failures.Add("Missing tank boss prefab.");
         }
         if (Object.FindAnyObjectByType<FinishLineTrigger>() == null)
         {
@@ -1133,6 +1172,7 @@ public static class ArmyRushProjectBuilder
         public GameObject gate;
         public GameObject enemyGroup;
         public GameObject obstacle;
+        public GameObject bossTank;
         public GameObject finishLine;
         public GameObject floatingText;
     }

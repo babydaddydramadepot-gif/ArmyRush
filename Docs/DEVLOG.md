@@ -233,6 +233,40 @@ Add final particle effects for hit sparks, gate bursts, coin bursts, obstacle de
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Tank Boss Foundation
+
+Files:
+
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/Bosses/PF_Boss_Tank.prefab
+Assets/_Project/ScriptableObjects/Levels/SO_Level_005.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_010.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_015.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_020.asset
+
+Summary:
+
+Added a first tank boss implementation. Boss levels now spawn a generated low-poly tank boss instead of using only a large enemy crowd. The boss is a damageable target with world health text, contact pressure, defeat feedback, and HUD boss health bar events.
+
+Result:
+
+Unity batch generation and validation pass with no compiler errors or warnings. Levels 5, 10, 15, and 20 now contain a boss-specific runtime object and boss health UI support.
+
+Follow Up:
+
+Add unique boss attacks, boss reward tuning, boss-specific SFX/VFX, and manual balance testing.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -473,7 +507,7 @@ AR-002
 
 Status:
 
-Boss levels currently use high-pressure enemy encounters and boss flags, but no unique BossController, boss model, attack pattern, or boss health bar is implemented yet.
+Boss levels now have a tank boss foundation and boss health bar, but unique boss attacks, boss-specific rewards, and boss VFX/audio are still pending.
 
 Issue ID:
 

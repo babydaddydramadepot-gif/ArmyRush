@@ -14,6 +14,7 @@ namespace ArmyRush
         [SerializeField] private GameObject _enemyGroupPrefab;
         [SerializeField] private GameObject _enemyUnitPrefab;
         [SerializeField] private GameObject _obstaclePrefab;
+        [SerializeField] private GameObject _bossPrefab;
         [SerializeField] private GameObject _finishLinePrefab;
         [SerializeField] private Transform _levelRoot;
 
@@ -40,6 +41,7 @@ namespace ArmyRush
             GameObject enemyGroupPrefab,
             GameObject enemyUnitPrefab,
             GameObject obstaclePrefab,
+            GameObject bossPrefab,
             GameObject finishLinePrefab,
             Transform levelRoot)
         {
@@ -52,6 +54,7 @@ namespace ArmyRush
             _enemyGroupPrefab = enemyGroupPrefab;
             _enemyUnitPrefab = enemyUnitPrefab;
             _obstaclePrefab = obstaclePrefab;
+            _bossPrefab = bossPrefab;
             _finishLinePrefab = finishLinePrefab;
             _levelRoot = levelRoot;
         }
@@ -79,6 +82,7 @@ namespace ArmyRush
             SpawnGates();
             SpawnEnemies();
             SpawnObstacles();
+            SpawnBoss();
             SpawnFinish();
         }
 
@@ -163,6 +167,19 @@ namespace ArmyRush
                 obstacle?.Configure(data.health, data.collisionPenalty);
                 _spawned.Add(obstacleObject);
             }
+        }
+
+        private void SpawnBoss()
+        {
+            if (_bossPrefab == null || !CurrentLevel.hasBoss)
+            {
+                return;
+            }
+
+            GameObject bossObject = Instantiate(_bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f), Quaternion.identity, _levelRoot);
+            BossController boss = bossObject.GetComponent<BossController>();
+            boss?.Configure(CurrentLevel.bossHealth, 18 + CurrentLevel.levelIndex * 2, CurrentLevel.levelIndex >= 10 ? "HEAVY TANK" : "TANK BOSS");
+            _spawned.Add(bossObject);
         }
 
         private void SpawnFinish()

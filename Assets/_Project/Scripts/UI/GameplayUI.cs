@@ -10,6 +10,9 @@ namespace ArmyRush
         [SerializeField] private Text _coinText;
         [SerializeField] private Text _stateText;
         [SerializeField] private Slider _progressSlider;
+        [SerializeField] private GameObject _bossPanel;
+        [SerializeField] private Slider _bossSlider;
+        [SerializeField] private Text _bossText;
         [SerializeField] private GameObject _startPrompt;
         [SerializeField] private GameObject _victoryPanel;
         [SerializeField] private Text _victoryCoinsText;
@@ -38,8 +41,19 @@ namespace ArmyRush
             SetRunState(RunState.PreRun);
         }
 
+        private void OnEnable()
+        {
+            BossController.BossSpawned += OnBossSpawned;
+            BossController.BossDefeated += OnBossDefeated;
+            BossController.BossHealthChanged += OnBossHealthChanged;
+        }
+
         private void OnDestroy()
         {
+            BossController.BossSpawned -= OnBossSpawned;
+            BossController.BossDefeated -= OnBossDefeated;
+            BossController.BossHealthChanged -= OnBossHealthChanged;
+
             if (_economy != null)
             {
                 _economy.CoinsChanged -= OnCoinsChanged;
@@ -124,6 +138,46 @@ namespace ArmyRush
             if (_coinText != null)
             {
                 _coinText.text = coins.ToString();
+            }
+        }
+
+        private void OnBossSpawned(BossController boss)
+        {
+            if (_bossPanel != null)
+            {
+                _bossPanel.SetActive(true);
+            }
+            if (_bossText != null)
+            {
+                _bossText.text = boss.DisplayName;
+            }
+            if (_bossSlider != null)
+            {
+                _bossSlider.value = 1f;
+            }
+        }
+
+        private void OnBossDefeated(BossController boss)
+        {
+            if (_bossPanel != null)
+            {
+                _bossPanel.SetActive(false);
+            }
+        }
+
+        private void OnBossHealthChanged(BossController boss, float normalized)
+        {
+            if (_bossPanel != null)
+            {
+                _bossPanel.SetActive(normalized > 0f);
+            }
+            if (_bossSlider != null)
+            {
+                _bossSlider.value = Mathf.Clamp01(normalized);
+            }
+            if (_bossText != null)
+            {
+                _bossText.text = boss.DisplayName;
             }
         }
     }

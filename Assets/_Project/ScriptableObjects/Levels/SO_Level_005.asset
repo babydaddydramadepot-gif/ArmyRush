@@ -63,11 +63,6 @@ MonoBehaviour:
     count: 41
     healthPerUnit: 20
     width: 2.4
-  - z: 113.94737
-    x: 0
-    count: 80
-    healthPerUnit: 33
-    width: 2.4
   obstacles:
   - z: 64
     x: 1.4

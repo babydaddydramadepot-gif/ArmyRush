@@ -173,6 +173,7 @@ Implementation Pass 1 Result:
 - Unity batch mode generation completed with no compiler errors or warnings in `/tmp/armyrush_unity_build.log`.
 - Unity batch mode validation completed with no compiler errors or warnings in `/tmp/armyrush_unity_validate.log`.
 - Added pooled floating text feedback for gate changes, damage, enemy clears, and coin rewards.
+- Added first tank boss pass with generated boss prefab, boss spawning on levels 5/10/15/20, damageable boss health, collision pressure, world label, and HUD boss health bar.
 - Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
 
 ---
@@ -744,7 +745,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels
 Priority: Critical
 
 Tasks:
@@ -795,7 +796,7 @@ Acceptance Criteria:
 
 ## 4.1 Boss Architecture
 
-Status: Not Started
+Status: Functional Pass Implemented; Attack Patterns Pending
 Priority: High
 
 Tasks:
@@ -818,7 +819,7 @@ Acceptance Criteria:
 
 ## 4.2 Tank Boss
 
-Status: Not Started
+Status: In Progress; Generated Tank Boss Pass Implemented
 Priority: High
 
 Tasks:
