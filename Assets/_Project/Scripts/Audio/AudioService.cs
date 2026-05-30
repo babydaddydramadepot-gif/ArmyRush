@@ -11,6 +11,7 @@ namespace ArmyRush
         Shoot,
         Hit,
         EnemyDefeat,
+        ObstacleDamage,
         ObstacleDestroyed,
         CoinReward,
         Upgrade,
@@ -32,6 +33,7 @@ namespace ArmyRush
         private int _nextSourceIndex;
         private float _lastShootTime;
         private float _lastHitTime;
+        private float _lastObstacleDamageTime;
         private float _lastCoinRewardTime;
 
         public AudioService(SaveService saveService)
@@ -55,6 +57,10 @@ namespace ArmyRush
             {
                 return;
             }
+            if (cue == AudioCue.ObstacleDamage && Time.unscaledTime - _lastObstacleDamageTime < 0.09f)
+            {
+                return;
+            }
             if (cue == AudioCue.CoinReward && Time.unscaledTime - _lastCoinRewardTime < 0.12f)
             {
                 return;
@@ -67,6 +73,10 @@ namespace ArmyRush
             else if (cue == AudioCue.Hit)
             {
                 _lastHitTime = Time.unscaledTime;
+            }
+            else if (cue == AudioCue.ObstacleDamage)
+            {
+                _lastObstacleDamageTime = Time.unscaledTime;
             }
             else if (cue == AudioCue.CoinReward)
             {
@@ -172,6 +182,7 @@ namespace ArmyRush
             _clips[AudioCue.Shoot] = CreateNoiseBurst("SFX_Shoot", 0.045f, 0.09f, 0.45f);
             _clips[AudioCue.Hit] = CreateNoiseBurst("SFX_Hit", 0.05f, 0.16f, 0.72f);
             _clips[AudioCue.EnemyDefeat] = CreateArpeggio("SFX_EnemyDefeat", 420f, 660f, 0.14f, 0.2f);
+            _clips[AudioCue.ObstacleDamage] = CreateNoiseBurst("SFX_ObstacleDamage", 0.08f, 0.18f, 0.28f);
             _clips[AudioCue.ObstacleDestroyed] = CreateNoiseBurst("SFX_Destroy", 0.22f, 0.28f, 0.85f);
             _clips[AudioCue.CoinReward] = CreateArpeggio("SFX_CoinReward", 760f, 1180f, 0.2f, 0.32f);
             _clips[AudioCue.Upgrade] = CreateArpeggio("SFX_Upgrade", 580f, 980f, 0.2f, 0.3f);

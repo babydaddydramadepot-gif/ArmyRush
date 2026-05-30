@@ -1148,7 +1148,7 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: Functional Pass Implemented with Procedural Runtime SFX, Boss Intro Cue, and Centralized Coin Reward Audio; Final Clips/Music Pending
+Status: Functional Pass Implemented with Procedural Runtime SFX, Boss Intro Cue, Centralized Coin Reward Audio, and Obstacle Damage Cue; Final Clips/Music Pending
 Priority: High
 
 Add SFX for:
@@ -1160,7 +1160,7 @@ Add SFX for:
 - Shooting
 - Hit impact
 - Enemy defeat
-- Obstacle damage
+- [x] Obstacle damage
 - Obstacle destruction
 - [x] Coin collect
 - Upgrade purchase

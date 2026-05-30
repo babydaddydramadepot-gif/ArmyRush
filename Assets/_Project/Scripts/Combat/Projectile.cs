@@ -36,10 +36,11 @@ namespace ArmyRush
 
             if (Vector3.Distance(transform.position, aimPoint) <= _hitDistance)
             {
+                CombatTargetKind targetKind = _target.Kind;
                 _target.ApplyDamage(_damage);
                 if (ServiceLocator.TryGet(out AudioService audio))
                 {
-                    audio.Play(AudioCue.Hit);
+                    audio.Play(targetKind == CombatTargetKind.Obstacle ? AudioCue.ObstacleDamage : AudioCue.Hit);
                 }
                 Release();
             }

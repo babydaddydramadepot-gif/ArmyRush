@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-61%
+62%
 
 Last Updated:
 
@@ -1487,6 +1487,35 @@ Date:
 
 System:
 
+Obstacle Damage Audio Cue
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Combat/Projectile.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a dedicated procedural obstacle-damage SFX cue and routed projectile impact audio by target type. Obstacle hits now use a heavier chipped-impact sound with its own short throttle, while enemy and boss hits keep the existing hit cue.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Required SFX coverage now includes obstacle damage as a distinct feedback layer instead of reusing only the generic hit sound.
+
+Follow Up:
+
+Tune obstacle-damage audio mix against shooting and destruction cues during device speaker QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Obstacle Damage-State Feedback
 
 Files:
@@ -1699,7 +1728,7 @@ Visual Systems
 
 Audio Systems
 
-28%
+29%
 
 Level Systems
 
