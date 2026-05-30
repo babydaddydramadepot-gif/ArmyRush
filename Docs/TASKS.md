@@ -662,16 +662,16 @@ Acceptance Criteria:
 
 ## 2.3 Destruction VFX
 
-Status: Functional Pass Implemented; Explosive Variants Pending
+Status: Functional Pass Implemented with Sparks, Smoke, Explosion, Debris, and Shake; Device Tuning Pending
 Priority: High
 
 Tasks:
 
-- Add impact sparks.
+- [x] Add impact sparks.
 - [x] Add smoke puffs.
-- Add explosion effects for explosive obstacles.
-- Add debris bursts.
-- Add camera shake for large destruction.
+- [x] Add explosion effects for explosive obstacles.
+- [x] Add debris bursts.
+- [x] Add camera shake for large destruction.
 
 Acceptance Criteria:
 

@@ -12,6 +12,7 @@ namespace ArmyRush
         CrowdLoss,
         CoinBurst,
         ObstacleDebris,
+        ObstacleExplosion,
         VictoryBurst,
         BossExplosion,
         SmokePuff,
@@ -30,6 +31,7 @@ namespace ArmyRush
         [SerializeField] private GameObject _crowdLossPrefab;
         [SerializeField] private GameObject _coinBurstPrefab;
         [SerializeField] private GameObject _obstacleDebrisPrefab;
+        [SerializeField] private GameObject _obstacleExplosionPrefab;
         [SerializeField] private GameObject _victoryBurstPrefab;
         [SerializeField] private GameObject _bossExplosionPrefab;
         [SerializeField] private GameObject _smokePuffPrefab;
@@ -42,6 +44,7 @@ namespace ArmyRush
         {
             _active = this;
             EnsureSmokePrefabs();
+            EnsureObstacleExplosionPrefab();
             if (_poolManager != null && _floatingTextPrefab != null)
             {
                 _poolManager.Prewarm(_floatingTextPrefab, 24);
@@ -54,6 +57,7 @@ namespace ArmyRush
             Prewarm(_crowdLossPrefab, 10);
             Prewarm(_coinBurstPrefab, 8);
             Prewarm(_obstacleDebrisPrefab, 8);
+            Prewarm(_obstacleExplosionPrefab, 6);
             Prewarm(_victoryBurstPrefab, 4);
             Prewarm(_bossExplosionPrefab, 4);
             Prewarm(_smokePuffPrefab, 8);
@@ -79,6 +83,7 @@ namespace ArmyRush
             GameObject crowdLossPrefab,
             GameObject coinBurstPrefab,
             GameObject obstacleDebrisPrefab,
+            GameObject obstacleExplosionPrefab,
             GameObject victoryBurstPrefab,
             GameObject bossExplosionPrefab,
             GameObject smokePuffPrefab,
@@ -94,6 +99,7 @@ namespace ArmyRush
             _crowdLossPrefab = crowdLossPrefab;
             _coinBurstPrefab = coinBurstPrefab;
             _obstacleDebrisPrefab = obstacleDebrisPrefab;
+            _obstacleExplosionPrefab = obstacleExplosionPrefab;
             _victoryBurstPrefab = victoryBurstPrefab;
             _bossExplosionPrefab = bossExplosionPrefab;
             _smokePuffPrefab = smokePuffPrefab;
@@ -166,6 +172,8 @@ namespace ArmyRush
                     return _coinBurstPrefab;
                 case VfxCue.ObstacleDebris:
                     return _obstacleDebrisPrefab;
+                case VfxCue.ObstacleExplosion:
+                    return _obstacleExplosionPrefab != null ? _obstacleExplosionPrefab : _bossExplosionPrefab;
                 case VfxCue.VictoryBurst:
                     return _victoryBurstPrefab;
                 case VfxCue.BossExplosion:
@@ -179,6 +187,25 @@ namespace ArmyRush
             }
         }
 
+        private void EnsureObstacleExplosionPrefab()
+        {
+            if (_obstacleExplosionPrefab != null)
+            {
+                return;
+            }
+
+            GameObject root = new GameObject("PF_RuntimeObstacleExplosion");
+            root.SetActive(false);
+            root.transform.SetParent(transform, false);
+            root.AddComponent<PooledObject>();
+            ParticleSystem particles = root.AddComponent<ParticleSystem>();
+            PooledParticleVfx pooledVfx = root.AddComponent<PooledParticleVfx>();
+
+            ConfigureExplosionParticleSystem(particles, new Color(1f, 0.42f, 0.08f), 0.6f, 0.34f, 3.45f, 34, 0.28f, 0.82f, RuntimeSmokeMaterial);
+            pooledVfx.Configure(new[] { particles }, 0.72f);
+            _obstacleExplosionPrefab = root;
+        }
+
         private void EnsureSmokePrefabs()
         {
             if (_smokePuffPrefab == null)
@@ -189,6 +216,73 @@ namespace ArmyRush
             {
                 _heavySmokePrefab = CreateRuntimeSmokePrefab("PF_RuntimeHeavySmoke", new Color(0.25f, 0.26f, 0.28f, 0.62f), 1.42f, 1.05f, 0.52f, 20, 0.62f, 0.52f);
             }
+        }
+
+        private static void ConfigureExplosionParticleSystem(
+            ParticleSystem particles,
+            Color color,
+            float lifetime,
+            float particleLifetime,
+            float speed,
+            int burstCount,
+            float startSize,
+            float radius,
+            Material material)
+        {
+            ParticleSystem.MainModule main = particles.main;
+            main.duration = lifetime;
+            main.loop = false;
+            main.playOnAwake = false;
+            main.startLifetime = particleLifetime;
+            main.startSpeed = speed;
+            main.startSize = startSize;
+            main.startColor = color;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.gravityModifier = 0.08f;
+            main.stopAction = ParticleSystemStopAction.None;
+
+            ParticleSystem.EmissionModule emission = particles.emission;
+            emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)Mathf.Max(1, burstCount)) });
+
+            ParticleSystem.ShapeModule shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Sphere;
+            shape.radius = radius;
+            shape.randomDirectionAmount = 0.62f;
+
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particles.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(Color.white, 0f),
+                    new GradientColorKey(color, 0.22f),
+                    new GradientColorKey(Color.Lerp(color, Color.black, 0.28f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(1f, 0f),
+                    new GradientAlphaKey(0.72f, 0.42f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            colorOverLifetime.color = gradient;
+
+            ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particles.sizeOverLifetime;
+            sizeOverLifetime.enabled = true;
+            sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(
+                new Keyframe(0f, 0.82f),
+                new Keyframe(0.36f, 1.18f),
+                new Keyframe(1f, 0.2f)));
+
+            ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            if (material != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
         }
 
         private GameObject CreateRuntimeSmokePrefab(string name, Color color, float lifetime, float particleLifetime, float speed, int burstCount, float startSize, float radius)

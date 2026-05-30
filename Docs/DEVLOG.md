@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-56%
+57%
 
 Last Updated:
 
@@ -1487,6 +1487,36 @@ Date:
 
 System:
 
+Obstacle Explosion VFX
+
+Files:
+
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a dedicated obstacle explosion VFX cue. Obstacle destruction now spawns an explosion burst before debris and smoke, adds heavier smoke for high-penalty obstacles, and uses a pooled runtime fallback when an authored obstacle-explosion prefab is not present in existing scenes. The project builder can wire a dedicated `PF_VFX_ObstacleExplosion` prefab for newly generated scenes.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Destruction VFX now have functional spark, smoke, explosion, debris, and camera-shake coverage.
+
+Follow Up:
+
+Run device QA for explosion scale/readability and generate the dedicated authored prefab asset during the next full foundation rebuild if the scene is regenerated.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Shoot Animation Feedback
 
 Files:
@@ -1550,7 +1580,7 @@ UI Systems
 
 Visual Systems
 
-44%
+45%
 
 Audio Systems
 
@@ -1574,7 +1604,7 @@ Optimization
 
 Polish
 
-34%
+35%
 
 Release Readiness
 

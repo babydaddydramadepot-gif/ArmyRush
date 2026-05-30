@@ -70,8 +70,15 @@ namespace ArmyRush
 
         private void OnDied(Damageable damageable)
         {
-            VfxManager.Spawn(VfxCue.ObstacleDebris, transform.position + Vector3.up * 0.75f);
+            Vector3 impactCenter = transform.position + Vector3.up * 0.78f;
+            VfxManager.Spawn(VfxCue.ObstacleExplosion, impactCenter);
+            VfxManager.Spawn(VfxCue.ObstacleDebris, impactCenter);
             VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 0.65f);
+            if (_collisionPenalty >= 14)
+            {
+                VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.72f);
+            }
+
             if (_coinReward > 0 && _runManager != null)
             {
                 Vector3 rewardPosition = transform.position + Vector3.up * 1.1f;
