@@ -174,6 +174,7 @@ Implementation Pass 1 Result:
 - Unity batch mode validation completed with no compiler errors or warnings in `/tmp/armyrush_unity_validate.log`.
 - Added pooled floating text feedback for gate changes, damage, enemy clears, and coin rewards.
 - Added first tank boss pass with generated boss prefab, boss spawning on levels 5/10/15/20, damageable boss health, collision pressure, world label, and HUD boss health bar.
+- Added runtime procedural SFX playback through pooled AudioSources for buttons, gates, shooting, hits, clears, destruction, coin rewards, upgrades, victory, and defeat.
 - Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
 
 ---
@@ -1113,7 +1114,7 @@ Acceptance Criteria:
 
 ## 7.1 Audio System
 
-Status: In Progress; Centralized Hooks Implemented, Audio Assets Pending
+Status: Functional Pass Implemented; Final Audio Assets Pending
 Priority: High
 
 Tasks:
@@ -1134,7 +1135,7 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: In Progress; Code Hooks Implemented, Final Clips Pending
+Status: Functional Pass Implemented with Procedural Runtime SFX; Final Clips Pending
 Priority: High
 
 Add SFX for:

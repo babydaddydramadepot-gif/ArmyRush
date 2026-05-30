@@ -267,6 +267,34 @@ Add unique boss attacks, boss reward tuning, boss-specific SFX/VFX, and manual b
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Runtime Audio Feedback
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Upgraded the audio hook service from silent call sites to audible runtime feedback. The service now lazily creates a small persistent AudioSource pool and procedural mobile-friendly clips for button taps, gates, shooting, hits, enemy defeat, destruction, coin rewards, upgrades, victory, and defeat.
+
+Result:
+
+Unity batch validation passes with no compiler errors or warnings. Core interactions now produce audio feedback without requiring external audio assets or third-party packages.
+
+Follow Up:
+
+Replace procedural clips with final authored SFX/music assets during the audio polish pass.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -283,7 +311,7 @@ Visual Systems
 
 Audio Systems
 
-8%
+20%
 
 Level Systems
 
@@ -423,7 +451,7 @@ All audio changes belong here.
 
 ## Initial State
 
-Centralized audio cue hooks implemented. Final audio clips and pooled AudioSource playback remain pending.
+Centralized audio cue hooks and pooled procedural runtime SFX implemented. Final authored clips and music remain pending.
 
 ---
 
@@ -515,7 +543,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist, but final SFX/music assets and pooled AudioSource playback are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 
