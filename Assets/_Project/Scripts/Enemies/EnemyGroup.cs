@@ -48,6 +48,7 @@ namespace ArmyRush
                 _damageable.Damaged -= OnDamaged;
                 _damageable.Died -= OnDied;
             }
+            SyncUnits(0);
         }
 
         public void Configure(int count, int healthPerUnit, GameObject unitPrefab, PoolManager poolManager)

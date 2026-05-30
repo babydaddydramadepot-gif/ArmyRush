@@ -25,6 +25,7 @@ namespace ArmyRush
         private readonly List<GateSpawnData> _resolvedGates = new List<GateSpawnData>();
         private readonly List<EnemyGroupSpawnData> _resolvedEnemyGroups = new List<EnemyGroupSpawnData>();
         private readonly List<ObstacleSpawnData> _resolvedObstacles = new List<ObstacleSpawnData>();
+        private readonly Dictionary<GameObject, int> _levelPrefabPrewarmCounts = new Dictionary<GameObject, int>();
         private ProgressionService _progression;
         private UpgradeService _upgrades;
         private LevelData _runtimeEndlessLevel;
@@ -611,7 +612,7 @@ namespace ArmyRush
             int segmentCount = Mathf.CeilToInt(length / segmentLength);
             for (int i = 0; i < segmentCount; i++)
             {
-                GameObject segment = Instantiate(_trackSegmentPrefab, new Vector3(0f, -0.05f, i * segmentLength + segmentLength * 0.5f), Quaternion.identity, _levelRoot);
+                GameObject segment = SpawnLevelObject(_trackSegmentPrefab, new Vector3(0f, -0.05f, i * segmentLength + segmentLength * 0.5f));
                 _spawned.Add(segment);
             }
         }
@@ -625,8 +626,8 @@ namespace ArmyRush
 
             foreach (GateSpawnData data in _resolvedGates)
             {
-                GameObject gateObject = Instantiate(_gatePrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
-                GateController gate = gateObject.GetComponent<GateController>();
+                GameObject gateObject = SpawnLevelObject(_gatePrefab, new Vector3(data.x, 0f, data.z));
+                GateController gate = GetLevelComponent<GateController>(gateObject);
                 gate?.Configure(data.operation, data.value);
                 _spawned.Add(gateObject);
             }
@@ -641,8 +642,8 @@ namespace ArmyRush
 
             foreach (EnemyGroupSpawnData data in _resolvedEnemyGroups)
             {
-                GameObject enemyObject = Instantiate(_enemyGroupPrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
-                EnemyGroup enemy = enemyObject.GetComponent<EnemyGroup>();
+                GameObject enemyObject = SpawnLevelObject(_enemyGroupPrefab, new Vector3(data.x, 0f, data.z));
+                EnemyGroup enemy = GetLevelComponent<EnemyGroup>(enemyObject);
                 float rewardPerEnemy = (_tuning != null ? _tuning.enemyCoinValue : 2) + Mathf.Max(0, CurrentLevel.levelIndex - 1) * 0.25f;
                 int reward = Mathf.RoundToInt(data.count * rewardPerEnemy);
                 enemy?.Configure(data.count, data.healthPerUnit, _enemyUnitPrefab, _poolManager, reward, _runManager);
@@ -661,8 +662,8 @@ namespace ArmyRush
                     continue;
                 }
 
-                GameObject obstacleObject = Instantiate(obstaclePrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
-                ObstacleController obstacle = obstacleObject.GetComponent<ObstacleController>();
+                GameObject obstacleObject = SpawnLevelObject(obstaclePrefab, new Vector3(data.x, 0f, data.z));
+                ObstacleController obstacle = GetLevelComponent<ObstacleController>(obstacleObject);
                 int health = definition != null ? definition.GetHealth(CurrentLevel.levelIndex, data.health) : Mathf.Max(1, data.health);
                 int penalty = definition != null ? definition.GetCollisionPenalty(data.collisionPenalty) : Mathf.Max(0, data.collisionPenalty);
                 int reward = definition != null ? definition.GetCoinReward(CurrentLevel.levelIndex, data.coinReward) : (_tuning != null ? _tuning.obstacleCoinValue : 12) + Mathf.Max(0, CurrentLevel.levelIndex - 1);
@@ -681,8 +682,8 @@ namespace ArmyRush
                 return;
             }
 
-            GameObject bossObject = Instantiate(bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f), Quaternion.identity, _levelRoot);
-            BossController boss = bossObject.GetComponent<BossController>();
+            GameObject bossObject = SpawnLevelObject(bossPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength - 24f));
+            BossController boss = GetLevelComponent<BossController>(bossObject);
             boss?.Configure(CurrentLevel.bossDefinition, CurrentLevel.levelIndex, CurrentLevel.bossHealth, _crowd, _runManager);
             ActiveBoss = boss;
             _spawned.Add(bossObject);
@@ -695,8 +696,8 @@ namespace ArmyRush
                 return;
             }
 
-            GameObject finish = Instantiate(_finishLinePrefab, new Vector3(0f, 0f, CurrentLevel.trackLength), Quaternion.identity, _levelRoot);
-            FinishLineTrigger trigger = finish.GetComponent<FinishLineTrigger>();
+            GameObject finish = SpawnLevelObject(_finishLinePrefab, new Vector3(0f, 0f, CurrentLevel.trackLength));
+            FinishLineTrigger trigger = GetLevelComponent<FinishLineTrigger>(finish);
             trigger?.Configure(_runManager);
             _spawned.Add(finish);
         }
@@ -717,8 +718,8 @@ namespace ArmyRush
                 {
                     float laneX = i % 3 == 0 ? 0f : i % 3 == 1 ? -1.45f : 1.45f;
                     float z = CurrentLevel.trackLength + spacing * (i + 1);
-                    GameObject crateObject = Instantiate(_bonusCratePrefab, new Vector3(laneX, 0f, z), Quaternion.identity, _levelRoot);
-                    BonusCrateController crate = crateObject.GetComponent<BonusCrateController>();
+                    GameObject crateObject = SpawnLevelObject(_bonusCratePrefab, new Vector3(laneX, 0f, z));
+                    BonusCrateController crate = GetLevelComponent<BonusCrateController>(crateObject);
                     int health = CurrentLevel.bonusCrateHealth + CurrentLevel.levelIndex * 12 + i * 18;
                     int reward = CurrentLevel.bonusCrateReward + CurrentLevel.levelIndex * 6 + i * 10;
                     crate?.Configure(health, reward, _runManager);
@@ -728,8 +729,8 @@ namespace ArmyRush
 
             if (_bonusEndPrefab != null)
             {
-                GameObject end = Instantiate(_bonusEndPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength + sectionLength), Quaternion.identity, _levelRoot);
-                BonusEndTrigger trigger = end.GetComponent<BonusEndTrigger>();
+                GameObject end = SpawnLevelObject(_bonusEndPrefab, new Vector3(0f, 0f, CurrentLevel.trackLength + sectionLength));
+                BonusEndTrigger trigger = GetLevelComponent<BonusEndTrigger>(end);
                 trigger?.Configure(_runManager);
                 _spawned.Add(end);
             }
@@ -738,6 +739,7 @@ namespace ArmyRush
         private void PrewarmLevelPools(int startingSoldiers)
         {
             _crowd?.PrewarmVisuals(startingSoldiers);
+            PrewarmLevelObjectPools();
 
             if (_poolManager == null || _enemyUnitPrefab == null || CurrentLevel == null)
             {
@@ -755,13 +757,99 @@ namespace ArmyRush
             }
         }
 
+        private void PrewarmLevelObjectPools()
+        {
+            if (_poolManager == null || CurrentLevel == null)
+            {
+                return;
+            }
+
+            _levelPrefabPrewarmCounts.Clear();
+            const float segmentLength = 10f;
+            int segmentCount = Mathf.CeilToInt((CurrentLevel.trackLength + Mathf.Max(0f, CurrentLevel.bonusSectionLength)) / segmentLength);
+            AddPrewarmCount(_trackSegmentPrefab, segmentCount);
+            AddPrewarmCount(_gatePrefab, _resolvedGates.Count);
+            AddPrewarmCount(_enemyGroupPrefab, _resolvedEnemyGroups.Count);
+            AddPrewarmCount(_finishLinePrefab, 1);
+            AddPrewarmCount(_bonusCratePrefab, Mathf.Max(0, CurrentLevel.bonusCrateCount));
+            AddPrewarmCount(_bonusEndPrefab, 1);
+
+            if (CurrentLevel.hasBoss)
+            {
+                GameObject bossPrefab = CurrentLevel.bossDefinition != null && CurrentLevel.bossDefinition.bossPrefab != null
+                    ? CurrentLevel.bossDefinition.bossPrefab
+                    : _bossPrefab;
+                AddPrewarmCount(bossPrefab, 1);
+            }
+
+            for (int i = 0; i < _resolvedObstacles.Count; i++)
+            {
+                ObstacleSpawnData data = _resolvedObstacles[i];
+                ObstacleDefinition definition = data.definition;
+                GameObject obstaclePrefab = definition != null && definition.prefab != null ? definition.prefab : _obstaclePrefab;
+                AddPrewarmCount(obstaclePrefab, 1);
+            }
+
+            foreach (KeyValuePair<GameObject, int> pair in _levelPrefabPrewarmCounts)
+            {
+                _poolManager.Prewarm(pair.Key, pair.Value);
+            }
+        }
+
+        private void AddPrewarmCount(GameObject prefab, int count)
+        {
+            if (prefab == null || count <= 0)
+            {
+                return;
+            }
+
+            _levelPrefabPrewarmCounts.TryGetValue(prefab, out int current);
+            _levelPrefabPrewarmCounts[prefab] = current + count;
+        }
+
+        private GameObject SpawnLevelObject(GameObject prefab, Vector3 position)
+        {
+            if (_poolManager != null)
+            {
+                return _poolManager.Get(prefab, position, Quaternion.identity, _levelRoot).gameObject;
+            }
+
+            return Instantiate(prefab, position, Quaternion.identity, _levelRoot);
+        }
+
+        private static T GetLevelComponent<T>(GameObject instance) where T : Component
+        {
+            if (instance == null)
+            {
+                return null;
+            }
+
+            if (instance.TryGetComponent(out PooledObject pooled))
+            {
+                return pooled.GetCachedComponent<T>();
+            }
+
+            instance.TryGetComponent(out T component);
+            return component;
+        }
+
         private void ClearLevel()
         {
             for (int i = 0; i < _spawned.Count; i++)
             {
-                if (_spawned[i] != null)
+                GameObject spawned = _spawned[i];
+                if (spawned == null)
                 {
-                    Destroy(_spawned[i]);
+                    continue;
+                }
+
+                if (spawned.TryGetComponent(out PooledObject pooled) && pooled.Owner != null)
+                {
+                    pooled.Release();
+                }
+                else
+                {
+                    Destroy(spawned);
                 }
             }
             _spawned.Clear();

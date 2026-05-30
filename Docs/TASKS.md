@@ -1376,7 +1376,7 @@ Acceptance Criteria:
 
 ## 9.1 Mobile Performance Pass
 
-Status: In Progress; Runtime Frame Pacing, Pool Prewarm, Formation Update, Runtime Dependency Wiring, Instanced Material, and Pool Validation Baseline Implemented
+Status: In Progress; Runtime Frame Pacing, Pool Prewarm, Formation Update, Runtime Dependency Wiring, Instanced Material, Level Fixture Pooling, and Pool Validation Baseline Implemented
 Priority: Critical
 
 Tasks:
@@ -1398,6 +1398,7 @@ Tasks:
 - [x] Cache pooled-object component lookups for repeated projectile, soldier, floating text, and particle checkouts.
 - [x] Remove redundant crowd-label rotation updates and share main-camera lookup across billboard labels.
 - [x] Share main-camera lookup across pooled floating text feedback.
+- [x] Pool level fixtures for track segments, gates, enemy groups, obstacles, bosses, finish triggers, bonus crates, and bonus-end triggers across level rebuilds.
 
 Acceptance Criteria:
 
@@ -1409,6 +1410,7 @@ Acceptance Criteria:
 - Pool checkouts avoid repeated `GetComponent<T>()` lookups for cached pooled components.
 - World-space labels avoid duplicate per-frame camera/rotation work.
 - Pooled floating text avoids per-frame `Camera.main` lookups.
+- Level rebuilds reuse pooled fixture objects instead of destroying and instantiating the full level layout.
 
 ---
 

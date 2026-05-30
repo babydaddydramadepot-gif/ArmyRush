@@ -2704,6 +2704,33 @@ Physical iPhone deployment still requires signing/provisioning. Continue hands-o
 
 ---
 
+System:
+
+Level Fixture Pooling Optimization
+
+Files:
+
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Level/FinishLineTrigger.cs
+Assets/_Project/Scripts/Level/BonusEndTrigger.cs
+Assets/_Project/Scripts/Enemies/EnemyGroup.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Moved level rebuild objects onto the existing pool manager path. Track segments, gates, enemy groups, obstacle variants, boss prefabs, finish triggers, bonus crates, and bonus-end triggers now prewarm per level and recycle through `PooledObject` instead of being destroyed and instantiated every rebuild. Reused finish and bonus-end triggers reset their one-shot state during configuration, and pooled enemy groups release child unit visuals when disabled.
+
+Result:
+
+Unity production validation passed. Level transitions and retries now avoid full fixture churn, better aligning the level construction path with the project-wide pooling requirement and 60 FPS mobile target.
+
+Follow Up:
+
+Profile retry/next-level transitions on simulator and physical device to tune prewarm counts and confirm no level-object state leaks remain.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2736,7 +2763,7 @@ Boss Systems
 
 Optimization
 
-35%
+36%
 
 Polish
 

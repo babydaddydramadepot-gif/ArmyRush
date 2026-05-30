@@ -17,6 +17,7 @@ namespace ArmyRush
         public void Configure(RunManager runManager)
         {
             _runManager = runManager;
+            _triggered = false;
         }
 
         private void OnTriggerEnter(Collider other)
