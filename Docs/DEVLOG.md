@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-54%
+55%
 
 Last Updated:
 
@@ -1481,11 +1481,40 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Enemy Defeat Rewards
+
+Files:
+
+Assets/_Project/Scripts/Enemies/EnemyGroup.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added enemy-group coin rewards to the combat loop. Level spawning now calculates a scaled coin reward per enemy group from `GlobalTuning.enemyCoinValue` and level index, passes it into `EnemyGroup`, and cleared groups add those coins through the run reward pipeline with coin-burst feedback.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Reward calculation now includes level completion, enemy clears, obstacle clears, boss rewards, bonus crates, survivor bonus, and coin multiplier upgrades.
+
+Follow Up:
+
+Balance enemy reward values against enemy density and early upgrade costs during manual level QA.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-43%
+44%
 
 UI Systems
 
@@ -1505,7 +1534,7 @@ Level Systems
 
 Progression Systems
 
-46%
+47%
 
 Boss Systems
 

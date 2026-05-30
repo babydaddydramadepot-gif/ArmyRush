@@ -942,17 +942,17 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Functional Pass Implemented; Enemy/Obstacle Reward Balance Pending
+Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, and Multiplier Rewards; Economy Balance QA Pending
 Priority: High
 
 Tasks:
 
-- Calculate level completion reward.
-- Calculate enemy rewards.
-- Calculate obstacle rewards.
-- Calculate boss rewards.
-- Calculate bonus run crate rewards.
-- Apply coin multipliers.
+- [x] Calculate level completion reward.
+- [x] Calculate enemy rewards.
+- [x] Calculate obstacle rewards.
+- [x] Calculate boss rewards.
+- [x] Calculate bonus run crate rewards.
+- [x] Apply coin multipliers.
 
 Acceptance Criteria:
 

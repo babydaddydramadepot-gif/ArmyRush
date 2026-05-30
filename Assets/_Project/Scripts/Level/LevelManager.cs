@@ -275,11 +275,14 @@ namespace ArmyRush
                 return;
             }
 
+            RunManager runManager = FindAnyObjectByType<RunManager>();
             foreach (EnemyGroupSpawnData data in CurrentLevel.enemyGroups)
             {
                 GameObject enemyObject = Instantiate(_enemyGroupPrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
                 EnemyGroup enemy = enemyObject.GetComponent<EnemyGroup>();
-                enemy?.Configure(data.count, data.healthPerUnit, _enemyUnitPrefab, _poolManager);
+                float rewardPerEnemy = (_tuning != null ? _tuning.enemyCoinValue : 2) + Mathf.Max(0, CurrentLevel.levelIndex - 1) * 0.25f;
+                int reward = Mathf.RoundToInt(data.count * rewardPerEnemy);
+                enemy?.Configure(data.count, data.healthPerUnit, _enemyUnitPrefab, _poolManager, reward, runManager);
                 _spawned.Add(enemyObject);
             }
         }

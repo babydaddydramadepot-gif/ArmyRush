@@ -10,11 +10,14 @@ namespace ArmyRush
         [SerializeField] private PoolManager _poolManager;
         [SerializeField] private TextMesh _countLabel;
         [SerializeField] private Damageable _damageable;
+        [SerializeField] private int _coinReward = 10;
 
         private readonly List<SoldierUnitVisual> _units = new List<SoldierUnitVisual>();
         private int _unitCount;
         private int _healthPerUnit;
         private int _lastDisplayedUnitCount;
+        private RunManager _runManager;
+        private bool _rewardClaimed;
 
         private void Awake()
         {
@@ -47,11 +50,19 @@ namespace ArmyRush
 
         public void Configure(int count, int healthPerUnit, GameObject unitPrefab, PoolManager poolManager)
         {
+            Configure(count, healthPerUnit, unitPrefab, poolManager, _coinReward, _runManager);
+        }
+
+        public void Configure(int count, int healthPerUnit, GameObject unitPrefab, PoolManager poolManager, int coinReward, RunManager runManager)
+        {
             _unitCount = Mathf.Max(1, count);
             _healthPerUnit = Mathf.Max(1, healthPerUnit);
             _enemyUnitPrefab = unitPrefab;
             _poolManager = poolManager;
+            _coinReward = Mathf.Max(0, coinReward);
+            _runManager = runManager;
             _lastDisplayedUnitCount = _unitCount;
+            _rewardClaimed = false;
 
             if (_damageable == null)
             {
@@ -117,8 +128,22 @@ namespace ArmyRush
         private void ClearGroup()
         {
             VfxManager.SpawnFloatingText("CLEAR", transform.position + Vector3.up * 2.15f, new Color(1f, 0.85f, 0.18f));
+            ClaimReward();
             SyncUnits(0);
             gameObject.SetActive(false);
+        }
+
+        private void ClaimReward()
+        {
+            if (_rewardClaimed || _coinReward <= 0 || _runManager == null)
+            {
+                return;
+            }
+
+            _rewardClaimed = true;
+            Vector3 rewardPosition = transform.position + Vector3.up * 1.25f;
+            _runManager.AddCombatCoins(_coinReward, rewardPosition);
+            VfxManager.Spawn(VfxCue.CoinBurst, rewardPosition);
         }
 
         private void SyncUnits(int count)
