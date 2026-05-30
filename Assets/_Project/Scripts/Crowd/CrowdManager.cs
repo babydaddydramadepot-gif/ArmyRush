@@ -14,6 +14,7 @@ namespace ArmyRush
 
         private readonly List<SoldierUnitVisual> _soldiers = new List<SoldierUnitVisual>();
         private int _logicalCount;
+        private int _shootFeedbackCursor;
         private bool _hasInitializedCount;
 
         public event Action<int> CountChanged;
@@ -91,6 +92,24 @@ namespace ArmyRush
             }
 
             SetCount(_logicalCount - amount);
+        }
+
+        public void PlayShootFeedback(int requestedUnits)
+        {
+            if (_soldiers.Count == 0 || requestedUnits <= 0)
+            {
+                return;
+            }
+
+            int feedbackCount = Mathf.Min(requestedUnits, _soldiers.Count, 16);
+            int step = Mathf.Max(1, _soldiers.Count / feedbackCount);
+            for (int i = 0; i < feedbackCount; i++)
+            {
+                int index = (_shootFeedbackCursor + i * step) % _soldiers.Count;
+                _soldiers[index].PlayShootKick();
+            }
+
+            _shootFeedbackCursor = (_shootFeedbackCursor + 1) % _soldiers.Count;
         }
 
         private void SyncVisualCount()

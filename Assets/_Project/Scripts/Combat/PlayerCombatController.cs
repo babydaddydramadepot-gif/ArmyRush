@@ -109,6 +109,7 @@ namespace ArmyRush
             int projectileCount = Mathf.Clamp(_crowd.Count / 12 + 1, 1, _tuning.projectileVisualBurst);
             int damagePerProjectile = Mathf.Max(1, Mathf.CeilToInt(totalDamage / (float)projectileCount));
             Vector3 origin = _aimOrigin != null ? _aimOrigin.position : transform.position + Vector3.up * 0.8f;
+            _crowd.PlayShootFeedback(projectileCount + 1);
             VfxManager.Spawn(VfxCue.MuzzleFlash, origin + Vector3.forward * 0.35f);
 
             for (int i = 0; i < projectileCount; i++)

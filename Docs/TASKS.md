@@ -442,17 +442,18 @@ Acceptance Criteria:
 
 ## 1.4 Production Soldier Visuals
 
-Status: In Progress; Procedural Low-Poly Visual Pass Implemented
+Status: In Progress; Procedural Low-Poly Visual and Spawn/Shoot/Death Animation Pass Implemented
 Priority: Critical
 
 Tasks:
 
 - Create stylized blue soldier prefab.
 - Soldier must include body, head, helmet, vest, weapon, boots, and team color material.
-- Add run animation.
-- Add shooting animation.
-- Add hit/death animation.
-- Add spawn animation.
+- [x] Add run animation.
+- [x] Add shooting animation.
+- Add hit reaction animation.
+- [x] Add death animation.
+- [x] Add spawn animation.
 - Add victory animation.
 
 Acceptance Criteria:
@@ -540,13 +541,14 @@ Acceptance Criteria:
 
 ## 1.8 Production Enemy Visuals
 
-Status: In Progress; Procedural Low-Poly Visual Pass Implemented
+Status: In Progress; Procedural Low-Poly Visual and Run/Death Animation Pass Implemented
 Priority: Critical
 
 Tasks:
 
 - Create stylized red enemy soldier prefab.
-- Add enemy run, shoot, hit, death animations.
+- [x] Add enemy run and death animations.
+- Add enemy shoot and hit reaction animations.
 - Add team color material.
 - Ensure enemy silhouette differs from player.
 
@@ -560,14 +562,14 @@ Acceptance Criteria:
 
 ## 1.9 Crowd Combat Resolution
 
-Status: Functional Pass Implemented; VFX/Audio Polish Pending
+Status: Functional Pass Implemented with Animated Unit Removal; QA Pending
 Priority: Critical
 
 Tasks:
 
 - Implement collision-based crowd combat.
 - Resolve player vs enemy count correctly.
-- Remove defeated units with animation.
+- [x] Remove defeated units with animation.
 - Continue level if player survives.
 - Trigger failure if player reaches zero.
 - Add VFX and audio.
@@ -659,13 +661,13 @@ Acceptance Criteria:
 
 ## 2.3 Destruction VFX
 
-Status: Functional Pass Implemented; Smoke/Explosive Variants Pending
+Status: Functional Pass Implemented; Explosive Variants Pending
 Priority: High
 
 Tasks:
 
 - Add impact sparks.
-- Add smoke puffs.
+- [x] Add smoke puffs.
 - Add explosion effects for explosive obstacles.
 - Add debris bursts.
 - Add camera shake for large destruction.
@@ -1308,16 +1310,16 @@ Acceptance Criteria:
 
 ## 8.4 Animation Polish Pass
 
-Status: Not Started
+Status: In Progress; Button/Reward/Unit Animation Pass Implemented
 Priority: High
 
 Tasks:
 
-- Add button bounce animations.
-- Add reward count-up animation.
+- [x] Add button bounce animations.
+- [x] Add reward count-up animation.
 - Add gate punch animation.
-- Add unit spawn animation.
-- Add unit death animation.
+- [x] Add unit spawn animation.
+- [x] Add unit death animation.
 - Add boss defeat animation.
 - Add victory celebration animation.
 
@@ -1361,7 +1363,7 @@ Acceptance Criteria:
 
 ## 9.2 Safe Area Pass
 
-Status: Not Started
+Status: Functional Pass Implemented; Device Matrix QA Pending
 Priority: Critical
 
 Tasks:

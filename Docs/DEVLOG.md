@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-36%
+37%
 
 Last Updated:
 
@@ -747,6 +747,36 @@ Date:
 
 System:
 
+Procedural Unit Animation Polish
+
+Files:
+
+Assets/_Project/Scripts/Crowd/SoldierUnitVisual.cs
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added pooled procedural animation polish for crowd and enemy units. Soldier visuals now reset cleanly on spawn, pop in from a small scale, kick their weapon/body during sampled firing volleys, and play a short detached death tumble before returning to the pool. Crowd shooting now triggers sampled unit recoil instead of only spawning muzzle flashes and projectiles.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Unit removal is no longer instant, combat has more readable motion, and pooling remains intact because death animation releases units back through `PooledObject`.
+
+Follow Up:
+
+Add explicit hit reactions, gate punch animation, victory celebration poses, and authored boss defeat animation during the broader animation polish pass.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Safe Area Fitter Hardening
 
 Files:
@@ -953,7 +983,7 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 Gameplay Systems
 
-37%
+38%
 
 UI Systems
 
@@ -961,7 +991,7 @@ UI Systems
 
 Visual Systems
 
-35%
+36%
 
 Audio Systems
 
@@ -985,7 +1015,7 @@ Optimization
 
 Polish
 
-24%
+26%
 
 Release Readiness
 
@@ -1073,7 +1103,7 @@ All gameplay-related changes belong here.
 
 ## Initial State
 
-First functional pass implemented for runner movement, crowd count, gates, shooting, enemy groups, obstacles, finish, rewards, and run state. Manual play-mode QA remains pending.
+First functional pass implemented for runner movement, crowd count, gates, shooting with sampled unit recoil, enemy groups, animated unit removal, obstacles, finish, rewards, and run state. Manual play-mode QA remains pending.
 
 ---
 
@@ -1097,7 +1127,7 @@ All visual changes belong here.
 
 ## Initial State
 
-Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, and finish line. Final art polish and VFX pass remain pending.
+Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, finish line, and procedural unit spawn/shoot/death motion. Final art polish and VFX pass remain pending.
 
 ---
 
