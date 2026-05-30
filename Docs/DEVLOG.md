@@ -200,6 +200,39 @@ Manual play-mode QA is still required to validate feel, timing, touch ergonomics
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Floating Feedback VFX
+
+Files:
+
+Assets/_Project/Scripts/VFX/FloatingText.cs
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/Gates/GateController.cs
+Assets/_Project/Scripts/Combat/Damageable.cs
+Assets/_Project/Scripts/Enemies/EnemyGroup.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/VFX/PF_FloatingText.prefab
+
+Summary:
+
+Added pooled floating text feedback for gate math, projectile damage, enemy clears, and coin rewards. Regenerated the Game scene so `VfxManager` and `PF_FloatingText` are wired into the runtime pool.
+
+Result:
+
+Unity batch generation and validation both pass with no compiler errors or warnings. Gameplay interactions now have readable on-screen feedback instead of only hidden count math.
+
+Follow Up:
+
+Add final particle effects for hit sparks, gate bursts, coin bursts, obstacle debris, victory fireworks, and boss explosions.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -368,7 +401,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Basic projectile tracer and gate pulse feedback implemented. Dedicated pooled VFX manager and final particle assets remain pending.
+Basic projectile tracer, gate pulse feedback, pooled floating text, damage feedback, clear feedback, and coin reward text implemented. Final particle assets remain pending.
 
 ---
 

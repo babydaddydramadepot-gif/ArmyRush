@@ -59,6 +59,7 @@ namespace ArmyRush
 
             _used = true;
             Apply(crowd);
+            VfxManager.SpawnFloatingText(GetLabel(), crowd.transform.position + Vector3.up * 2.45f, IsPositive() ? new Color(0.2f, 1f, 0.65f) : new Color(1f, 0.25f, 0.15f));
             if (_burst != null)
             {
                 _burst.Play();

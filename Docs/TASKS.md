@@ -172,6 +172,7 @@ Implementation Pass 1 Result:
 - Configured portrait-only orientation and iPhone/iPad target support.
 - Unity batch mode generation completed with no compiler errors or warnings in `/tmp/armyrush_unity_build.log`.
 - Unity batch mode validation completed with no compiler errors or warnings in `/tmp/armyrush_unity_validate.log`.
+- Added pooled floating text feedback for gate changes, damage, enemy clears, and coin rewards.
 - Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
 
 ---
@@ -1162,7 +1163,7 @@ Acceptance Criteria:
 
 ## 7.3 VFX System
 
-Status: Not Started
+Status: Functional Pass Implemented; Particle Library Pending
 Priority: High
 
 Tasks:
@@ -1182,7 +1183,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: Not Started
+Status: In Progress; Floating Text and Projectile Tracers Implemented
 Priority: High
 
 Add VFX for:

@@ -88,6 +88,10 @@ namespace ArmyRush
             }
 
             SetState(RunState.Victory);
+            if (_crowd != null)
+            {
+                VfxManager.SpawnFloatingText("+" + _runCoins + " COINS", _crowd.transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
+            }
             _gameplayUI?.ShowVictory(_runCoins);
         }
 

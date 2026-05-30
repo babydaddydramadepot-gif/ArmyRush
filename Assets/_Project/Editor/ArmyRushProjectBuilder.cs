@@ -190,6 +190,7 @@ public static class ArmyRushProjectBuilder
         prefabs.enemyGroup = CreateEnemyGroupPrefab(materials, meshes);
         prefabs.obstacle = CreateObstaclePrefab(materials, meshes);
         prefabs.finishLine = CreateFinishLinePrefab(materials, meshes);
+        prefabs.floatingText = CreateFloatingTextPrefab();
         return prefabs;
     }
 
@@ -324,6 +325,18 @@ public static class ArmyRushProjectBuilder
         TextMesh label = CreateWorldText("FinishLabel", root.transform, "FINISH", new Vector3(0f, 2.56f, -0.08f), 0.13f, Color.white);
         label.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
         GameObject prefab = SavePrefab(root, PrefabPath + "/Levels/PF_FinishLine.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
+    private static GameObject CreateFloatingTextPrefab()
+    {
+        GameObject root = new GameObject("PF_FloatingText");
+        root.AddComponent<PooledObject>();
+        FloatingText floatingText = root.AddComponent<FloatingText>();
+        TextMesh label = CreateWorldText("Label", root.transform, "+10", Vector3.zero, 0.16f, Color.white);
+        SetObject(floatingText, "_label", label);
+        GameObject prefab = SavePrefab(root, PrefabPath + "/VFX/PF_FloatingText.prefab");
         Object.DestroyImmediate(root);
         return prefab;
     }
@@ -478,6 +491,7 @@ public static class ArmyRushProjectBuilder
         RunnerInputController input = gameRoot.AddComponent<RunnerInputController>();
         RunManager run = gameRoot.AddComponent<RunManager>();
         LevelManager levelManager = gameRoot.AddComponent<LevelManager>();
+        VfxManager vfx = gameRoot.AddComponent<VfxManager>();
 
         GameObject player = new GameObject("PlayerRoot");
         player.transform.position = Vector3.zero;
@@ -531,6 +545,7 @@ public static class ArmyRushProjectBuilder
 
         playerController.Configure(tuning, input, crowd, run);
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
+        vfx.Configure(pool, prefabs.floatingText);
 
         levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.finishLine, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
@@ -654,6 +669,10 @@ public static class ArmyRushProjectBuilder
         if (ui == null)
         {
             failures.Add("Game scene is missing GameplayUI.");
+        }
+        if (Object.FindAnyObjectByType<VfxManager>() == null)
+        {
+            failures.Add("Game scene is missing VfxManager.");
         }
         if (pool == null)
         {
@@ -1115,5 +1134,6 @@ public static class ArmyRushProjectBuilder
         public GameObject enemyGroup;
         public GameObject obstacle;
         public GameObject finishLine;
+        public GameObject floatingText;
     }
 }
