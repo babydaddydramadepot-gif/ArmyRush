@@ -211,7 +211,7 @@ Acceptance Criteria:
 
 ## 0.2 Unity Project Validation
 
-Status: Completed for Editor Foundation; Current iOS Export Refreshed After Art/UI Passes; Signing-Independent Xcode Build Passed; Device QA Pending
+Status: Completed for Editor Foundation; Current iOS Export and Signing-Independent Xcode Build Refreshed After Art/UI Passes; Device QA Pending
 Priority: Critical
 
 Tasks:
@@ -1389,22 +1389,22 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Current Unity Xcode Export Passed After Art/UI Passes; Signing-Independent Xcode Build Passed; Simulator/Device Launch Pending
+Status: Current Unity Xcode Export and Signing-Independent Xcode Build Passed After Art/UI Passes; Simulator/Device Launch Pending
 Priority: Critical
 
 Tasks:
 
 - [x] Export Unity project to Xcode.
 - [x] Confirm Xcode project builds without signing requirements.
-- Confirm app launches in simulator if available.
-- Confirm app launches on device if available.
-- Fix iOS build errors.
+- [ ] Confirm app launches in simulator if available.
+- [ ] Confirm app launches on device if available.
+- [x] Fix signing-independent iOS build errors.
 
 Acceptance Criteria:
 
-- Xcode project builds without signing-independent errors.
-- App launches successfully.
-- No missing signing-independent build issues.
+- [x] Xcode project builds without signing-independent errors.
+- [ ] App launches successfully.
+- [x] No missing signing-independent build issues.
 
 ---
 

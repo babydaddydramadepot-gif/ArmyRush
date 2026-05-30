@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-68%
+69%
 
 Last Updated:
 
@@ -1514,6 +1514,34 @@ Date:
 
 System:
 
+Refreshed Xcode Build Validation
+
+Files:
+
+ArmyRush_iOSBuild/
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Built the refreshed Unity iOS export with `xcodebuild -project ArmyRush_iOSBuild/Unity-iPhone.xcodeproj -scheme Unity-iPhone -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= build`.
+
+Result:
+
+The refreshed Xcode project completed with `** BUILD SUCCEEDED **`. The only warnings were Unity-generated script phase dependency warnings and a nonfatal Unity Cloud Diagnostics symbol upload auth warning caused by missing `USYM_UPLOAD_AUTH_TOKEN`.
+
+Follow Up:
+
+Run simulator launch QA where possible and complete physical iPhone deployment once signing credentials/provisioning are available.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Silhouette Polish
 
 Files:
@@ -2012,7 +2040,7 @@ Polish
 
 Release Readiness
 
-14%
+16%
 
 ---
 
