@@ -2492,6 +2492,33 @@ Retry Unity validation and the iOS simulator export after the active Unity edito
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Optimization Validation Refresh
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran Unity production validation after the runtime dependency, static lookup, pooling, and world-label optimization commits. Retried the iOS simulator development export once the Unity editor released the project lock.
+
+Result:
+
+Unity production validation passed. Unity iOS simulator development export also completed with `Build Finished, Result: Success` and wrote a fresh generated Xcode project to `ArmyRush_iOSSimulatorBuild`, which was removed after verification to keep build output out of source control. Unity still logs expected editor-side shader import warnings and a transient licensing access-token message during batch startup, but the ArmyRush validation/export result is successful.
+
+Follow Up:
+
+Run an Xcode simulator compile/install pass after the next gameplay-facing slice, then continue profiling dense combat on device.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
