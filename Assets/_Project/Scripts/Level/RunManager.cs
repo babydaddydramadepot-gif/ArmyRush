@@ -171,6 +171,7 @@ namespace ArmyRush
                 return;
             }
 
+            AwardDefeatCoins();
             SetState(RunState.Defeat);
             _gameplayUI?.ShowDefeat(_runCoins);
 
@@ -190,6 +191,18 @@ namespace ArmyRush
             {
                 LoseRun();
             }
+        }
+
+        private void AwardDefeatCoins()
+        {
+            if (_bonusCoins <= 0 || _runCoins > 0)
+            {
+                return;
+            }
+
+            float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
+            _runCoins = Mathf.RoundToInt(_bonusCoins * coinMultiplier);
+            _economy?.AddCoins(_runCoins);
         }
 
         private void SetState(RunState state)

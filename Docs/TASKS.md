@@ -1081,7 +1081,7 @@ Acceptance Criteria:
 
 ## 6.5 Defeat Screen
 
-Status: Functional Pass Implemented with Animated Reveal, Revive Placeholder, and Upgrade Shortcut; Device Fit QA Pending
+Status: Functional Pass Implemented with Animated Reveal, Partial Rewards, Revive Placeholder, and Upgrade Shortcut; Device Fit QA Pending
 Priority: High
 
 Tasks:
@@ -1089,7 +1089,7 @@ Tasks:
 - Create defeat screen.
 - Add retry button.
 - [x] Add upgrade button.
-- Add coins earned.
+- [x] Add coins earned.
 - [x] Add revive architecture for rewarded ads future.
 
 Acceptance Criteria:

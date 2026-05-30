@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-53%
+54%
 
 Last Updated:
 
@@ -1135,6 +1135,34 @@ Date:
 
 System:
 
+Defeat Partial Reward Payout
+
+Files:
+
+Assets/_Project/Scripts/Level/RunManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Fixed defeat reward handling so coins earned before failure are not discarded. Combat/obstacle rewards accumulated during a run are now multiplied by the coin-reward upgrade, added to the economy on defeat, and shown by the defeat panel.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Defeat UI now has a real coins-earned path instead of only displaying zero unless the run reached victory.
+
+Follow Up:
+
+Tune whether partial defeat rewards should be generous or conservative once obstacle reward balance is tested on-device.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1477,7 +1505,7 @@ Level Systems
 
 Progression Systems
 
-45%
+46%
 
 Boss Systems
 
