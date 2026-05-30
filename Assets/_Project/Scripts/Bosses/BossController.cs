@@ -214,7 +214,7 @@ namespace ArmyRush
 
             if (ServiceLocator.TryGet(out AudioService audio))
             {
-                audio.Play(AudioCue.BossAttack);
+                audio.Play(GetAttackAudioCue(GetCurrentPattern()));
             }
             if (ServiceLocator.TryGet(out HapticsService haptics))
             {
@@ -392,7 +392,7 @@ namespace ArmyRush
 
             if (ServiceLocator.TryGet(out AudioService audio))
             {
-                audio.Play(AudioCue.BossAttack);
+                audio.Play(AudioCue.BossShockwaveAttack);
             }
             if (ServiceLocator.TryGet(out HapticsService haptics))
             {
@@ -612,6 +612,22 @@ namespace ArmyRush
             return radius;
         }
 
+        private static AudioCue GetAttackAudioCue(BossAttackPattern pattern)
+        {
+            switch (pattern)
+            {
+                case BossAttackPattern.MissileStrike:
+                    return AudioCue.BossMissileAttack;
+                case BossAttackPattern.ShockwaveSlam:
+                    return AudioCue.BossShockwaveAttack;
+                case BossAttackPattern.SuppressionBurst:
+                case BossAttackPattern.CannonVolley:
+                    return AudioCue.BossCannonAttack;
+                default:
+                    return AudioCue.BossAttack;
+            }
+        }
+
         private BossAttackPattern GetCurrentPattern()
         {
             return _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
@@ -665,7 +681,7 @@ namespace ArmyRush
                     CameraFollowRig.Shake(CameraShakeCue.BossDefeat);
                     if (ServiceLocator.TryGet(out AudioService audio))
                     {
-                        audio.Play(AudioCue.Hit);
+                        audio.Play(AudioCue.BossCrash);
                     }
                     if (ServiceLocator.TryGet(out HapticsService haptics))
                     {

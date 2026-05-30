@@ -21,6 +21,10 @@ namespace ArmyRush
         Upgrade,
         BossIntro,
         BossAttack,
+        BossCannonAttack,
+        BossMissileAttack,
+        BossShockwaveAttack,
+        BossCrash,
         BossDefeat,
         Victory,
         Defeat
@@ -109,8 +113,9 @@ namespace ArmyRush
 
             AudioSource source = _sources[_nextSourceIndex];
             _nextSourceIndex = (_nextSourceIndex + 1) % _sources.Count;
-            source.pitch = Random.Range(0.96f, 1.04f);
-            source.volume = Mathf.Clamp01(_saveService.Data.sfxVolume);
+            Vector2 pitchRange = GetPitchRange(cue);
+            source.pitch = Random.Range(pitchRange.x, pitchRange.y);
+            source.volume = Mathf.Clamp01(_saveService.Data.sfxVolume) * GetCueVolume(cue);
             source.PlayOneShot(clip);
         }
 
@@ -205,6 +210,10 @@ namespace ArmyRush
             _clips[AudioCue.Upgrade] = CreateArpeggio("SFX_Upgrade", 580f, 980f, 0.2f, 0.3f);
             _clips[AudioCue.BossIntro] = CreateArpeggio("SFX_BossIntro", 120f, 360f, 0.5f, 0.36f);
             _clips[AudioCue.BossAttack] = CreateTone("SFX_BossAttack", 96f, 0.22f, 0.32f, 0.08f);
+            _clips[AudioCue.BossCannonAttack] = CreateNoiseBurst("SFX_BossCannonAttack", 0.19f, 0.3f, 0.78f);
+            _clips[AudioCue.BossMissileAttack] = CreateSweep("SFX_BossMissileAttack", 980f, 180f, 0.34f, 0.28f);
+            _clips[AudioCue.BossShockwaveAttack] = CreateLayeredPulse("SFX_BossShockwaveAttack", 72f, 0.4f, 0.38f, 0.2f);
+            _clips[AudioCue.BossCrash] = CreateNoiseBurst("SFX_BossCrash", 0.52f, 0.42f, 0.36f);
             _clips[AudioCue.BossDefeat] = CreateNoiseBurst("SFX_BossDefeat", 0.42f, 0.36f, 0.62f);
             _clips[AudioCue.Victory] = CreateArpeggio("SFX_Victory", 520f, 1040f, 0.42f, 0.34f);
             _clips[AudioCue.Defeat] = CreateTone("SFX_Defeat", 140f, 0.32f, 0.28f, 0.01f);
@@ -272,6 +281,29 @@ namespace ArmyRush
             return clip;
         }
 
+        private static AudioClip CreateLayeredPulse(string name, float baseFrequency, float duration, float gain, float noiseBlend)
+        {
+            const int sampleRate = 22050;
+            int samples = Mathf.CeilToInt(sampleRate * duration);
+            float[] data = new float[samples];
+            uint seed = 98117u;
+            for (int i = 0; i < samples; i++)
+            {
+                seed = seed * 1664525u + 1013904223u;
+                float t = i / (float)sampleRate;
+                float normalized = i / (float)Mathf.Max(1, samples - 1);
+                float envelope = Mathf.Sin(normalized * Mathf.PI);
+                float thump = Mathf.Sin(baseFrequency * Mathf.PI * 2f * t);
+                float harmonic = Mathf.Sin(baseFrequency * 2.5f * Mathf.PI * 2f * t) * 0.35f;
+                float noise = ((seed >> 16) / 32768f) - 1f;
+                data[i] = Mathf.Lerp(thump + harmonic, noise, noiseBlend) * envelope * gain;
+            }
+
+            AudioClip clip = AudioClip.Create(name, samples, 1, sampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
         private static AudioClip CreateSweep(string name, float startFrequency, float endFrequency, float duration, float gain)
         {
             const int sampleRate = 22050;
@@ -291,6 +323,63 @@ namespace ArmyRush
             AudioClip clip = AudioClip.Create(name, samples, 1, sampleRate, false);
             clip.SetData(data, 0);
             return clip;
+        }
+
+        private static Vector2 GetPitchRange(AudioCue cue)
+        {
+            switch (cue)
+            {
+                case AudioCue.Shoot:
+                    return new Vector2(0.92f, 1.08f);
+                case AudioCue.CrowdGain:
+                case AudioCue.CrowdLoss:
+                    return new Vector2(0.94f, 1.06f);
+                case AudioCue.BossIntro:
+                case AudioCue.BossShockwaveAttack:
+                case AudioCue.BossCrash:
+                case AudioCue.BossDefeat:
+                    return new Vector2(0.98f, 1.02f);
+                case AudioCue.BossMissileAttack:
+                    return new Vector2(0.95f, 1.02f);
+                case AudioCue.CoinReward:
+                case AudioCue.Upgrade:
+                    return new Vector2(0.97f, 1.06f);
+                default:
+                    return new Vector2(0.96f, 1.04f);
+            }
+        }
+
+        private static float GetCueVolume(AudioCue cue)
+        {
+            switch (cue)
+            {
+                case AudioCue.Button:
+                    return 0.72f;
+                case AudioCue.Shoot:
+                    return 0.58f;
+                case AudioCue.Hit:
+                    return 0.72f;
+                case AudioCue.CrowdGain:
+                case AudioCue.CrowdLoss:
+                    return 0.7f;
+                case AudioCue.GatePass:
+                    return 0.64f;
+                case AudioCue.GatePositive:
+                case AudioCue.GateNegative:
+                    return 0.82f;
+                case AudioCue.BossIntro:
+                case AudioCue.BossCannonAttack:
+                case AudioCue.BossMissileAttack:
+                case AudioCue.BossShockwaveAttack:
+                case AudioCue.BossCrash:
+                case AudioCue.BossDefeat:
+                    return 0.92f;
+                case AudioCue.Victory:
+                case AudioCue.Defeat:
+                    return 0.88f;
+                default:
+                    return 0.78f;
+            }
         }
 
         private static AudioClip CreateMusicLoop()

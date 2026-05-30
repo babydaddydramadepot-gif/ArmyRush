@@ -2630,6 +2630,31 @@ Tune telegraph brightness and attack timing during hands-on boss-level playthrou
 
 ---
 
+System:
+
+Boss Audio Variant Polish
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added distinct procedural boss cues for cannon attacks, missile attacks, shockwave attacks, and helicopter crash impact. `AudioService` now applies cue-level volume and pitch profiles so frequent combat sounds sit below heavier boss beats, while boss attacks read with more identity alongside the new telegraph VFX.
+
+Result:
+
+Tank, helicopter, and mech attack warnings no longer share a single generic low tone, and the helicopter crash has a dedicated heavy audio beat instead of reusing the standard hit cue.
+
+Follow Up:
+
+Replace procedural boss cues with authored final SFX and tune the mix on physical device speakers.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2646,7 +2671,7 @@ Visual Systems
 
 Audio Systems
 
-32%
+34%
 
 Level Systems
 
@@ -2790,7 +2815,7 @@ All audio changes belong here.
 
 ## Initial State
 
-Centralized audio cue hooks, pooled procedural runtime SFX, procedural music loop, and persisted music/SFX volume settings implemented. Final authored clips and music remain pending.
+Centralized audio cue hooks, pooled procedural runtime SFX with boss pattern variants, procedural music loop, and persisted music/SFX volume settings implemented. Final authored clips and music remain pending.
 
 ---
 
@@ -2882,7 +2907,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist with pooled procedural SFX playback including centralized coin reward audio and boss intro/attack/defeat cues, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback including centralized coin reward audio, boss intro/defeat cues, boss pattern attack variants, helicopter crash audio, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 

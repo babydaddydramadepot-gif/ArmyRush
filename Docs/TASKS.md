@@ -1175,7 +1175,7 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: Functional Pass Complete with Procedural Runtime SFX; Final Authored Clips and Music Pending
+Status: Functional Pass Complete with Procedural Runtime SFX and Boss Variant Cues; Final Authored Clips and Music Pending
 Priority: High
 
 Add SFX for:
@@ -1197,6 +1197,8 @@ Add SFX for:
 - [x] Defeat
 - [x] Boss intro
 - [x] Boss attack
+- [x] Boss pattern-specific attack cues
+- [x] Helicopter crash cue
 - [x] Boss defeat
 
 Acceptance Criteria:
