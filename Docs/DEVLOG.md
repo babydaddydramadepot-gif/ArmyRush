@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-29%
+30%
 
 Last Updated:
 
@@ -740,11 +740,42 @@ Profile real device frame time during level load, large gate multipliers, and bo
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Camera Impact Feedback
+
+Files:
+
+Assets/_Project/Scripts/Camera/CameraFollowRig.cs
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a cue-based camera shake API to the follow rig and connected it to high-impact gameplay moments. Obstacle destruction now produces a small shake, successful boss attacks produce a stronger hit shake, boss defeat produces a heavier burst, and victory adds a brief celebration shake.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Camera impact feedback now supports the documented destruction, boss, and victory polish requirements without adding per-event camera references.
+
+Follow Up:
+
+Tune amplitudes on device to keep the effect satisfying without hurting portrait readability or causing motion discomfort.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-36%
+37%
 
 UI Systems
 
@@ -752,7 +783,7 @@ UI Systems
 
 Visual Systems
 
-31%
+32%
 
 Audio Systems
 
@@ -776,7 +807,7 @@ Optimization
 
 Polish
 
-17%
+18%
 
 Release Readiness
 

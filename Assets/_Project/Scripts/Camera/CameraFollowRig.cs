@@ -2,6 +2,14 @@ using UnityEngine;
 
 namespace ArmyRush
 {
+    public enum CameraShakeCue
+    {
+        ObstacleBreak,
+        BossHit,
+        BossDefeat,
+        Victory
+    }
+
     public sealed class CameraFollowRig : MonoBehaviour
     {
         [SerializeField] private GlobalTuning _tuning;
@@ -12,11 +20,22 @@ namespace ArmyRush
         private float _shakeTime;
         private float _shakeAmplitude;
 
+        private static CameraFollowRig _active;
+
         private void Awake()
         {
+            _active = this;
             if (_camera == null)
             {
                 _camera = GetComponentInChildren<Camera>();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_active == this)
+            {
+                _active = null;
             }
         }
 
@@ -56,6 +75,35 @@ namespace ArmyRush
         {
             _shakeAmplitude = Mathf.Max(_shakeAmplitude, amplitude);
             _shakeTime = Mathf.Max(_shakeTime, duration);
+        }
+
+        public static void Shake(CameraShakeCue cue)
+        {
+            if (_active == null)
+            {
+                _active = FindAnyObjectByType<CameraFollowRig>();
+            }
+
+            if (_active == null)
+            {
+                return;
+            }
+
+            switch (cue)
+            {
+                case CameraShakeCue.ObstacleBreak:
+                    _active.Shake(0.08f, 0.12f);
+                    break;
+                case CameraShakeCue.BossHit:
+                    _active.Shake(0.13f, 0.18f);
+                    break;
+                case CameraShakeCue.BossDefeat:
+                    _active.Shake(0.22f, 0.26f);
+                    break;
+                case CameraShakeCue.Victory:
+                    _active.Shake(0.1f, 0.2f);
+                    break;
+            }
         }
     }
 }

@@ -197,6 +197,7 @@ namespace ArmyRush
                 int damage = _definition != null ? _definition.GetAttackDamage(_levelIndex) : 8;
                 _targetCrowd.Remove(damage);
                 VfxManager.SpawnFloatingText("HIT -" + damage, current + Vector3.up * 2.5f, new Color(1f, 0.18f, 0.1f));
+                CameraFollowRig.Shake(CameraShakeCue.BossHit);
                 if (ServiceLocator.TryGet(out AudioService audio))
                 {
                     audio.Play(AudioCue.Hit);
@@ -237,6 +238,7 @@ namespace ArmyRush
             UpdateLabel();
             VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 1.1f);
             VfxManager.SpawnFloatingText("BOSS DOWN", transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
+            CameraFollowRig.Shake(CameraShakeCue.BossDefeat);
             BossHealthChanged?.Invoke(this, 0f);
             BossDefeated?.Invoke(this);
             if (ServiceLocator.TryGet(out AudioService audio))

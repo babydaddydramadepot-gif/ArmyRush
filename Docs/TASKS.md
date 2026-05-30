@@ -392,7 +392,7 @@ Acceptance Criteria:
 
 ## 1.2 Follow Camera
 
-Status: Functional Pass Implemented; Framing QA Pending
+Status: Functional Pass Implemented with Impact Shake; Framing QA Pending
 Priority: Critical
 
 Tasks:
@@ -403,6 +403,7 @@ Tasks:
 - Camera shows upcoming gates and enemies.
 - Camera does not rotate freely.
 - Camera avoids jitter.
+- Add camera shake for obstacle, boss, and victory moments.
 
 Acceptance Criteria:
 
@@ -658,7 +659,7 @@ Acceptance Criteria:
 
 ## 2.3 Destruction VFX
 
-Status: Functional Pass Implemented; Smoke/Camera Shake/Explosive Variants Pending
+Status: Functional Pass Implemented; Smoke/Explosive Variants Pending
 Priority: High
 
 Tasks:

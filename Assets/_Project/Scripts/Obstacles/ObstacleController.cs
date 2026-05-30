@@ -61,6 +61,7 @@ namespace ArmyRush
         private void OnDied(Damageable damageable)
         {
             VfxManager.Spawn(VfxCue.ObstacleDebris, transform.position + Vector3.up * 0.75f);
+            CameraFollowRig.Shake(CameraShakeCue.ObstacleBreak);
 
             if (_destroyEffect != null)
             {

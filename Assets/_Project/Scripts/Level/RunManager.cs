@@ -144,6 +144,7 @@ namespace ArmyRush
                 VfxManager.Spawn(VfxCue.VictoryBurst, _crowd.transform.position + Vector3.up * 1.6f);
                 VfxManager.SpawnFloatingText("+" + _runCoins + " COINS", _crowd.transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
             }
+            CameraFollowRig.Shake(CameraShakeCue.Victory);
             _gameplayUI?.ShowVictory(_runCoins);
         }
 
