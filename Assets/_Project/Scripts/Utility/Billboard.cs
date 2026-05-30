@@ -7,15 +7,32 @@ namespace ArmyRush
         private static Camera _mainCamera;
         private Camera _camera;
 
-        private void LateUpdate()
+        public static Camera SharedCamera
         {
-            if (_camera == null)
+            get
             {
                 if (_mainCamera == null)
                 {
                     _mainCamera = Camera.main;
                 }
-                _camera = _mainCamera;
+
+                return _mainCamera;
+            }
+        }
+
+        public static void RegisterCamera(Camera camera)
+        {
+            if (camera != null)
+            {
+                _mainCamera = camera;
+            }
+        }
+
+        private void LateUpdate()
+        {
+            if (_camera == null)
+            {
+                _camera = SharedCamera;
             }
 
             if (_camera != null)

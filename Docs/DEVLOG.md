@@ -2655,6 +2655,32 @@ Replace procedural boss cues with authored final SFX and tune the mix on physica
 
 ---
 
+System:
+
+Floating Text Camera Lookup Optimization
+
+Files:
+
+Assets/_Project/Scripts/Utility/Billboard.cs
+Assets/_Project/Scripts/Camera/CameraFollowRig.cs
+Assets/_Project/Scripts/VFX/FloatingText.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Moved pooled floating-text facing logic onto the shared billboard camera cache and registered the gameplay camera from `CameraFollowRig`. Floating text now reuses the same cached camera reference as billboard labels instead of resolving `Camera.main` every frame while damage/reward text is active.
+
+Result:
+
+Runtime world-space feedback has one less per-frame scene/tag lookup during combat-heavy moments, aligning the floating text path with the existing billboard-label optimization.
+
+Follow Up:
+
+Continue profiling remaining UI and pooled VFX update paths on simulator and device.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2687,7 +2713,7 @@ Boss Systems
 
 Optimization
 
-34%
+35%
 
 Polish
 
@@ -2863,7 +2889,7 @@ All performance improvements belong here.
 
 ## Initial State
 
-Runtime frame pacing setup, pool prewarm top-ups, player-crowd formation update reduction, generated material instancing, and pooling validation coverage are implemented. Device profiling remains pending.
+Runtime frame pacing setup, pool prewarm top-ups, player-crowd formation update reduction, generated material instancing, shared camera lookup for billboard/floating text feedback, and pooling validation coverage are implemented. Device profiling remains pending.
 
 ---
 

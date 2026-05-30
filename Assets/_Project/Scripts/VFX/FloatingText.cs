@@ -13,6 +13,7 @@ namespace ArmyRush
         private float _remaining;
         private Color _color;
         private Vector3 _startScale;
+        private Camera _camera;
 
         private void Awake()
         {
@@ -39,10 +40,13 @@ namespace ArmyRush
                 Color color = _color;
                 color.a = alpha;
                 _label.color = color;
-                Camera camera = Camera.main;
-                if (camera != null)
+                if (_camera == null)
                 {
-                    _label.transform.rotation = Quaternion.LookRotation(_label.transform.position - camera.transform.position, Vector3.up);
+                    _camera = Billboard.SharedCamera;
+                }
+                if (_camera != null)
+                {
+                    _label.transform.rotation = Quaternion.LookRotation(_label.transform.position - _camera.transform.position, Vector3.up);
                 }
             }
 

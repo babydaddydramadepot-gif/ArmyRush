@@ -31,6 +31,7 @@ namespace ArmyRush
             {
                 _camera = GetComponentInChildren<Camera>();
             }
+            Billboard.RegisterCamera(_camera);
             NormalizeCameraChild();
         }
 
