@@ -1435,7 +1435,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Unity Xcode Export, Signing-Independent Xcode Simulator Build, App Icon Packaging, Simulator Install/Launch, Screenshot, and Runtime Error Scan Passed; Physical Device Launch Pending
+Status: Latest Post-Boss Unity Xcode Export, Signing-Independent Xcode Simulator Build, App Icon Packaging, Simulator Install/Launch, Screenshot, and Runtime Error Scan Passed; Physical Device Launch Pending
 Priority: Critical
 
 Tasks:
@@ -1448,6 +1448,7 @@ Tasks:
 - [x] Assign branded iOS app icon across Unity iOS icon slots.
 - [x] Confirm simulator Xcode build no longer reports missing 1024x1024 App Store icon.
 - [x] Run refreshed post-mech Xcode simulator build, install, launch, screenshot, and targeted runtime log scan.
+- [x] Run refreshed post-boss Xcode simulator build, install, launch, screenshot, and targeted runtime log scan after boss telegraph, boss audio, and floating-text optimization work.
 
 Acceptance Criteria:
 
@@ -1487,7 +1488,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; Main Menu UI Crowding Fixed; Post-Mech Simulator Smoke Test Passed
+Status: In Progress; Simulator Input System Console Exception Fixed; Missing App Store Icon Warning Fixed; Main Menu UI Crowding Fixed; Post-Boss Simulator Smoke Test Passed
 Priority: Critical
 
 Tasks:
@@ -1497,6 +1498,7 @@ Tasks:
 - [x] Fix main-menu upgrade tile text/icon crowding on simulator-sized portrait screens.
 - [x] Correct reversed play icon sprite.
 - [x] Confirm post-mech simulator launch has no Unity runtime exception signatures.
+- [x] Confirm post-boss simulator launch has no Unity runtime exception signatures after latest VFX/audio/optimization changes.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

@@ -2681,6 +2681,29 @@ Continue profiling remaining UI and pooled VFX update paths on simulator and dev
 
 ---
 
+System:
+
+Post-Boss Simulator Build and Launch Validation
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran the full simulator validation chain after the boss telegraph VFX, boss audio variant, and floating-text camera lookup optimization work: Unity iOS simulator development export, signing-independent Xcode simulator build, install to the booted iPhone 17 Pro simulator, app launch, portrait screenshot capture, and a targeted runtime log scan for Unity exception signatures.
+
+Result:
+
+Unity export completed successfully, Xcode ended in `** BUILD SUCCEEDED **`, and the app installed and launched as `com.armyrush.game` on the iPhone 17 Pro simulator. The screenshot confirmed the portrait main menu, staged squad, upgrade grid, settings button, currency, and play CTA render correctly. The targeted runtime scan found no Unity exception, null-reference, missing-reference, argument-exception, crash, fatal, or unhandled-error signatures. Remaining messages were expected local-build or simulator noise: Unity Cloud Diagnostics symbol upload missing `USYM_UPLOAD_AUTH_TOKEN`, UnityRuntime simulator linker warnings, Apple CoreAudio preset chatter, and Apple networking/security diagnostics.
+
+Follow Up:
+
+Physical iPhone deployment still requires signing/provisioning. Continue hands-on gameplay QA for boss telegraph timing, boss audio mix, and upgrade-menu touch feel on device.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2721,7 +2744,7 @@ Polish
 
 Release Readiness
 
-28%
+29%
 
 ---
 
