@@ -64,10 +64,6 @@ namespace ArmyRush
             Vector3 rewardPosition = transform.position + Vector3.up * 1.3f;
             _runManager?.AddBonusCoins(_coinReward, rewardPosition);
             VfxManager.Spawn(VfxCue.CoinBurst, rewardPosition);
-            if (ServiceLocator.TryGet(out AudioService audio))
-            {
-                audio.Play(AudioCue.CoinReward);
-            }
             gameObject.SetActive(false);
         }
 

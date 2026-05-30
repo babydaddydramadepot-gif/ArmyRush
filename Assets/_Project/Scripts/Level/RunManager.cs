@@ -115,6 +115,10 @@ namespace ArmyRush
         {
             _bonusCoins += amount;
             VfxManager.SpawnFloatingText("+" + amount + " COINS", worldPosition + Vector3.up * 0.8f, new Color(1f, 0.78f, 0.12f));
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(AudioCue.CoinReward);
+            }
         }
 
         public void WinRun()

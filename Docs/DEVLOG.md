@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-59%
+60%
 
 Last Updated:
 
@@ -1487,6 +1487,36 @@ Date:
 
 System:
 
+Centralized Coin Reward Audio
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/Level/BonusCrateController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Moved coin reward audio into the shared run reward pipeline so enemy clears, obstacle clears, and bonus crates all use the same coin feedback path. Added a short coin-reward audio throttle in `AudioService` to prevent rapid reward bursts from stacking into overlapping noise.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Coin reward audio is now centralized alongside the floating text and coin burst reward feedback.
+
+Follow Up:
+
+Tune the reward cue gain and throttle against real device speakers during final audio QA.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Automated Level Data QA Baseline
 
 Files:
@@ -1641,7 +1671,7 @@ Visual Systems
 
 Audio Systems
 
-27%
+28%
 
 Level Systems
 
@@ -1661,7 +1691,7 @@ Optimization
 
 Polish
 
-35%
+36%
 
 Release Readiness
 
@@ -1877,7 +1907,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist with pooled procedural SFX playback including boss intro/attack/defeat cues, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback including centralized coin reward audio and boss intro/attack/defeat cues, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 

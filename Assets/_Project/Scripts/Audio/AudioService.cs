@@ -32,6 +32,7 @@ namespace ArmyRush
         private int _nextSourceIndex;
         private float _lastShootTime;
         private float _lastHitTime;
+        private float _lastCoinRewardTime;
 
         public AudioService(SaveService saveService)
         {
@@ -54,6 +55,10 @@ namespace ArmyRush
             {
                 return;
             }
+            if (cue == AudioCue.CoinReward && Time.unscaledTime - _lastCoinRewardTime < 0.12f)
+            {
+                return;
+            }
 
             if (cue == AudioCue.Shoot)
             {
@@ -62,6 +67,10 @@ namespace ArmyRush
             else if (cue == AudioCue.Hit)
             {
                 _lastHitTime = Time.unscaledTime;
+            }
+            else if (cue == AudioCue.CoinReward)
+            {
+                _lastCoinRewardTime = Time.unscaledTime;
             }
 
             if (!Application.isPlaying)
