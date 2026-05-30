@@ -268,6 +268,8 @@ public static class ArmyRushProjectBuilder
         prefabs.obstacleDebris = CreateParticleVfxPrefab("PF_VFX_ObstacleDebris", new Color(0.72f, 0.38f, 0.16f), 0.64f, 0.46f, 3.2f, 26, 0.16f, 0.48f, materials.vfxParticle);
         prefabs.victoryBurst = CreateParticleVfxPrefab("PF_VFX_VictoryBurst", new Color(0.22f, 1f, 0.48f), 1.05f, 0.72f, 3.7f, 44, 0.18f, 0.82f, materials.vfxParticle);
         prefabs.bossExplosion = CreateParticleVfxPrefab("PF_VFX_BossExplosion", new Color(1f, 0.34f, 0.08f), 1.1f, 0.72f, 4.2f, 46, 0.36f, 1.35f, materials.vfxParticle);
+        prefabs.smokePuff = CreateSmokeVfxPrefab("PF_VFX_SmokePuff", new Color(0.36f, 0.39f, 0.42f, 0.56f), 1.05f, 0.72f, 0.68f, 12, 0.42f, 0.34f, materials.vfxParticle);
+        prefabs.heavySmoke = CreateSmokeVfxPrefab("PF_VFX_HeavySmoke", new Color(0.25f, 0.26f, 0.28f, 0.62f), 1.42f, 1.05f, 0.52f, 20, 0.62f, 0.52f, materials.vfxParticle);
         return prefabs;
     }
 
@@ -570,6 +572,31 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
+    private static GameObject CreateSmokeVfxPrefab(
+        string name,
+        Color color,
+        float lifetime,
+        float particleLifetime,
+        float speed,
+        int burstCount,
+        float startSize,
+        float radius,
+        Material material)
+    {
+        GameObject root = new GameObject(name);
+        root.AddComponent<PooledObject>();
+        PooledParticleVfx pooledVfx = root.AddComponent<PooledParticleVfx>();
+        ParticleSystem particles = root.AddComponent<ParticleSystem>();
+
+        VfxManager.ConfigureSmokeParticleSystem(particles, color, lifetime, particleLifetime, speed, burstCount, startSize, radius, material);
+
+        pooledVfx.Configure(new[] { particles }, lifetime + 0.12f);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/VFX/" + name + ".prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
     private static LevelData[] CreateLevels(BossDefinition[] bosses)
     {
         List<LevelData> levels = new List<LevelData>();
@@ -806,7 +833,7 @@ public static class ArmyRushProjectBuilder
 
         playerController.Configure(tuning, input, crowd, run);
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
-        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.victoryBurst, prefabs.bossExplosion);
+        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.victoryBurst, prefabs.bossExplosion, prefabs.smokePuff, prefabs.heavySmoke);
 
         levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
@@ -1599,5 +1626,7 @@ public static class ArmyRushProjectBuilder
         public GameObject obstacleDebris;
         public GameObject victoryBurst;
         public GameObject bossExplosion;
+        public GameObject smokePuff;
+        public GameObject heavySmoke;
     }
 }

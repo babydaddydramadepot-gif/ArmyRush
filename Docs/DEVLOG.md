@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-32%
+33%
 
 Last Updated:
 
@@ -746,6 +746,38 @@ Date:
 
 System:
 
+Smoke VFX Variants
+
+Files:
+
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/VFX/PooledParticleVfx.cs
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added pooled smoke VFX cues for obstacle destruction and boss defeat. `VfxManager` now supports light and heavy smoke prefabs, creates runtime smoke templates for existing scenes, and exposes builder-created smoke prefabs for future generated scenes. Obstacle breaks spawn a dust puff, while boss defeats layer heavy smoke with offset smaller puffs.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. The required VFX list now has a functional pass for smoke coverage without runtime allocation spikes at impact sites.
+
+Follow Up:
+
+Replace procedural smoke styling with authored mobile-optimized particle art during the final VFX pass.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Defeat Fade Overlay
 
 Files:
@@ -840,7 +872,7 @@ UI Systems
 
 Visual Systems
 
-34%
+35%
 
 Audio Systems
 
@@ -864,7 +896,7 @@ Optimization
 
 Polish
 
-20%
+21%
 
 Release Readiness
 
@@ -1000,7 +1032,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin reward bursts, victory bursts, upgrade glow feedback, and defeat fade implemented. Final authored particle styling remains pending.
+Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, smoke variants, coin reward bursts, victory bursts, upgrade glow feedback, and defeat fade implemented. Final authored particle styling remains pending.
 
 ---
 
@@ -1088,7 +1120,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, boss explosion bursts, upgrade glow feedback, and defeat fade are present, but smoke variants and final authored styling remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, muzzle flashes, crowd gain/loss bursts, obstacle debris, smoke variants, coin bursts, bonus crate reward bursts, victory bursts, boss attack telegraphs, boss explosion bursts, upgrade glow feedback, and defeat fade are present, but final authored styling remains pending.
 
 Issue ID:
 

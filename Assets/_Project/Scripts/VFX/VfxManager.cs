@@ -13,7 +13,9 @@ namespace ArmyRush
         CoinBurst,
         ObstacleDebris,
         VictoryBurst,
-        BossExplosion
+        BossExplosion,
+        SmokePuff,
+        HeavySmoke
     }
 
     public sealed class VfxManager : MonoBehaviour
@@ -30,12 +32,16 @@ namespace ArmyRush
         [SerializeField] private GameObject _obstacleDebrisPrefab;
         [SerializeField] private GameObject _victoryBurstPrefab;
         [SerializeField] private GameObject _bossExplosionPrefab;
+        [SerializeField] private GameObject _smokePuffPrefab;
+        [SerializeField] private GameObject _heavySmokePrefab;
 
         private static VfxManager _active;
+        private Material _runtimeSmokeMaterial;
 
         private void Awake()
         {
             _active = this;
+            EnsureSmokePrefabs();
             if (_poolManager != null && _floatingTextPrefab != null)
             {
                 _poolManager.Prewarm(_floatingTextPrefab, 24);
@@ -50,6 +56,8 @@ namespace ArmyRush
             Prewarm(_obstacleDebrisPrefab, 8);
             Prewarm(_victoryBurstPrefab, 4);
             Prewarm(_bossExplosionPrefab, 4);
+            Prewarm(_smokePuffPrefab, 8);
+            Prewarm(_heavySmokePrefab, 4);
         }
 
         private void OnDestroy()
@@ -72,7 +80,9 @@ namespace ArmyRush
             GameObject coinBurstPrefab,
             GameObject obstacleDebrisPrefab,
             GameObject victoryBurstPrefab,
-            GameObject bossExplosionPrefab)
+            GameObject bossExplosionPrefab,
+            GameObject smokePuffPrefab,
+            GameObject heavySmokePrefab)
         {
             _poolManager = poolManager;
             _floatingTextPrefab = floatingTextPrefab;
@@ -86,6 +96,8 @@ namespace ArmyRush
             _obstacleDebrisPrefab = obstacleDebrisPrefab;
             _victoryBurstPrefab = victoryBurstPrefab;
             _bossExplosionPrefab = bossExplosionPrefab;
+            _smokePuffPrefab = smokePuffPrefab;
+            _heavySmokePrefab = heavySmokePrefab;
         }
 
         public static void SpawnFloatingText(string text, Vector3 position, Color color)
@@ -158,9 +170,133 @@ namespace ArmyRush
                     return _victoryBurstPrefab;
                 case VfxCue.BossExplosion:
                     return _bossExplosionPrefab;
+                case VfxCue.SmokePuff:
+                    return _smokePuffPrefab;
+                case VfxCue.HeavySmoke:
+                    return _heavySmokePrefab;
                 default:
                     return null;
             }
+        }
+
+        private void EnsureSmokePrefabs()
+        {
+            if (_smokePuffPrefab == null)
+            {
+                _smokePuffPrefab = CreateRuntimeSmokePrefab("PF_RuntimeSmokePuff", new Color(0.36f, 0.39f, 0.42f, 0.56f), 1.05f, 0.72f, 0.68f, 12, 0.42f, 0.34f);
+            }
+            if (_heavySmokePrefab == null)
+            {
+                _heavySmokePrefab = CreateRuntimeSmokePrefab("PF_RuntimeHeavySmoke", new Color(0.25f, 0.26f, 0.28f, 0.62f), 1.42f, 1.05f, 0.52f, 20, 0.62f, 0.52f);
+            }
+        }
+
+        private GameObject CreateRuntimeSmokePrefab(string name, Color color, float lifetime, float particleLifetime, float speed, int burstCount, float startSize, float radius)
+        {
+            GameObject root = new GameObject(name);
+            root.SetActive(false);
+            root.transform.SetParent(transform, false);
+            root.AddComponent<PooledObject>();
+            ParticleSystem particles = root.AddComponent<ParticleSystem>();
+            PooledParticleVfx pooledVfx = root.AddComponent<PooledParticleVfx>();
+
+            ConfigureSmokeParticleSystem(particles, color, lifetime, particleLifetime, speed, burstCount, startSize, radius, RuntimeSmokeMaterial);
+            pooledVfx.Configure(new[] { particles }, lifetime + 0.12f);
+
+            return root;
+        }
+
+        private Material RuntimeSmokeMaterial
+        {
+            get
+            {
+                if (_runtimeSmokeMaterial == null)
+                {
+                    Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+                    if (shader == null)
+                    {
+                        shader = Shader.Find("Sprites/Default");
+                    }
+
+                    if (shader != null)
+                    {
+                        _runtimeSmokeMaterial = new Material(shader)
+                        {
+                            name = "MAT_RuntimeSmoke"
+                        };
+                    }
+                }
+
+                return _runtimeSmokeMaterial;
+            }
+        }
+
+        public static void ConfigureSmokeParticleSystem(
+            ParticleSystem particles,
+            Color color,
+            float lifetime,
+            float particleLifetime,
+            float speed,
+            int burstCount,
+            float startSize,
+            float radius,
+            Material material)
+        {
+            ParticleSystem.MainModule main = particles.main;
+            main.duration = lifetime;
+            main.loop = false;
+            main.playOnAwake = false;
+            main.startLifetime = particleLifetime;
+            main.startSpeed = speed;
+            main.startSize = startSize;
+            main.startColor = color;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.gravityModifier = -0.05f;
+            main.stopAction = ParticleSystemStopAction.None;
+
+            ParticleSystem.EmissionModule emission = particles.emission;
+            emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)Mathf.Max(1, burstCount)) });
+
+            ParticleSystem.ShapeModule shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Sphere;
+            shape.radius = radius;
+            shape.randomDirectionAmount = 0.18f;
+
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particles.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(color, 0f),
+                    new GradientColorKey(Color.Lerp(color, Color.white, 0.18f), 0.65f),
+                    new GradientColorKey(Color.Lerp(color, Color.black, 0.12f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(color.a, 0f),
+                    new GradientAlphaKey(color.a * 0.58f, 0.55f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            colorOverLifetime.color = gradient;
+
+            ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particles.sizeOverLifetime;
+            sizeOverLifetime.enabled = true;
+            AnimationCurve sizeCurve = new AnimationCurve(
+                new Keyframe(0f, 0.55f),
+                new Keyframe(0.55f, 1.12f),
+                new Keyframe(1f, 1.38f));
+            sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
+
+            ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            if (material != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
         }
     }
 }

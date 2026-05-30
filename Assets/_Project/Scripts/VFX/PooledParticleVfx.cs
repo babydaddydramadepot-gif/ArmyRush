@@ -48,6 +48,12 @@ namespace ArmyRush
             }
         }
 
+        public void Configure(ParticleSystem[] systems, float lifetime)
+        {
+            _systems = systems;
+            _lifetime = Mathf.Max(0.05f, lifetime);
+        }
+
         private void Release()
         {
             if (_pooledObject != null)

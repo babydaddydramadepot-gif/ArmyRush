@@ -237,6 +237,9 @@ namespace ArmyRush
         {
             UpdateLabel();
             VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 1.1f);
+            VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 1.05f);
+            VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.right * 0.75f);
+            VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.left * 0.75f);
             VfxManager.SpawnFloatingText("BOSS DOWN", transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
             CameraFollowRig.Shake(CameraShakeCue.BossDefeat);
             BossHealthChanged?.Invoke(this, 0f);

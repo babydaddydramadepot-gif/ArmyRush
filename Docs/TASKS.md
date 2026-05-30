@@ -1194,7 +1194,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: In Progress; Core Combat/Crowd/Reward/Upgrade/Defeat Feedback Implemented
+Status: Functional Pass Implemented; Final Authored Styling Pending
 Priority: High
 
 Add VFX for:
