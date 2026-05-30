@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-18%
+19%
 
 Last Updated:
 
@@ -384,7 +384,43 @@ Unity generation and production validation both pass with no C# compiler errors 
 
 Follow Up:
 
-Tune boss damage/health on device, add authored boss animations, add boss explosion VFX, add additional boss variants, and expose late-game upgrade buttons in the UI.
+Tune boss damage/health on device, add authored boss animations, polish boss explosion VFX styling, add additional boss variants, and expose late-game upgrade buttons in the UI.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
+Pooled Gameplay VFX
+
+Files:
+
+Assets/_Project/Scripts/VFX/PooledParticleVfx.cs
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/Combat/Damageable.cs
+Assets/_Project/Scripts/Gates/GateController.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/VFX/
+Assets/_Project/Art/Materials/MAT_VFXParticle.mat
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added pooled particle VFX support with generated prefabs for hit sparks, positive gate bursts, negative gate bursts, coin reward bursts, and boss explosions. `VfxManager` now exposes cue-based particle spawning alongside floating text, and core gameplay events call those cues.
+
+Result:
+
+Unity generation and production validation pass with no C# compiler errors or warnings. Combat, gates, rewards, and boss defeat now have pooled visual effects instead of relying only on text feedback.
+
+Follow Up:
+
+Add muzzle flashes, obstacle debris, victory fireworks, defeat fade, final authored VFX styling, and device performance tuning for particle density.
 
 ---
 
@@ -400,7 +436,7 @@ UI Systems
 
 Visual Systems
 
-18%
+24%
 
 Audio Systems
 
@@ -424,7 +460,7 @@ Optimization
 
 Polish
 
-8%
+10%
 
 Release Readiness
 
@@ -648,7 +684,7 @@ AR-004
 
 Status:
 
-Final VFX assets are not complete; projectile tracers, floating combat text, gate feedback, and boss attack telegraphs are present, but hit sparks, coin bursts, debris, victory effects, and boss explosions remain pending.
+Final VFX assets are not complete; projectile tracers, floating combat text, gate bursts, hit sparks, coin bursts, boss attack telegraphs, and boss explosion bursts are present, but muzzle flashes, obstacle debris, victory effects, defeat fade, and final authored styling remain pending.
 
 Issue ID:
 

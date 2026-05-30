@@ -66,6 +66,7 @@ namespace ArmyRush
             }
 
             bool positive = IsPositive();
+            VfxManager.Spawn(positive ? VfxCue.GatePositive : VfxCue.GateNegative, transform.position + Vector3.up * 1.2f);
             if (ServiceLocator.TryGet(out AudioService audio))
             {
                 audio.Play(positive ? AudioCue.GatePositive : AudioCue.GateNegative);

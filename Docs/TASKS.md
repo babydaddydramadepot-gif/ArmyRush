@@ -178,6 +178,7 @@ Implementation Pass 1 Result:
 - Added repeatable iOS development export command and successfully generated an Xcode project at `ArmyRush_iOSBuild`.
 - Confirmed the generated Xcode project builds successfully with `CODE_SIGNING_ALLOWED=NO` for a Debug `iphoneos` build.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
+- Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Manual Unity play-mode QA, simulator/device launch testing, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
 
 ---
@@ -1169,7 +1170,7 @@ Acceptance Criteria:
 
 ## 7.3 VFX System
 
-Status: Functional Pass Implemented; Particle Library Pending
+Status: Functional Pass Implemented with Pooled Particle Prefabs; Library Expansion Pending
 Priority: High
 
 Tasks:
@@ -1189,7 +1190,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: In Progress; Floating Text and Projectile Tracers Implemented
+Status: In Progress; Hit/Gate/Coin/Boss Particle Bursts Implemented
 Priority: High
 
 Add VFX for:

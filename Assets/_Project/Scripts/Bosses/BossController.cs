@@ -235,6 +235,7 @@ namespace ArmyRush
         private void OnDied(Damageable damageable)
         {
             UpdateLabel();
+            VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 1.1f);
             VfxManager.SpawnFloatingText("BOSS DOWN", transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
             BossHealthChanged?.Invoke(this, 0f);
             BossDefeated?.Invoke(this);

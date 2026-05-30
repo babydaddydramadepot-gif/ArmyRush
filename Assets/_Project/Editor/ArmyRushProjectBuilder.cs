@@ -152,6 +152,12 @@ public static class ArmyRushProjectBuilder
             shader = Shader.Find("Standard");
         }
 
+        Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (particleShader == null)
+        {
+            particleShader = shader;
+        }
+
         return new MaterialSet
         {
             playerBlue = CreateMaterial("MAT_PlayerBlue", shader, new Color(0.05f, 0.36f, 1f), 0f),
@@ -168,7 +174,8 @@ public static class ArmyRushProjectBuilder
             coin = CreateMaterial("MAT_CoinGold", shader, new Color(1f, 0.68f, 0.05f), 0f),
             obstacle = CreateMaterial("MAT_ObstacleWood", shader, new Color(0.58f, 0.32f, 0.16f), 0f),
             obstacleMetal = CreateMaterial("MAT_ObstacleMetal", shader, new Color(0.34f, 0.38f, 0.42f), 0f),
-            uiBlue = CreateMaterial("MAT_UIBlue", shader, new Color(0.1f, 0.32f, 1f), 0f)
+            uiBlue = CreateMaterial("MAT_UIBlue", shader, new Color(0.1f, 0.32f, 1f), 0f),
+            vfxParticle = CreateMaterial("MAT_VFXParticle", particleShader, Color.white, 0f)
         };
     }
 
@@ -249,6 +256,11 @@ public static class ArmyRushProjectBuilder
         prefabs.bossTank = CreateBossTankPrefab(materials, meshes);
         prefabs.finishLine = CreateFinishLinePrefab(materials, meshes);
         prefabs.floatingText = CreateFloatingTextPrefab();
+        prefabs.hitSpark = CreateParticleVfxPrefab("PF_VFX_HitSpark", new Color(1f, 0.84f, 0.18f), 0.38f, 0.28f, 3.4f, 14, 0.14f, 0.18f, materials.vfxParticle);
+        prefabs.gatePositiveBurst = CreateParticleVfxPrefab("PF_VFX_GatePositive", new Color(0.16f, 1f, 0.62f), 0.62f, 0.42f, 2.2f, 26, 0.22f, 0.55f, materials.vfxParticle);
+        prefabs.gateNegativeBurst = CreateParticleVfxPrefab("PF_VFX_GateNegative", new Color(1f, 0.24f, 0.12f), 0.62f, 0.42f, 2.2f, 22, 0.2f, 0.55f, materials.vfxParticle);
+        prefabs.coinBurst = CreateParticleVfxPrefab("PF_VFX_CoinBurst", new Color(1f, 0.76f, 0.12f), 0.72f, 0.5f, 2.8f, 30, 0.17f, 0.75f, materials.vfxParticle);
+        prefabs.bossExplosion = CreateParticleVfxPrefab("PF_VFX_BossExplosion", new Color(1f, 0.34f, 0.08f), 1.1f, 0.72f, 4.2f, 46, 0.36f, 1.35f, materials.vfxParticle);
         return prefabs;
     }
 
@@ -423,6 +435,74 @@ public static class ArmyRushProjectBuilder
         TextMesh label = CreateWorldText("Label", root.transform, "+10", Vector3.zero, 0.16f, Color.white);
         SetObject(floatingText, "_label", label);
         GameObject prefab = SavePrefab(root, PrefabPath + "/VFX/PF_FloatingText.prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
+    private static GameObject CreateParticleVfxPrefab(
+        string name,
+        Color color,
+        float lifetime,
+        float particleLifetime,
+        float speed,
+        int burstCount,
+        float startSize,
+        float radius,
+        Material material)
+    {
+        GameObject root = new GameObject(name);
+        root.AddComponent<PooledObject>();
+        PooledParticleVfx pooledVfx = root.AddComponent<PooledParticleVfx>();
+        ParticleSystem particles = root.AddComponent<ParticleSystem>();
+
+        ParticleSystem.MainModule main = particles.main;
+        main.duration = lifetime;
+        main.loop = false;
+        main.playOnAwake = false;
+        main.startLifetime = particleLifetime;
+        main.startSpeed = speed;
+        main.startSize = startSize;
+        main.startColor = color;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.stopAction = ParticleSystemStopAction.None;
+
+        ParticleSystem.EmissionModule emission = particles.emission;
+        emission.rateOverTime = 0f;
+        emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)Mathf.Max(1, burstCount)) });
+
+        ParticleSystem.ShapeModule shape = particles.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = radius;
+        shape.randomDirectionAmount = 0.45f;
+
+        ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particles.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(
+            new[]
+            {
+                new GradientColorKey(color, 0f),
+                new GradientColorKey(Color.Lerp(color, Color.white, 0.35f), 0.45f),
+                new GradientColorKey(color, 1f)
+            },
+            new[]
+            {
+                new GradientAlphaKey(1f, 0f),
+                new GradientAlphaKey(0.82f, 0.55f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        colorOverLifetime.color = gradient;
+
+        ParticleSystemRenderer renderer = root.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sharedMaterial = material;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+
+        SetObjectArray(pooledVfx, "_systems", new[] { particles });
+        SetFloat(pooledVfx, "_lifetime", lifetime + 0.08f);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/VFX/" + name + ".prefab");
         Object.DestroyImmediate(root);
         return prefab;
     }
@@ -636,7 +716,7 @@ public static class ArmyRushProjectBuilder
 
         playerController.Configure(tuning, input, crowd, run);
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
-        vfx.Configure(pool, prefabs.floatingText);
+        vfx.Configure(pool, prefabs.floatingText, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.coinBurst, prefabs.bossExplosion);
 
         levelManager.Configure(tuning, levels, pool, crowd, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
@@ -767,6 +847,21 @@ public static class ArmyRushProjectBuilder
         if (Object.FindAnyObjectByType<VfxManager>() == null)
         {
             failures.Add("Game scene is missing VfxManager.");
+        }
+        string[] requiredVfx =
+        {
+            PrefabPath + "/VFX/PF_VFX_HitSpark.prefab",
+            PrefabPath + "/VFX/PF_VFX_GatePositive.prefab",
+            PrefabPath + "/VFX/PF_VFX_GateNegative.prefab",
+            PrefabPath + "/VFX/PF_VFX_CoinBurst.prefab",
+            PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab"
+        };
+        foreach (string vfxPath in requiredVfx)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(vfxPath) == null)
+            {
+                failures.Add("Missing VFX prefab: " + vfxPath);
+            }
         }
         if (pool == null)
         {
@@ -1237,6 +1332,17 @@ public static class ArmyRushProjectBuilder
         }
     }
 
+    private static void SetFloat(Object target, string propertyName, float value)
+    {
+        SerializedObject serialized = new SerializedObject(target);
+        SerializedProperty property = serialized.FindProperty(propertyName);
+        if (property != null)
+        {
+            property.floatValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+    }
+
     private static void SetObjectArray<T>(Object target, string propertyName, T[] values) where T : Object
     {
         SerializedObject serialized = new SerializedObject(target);
@@ -1270,6 +1376,7 @@ public static class ArmyRushProjectBuilder
         public Material obstacle;
         public Material obstacleMetal;
         public Material uiBlue;
+        public Material vfxParticle;
     }
 
     private sealed class MeshSet
@@ -1293,5 +1400,10 @@ public static class ArmyRushProjectBuilder
         public GameObject bossTank;
         public GameObject finishLine;
         public GameObject floatingText;
+        public GameObject hitSpark;
+        public GameObject gatePositiveBurst;
+        public GameObject gateNegativeBurst;
+        public GameObject coinBurst;
+        public GameObject bossExplosion;
     }
 }
