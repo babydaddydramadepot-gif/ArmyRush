@@ -24,60 +24,72 @@ MonoBehaviour:
   bonusCrateHealth: 92
   bonusCrateReward: 24
   bonusSectionLength: 34
+  chunks:
+  - chunk: {fileID: 11400000, guid: ff0094077705948b6a267c906eaa6fb5, type: 2}
+    z: 8
+    x: 0
+    mirrorX: 0
+    difficultyMultiplier: 1
+  - chunk: {fileID: 11400000, guid: d30ef39903f334eb9bdb82b614347f9f, type: 2}
+    z: 30
+    x: 0
+    mirrorX: 0
+    difficultyMultiplier: 1
+  - chunk: {fileID: 11400000, guid: 8ec5ebe02084d4b69aa46fd83092ba32, type: 2}
+    z: 58
+    x: 0
+    mirrorX: 1
+    difficultyMultiplier: 1
   gates:
   - z: 16
     x: -1.45
     operation: 0
-    value: 6
+    value: 10
   - z: 16
     x: 1.45
+    operation: 2
+    value: 2
+  - z: 38
+    x: -1.45
     operation: 0
     value: 12
-  - z: 47
-    x: -1.45
-    operation: 2
-    value: 2
-  - z: 47
-    x: 1.45
-    operation: 0
-    value: 21
-  - z: 82
-    x: -1.45
-    operation: 0
-    value: 10
-  - z: 82
+  - z: 38
     x: 1.45
     operation: 2
     value: 2
-  - z: 82
-    x: -1.45
-    operation: 0
-    value: 27
-  - z: 82
+  - z: 88
     x: 1.45
+    operation: 0
+    value: 18
+  - z: 88
+    x: -1.45
     operation: 2
     value: 2
   enemyGroups:
-  - z: 32
+  - z: 53
     x: 0
-    count: 11
-    healthPerUnit: 9
-    width: 2.4
-  - z: 101
-    x: -1.2
-    count: 21
+    count: 16
     healthPerUnit: 12
     width: 2.4
-  - z: 100
-    x: 0
-    count: 26
-    healthPerUnit: 14
-    width: 2.4
   obstacles:
-  - definition: {fileID: 11400000, guid: 4ed90245936644e4584a6047c47679d8, type: 2}
-    z: 64
-    x: 1.4
-    health: 105
-    collisionPenalty: 6
+  - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
+    z: 70
+    x: 1.35
+    health: 110
+    collisionPenalty: 7
     coinReward: 14
+    width: 1.65
+  - definition: {fileID: 11400000, guid: 4ed90245936644e4584a6047c47679d8, type: 2}
+    z: 70
+    x: -1.35
+    health: 125
+    collisionPenalty: 8
+    coinReward: 16
     width: 1.7
+  - definition: {fileID: 11400000, guid: 4adfd09552cea498b8f41ed1ad079806, type: 2}
+    z: 79
+    x: 0
+    health: 160
+    collisionPenalty: 10
+    coinReward: 20
+    width: 1.9

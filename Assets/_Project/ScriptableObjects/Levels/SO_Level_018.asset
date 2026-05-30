@@ -24,74 +24,168 @@ MonoBehaviour:
   bonusCrateHealth: 466
   bonusCrateReward: 119
   bonusSectionLength: 34
+  chunks:
+  - chunk: {fileID: 11400000, guid: ff0094077705948b6a267c906eaa6fb5, type: 2}
+    z: 8
+    x: 0
+    mirrorX: 0
+    difficultyMultiplier: 1.64475
+  - chunk: {fileID: 11400000, guid: d30ef39903f334eb9bdb82b614347f9f, type: 2}
+    z: 30
+    x: 0
+    mirrorX: 1
+    difficultyMultiplier: 1.935
+  - chunk: {fileID: 11400000, guid: 8ec5ebe02084d4b69aa46fd83092ba32, type: 2}
+    z: 58
+    x: 0
+    mirrorX: 0
+    difficultyMultiplier: 1.935
+  - chunk: {fileID: 11400000, guid: fd62522aa99444019b43fabcd376cc7f, type: 2}
+    z: 86
+    x: 0
+    mirrorX: 1
+    difficultyMultiplier: 1.935
+  - chunk: {fileID: 11400000, guid: 7d1cef1a744c5411293b8eea8ec01860, type: 2}
+    z: 116
+    x: 0
+    mirrorX: 0
+    difficultyMultiplier: 2.0149999
+  - chunk: {fileID: 11400000, guid: fd62522aa99444019b43fabcd376cc7f, type: 2}
+    z: 152.52632
+    x: 0
+    mirrorX: 1
+    difficultyMultiplier: 2.0349998
   gates:
   - z: 16
     x: -1.45
     operation: 0
-    value: 23
+    value: 16
   - z: 16
-    x: 1.45
-    operation: 0
-    value: 46
-  - z: 47
-    x: -1.45
-    operation: 2
-    value: 3
-  - z: 47
-    x: 1.45
-    operation: 0
-    value: 72
-  - z: 82
-    x: -1.45
-    operation: 1
-    value: 28
-  - z: 82
     x: 1.45
     operation: 2
     value: 2
-  - z: 162.52632
+  - z: 38
+    x: 1.45
+    operation: 0
+    value: 23
+  - z: 38
+    x: -1.45
+    operation: 2
+    value: 2
+  - z: 88
     x: -1.45
     operation: 0
-    value: 61
-  - z: 162.52632
+    value: 35
+  - z: 88
     x: 1.45
+    operation: 2
+    value: 2
+  - z: 120
+    x: 1.45
+    operation: 0
+    value: 54
+  - z: 120
+    x: -1.45
+    operation: 2
+    value: 2
+  - z: 123
+    x: -1.45
+    operation: 0
+    value: 40
+  - z: 123
+    x: 1.45
+    operation: 2
+    value: 2
+  - z: 186.52632
+    x: 1.45
+    operation: 0
+    value: 57
+  - z: 186.52632
+    x: -1.45
     operation: 2
     value: 2
   enemyGroups:
-  - z: 32
+  - z: 53
     x: 0
-    count: 62
-    healthPerUnit: 26
+    count: 31
+    healthPerUnit: 23
     width: 2.4
-  - z: 101
-    x: 1.2
-    count: 106
-    healthPerUnit: 46
-    width: 2.4
-  - z: 180.52632
+  - z: 98
     x: 0
-    count: 94
-    healthPerUnit: 48
+    count: 66
+    healthPerUnit: 35
+    width: 2.4
+  - z: 146
+    x: 0
+    count: 44
+    healthPerUnit: 28
+    width: 2.4
+  - z: 164.52632
+    x: 0
+    count: 69
+    healthPerUnit: 37
     width: 2.4
   obstacles:
-  - definition: {fileID: 11400000, guid: 2a47d897e9c55438f90e63eedac956cb, type: 2}
-    z: 64
-    x: -1.4
-    health: 700
-    collisionPenalty: 23
-    coinReward: 62
-    width: 2.25
-  - definition: {fileID: 11400000, guid: 3b1a7c49bf23f4556a51fcd7e29101d9, type: 2}
-    z: 118
-    x: -1.6
-    health: 920
-    collisionPenalty: 26
-    coinReward: 83
-    width: 2
+  - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
+    z: 70
+    x: -1.35
+    health: 213
+    collisionPenalty: 14
+    coinReward: 27
+    width: 1.65
   - definition: {fileID: 11400000, guid: 4ed90245936644e4584a6047c47679d8, type: 2}
-    z: 118
-    x: 1.6
-    health: 994
-    collisionPenalty: 26
+    z: 70
+    x: 1.35
+    health: 242
+    collisionPenalty: 15
     coinReward: 31
     width: 1.7
+  - definition: {fileID: 11400000, guid: 4adfd09552cea498b8f41ed1ad079806, type: 2}
+    z: 79
+    x: 0
+    health: 310
+    collisionPenalty: 19
+    coinReward: 39
+    width: 1.9
+  - definition: {fileID: 11400000, guid: 2a47d897e9c55438f90e63eedac956cb, type: 2}
+    z: 110
+    x: 1.45
+    health: 445
+    collisionPenalty: 31
+    coinReward: 70
+    width: 2.25
+  - definition: {fileID: 11400000, guid: cb8cb33ec035848719cd127459b1c333, type: 2}
+    z: 110
+    x: -1.45
+    health: 397
+    collisionPenalty: 27
+    coinReward: 66
+    width: 1.8
+  - definition: {fileID: 11400000, guid: 0f87bc6cfbfde47d78ab7e81d86450e9, type: 2}
+    z: 134
+    x: -1.45
+    health: 302
+    collisionPenalty: 22
+    coinReward: 52
+    width: 1.75
+  - definition: {fileID: 11400000, guid: 3b1a7c49bf23f4556a51fcd7e29101d9, type: 2}
+    z: 134
+    x: 1.45
+    health: 383
+    collisionPenalty: 28
+    coinReward: 83
+    width: 2
+  - definition: {fileID: 11400000, guid: 2a47d897e9c55438f90e63eedac956cb, type: 2}
+    z: 176.52632
+    x: 1.45
+    health: 468
+    collisionPenalty: 33
+    coinReward: 73
+    width: 2.25
+  - definition: {fileID: 11400000, guid: cb8cb33ec035848719cd127459b1c333, type: 2}
+    z: 176.52632
+    x: -1.45
+    health: 417
+    collisionPenalty: 28
+    coinReward: 69
+    width: 1.8

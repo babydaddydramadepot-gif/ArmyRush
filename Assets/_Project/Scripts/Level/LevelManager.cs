@@ -21,6 +21,9 @@ namespace ArmyRush
         [SerializeField] private Transform _levelRoot;
 
         private readonly List<GameObject> _spawned = new List<GameObject>();
+        private readonly List<GateSpawnData> _resolvedGates = new List<GateSpawnData>();
+        private readonly List<EnemyGroupSpawnData> _resolvedEnemyGroups = new List<EnemyGroupSpawnData>();
+        private readonly List<ObstacleSpawnData> _resolvedObstacles = new List<ObstacleSpawnData>();
         private ProgressionService _progression;
         private UpgradeService _upgrades;
         private LevelData _runtimeEndlessLevel;
@@ -78,6 +81,7 @@ namespace ArmyRush
                 Debug.LogError("No LevelData assets assigned.");
                 return;
             }
+            ResolveCurrentLevelSpawnData();
 
             int startingSoldiers = CurrentLevel.startingSoldiersOverride > 0 ? CurrentLevel.startingSoldiersOverride : (_tuning != null ? _tuning.defaultStartingSoldiers : 10);
             if (_upgrades != null)
@@ -169,27 +173,158 @@ namespace ArmyRush
             _runtimeEndlessLevel.gates.Clear();
             _runtimeEndlessLevel.enemyGroups.Clear();
             _runtimeEndlessLevel.obstacles.Clear();
+            _runtimeEndlessLevel.chunks.Clear();
 
-            AddEndlessGatePair(16f, GateOperation.Add, Mathf.RoundToInt(18f * difficulty), GateOperation.Multiply, overflow % 3 == 0 ? 3 : 2);
-            AddEndlessEnemy(34f, 0f, Mathf.RoundToInt(28f * difficulty), Mathf.RoundToInt(16f * difficulty));
-            AddEndlessGatePair(52f, overflow % 2 == 0 ? GateOperation.Subtract : GateOperation.Add, Mathf.RoundToInt(14f * difficulty), GateOperation.Add, Mathf.RoundToInt(26f * difficulty));
-            AddEndlessObstacle(72f, overflow % 2 == 0 ? -1.45f : 1.45f, Mathf.RoundToInt(210f * difficulty), Mathf.RoundToInt(14f * difficulty), FindEndlessObstacleDefinition(overflow, 0));
-            AddEndlessGatePair(94f, GateOperation.Multiply, overflow % 4 == 0 ? 3 : 2, GateOperation.Add, Mathf.RoundToInt(32f * difficulty));
-            AddEndlessEnemy(118f, overflow % 2 == 0 ? 1.15f : -1.15f, Mathf.RoundToInt(42f * difficulty), Mathf.RoundToInt(18f * difficulty));
-            AddEndlessObstacle(142f, -1.55f, Mathf.RoundToInt(250f * difficulty), Mathf.RoundToInt(16f * difficulty), FindEndlessObstacleDefinition(overflow, 1));
-            AddEndlessObstacle(142f, 1.55f, Mathf.RoundToInt(270f * difficulty), Mathf.RoundToInt(16f * difficulty), FindEndlessObstacleDefinition(overflow, 2));
-
-            if (_runtimeEndlessLevel.hasBoss)
+            List<LevelChunkData> chunks = CollectAuthoredChunks();
+            if (chunks.Count > 0)
             {
-                AddEndlessGatePair(trackLength - 48f, GateOperation.Add, Mathf.RoundToInt(42f * difficulty), GateOperation.Multiply, overflow >= 10 ? 3 : 2);
+                BuildEndlessChunkSequence(chunks, overflow, difficulty, trackLength, _runtimeEndlessLevel.hasBoss);
             }
             else
             {
-                AddEndlessGatePair(trackLength - 42f, GateOperation.Add, Mathf.RoundToInt(36f * difficulty), GateOperation.Multiply, 2);
-                AddEndlessEnemy(trackLength - 22f, 0f, Mathf.RoundToInt(52f * difficulty), Mathf.RoundToInt(20f * difficulty));
+                AddEndlessGatePair(16f, GateOperation.Add, Mathf.RoundToInt(18f * difficulty), GateOperation.Multiply, overflow % 3 == 0 ? 3 : 2);
+                AddEndlessEnemy(34f, 0f, Mathf.RoundToInt(28f * difficulty), Mathf.RoundToInt(16f * difficulty));
+                AddEndlessGatePair(52f, overflow % 2 == 0 ? GateOperation.Subtract : GateOperation.Add, Mathf.RoundToInt(14f * difficulty), GateOperation.Add, Mathf.RoundToInt(26f * difficulty));
+                AddEndlessObstacle(72f, overflow % 2 == 0 ? -1.45f : 1.45f, Mathf.RoundToInt(210f * difficulty), Mathf.RoundToInt(14f * difficulty), FindEndlessObstacleDefinition(overflow, 0));
+                AddEndlessGatePair(94f, GateOperation.Multiply, overflow % 4 == 0 ? 3 : 2, GateOperation.Add, Mathf.RoundToInt(32f * difficulty));
+                AddEndlessEnemy(118f, overflow % 2 == 0 ? 1.15f : -1.15f, Mathf.RoundToInt(42f * difficulty), Mathf.RoundToInt(18f * difficulty));
+                AddEndlessObstacle(142f, -1.55f, Mathf.RoundToInt(250f * difficulty), Mathf.RoundToInt(16f * difficulty), FindEndlessObstacleDefinition(overflow, 1));
+                AddEndlessObstacle(142f, 1.55f, Mathf.RoundToInt(270f * difficulty), Mathf.RoundToInt(16f * difficulty), FindEndlessObstacleDefinition(overflow, 2));
+
+                if (_runtimeEndlessLevel.hasBoss)
+                {
+                    AddEndlessGatePair(trackLength - 48f, GateOperation.Add, Mathf.RoundToInt(42f * difficulty), GateOperation.Multiply, overflow >= 10 ? 3 : 2);
+                }
+                else
+                {
+                    AddEndlessGatePair(trackLength - 42f, GateOperation.Add, Mathf.RoundToInt(36f * difficulty), GateOperation.Multiply, 2);
+                    AddEndlessEnemy(trackLength - 22f, 0f, Mathf.RoundToInt(52f * difficulty), Mathf.RoundToInt(20f * difficulty));
+                }
             }
 
             return _runtimeEndlessLevel;
+        }
+
+        private List<LevelChunkData> CollectAuthoredChunks()
+        {
+            List<LevelChunkData> chunks = new List<LevelChunkData>();
+            if (_levels == null)
+            {
+                return chunks;
+            }
+
+            for (int i = 0; i < _levels.Length; i++)
+            {
+                LevelData level = _levels[i];
+                if (level == null || level.chunks == null)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < level.chunks.Count; j++)
+                {
+                    LevelChunkData chunk = level.chunks[j] != null ? level.chunks[j].chunk : null;
+                    if (chunk != null && !chunks.Contains(chunk))
+                    {
+                        chunks.Add(chunk);
+                    }
+                }
+            }
+
+            return chunks;
+        }
+
+        private void BuildEndlessChunkSequence(List<LevelChunkData> chunks, int overflow, float difficulty, float trackLength, bool hasBoss)
+        {
+            float z = 10f;
+            LevelChunkKind previous = LevelChunkKind.BossLeadIn;
+            int repeatCount = 0;
+            int targetChunkCount = hasBoss ? 4 : Mathf.Clamp(Mathf.FloorToInt((trackLength - 56f) / 42f), 4, 6);
+
+            for (int i = 0; i < targetChunkCount; i++)
+            {
+                LevelChunkData selected = SelectEndlessChunk(chunks, overflow + i, false, previous, repeatCount);
+                if (selected == null)
+                {
+                    continue;
+                }
+                if (z + selected.length >= (hasBoss ? trackLength - 62f : trackLength - 18f))
+                {
+                    break;
+                }
+
+                if (selected.kind == previous)
+                {
+                    repeatCount++;
+                }
+                else
+                {
+                    previous = selected.kind;
+                    repeatCount = 1;
+                }
+
+                AddChunkPlacement(_runtimeEndlessLevel, selected, z, (overflow + i) % 2 == 0, difficulty);
+                z += Mathf.Max(22f, selected.length + 6f);
+            }
+
+            if (hasBoss)
+            {
+                LevelChunkData bossLeadIn = FindChunkByKind(chunks, LevelChunkKind.BossLeadIn);
+                if (bossLeadIn != null)
+                {
+                    AddChunkPlacement(_runtimeEndlessLevel, bossLeadIn, Mathf.Max(z, trackLength - 58f), overflow % 2 == 0, difficulty);
+                }
+            }
+        }
+
+        private static LevelChunkData SelectEndlessChunk(List<LevelChunkData> chunks, int seed, bool requireBossLeadIn, LevelChunkKind previous, int repeatCount)
+        {
+            if (requireBossLeadIn)
+            {
+                return FindChunkByKind(chunks, LevelChunkKind.BossLeadIn);
+            }
+
+            for (int attempt = 0; attempt < chunks.Count; attempt++)
+            {
+                LevelChunkData chunk = chunks[Mathf.Abs((seed + attempt) % chunks.Count)];
+                if (chunk == null || chunk.kind == LevelChunkKind.BossLeadIn)
+                {
+                    continue;
+                }
+                if (repeatCount >= 2 && chunk.kind == previous)
+                {
+                    continue;
+                }
+
+                return chunk;
+            }
+
+            return chunks.Count > 0 ? chunks[Mathf.Abs(seed % chunks.Count)] : null;
+        }
+
+        private static LevelChunkData FindChunkByKind(List<LevelChunkData> chunks, LevelChunkKind kind)
+        {
+            for (int i = 0; i < chunks.Count; i++)
+            {
+                if (chunks[i] != null && chunks[i].kind == kind)
+                {
+                    return chunks[i];
+                }
+            }
+
+            return null;
+        }
+
+        private static void AddChunkPlacement(LevelData level, LevelChunkData chunk, float z, bool mirrorX, float difficultyMultiplier)
+        {
+            level.chunks.Add(new LevelChunkPlacementData
+            {
+                chunk = chunk,
+                z = z,
+                x = 0f,
+                mirrorX = mirrorX,
+                difficultyMultiplier = Mathf.Max(1f, difficultyMultiplier)
+            });
         }
 
         private BossDefinition FindEndlessBossDefinition(int overflow)
@@ -226,17 +361,43 @@ namespace ArmyRush
             for (int i = 0; i < _levels.Length; i++)
             {
                 LevelData level = _levels[i];
-                if (level == null || level.obstacles == null)
+                if (level == null)
                 {
                     continue;
                 }
 
-                for (int j = 0; j < level.obstacles.Count; j++)
+                if (level.obstacles != null)
                 {
-                    ObstacleDefinition definition = level.obstacles[j] != null ? level.obstacles[j].definition : null;
-                    if (definition != null && !definitions.Contains(definition))
+                    for (int j = 0; j < level.obstacles.Count; j++)
                     {
-                        definitions.Add(definition);
+                        ObstacleDefinition definition = level.obstacles[j] != null ? level.obstacles[j].definition : null;
+                        if (definition != null && !definitions.Contains(definition))
+                        {
+                            definitions.Add(definition);
+                        }
+                    }
+                }
+
+                if (level.chunks == null)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < level.chunks.Count; j++)
+                {
+                    LevelChunkData chunk = level.chunks[j] != null ? level.chunks[j].chunk : null;
+                    if (chunk == null || chunk.obstacles == null)
+                    {
+                        continue;
+                    }
+
+                    for (int k = 0; k < chunk.obstacles.Count; k++)
+                    {
+                        ObstacleDefinition definition = chunk.obstacles[k] != null ? chunk.obstacles[k].definition : null;
+                        if (definition != null && !definitions.Contains(definition))
+                        {
+                            definitions.Add(definition);
+                        }
                     }
                 }
             }
@@ -273,6 +434,156 @@ namespace ArmyRush
             });
         }
 
+        private void ResolveCurrentLevelSpawnData()
+        {
+            _resolvedGates.Clear();
+            _resolvedEnemyGroups.Clear();
+            _resolvedObstacles.Clear();
+
+            if (CurrentLevel == null)
+            {
+                return;
+            }
+
+            bool hasChunks = CurrentLevel.chunks != null && CurrentLevel.chunks.Count > 0;
+            if (!hasChunks)
+            {
+                AppendDirectLevelData();
+                return;
+            }
+
+            for (int i = 0; i < CurrentLevel.chunks.Count; i++)
+            {
+                LevelChunkPlacementData placement = CurrentLevel.chunks[i];
+                LevelChunkData chunk = placement != null ? placement.chunk : null;
+                if (chunk == null)
+                {
+                    continue;
+                }
+
+                AppendChunkData(chunk, placement);
+            }
+        }
+
+        private void AppendDirectLevelData()
+        {
+            if (CurrentLevel.gates != null)
+            {
+                for (int i = 0; i < CurrentLevel.gates.Count; i++)
+                {
+                    GateSpawnData gate = CurrentLevel.gates[i];
+                    if (gate != null)
+                    {
+                        _resolvedGates.Add(new GateSpawnData { z = gate.z, x = gate.x, operation = gate.operation, value = gate.value });
+                    }
+                }
+            }
+
+            if (CurrentLevel.enemyGroups != null)
+            {
+                for (int i = 0; i < CurrentLevel.enemyGroups.Count; i++)
+                {
+                    EnemyGroupSpawnData enemy = CurrentLevel.enemyGroups[i];
+                    if (enemy != null)
+                    {
+                        _resolvedEnemyGroups.Add(new EnemyGroupSpawnData { z = enemy.z, x = enemy.x, count = enemy.count, healthPerUnit = enemy.healthPerUnit, width = enemy.width });
+                    }
+                }
+            }
+
+            if (CurrentLevel.obstacles != null)
+            {
+                for (int i = 0; i < CurrentLevel.obstacles.Count; i++)
+                {
+                    ObstacleSpawnData obstacle = CurrentLevel.obstacles[i];
+                    if (obstacle != null)
+                    {
+                        _resolvedObstacles.Add(new ObstacleSpawnData { definition = obstacle.definition, z = obstacle.z, x = obstacle.x, health = obstacle.health, collisionPenalty = obstacle.collisionPenalty, coinReward = obstacle.coinReward, width = obstacle.width });
+                    }
+                }
+            }
+        }
+
+        private void AppendChunkData(LevelChunkData chunk, LevelChunkPlacementData placement)
+        {
+            float multiplier = Mathf.Max(0.1f, placement.difficultyMultiplier);
+            float xSign = placement.mirrorX ? -1f : 1f;
+
+            if (chunk.gates != null)
+            {
+                for (int i = 0; i < chunk.gates.Count; i++)
+                {
+                    GateSpawnData gate = chunk.gates[i];
+                    if (gate == null)
+                    {
+                        continue;
+                    }
+
+                    _resolvedGates.Add(new GateSpawnData
+                    {
+                        z = placement.z + gate.z,
+                        x = placement.x + gate.x * xSign,
+                        operation = gate.operation,
+                        value = ScaleGateValue(gate, multiplier)
+                    });
+                }
+            }
+
+            if (chunk.enemyGroups != null)
+            {
+                for (int i = 0; i < chunk.enemyGroups.Count; i++)
+                {
+                    EnemyGroupSpawnData enemy = chunk.enemyGroups[i];
+                    if (enemy == null)
+                    {
+                        continue;
+                    }
+
+                    _resolvedEnemyGroups.Add(new EnemyGroupSpawnData
+                    {
+                        z = placement.z + enemy.z,
+                        x = placement.x + enemy.x * xSign,
+                        count = Mathf.Max(1, Mathf.RoundToInt(enemy.count * multiplier)),
+                        healthPerUnit = Mathf.Max(1, Mathf.RoundToInt(enemy.healthPerUnit * multiplier)),
+                        width = enemy.width
+                    });
+                }
+            }
+
+            if (chunk.obstacles != null)
+            {
+                for (int i = 0; i < chunk.obstacles.Count; i++)
+                {
+                    ObstacleSpawnData obstacle = chunk.obstacles[i];
+                    if (obstacle == null)
+                    {
+                        continue;
+                    }
+
+                    _resolvedObstacles.Add(new ObstacleSpawnData
+                    {
+                        definition = obstacle.definition,
+                        z = placement.z + obstacle.z,
+                        x = placement.x + obstacle.x * xSign,
+                        health = Mathf.Max(1, Mathf.RoundToInt(obstacle.health * multiplier)),
+                        collisionPenalty = Mathf.Max(0, Mathf.RoundToInt(obstacle.collisionPenalty * multiplier)),
+                        coinReward = Mathf.Max(0, Mathf.RoundToInt(obstacle.coinReward * multiplier)),
+                        width = obstacle.width
+                    });
+                }
+            }
+        }
+
+        private static int ScaleGateValue(GateSpawnData gate, float multiplier)
+        {
+            if (gate.operation == GateOperation.Multiply || gate.operation == GateOperation.Divide)
+            {
+                return Mathf.Max(1, gate.value);
+            }
+
+            return Mathf.Max(1, Mathf.RoundToInt(gate.value * multiplier));
+        }
+
         private void BuildTrack(float length)
         {
             if (_trackSegmentPrefab == null)
@@ -296,7 +607,7 @@ namespace ArmyRush
                 return;
             }
 
-            foreach (GateSpawnData data in CurrentLevel.gates)
+            foreach (GateSpawnData data in _resolvedGates)
             {
                 GameObject gateObject = Instantiate(_gatePrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
                 GateController gate = gateObject.GetComponent<GateController>();
@@ -313,7 +624,7 @@ namespace ArmyRush
             }
 
             RunManager runManager = FindAnyObjectByType<RunManager>();
-            foreach (EnemyGroupSpawnData data in CurrentLevel.enemyGroups)
+            foreach (EnemyGroupSpawnData data in _resolvedEnemyGroups)
             {
                 GameObject enemyObject = Instantiate(_enemyGroupPrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
                 EnemyGroup enemy = enemyObject.GetComponent<EnemyGroup>();
@@ -327,7 +638,7 @@ namespace ArmyRush
         private void SpawnObstacles()
         {
             RunManager runManager = FindAnyObjectByType<RunManager>();
-            foreach (ObstacleSpawnData data in CurrentLevel.obstacles)
+            foreach (ObstacleSpawnData data in _resolvedObstacles)
             {
                 ObstacleDefinition definition = data.definition;
                 GameObject obstaclePrefab = definition != null && definition.prefab != null ? definition.prefab : _obstaclePrefab;
@@ -417,9 +728,9 @@ namespace ArmyRush
             }
 
             int enemyVisualCount = 0;
-            for (int i = 0; i < CurrentLevel.enemyGroups.Count; i++)
+            for (int i = 0; i < _resolvedEnemyGroups.Count; i++)
             {
-                enemyVisualCount += Mathf.Min(CurrentLevel.enemyGroups[i].count, 80);
+                enemyVisualCount += Mathf.Min(_resolvedEnemyGroups[i].count, 80);
             }
             if (enemyVisualCount > 0)
             {
@@ -437,6 +748,9 @@ namespace ArmyRush
                 }
             }
             _spawned.Clear();
+            _resolvedGates.Clear();
+            _resolvedEnemyGroups.Clear();
+            _resolvedObstacles.Clear();
             ActiveBoss = null;
         }
     }

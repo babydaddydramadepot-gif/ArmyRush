@@ -20,9 +20,20 @@ namespace ArmyRush
         public int bonusCrateReward = 25;
         public float bonusSectionLength = 34f;
 
+        public List<LevelChunkPlacementData> chunks = new List<LevelChunkPlacementData>();
         public List<GateSpawnData> gates = new List<GateSpawnData>();
         public List<EnemyGroupSpawnData> enemyGroups = new List<EnemyGroupSpawnData>();
         public List<ObstacleSpawnData> obstacles = new List<ObstacleSpawnData>();
+    }
+
+    [Serializable]
+    public sealed class LevelChunkPlacementData
+    {
+        public LevelChunkData chunk;
+        public float z;
+        public float x;
+        public bool mirrorX;
+        public float difficultyMultiplier = 1f;
     }
 
     [Serializable]

@@ -20,6 +20,7 @@ public static class ArmyRushProjectBuilder
     private const string UiGeneratedPath = Root + "/Art/UI/Generated";
     private const string AppIconPath = UiGeneratedPath + "/APP_ArmyRush_1024.png";
     private const string LevelDataPath = Root + "/ScriptableObjects/Levels";
+    private const string LevelChunkDataPath = Root + "/ScriptableObjects/LevelChunks";
     private const string UpgradeDataPath = Root + "/ScriptableObjects/Upgrades";
     private const string TuningPath = Root + "/ScriptableObjects/Tuning";
     private const string BossDataPath = Root + "/ScriptableObjects/Bosses";
@@ -38,7 +39,8 @@ public static class ArmyRushProjectBuilder
         PrefabSet prefabs = CreatePrefabs(materials, meshes);
         ObstacleDefinition[] obstacles = CreateObstacleDefinitions(prefabs);
         BossDefinition[] bosses = CreateBossDefinitions(prefabs);
-        LevelData[] levels = CreateLevels(bosses, obstacles);
+        LevelChunkData[] chunks = CreateLevelChunks(obstacles);
+        LevelData[] levels = CreateLevels(bosses, chunks);
 
         CreateBootScene(upgrades);
         CreateMainMenuScene(upgrades, materials, meshes);
@@ -61,6 +63,7 @@ public static class ArmyRushProjectBuilder
         ValidatePoolingSetup(failures);
         ValidateBossPrefabs(failures);
         ValidateObstaclePrefabs(failures);
+        ValidateLevelChunkDataAssets(failures);
         ValidateLevelDataAssets(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
@@ -245,6 +248,7 @@ public static class ArmyRushProjectBuilder
             ScenePath,
             Root + "/ScriptableObjects",
             LevelDataPath,
+            LevelChunkDataPath,
             UpgradeDataPath,
             TuningPath,
             Root + "/ScriptableObjects/Economy",
@@ -449,6 +453,87 @@ public static class ArmyRushProjectBuilder
             new Color(1f, 0.34f, 0.1f));
 
         return new[] { tank, helicopter, mech };
+    }
+
+    private static LevelChunkData[] CreateLevelChunks(ObstacleDefinition[] obstacleDefinitions)
+    {
+        LevelChunkData intro = CreateLevelChunk("SO_Chunk_A_IntroGates", "Chunk A - Intro Gates", LevelChunkKind.IntroGates, 24f, 1, false, true);
+        AddChunkGatePair(intro, 8f, GateOperation.Add, 10, GateOperation.Multiply, 2);
+
+        LevelChunkData gateEnemy = CreateLevelChunk("SO_Chunk_B_GateEnemy", "Chunk B - Gate + Enemy", LevelChunkKind.GateEnemy, 34f, 2, false, false);
+        AddChunkGatePair(gateEnemy, 8f, GateOperation.Add, 12, GateOperation.Multiply, 2);
+        AddChunkEnemy(gateEnemy, 23f, 0f, 16, 12);
+
+        LevelChunkData obstacleCorridor = CreateLevelChunk("SO_Chunk_C_ObstacleCorridor", "Chunk C - Obstacle Corridor", LevelChunkKind.ObstacleCorridor, 38f, 3, false, true);
+        AddChunkObstacle(obstacleCorridor, 12f, -1.35f, 110, 7, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.Barricade));
+        AddChunkObstacle(obstacleCorridor, 12f, 1.35f, 125, 8, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.CrateStack));
+        AddChunkObstacle(obstacleCorridor, 21f, 0f, 160, 10, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.ConcreteBlock));
+        AddChunkGatePair(obstacleCorridor, 30f, GateOperation.Add, 18, GateOperation.Multiply, 2);
+
+        LevelChunkData riskReward = CreateLevelChunk("SO_Chunk_D_RiskRewardSplit", "Chunk D - Risk Reward Split", LevelChunkKind.RiskRewardSplit, 36f, 4, false, true);
+        AddChunkGatePair(riskReward, 7f, GateOperation.Add, 20, GateOperation.Multiply, 2);
+        AddChunkObstacle(riskReward, 18f, -1.45f, 150, 11, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.BarrelCluster));
+        AddChunkObstacle(riskReward, 18f, 1.45f, 190, 14, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.FuelTank));
+        AddChunkEnemy(riskReward, 30f, 0f, 22, 14);
+
+        LevelChunkData elite = CreateLevelChunk("SO_Chunk_E_EliteEncounter", "Chunk E - Elite Encounter", LevelChunkKind.EliteEncounter, 40f, 5, false, false);
+        AddChunkEnemy(elite, 12f, 0f, 34, 18);
+        AddChunkObstacle(elite, 24f, -1.45f, 230, 16, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.MilitaryTruck));
+        AddChunkObstacle(elite, 24f, 1.45f, 205, 14, FindObstacleDefinition(obstacleDefinitions, ObstacleKind.Turret));
+        AddChunkGatePair(elite, 34f, GateOperation.Add, 28, GateOperation.Multiply, 2);
+
+        LevelChunkData bossLeadIn = CreateLevelChunk("SO_Chunk_F_BossLeadIn", "Chunk F - Boss Lead-In", LevelChunkKind.BossLeadIn, 28f, 5, true, true);
+        AddChunkGatePair(bossLeadIn, 8f, GateOperation.Add, 34, GateOperation.Multiply, 2);
+
+        return new[] { intro, gateEnemy, obstacleCorridor, riskReward, elite, bossLeadIn };
+    }
+
+    private static LevelChunkData CreateLevelChunk(string assetName, string displayName, LevelChunkKind kind, float length, int difficultyRating, bool isBossLeadIn, bool isRewardFocused)
+    {
+        string path = $"{LevelChunkDataPath}/{assetName}.asset";
+        LevelChunkData chunk = AssetDatabase.LoadAssetAtPath<LevelChunkData>(path);
+        if (chunk == null)
+        {
+            chunk = ScriptableObject.CreateInstance<LevelChunkData>();
+            AssetDatabase.CreateAsset(chunk, path);
+        }
+
+        chunk.displayName = displayName;
+        chunk.kind = kind;
+        chunk.length = length;
+        chunk.difficultyRating = difficultyRating;
+        chunk.isBossLeadIn = isBossLeadIn;
+        chunk.isRewardFocused = isRewardFocused;
+        chunk.gates.Clear();
+        chunk.enemyGroups.Clear();
+        chunk.obstacles.Clear();
+        EditorUtility.SetDirty(chunk);
+        return chunk;
+    }
+
+    private static void AddChunkGatePair(LevelChunkData chunk, float z, GateOperation leftOperation, int leftValue, GateOperation rightOperation, int rightValue)
+    {
+        chunk.gates.Add(new GateSpawnData { z = z, x = -1.45f, operation = leftOperation, value = leftValue });
+        chunk.gates.Add(new GateSpawnData { z = z, x = 1.45f, operation = rightOperation, value = rightValue });
+    }
+
+    private static void AddChunkEnemy(LevelChunkData chunk, float z, float x, int count, int hp)
+    {
+        chunk.enemyGroups.Add(new EnemyGroupSpawnData { z = z, x = x, count = count, healthPerUnit = hp });
+    }
+
+    private static void AddChunkObstacle(LevelChunkData chunk, float z, float x, int health, int penalty, ObstacleDefinition definition)
+    {
+        chunk.obstacles.Add(new ObstacleSpawnData
+        {
+            definition = definition,
+            z = z,
+            x = x,
+            health = health,
+            collisionPenalty = penalty,
+            coinReward = definition != null ? definition.GetCoinReward(chunk.difficultyRating, 0) : 0,
+            width = definition != null ? definition.width : 1.6f
+        });
     }
 
     private static PrefabSet CreatePrefabs(MaterialSet materials, MeshSet meshes)
@@ -1572,7 +1657,7 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
-    private static LevelData[] CreateLevels(BossDefinition[] bosses, ObstacleDefinition[] obstacleDefinitions)
+    private static LevelData[] CreateLevels(BossDefinition[] bosses, LevelChunkData[] chunks)
     {
         List<LevelData> levels = new List<LevelData>();
         BossDefinition fallbackBoss = bosses != null && bosses.Length > 0 ? bosses[0] : null;
@@ -1606,8 +1691,10 @@ public static class ArmyRushProjectBuilder
             data.gates.Clear();
             data.enemyGroups.Clear();
             data.obstacles.Clear();
+            data.chunks.Clear();
 
-            AddDesignedLevelData(data, i, obstacleDefinitions);
+            AddDesignedLevelData(data, i, chunks);
+            PopulateLevelListsFromChunks(data);
             EditorUtility.SetDirty(data);
             levels.Add(data);
         }
@@ -1615,32 +1702,233 @@ public static class ArmyRushProjectBuilder
         return levels.ToArray();
     }
 
-    private static void AddDesignedLevelData(LevelData data, int level, ObstacleDefinition[] obstacleDefinitions)
+    private static void AddDesignedLevelData(LevelData data, int level, LevelChunkData[] chunks)
     {
-        AddGatePair(data, 16f, GateOperation.Add, 5 + level, GateOperation.Add, 10 + level * 2);
-        AddEnemy(data, 32f, 0f, 8 + level * 3, 8 + level);
-        AddGatePair(data, 47f, GateOperation.Multiply, level < 6 ? 2 : 3, GateOperation.Add, 18 + level * 3);
-        AddObstacle(data, 64f, level % 2 == 0 ? -1.4f : 1.4f, 70 + level * 35, 5 + level, SelectObstacleDefinition(obstacleDefinitions, level, 0));
-        AddGatePair(data, 82f, level >= 3 ? GateOperation.Subtract : GateOperation.Add, level >= 3 ? 10 + level : 10, GateOperation.Multiply, 2);
-        AddEnemy(data, 101f, level % 2 == 0 ? 1.2f : -1.2f, 16 + level * 5, 10 + level * 2);
+        LevelChunkData intro = FindChunk(chunks, LevelChunkKind.IntroGates);
+        LevelChunkData gateEnemy = FindChunk(chunks, LevelChunkKind.GateEnemy);
+        LevelChunkData obstacleCorridor = FindChunk(chunks, LevelChunkKind.ObstacleCorridor);
+        LevelChunkData riskReward = FindChunk(chunks, LevelChunkKind.RiskRewardSplit);
+        LevelChunkData elite = FindChunk(chunks, LevelChunkKind.EliteEncounter);
+        LevelChunkData bossLeadIn = FindChunk(chunks, LevelChunkKind.BossLeadIn);
+        float difficultyMultiplier = 1f + Mathf.Max(0, level - 1) * 0.055f;
+        bool mirror = level % 2 == 0;
 
-        const float lateObstacleZ = 118f;
-        float bossApproachStart = GetBossApproachStart(data);
-        if (level >= 4 && lateObstacleZ < bossApproachStart - 8f)
+        AddLevelChunk(data, intro, 8f, false, Mathf.Max(1f, difficultyMultiplier * 0.85f));
+        AddLevelChunk(data, gateEnemy, 30f, mirror, difficultyMultiplier);
+        AddLevelChunk(data, obstacleCorridor, 58f, !mirror, difficultyMultiplier);
+
+        if (level >= 2)
         {
-            AddObstacle(data, lateObstacleZ, -1.6f, 110 + level * 45, 8 + level, SelectObstacleDefinition(obstacleDefinitions, level, 1));
-            AddObstacle(data, lateObstacleZ, 1.6f, 130 + level * 48, 8 + level, SelectObstacleDefinition(obstacleDefinitions, level, 2));
+            TryAddLevelChunk(data, level >= 11 ? elite : riskReward, 86f, mirror, difficultyMultiplier);
+        }
+
+        if (level >= 6)
+        {
+            TryAddLevelChunk(data, level >= 14 ? riskReward : gateEnemy, 116f, !mirror, difficultyMultiplier + 0.08f);
         }
 
         if (data.hasBoss)
         {
-            AddGatePair(data, data.trackLength - 46f, GateOperation.Add, 30 + level * 3, GateOperation.Multiply, level >= 10 ? 3 : 2);
+            AddLevelChunk(data, bossLeadIn, Mathf.Max(96f, data.trackLength - 58f), false, difficultyMultiplier + 0.12f);
         }
         else
         {
-            AddGatePair(data, data.trackLength - 38f, GateOperation.Add, 25 + level * 2, GateOperation.Multiply, 2);
-            AddEnemy(data, data.trackLength - 20f, 0f, 22 + level * 4, 12 + level * 2);
+            TryAddLevelChunk(data, level >= 10 ? elite : gateEnemy, Mathf.Max(88f, data.trackLength - 48f), mirror, difficultyMultiplier + 0.1f);
         }
+    }
+
+    private static LevelChunkData FindChunk(LevelChunkData[] chunks, LevelChunkKind kind)
+    {
+        if (chunks == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            if (chunks[i] != null && chunks[i].kind == kind)
+            {
+                return chunks[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static bool TryAddLevelChunk(LevelData data, LevelChunkData chunk, float z, bool mirrorX, float difficultyMultiplier)
+    {
+        if (data == null || chunk == null)
+        {
+            return false;
+        }
+
+        if (z + GetChunkMaxSpawnZ(chunk) >= data.trackLength - 3f)
+        {
+            return false;
+        }
+
+        if (data.hasBoss && !chunk.isBossLeadIn && z + GetChunkMaxCombatZ(chunk) >= GetBossApproachStart(data) - 6f)
+        {
+            return false;
+        }
+
+        AddLevelChunk(data, chunk, z, mirrorX, difficultyMultiplier);
+        return true;
+    }
+
+    private static void AddLevelChunk(LevelData data, LevelChunkData chunk, float z, bool mirrorX, float difficultyMultiplier)
+    {
+        if (data == null || chunk == null)
+        {
+            return;
+        }
+
+        data.chunks.Add(new LevelChunkPlacementData
+        {
+            chunk = chunk,
+            z = z,
+            x = 0f,
+            mirrorX = mirrorX,
+            difficultyMultiplier = Mathf.Max(0.1f, difficultyMultiplier)
+        });
+    }
+
+    private static void PopulateLevelListsFromChunks(LevelData data)
+    {
+        data.gates.Clear();
+        data.enemyGroups.Clear();
+        data.obstacles.Clear();
+
+        if (data.chunks == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < data.chunks.Count; i++)
+        {
+            LevelChunkPlacementData placement = data.chunks[i];
+            LevelChunkData chunk = placement != null ? placement.chunk : null;
+            if (chunk == null)
+            {
+                continue;
+            }
+
+            AppendChunkToLevelLists(data, chunk, placement);
+        }
+    }
+
+    private static void AppendChunkToLevelLists(LevelData data, LevelChunkData chunk, LevelChunkPlacementData placement)
+    {
+        float multiplier = Mathf.Max(0.1f, placement.difficultyMultiplier);
+        float xSign = placement.mirrorX ? -1f : 1f;
+
+        for (int i = 0; i < chunk.gates.Count; i++)
+        {
+            GateSpawnData gate = chunk.gates[i];
+            if (gate != null)
+            {
+                data.gates.Add(new GateSpawnData
+                {
+                    z = placement.z + gate.z,
+                    x = placement.x + gate.x * xSign,
+                    operation = gate.operation,
+                    value = ScaleChunkGateValue(gate, multiplier)
+                });
+            }
+        }
+
+        for (int i = 0; i < chunk.enemyGroups.Count; i++)
+        {
+            EnemyGroupSpawnData enemy = chunk.enemyGroups[i];
+            if (enemy != null)
+            {
+                data.enemyGroups.Add(new EnemyGroupSpawnData
+                {
+                    z = placement.z + enemy.z,
+                    x = placement.x + enemy.x * xSign,
+                    count = Mathf.Max(1, Mathf.RoundToInt(enemy.count * multiplier)),
+                    healthPerUnit = Mathf.Max(1, Mathf.RoundToInt(enemy.healthPerUnit * multiplier)),
+                    width = enemy.width
+                });
+            }
+        }
+
+        for (int i = 0; i < chunk.obstacles.Count; i++)
+        {
+            ObstacleSpawnData obstacle = chunk.obstacles[i];
+            if (obstacle != null)
+            {
+                data.obstacles.Add(new ObstacleSpawnData
+                {
+                    definition = obstacle.definition,
+                    z = placement.z + obstacle.z,
+                    x = placement.x + obstacle.x * xSign,
+                    health = Mathf.Max(1, Mathf.RoundToInt(obstacle.health * multiplier)),
+                    collisionPenalty = Mathf.Max(0, Mathf.RoundToInt(obstacle.collisionPenalty * multiplier)),
+                    coinReward = Mathf.Max(0, Mathf.RoundToInt(obstacle.coinReward * multiplier)),
+                    width = obstacle.width
+                });
+            }
+        }
+    }
+
+    private static int ScaleChunkGateValue(GateSpawnData gate, float multiplier)
+    {
+        if (gate.operation == GateOperation.Multiply || gate.operation == GateOperation.Divide)
+        {
+            return Mathf.Max(1, gate.value);
+        }
+
+        return Mathf.Max(1, Mathf.RoundToInt(gate.value * multiplier));
+    }
+
+    private static float GetChunkMaxSpawnZ(LevelChunkData chunk)
+    {
+        float maxZ = Mathf.Max(1f, chunk.length);
+        for (int i = 0; i < chunk.gates.Count; i++)
+        {
+            if (chunk.gates[i] != null)
+            {
+                maxZ = Mathf.Max(maxZ, chunk.gates[i].z);
+            }
+        }
+        for (int i = 0; i < chunk.enemyGroups.Count; i++)
+        {
+            if (chunk.enemyGroups[i] != null)
+            {
+                maxZ = Mathf.Max(maxZ, chunk.enemyGroups[i].z);
+            }
+        }
+        for (int i = 0; i < chunk.obstacles.Count; i++)
+        {
+            if (chunk.obstacles[i] != null)
+            {
+                maxZ = Mathf.Max(maxZ, chunk.obstacles[i].z);
+            }
+        }
+
+        return maxZ;
+    }
+
+    private static float GetChunkMaxCombatZ(LevelChunkData chunk)
+    {
+        float maxZ = 0f;
+        for (int i = 0; i < chunk.enemyGroups.Count; i++)
+        {
+            if (chunk.enemyGroups[i] != null)
+            {
+                maxZ = Mathf.Max(maxZ, chunk.enemyGroups[i].z);
+            }
+        }
+        for (int i = 0; i < chunk.obstacles.Count; i++)
+        {
+            if (chunk.obstacles[i] != null)
+            {
+                maxZ = Mathf.Max(maxZ, chunk.obstacles[i].z);
+            }
+        }
+
+        return maxZ;
     }
 
     private static void AddGatePair(LevelData data, float z, GateOperation leftOperation, int leftValue, GateOperation rightOperation, int rightValue)
@@ -1676,6 +1964,24 @@ public static class ArmyRushProjectBuilder
         }
 
         return definitions[Mathf.Clamp(index, 0, definitions.Length - 1)];
+    }
+
+    private static ObstacleDefinition FindObstacleDefinition(ObstacleDefinition[] definitions, ObstacleKind kind)
+    {
+        if (definitions == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < definitions.Length; i++)
+        {
+            if (definitions[i] != null && definitions[i].kind == kind)
+            {
+                return definitions[i];
+            }
+        }
+
+        return definitions.Length > 0 ? definitions[0] : null;
     }
 
     private static void AddObstacle(LevelData data, float z, float x, int health, int penalty, ObstacleDefinition definition)
@@ -2235,6 +2541,92 @@ public static class ArmyRushProjectBuilder
         return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
     }
 
+    private static void ValidateLevelChunkDataAssets(List<string> failures)
+    {
+        LevelChunkData[] chunks = AssetDatabase.FindAssets("t:LevelChunkData", new[] { LevelChunkDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelChunkData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+
+        if (chunks.Length < 6)
+        {
+            failures.Add("Expected at least six reusable level chunk assets.");
+        }
+
+        HashSet<LevelChunkKind> seenKinds = new HashSet<LevelChunkKind>();
+        HashSet<ObstacleKind> obstacleKinds = new HashSet<ObstacleKind>();
+        foreach (LevelChunkData chunk in chunks)
+        {
+            string label = chunk.name + " (" + chunk.kind + ")";
+            seenKinds.Add(chunk.kind);
+            if (chunk.length < 16f)
+            {
+                failures.Add(label + " has an invalid chunk length.");
+            }
+            if (chunk.difficultyRating <= 0)
+            {
+                failures.Add(label + " has no difficulty rating.");
+            }
+            if (!chunk.isBossLeadIn && chunk.gates.Count == 0 && chunk.enemyGroups.Count == 0 && chunk.obstacles.Count == 0)
+            {
+                failures.Add(label + " has no gameplay content.");
+            }
+            if (chunk.isBossLeadIn && chunk.kind != LevelChunkKind.BossLeadIn)
+            {
+                failures.Add(label + " is marked boss lead-in but has the wrong kind.");
+            }
+
+            for (int i = 0; i < chunk.gates.Count; i++)
+            {
+                GateSpawnData gate = chunk.gates[i];
+                if (gate == null || gate.z <= 0f || gate.z >= chunk.length || gate.value <= 0)
+                {
+                    failures.Add(label + " has invalid gate data at index " + i + ".");
+                }
+            }
+
+            for (int i = 0; i < chunk.enemyGroups.Count; i++)
+            {
+                EnemyGroupSpawnData enemy = chunk.enemyGroups[i];
+                if (enemy == null || enemy.z <= 0f || enemy.z >= chunk.length || enemy.count <= 0 || enemy.healthPerUnit <= 0)
+                {
+                    failures.Add(label + " has invalid enemy data at index " + i + ".");
+                }
+            }
+
+            for (int i = 0; i < chunk.obstacles.Count; i++)
+            {
+                ObstacleSpawnData obstacle = chunk.obstacles[i];
+                if (obstacle == null || obstacle.z <= 0f || obstacle.z >= chunk.length || obstacle.health <= 0 || obstacle.collisionPenalty < 0)
+                {
+                    failures.Add(label + " has invalid obstacle data at index " + i + ".");
+                    continue;
+                }
+                if (obstacle.definition == null)
+                {
+                    failures.Add(label + " has obstacle " + i + " without an ObstacleDefinition.");
+                }
+                else
+                {
+                    obstacleKinds.Add(obstacle.definition.kind);
+                }
+            }
+        }
+
+        foreach (LevelChunkKind kind in System.Enum.GetValues(typeof(LevelChunkKind)))
+        {
+            if (!seenKinds.Contains(kind))
+            {
+                failures.Add("Missing reusable level chunk kind: " + kind + ".");
+            }
+        }
+
+        if (obstacleKinds.Count < 7)
+        {
+            failures.Add("Reusable level chunks do not cover every required obstacle variant.");
+        }
+    }
+
     private static void ValidateLevelDataAssets(List<string> failures)
     {
         LevelData[] levels = AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
@@ -2282,6 +2674,14 @@ public static class ArmyRushProjectBuilder
             {
                 failures.Add(label + " has invalid bonus-run reward data.");
             }
+            if (level.chunks == null || level.chunks.Count < 3)
+            {
+                failures.Add(label + " does not reference enough reusable level chunks.");
+            }
+            else
+            {
+                ValidateChunkPlacements(failures, level, label, trackHalfWidth);
+            }
             if (level.gates == null || level.gates.Count < 2)
             {
                 failures.Add(label + " has fewer than two gates.");
@@ -2312,6 +2712,64 @@ public static class ArmyRushProjectBuilder
         if (referencedObstacleDefinitions.Count < 7)
         {
             failures.Add("Authored levels do not reference every required obstacle variant.");
+        }
+    }
+
+    private static void ValidateChunkPlacements(List<string> failures, LevelData level, string label, float trackHalfWidth)
+    {
+        LevelChunkKind previousKind = LevelChunkKind.BossLeadIn;
+        int repeatCount = 0;
+        bool hasBossLeadIn = false;
+
+        for (int i = 0; i < level.chunks.Count; i++)
+        {
+            LevelChunkPlacementData placement = level.chunks[i];
+            LevelChunkData chunk = placement != null ? placement.chunk : null;
+            if (chunk == null)
+            {
+                failures.Add(label + " has a null chunk placement at index " + i + ".");
+                continue;
+            }
+
+            if (placement.z <= 0f || placement.z + GetChunkMaxSpawnZ(chunk) >= level.trackLength)
+            {
+                failures.Add(label + " has chunk " + i + " outside the playable track.");
+            }
+            if (Mathf.Abs(placement.x) > trackHalfWidth)
+            {
+                failures.Add(label + " has chunk " + i + " outside the track width.");
+            }
+            if (placement.difficultyMultiplier <= 0f)
+            {
+                failures.Add(label + " has chunk " + i + " with an invalid difficulty multiplier.");
+            }
+            if (chunk.kind == LevelChunkKind.BossLeadIn)
+            {
+                hasBossLeadIn = true;
+            }
+            if (chunk.kind == previousKind)
+            {
+                repeatCount++;
+                if (repeatCount >= 3)
+                {
+                    failures.Add(label + " repeats chunk kind " + chunk.kind + " three times in a row.");
+                }
+            }
+            else
+            {
+                previousKind = chunk.kind;
+                repeatCount = 1;
+            }
+
+            if (level.hasBoss && !chunk.isBossLeadIn && placement.z + GetChunkMaxCombatZ(chunk) >= GetBossApproachStart(level) - 4f)
+            {
+                failures.Add(label + " has chunk " + i + " combat content too close to the boss approach zone.");
+            }
+        }
+
+        if (level.hasBoss && !hasBossLeadIn)
+        {
+            failures.Add(label + " is a boss level without a Boss Lead-In chunk.");
         }
     }
 
@@ -2632,7 +3090,7 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("LevelManager did not create a deterministic endless level preview.");
         }
-        else if (endlessPreview.gates.Count < 6 || endlessPreview.enemyGroups.Count < 2 || endlessPreview.obstacles.Count < 2 || endlessPreview.baseCoinReward <= 0)
+        else if (!HasEnoughEndlessPreviewContent(endlessPreview))
         {
             failures.Add("Endless level preview is missing required scaled encounters or rewards.");
         }
@@ -2661,6 +3119,42 @@ public static class ArmyRushProjectBuilder
             failures.Add("Game scene validation spawned no bonus end trigger.");
         }
         ValidateGameplayHudLayout(failures);
+    }
+
+    private static bool HasEnoughEndlessPreviewContent(LevelData level)
+    {
+        if (level == null || level.baseCoinReward <= 0)
+        {
+            return false;
+        }
+
+        if (level.gates.Count >= 6 && level.enemyGroups.Count >= 2 && level.obstacles.Count >= 2)
+        {
+            return true;
+        }
+
+        if (level.chunks == null || level.chunks.Count < 3)
+        {
+            return false;
+        }
+
+        int gates = 0;
+        int enemies = 0;
+        int obstacles = 0;
+        for (int i = 0; i < level.chunks.Count; i++)
+        {
+            LevelChunkData chunk = level.chunks[i] != null ? level.chunks[i].chunk : null;
+            if (chunk == null)
+            {
+                continue;
+            }
+
+            gates += chunk.gates != null ? chunk.gates.Count : 0;
+            enemies += chunk.enemyGroups != null ? chunk.enemyGroups.Count : 0;
+            obstacles += chunk.obstacles != null ? chunk.obstacles.Count : 0;
+        }
+
+        return gates >= 4 && enemies >= 2 && obstacles >= 2;
     }
 
     private static void ValidateGameplayHudLayout(List<string> failures)

@@ -697,18 +697,20 @@ Acceptance Criteria:
 
 ## 3.1 Level Data Architecture
 
-Status: Functional Pass Implemented; Chunk/Boss Data Pending
+Status: Completed with Reusable Chunk A-F Data, Chunk Placements, Boss Data, Reward Data, and Validator Coverage
 Priority: Critical
 
 Tasks:
 
-- Create LevelData ScriptableObject.
-- Create LevelChunkData ScriptableObject.
-- Create gate placement data.
-- Create enemy placement data.
-- Create obstacle placement data.
-- Create boss placement data.
-- Create reward data.
+- [x] Create LevelData ScriptableObject.
+- [x] Create LevelChunkData ScriptableObject.
+- [x] Create gate placement data.
+- [x] Create enemy placement data.
+- [x] Create obstacle placement data.
+- [x] Create boss placement data.
+- [x] Create reward data.
+- [x] Add reusable Chunk A-F assets matching `LEVEL_DESIGN.md`.
+- [x] Add validator coverage for chunk assets and chunk placement rules.
 
 Acceptance Criteria:
 
@@ -716,6 +718,7 @@ Acceptance Criteria:
 - Codex can add levels without hardcoding scenes.
 - Level data references reusable prefabs.
 - Level balancing can be edited from assets.
+- Authored and endless levels can resolve reusable chunks into gates, enemies, and obstacles.
 
 ---
 
@@ -797,7 +800,7 @@ Acceptance Criteria:
 
 ## 3.5 Endless Level Support
 
-Status: Functional Deterministic Runtime Generation Implemented with Boss Variant Rotation; Manual Endless QA Pending
+Status: Functional Deterministic Runtime Generation Implemented with Chunk Assembly and Boss Variant Rotation; Manual Endless QA Pending
 Priority: Medium
 
 Tasks:
