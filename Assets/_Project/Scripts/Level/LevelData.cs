@@ -47,10 +47,12 @@ namespace ArmyRush
     [Serializable]
     public sealed class ObstacleSpawnData
     {
+        public ObstacleDefinition definition;
         public float z;
         public float x;
         public int health = 100;
         public int collisionPenalty = 8;
+        public int coinReward = 0;
         public float width = 1.6f;
     }
 }

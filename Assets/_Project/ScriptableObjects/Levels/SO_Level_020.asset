@@ -69,18 +69,24 @@ MonoBehaviour:
     healthPerUnit: 50
     width: 2.4
   obstacles:
-  - z: 64
+  - definition: {fileID: 11400000, guid: 3b1a7c49bf23f4556a51fcd7e29101d9, type: 2}
+    z: 64
     x: -1.4
     health: 770
     collisionPenalty: 25
-    width: 1.6
-  - z: 118
+    coinReward: 89
+    width: 2
+  - definition: {fileID: 11400000, guid: 4ed90245936644e4584a6047c47679d8, type: 2}
+    z: 118
     x: -1.6
     health: 1010
     collisionPenalty: 28
-    width: 1.6
-  - z: 118
+    coinReward: 33
+    width: 1.7
+  - definition: {fileID: 11400000, guid: 4adfd09552cea498b8f41ed1ad079806, type: 2}
+    z: 118
     x: 1.6
     health: 1090
     collisionPenalty: 28
-    width: 1.6
+    coinReward: 37
+    width: 1.9

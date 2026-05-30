@@ -23,6 +23,7 @@ public static class ArmyRushProjectBuilder
     private const string UpgradeDataPath = Root + "/ScriptableObjects/Upgrades";
     private const string TuningPath = Root + "/ScriptableObjects/Tuning";
     private const string BossDataPath = Root + "/ScriptableObjects/Bosses";
+    private const string ObstacleDataPath = Root + "/ScriptableObjects/Obstacles";
 
     [MenuItem("ArmyRush/Build Production Foundation")]
     public static void BuildProductionFoundation()
@@ -35,8 +36,9 @@ public static class ArmyRushProjectBuilder
         GlobalTuning tuning = CreateTuning();
         UpgradeDefinition[] upgrades = CreateUpgrades();
         PrefabSet prefabs = CreatePrefabs(materials, meshes);
+        ObstacleDefinition[] obstacles = CreateObstacleDefinitions(prefabs);
         BossDefinition[] bosses = CreateBossDefinitions(prefabs);
-        LevelData[] levels = CreateLevels(bosses);
+        LevelData[] levels = CreateLevels(bosses, obstacles);
 
         CreateBootScene(upgrades);
         CreateMainMenuScene(upgrades, materials, meshes);
@@ -58,6 +60,7 @@ public static class ArmyRushProjectBuilder
         ValidatePrefabFolder(failures);
         ValidatePoolingSetup(failures);
         ValidateBossPrefabs(failures);
+        ValidateObstaclePrefabs(failures);
         ValidateLevelDataAssets(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
@@ -369,6 +372,20 @@ public static class ArmyRushProjectBuilder
         };
     }
 
+    private static ObstacleDefinition[] CreateObstacleDefinitions(PrefabSet prefabs)
+    {
+        return new[]
+        {
+            CreateObstacleDefinition("SO_Obstacle_Barricade", "Barricade", ObstacleKind.Barricade, prefabs.obstacle, 96, 26, 7, 12, 1, 1.65f, false),
+            CreateObstacleDefinition("SO_Obstacle_CrateStack", "Crate Stack", ObstacleKind.CrateStack, prefabs.obstacleCrateStack, 112, 28, 8, 14, 1, 1.7f, false),
+            CreateObstacleDefinition("SO_Obstacle_BarrelCluster", "Barrel Cluster", ObstacleKind.BarrelCluster, prefabs.obstacleBarrelCluster, 132, 34, 11, 20, 2, 1.75f, true),
+            CreateObstacleDefinition("SO_Obstacle_ConcreteBlock", "Concrete Block", ObstacleKind.ConcreteBlock, prefabs.obstacleConcreteBlock, 170, 42, 12, 18, 1, 1.9f, false),
+            CreateObstacleDefinition("SO_Obstacle_MilitaryTruck", "Military Truck", ObstacleKind.MilitaryTruck, prefabs.obstacleMilitaryTruck, 240, 54, 16, 28, 2, 2.25f, false),
+            CreateObstacleDefinition("SO_Obstacle_Turret", "Sentry Turret", ObstacleKind.Turret, prefabs.obstacleTurret, 210, 48, 14, 26, 2, 1.8f, false),
+            CreateObstacleDefinition("SO_Obstacle_FuelTank", "Fuel Tank", ObstacleKind.FuelTank, prefabs.obstacleFuelTank, 190, 45, 15, 32, 3, 2.0f, true)
+        };
+    }
+
     private static BossDefinition[] CreateBossDefinitions(PrefabSet prefabs)
     {
         BossDefinition tank = CreateBossDefinition(
@@ -444,6 +461,22 @@ public static class ArmyRushProjectBuilder
         prefabs.gate = CreateGatePrefab(materials, meshes);
         prefabs.enemyGroup = CreateEnemyGroupPrefab(materials, meshes);
         prefabs.obstacle = CreateObstaclePrefab(materials, meshes);
+        prefabs.obstacleCrateStack = CreateObstacleCrateStackPrefab(materials, meshes);
+        prefabs.obstacleBarrelCluster = CreateObstacleBarrelClusterPrefab(materials, meshes);
+        prefabs.obstacleConcreteBlock = CreateObstacleConcreteBlockPrefab(materials, meshes);
+        prefabs.obstacleMilitaryTruck = CreateObstacleMilitaryTruckPrefab(materials, meshes);
+        prefabs.obstacleTurret = CreateObstacleTurretPrefab(materials, meshes);
+        prefabs.obstacleFuelTank = CreateObstacleFuelTankPrefab(materials, meshes);
+        prefabs.obstacleVariants = new[]
+        {
+            prefabs.obstacle,
+            prefabs.obstacleCrateStack,
+            prefabs.obstacleBarrelCluster,
+            prefabs.obstacleConcreteBlock,
+            prefabs.obstacleMilitaryTruck,
+            prefabs.obstacleTurret,
+            prefabs.obstacleFuelTank
+        };
         prefabs.bossTank = CreateBossTankPrefab(materials, meshes);
         prefabs.bossHelicopter = CreateBossHelicopterPrefab(materials, meshes);
         prefabs.bossMech = CreateBossMechPrefab(materials, meshes);
@@ -1147,22 +1180,111 @@ public static class ArmyRushProjectBuilder
 
     private static GameObject CreateObstaclePrefab(MaterialSet materials, MeshSet meshes)
     {
-        GameObject root = new GameObject("PF_Obstacle_Barricade");
-        BoxCollider collider = root.AddComponent<BoxCollider>();
-        collider.size = new Vector3(2f, 1.5f, 1.1f);
-        collider.center = new Vector3(0f, 0.75f, 0f);
-        collider.isTrigger = true;
-        Damageable damageable = root.AddComponent<Damageable>();
-        ObstacleController obstacle = root.AddComponent<ObstacleController>();
+        GameObject root = CreateObstacleRoot("PF_Obstacle_Barricade", new Vector3(2f, 1.5f, 1.1f), new Vector3(0f, 0.75f, 0f), out Damageable damageable, out ObstacleController obstacle);
         AddMeshPart(root.transform, "Crate_L", meshes.box, materials.obstacle, new Vector3(-0.48f, 0.38f, 0f), new Vector3(0.78f, 0.72f, 0.72f));
         AddMeshPart(root.transform, "Crate_R", meshes.box, materials.obstacle, new Vector3(0.48f, 0.38f, 0f), new Vector3(0.78f, 0.72f, 0.72f));
         AddMeshPart(root.transform, "MetalBand", meshes.box, materials.obstacleMetal, new Vector3(0f, 0.82f, -0.02f), new Vector3(1.85f, 0.16f, 0.82f));
-        TextMesh label = CreateWorldText("HealthLabel", root.transform, "100", new Vector3(0f, 1.55f, 0f), 0.13f, Color.white);
+        AddMeshPart(root.transform, "HazardStripe", meshes.box, materials.projectile, new Vector3(0f, 1.0f, -0.48f), new Vector3(1.7f, 0.08f, 0.08f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "100", new Vector3(0f, 1.55f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_Barricade.prefab");
+    }
+
+    private static GameObject CreateObstacleCrateStackPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = CreateObstacleRoot("PF_Obstacle_CrateStack", new Vector3(2.2f, 1.7f, 1.25f), new Vector3(0f, 0.85f, 0f), out Damageable damageable, out ObstacleController obstacle);
+        AddMeshPart(root.transform, "BottomCrate_L", meshes.box, materials.obstacle, new Vector3(-0.52f, 0.35f, 0f), new Vector3(0.82f, 0.68f, 0.82f));
+        AddMeshPart(root.transform, "BottomCrate_R", meshes.box, materials.obstacle, new Vector3(0.52f, 0.35f, 0f), new Vector3(0.82f, 0.68f, 0.82f));
+        AddMeshPart(root.transform, "TopCrate", meshes.box, materials.obstacle, new Vector3(0f, 0.98f, -0.08f), new Vector3(0.92f, 0.62f, 0.78f));
+        AddMeshPart(root.transform, "CrossBand_A", meshes.box, materials.obstacleMetal, new Vector3(0f, 0.72f, -0.48f), new Vector3(1.96f, 0.09f, 0.08f));
+        AddMeshPart(root.transform, "CrossBand_B", meshes.box, materials.obstacleMetal, new Vector3(0f, 1.3f, -0.48f), new Vector3(1.24f, 0.09f, 0.08f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "120", new Vector3(0f, 1.78f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_CrateStack.prefab");
+    }
+
+    private static GameObject CreateObstacleBarrelClusterPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = CreateObstacleRoot("PF_Obstacle_BarrelCluster", new Vector3(2.1f, 1.45f, 1.45f), new Vector3(0f, 0.72f, 0f), out Damageable damageable, out ObstacleController obstacle);
+        AddMeshPart(root.transform, "Barrel_L", meshes.cylinder, materials.enemyRed, new Vector3(-0.52f, 0.62f, 0f), new Vector3(0.48f, 1.18f, 0.48f));
+        AddMeshPart(root.transform, "Barrel_R", meshes.cylinder, materials.enemyRed, new Vector3(0.52f, 0.62f, 0f), new Vector3(0.48f, 1.18f, 0.48f));
+        AddMeshPart(root.transform, "Barrel_Back", meshes.cylinder, materials.enemyCrimson, new Vector3(0f, 0.62f, 0.44f), new Vector3(0.46f, 1.12f, 0.46f));
+        AddMeshPart(root.transform, "WarningBand", meshes.box, materials.projectile, new Vector3(0f, 0.86f, -0.5f), new Vector3(1.55f, 0.11f, 0.08f));
+        AddMeshPart(root.transform, "BasePallet", meshes.box, materials.obstacleMetal, new Vector3(0f, 0.12f, 0f), new Vector3(1.65f, 0.18f, 1.12f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "140", new Vector3(0f, 1.58f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_BarrelCluster.prefab");
+    }
+
+    private static GameObject CreateObstacleConcreteBlockPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = CreateObstacleRoot("PF_Obstacle_ConcreteBlock", new Vector3(2.35f, 1.35f, 1.1f), new Vector3(0f, 0.68f, 0f), out Damageable damageable, out ObstacleController obstacle);
+        AddMeshPart(root.transform, "ConcreteBody", meshes.box, materials.track, new Vector3(0f, 0.48f, 0f), new Vector3(2.05f, 0.92f, 0.86f));
+        AddMeshPart(root.transform, "TopCap", meshes.box, materials.rail, new Vector3(0f, 1.0f, 0f), new Vector3(2.18f, 0.18f, 0.96f));
+        AddMeshPart(root.transform, "Rebar_L", meshes.box, materials.obstacleMetal, new Vector3(-0.54f, 1.23f, 0f), new Vector3(0.08f, 0.48f, 0.08f));
+        AddMeshPart(root.transform, "Rebar_R", meshes.box, materials.obstacleMetal, new Vector3(0.54f, 1.23f, 0f), new Vector3(0.08f, 0.48f, 0.08f));
+        AddMeshPart(root.transform, "WarningStripe", meshes.box, materials.projectile, new Vector3(0f, 0.72f, -0.48f), new Vector3(1.7f, 0.1f, 0.08f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "180", new Vector3(0f, 1.72f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_ConcreteBlock.prefab");
+    }
+
+    private static GameObject CreateObstacleMilitaryTruckPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = CreateObstacleRoot("PF_Obstacle_MilitaryTruck", new Vector3(2.7f, 1.7f, 2.6f), new Vector3(0f, 0.84f, 0f), out Damageable damageable, out ObstacleController obstacle);
+        AddMeshPart(root.transform, "Chassis", meshes.box, materials.obstacleMetal, new Vector3(0f, 0.48f, 0.08f), new Vector3(2.18f, 0.38f, 2.05f));
+        AddMeshPart(root.transform, "Cab", meshes.wedge, materials.enemyCrimson, new Vector3(0f, 1.02f, -0.74f), new Vector3(1.35f, 0.88f, 0.92f));
+        AddMeshPart(root.transform, "CanvasCover", meshes.box, materials.enemyRed, new Vector3(0f, 1.04f, 0.46f), new Vector3(1.72f, 0.78f, 1.2f));
+        Transform wheelFL = AddMeshPart(root.transform, "Wheel_FL", meshes.cylinder, materials.obstacleMetal, new Vector3(-1.15f, 0.32f, -0.72f), new Vector3(0.32f, 0.18f, 0.32f));
+        Transform wheelFR = AddMeshPart(root.transform, "Wheel_FR", meshes.cylinder, materials.obstacleMetal, new Vector3(1.15f, 0.32f, -0.72f), new Vector3(0.32f, 0.18f, 0.32f));
+        Transform wheelBL = AddMeshPart(root.transform, "Wheel_BL", meshes.cylinder, materials.obstacleMetal, new Vector3(-1.15f, 0.32f, 0.82f), new Vector3(0.32f, 0.18f, 0.32f));
+        Transform wheelBR = AddMeshPart(root.transform, "Wheel_BR", meshes.cylinder, materials.obstacleMetal, new Vector3(1.15f, 0.32f, 0.82f), new Vector3(0.32f, 0.18f, 0.32f));
+        wheelFL.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        wheelFR.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        wheelBL.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        wheelBR.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        AddMeshPart(root.transform, "Bumper", meshes.box, materials.projectile, new Vector3(0f, 0.64f, -1.22f), new Vector3(1.72f, 0.14f, 0.1f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "260", new Vector3(0f, 1.98f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_MilitaryTruck.prefab");
+    }
+
+    private static GameObject CreateObstacleTurretPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = CreateObstacleRoot("PF_Obstacle_Turret", new Vector3(2.0f, 1.85f, 1.75f), new Vector3(0f, 0.92f, 0f), out Damageable damageable, out ObstacleController obstacle);
+        AddMeshPart(root.transform, "Base", meshes.cylinder, materials.obstacleMetal, new Vector3(0f, 0.22f, 0f), new Vector3(1.22f, 0.36f, 1.22f));
+        AddMeshPart(root.transform, "Column", meshes.cylinder, materials.rail, new Vector3(0f, 0.76f, 0f), new Vector3(0.64f, 0.96f, 0.64f));
+        AddMeshPart(root.transform, "TurretHead", meshes.wedge, materials.enemyRed, new Vector3(0f, 1.35f, -0.05f), new Vector3(1.25f, 0.64f, 1.0f));
+        AddMeshPart(root.transform, "Barrel", meshes.box, materials.obstacleMetal, new Vector3(0f, 1.32f, -0.92f), new Vector3(0.22f, 0.22f, 1.25f));
+        AddMeshPart(root.transform, "OpticGlow", meshes.box, materials.projectile, new Vector3(0f, 1.46f, -0.58f), new Vector3(0.54f, 0.1f, 0.08f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "220", new Vector3(0f, 2.15f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_Turret.prefab");
+    }
+
+    private static GameObject CreateObstacleFuelTankPrefab(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = CreateObstacleRoot("PF_Obstacle_FuelTank", new Vector3(2.45f, 1.45f, 1.45f), new Vector3(0f, 0.72f, 0f), out Damageable damageable, out ObstacleController obstacle);
+        Transform tank = AddMeshPart(root.transform, "TankBody", meshes.cylinder, materials.enemyRed, new Vector3(0f, 0.82f, 0f), new Vector3(0.62f, 1.7f, 0.62f));
+        tank.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        Transform capL = AddMeshPart(root.transform, "Cap_L", meshes.cylinder, materials.obstacleMetal, new Vector3(-0.92f, 0.82f, 0f), new Vector3(0.66f, 0.08f, 0.66f));
+        Transform capR = AddMeshPart(root.transform, "Cap_R", meshes.cylinder, materials.obstacleMetal, new Vector3(0.92f, 0.82f, 0f), new Vector3(0.66f, 0.08f, 0.66f));
+        capL.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        capR.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        AddMeshPart(root.transform, "Saddle_L", meshes.box, materials.obstacleMetal, new Vector3(-0.62f, 0.22f, 0f), new Vector3(0.16f, 0.36f, 0.88f));
+        AddMeshPart(root.transform, "Saddle_R", meshes.box, materials.obstacleMetal, new Vector3(0.62f, 0.22f, 0f), new Vector3(0.16f, 0.36f, 0.88f));
+        AddMeshPart(root.transform, "HazardBand", meshes.box, materials.projectile, new Vector3(0f, 1.08f, -0.62f), new Vector3(1.52f, 0.1f, 0.08f));
+        return FinalizeObstaclePrefab(root, damageable, obstacle, "200", new Vector3(0f, 1.74f, 0f), PrefabPath + "/Obstacles/PF_Obstacle_FuelTank.prefab");
+    }
+
+    private static GameObject CreateObstacleRoot(string name, Vector3 colliderSize, Vector3 colliderCenter, out Damageable damageable, out ObstacleController obstacle)
+    {
+        GameObject root = new GameObject(name);
+        BoxCollider collider = root.AddComponent<BoxCollider>();
+        collider.size = colliderSize;
+        collider.center = colliderCenter;
+        collider.isTrigger = true;
+        damageable = root.AddComponent<Damageable>();
+        obstacle = root.AddComponent<ObstacleController>();
+        return root;
+    }
+
+    private static GameObject FinalizeObstaclePrefab(GameObject root, Damageable damageable, ObstacleController obstacle, string labelText, Vector3 labelPosition, string path)
+    {
+        TextMesh label = CreateWorldText("HealthLabel", root.transform, labelText, labelPosition, 0.13f, Color.white);
         label.gameObject.AddComponent<Billboard>();
         SetObject(damageable, "_label", label);
         SetObject(obstacle, "_damageable", damageable);
         SetObject(obstacle, "_healthLabel", label);
-        GameObject prefab = SavePrefab(root, PrefabPath + "/Obstacles/PF_Obstacle_Barricade.prefab");
+        GameObject prefab = SavePrefab(root, path);
         Object.DestroyImmediate(root);
         return prefab;
     }
@@ -1446,7 +1568,7 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
-    private static LevelData[] CreateLevels(BossDefinition[] bosses)
+    private static LevelData[] CreateLevels(BossDefinition[] bosses, ObstacleDefinition[] obstacleDefinitions)
     {
         List<LevelData> levels = new List<LevelData>();
         BossDefinition fallbackBoss = bosses != null && bosses.Length > 0 ? bosses[0] : null;
@@ -1466,6 +1588,10 @@ public static class ArmyRushProjectBuilder
             data.baseCoinReward = Mathf.RoundToInt(Mathf.Lerp(100f, 1200f, (i - 1) / 19f));
             data.difficultyRating = i;
             data.hasBoss = i == 5 || i == 10 || i == 15 || i == 20;
+            if (data.hasBoss)
+            {
+                data.trackLength = Mathf.Max(data.trackLength, 152f);
+            }
             BossDefinition bossDefinition = data.hasBoss && bosses != null && bosses.Length > 0 ? bosses[((i / 5) - 1) % bosses.Length] : fallbackBoss;
             data.bossDefinition = data.hasBoss ? bossDefinition : null;
             data.bossHealth = data.hasBoss && bossDefinition != null ? bossDefinition.GetHealth(i, 0) : 0;
@@ -1477,7 +1603,7 @@ public static class ArmyRushProjectBuilder
             data.enemyGroups.Clear();
             data.obstacles.Clear();
 
-            AddDesignedLevelData(data, i);
+            AddDesignedLevelData(data, i, obstacleDefinitions);
             EditorUtility.SetDirty(data);
             levels.Add(data);
         }
@@ -1485,19 +1611,21 @@ public static class ArmyRushProjectBuilder
         return levels.ToArray();
     }
 
-    private static void AddDesignedLevelData(LevelData data, int level)
+    private static void AddDesignedLevelData(LevelData data, int level, ObstacleDefinition[] obstacleDefinitions)
     {
         AddGatePair(data, 16f, GateOperation.Add, 5 + level, GateOperation.Add, 10 + level * 2);
         AddEnemy(data, 32f, 0f, 8 + level * 3, 8 + level);
         AddGatePair(data, 47f, GateOperation.Multiply, level < 6 ? 2 : 3, GateOperation.Add, 18 + level * 3);
-        AddObstacle(data, 64f, level % 2 == 0 ? -1.4f : 1.4f, 70 + level * 35, 5 + level);
+        AddObstacle(data, 64f, level % 2 == 0 ? -1.4f : 1.4f, 70 + level * 35, 5 + level, SelectObstacleDefinition(obstacleDefinitions, level, 0));
         AddGatePair(data, 82f, level >= 3 ? GateOperation.Subtract : GateOperation.Add, level >= 3 ? 10 + level : 10, GateOperation.Multiply, 2);
         AddEnemy(data, 101f, level % 2 == 0 ? 1.2f : -1.2f, 16 + level * 5, 10 + level * 2);
 
-        if (level >= 4)
+        const float lateObstacleZ = 118f;
+        float bossApproachStart = GetBossApproachStart(data);
+        if (level >= 4 && lateObstacleZ < bossApproachStart - 8f)
         {
-            AddObstacle(data, 118f, -1.6f, 110 + level * 45, 8 + level);
-            AddObstacle(data, 118f, 1.6f, 130 + level * 48, 8 + level);
+            AddObstacle(data, lateObstacleZ, -1.6f, 110 + level * 45, 8 + level, SelectObstacleDefinition(obstacleDefinitions, level, 1));
+            AddObstacle(data, lateObstacleZ, 1.6f, 130 + level * 48, 8 + level, SelectObstacleDefinition(obstacleDefinitions, level, 2));
         }
 
         if (data.hasBoss)
@@ -1522,9 +1650,42 @@ public static class ArmyRushProjectBuilder
         data.enemyGroups.Add(new EnemyGroupSpawnData { z = z, x = x, count = count, healthPerUnit = hp });
     }
 
-    private static void AddObstacle(LevelData data, float z, float x, int health, int penalty)
+    private static ObstacleDefinition SelectObstacleDefinition(ObstacleDefinition[] definitions, int level, int salt)
     {
-        data.obstacles.Add(new ObstacleSpawnData { z = z, x = x, health = health, collisionPenalty = penalty });
+        if (definitions == null || definitions.Length == 0)
+        {
+            return null;
+        }
+
+        int index;
+        if (level <= 2)
+        {
+            index = 1;
+        }
+        else if (level <= 4)
+        {
+            index = salt == 0 ? 0 : 1;
+        }
+        else
+        {
+            index = Mathf.Abs((level + salt * 2) % definitions.Length);
+        }
+
+        return definitions[Mathf.Clamp(index, 0, definitions.Length - 1)];
+    }
+
+    private static void AddObstacle(LevelData data, float z, float x, int health, int penalty, ObstacleDefinition definition)
+    {
+        data.obstacles.Add(new ObstacleSpawnData
+        {
+            definition = definition,
+            z = z,
+            x = x,
+            health = health,
+            collisionPenalty = penalty,
+            coinReward = definition != null ? definition.GetCoinReward(data.levelIndex, 0) : 0,
+            width = definition != null ? definition.width : 1.6f
+        });
     }
 
     private static void CreateBootScene(UpgradeDefinition[] upgrades)
@@ -1816,6 +1977,70 @@ public static class ArmyRushProjectBuilder
         }
     }
 
+    private static void ValidateObstaclePrefabs(List<string> failures)
+    {
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_Barricade.prefab", 4);
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_CrateStack.prefab", 5);
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_BarrelCluster.prefab", 5);
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_ConcreteBlock.prefab", 5);
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_MilitaryTruck.prefab", 8);
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_Turret.prefab", 5);
+        ValidateObstaclePrefab(failures, PrefabPath + "/Obstacles/PF_Obstacle_FuelTank.prefab", 6);
+
+        ObstacleDefinition[] definitions = AssetDatabase.FindAssets("t:ObstacleDefinition", new[] { ObstacleDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<ObstacleDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+        if (definitions.Length < 7)
+        {
+            failures.Add("Expected at least seven obstacle definition assets.");
+        }
+
+        foreach (ObstacleDefinition definition in definitions)
+        {
+            if (definition.prefab == null)
+            {
+                failures.Add(definition.name + " is missing an obstacle prefab reference.");
+            }
+            if (definition.baseHealth <= 0 || definition.healthPerLevel < 0 || definition.collisionPenalty < 0 || definition.baseCoinReward < 0 || definition.width <= 0f)
+            {
+                failures.Add(definition.name + " has invalid obstacle balance values.");
+            }
+        }
+    }
+
+    private static void ValidateObstaclePrefab(List<string> failures, string path, int minimumMeshRenderers)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null)
+        {
+            failures.Add("Missing obstacle prefab: " + path);
+            return;
+        }
+
+        if (prefab.GetComponent<ObstacleController>() == null)
+        {
+            failures.Add(path + " is missing ObstacleController.");
+        }
+        if (prefab.GetComponent<Damageable>() == null)
+        {
+            failures.Add(path + " is missing Damageable.");
+        }
+        Collider collider = prefab.GetComponent<Collider>();
+        if (collider == null || !collider.isTrigger)
+        {
+            failures.Add(path + " is missing a trigger collider.");
+        }
+        if (prefab.GetComponentsInChildren<MeshRenderer>(true).Length < minimumMeshRenderers)
+        {
+            failures.Add(path + " does not contain enough obstacle visual mesh parts.");
+        }
+        if (prefab.GetComponentInChildren<TextMesh>(true) == null)
+        {
+            failures.Add(path + " is missing an obstacle health label.");
+        }
+    }
+
     private static void ValidatePooledPrefab(List<string> failures, string path, params System.Type[] requiredComponents)
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -2020,6 +2245,7 @@ public static class ArmyRushProjectBuilder
         int defaultStartingSoldiers = tuning != null ? Mathf.Max(1, tuning.defaultStartingSoldiers) : 10;
         float trackHalfWidth = tuning != null ? Mathf.Max(1f, tuning.trackHalfWidth) : 3.2f;
         HashSet<int> seenIndices = new HashSet<int>();
+        HashSet<ObstacleDefinition> referencedObstacleDefinitions = new HashSet<ObstacleDefinition>();
         int bossLevelCount = 0;
 
         foreach (LevelData level in levels)
@@ -2060,7 +2286,7 @@ public static class ArmyRushProjectBuilder
 
             ValidateGateData(failures, level, label, trackHalfWidth);
             ValidateEnemyData(failures, level, label, trackHalfWidth);
-            ValidateObstacleData(failures, level, label, trackHalfWidth);
+            ValidateObstacleData(failures, level, label, trackHalfWidth, referencedObstacleDefinitions);
 
             if (level.hasBoss)
             {
@@ -2075,6 +2301,10 @@ public static class ArmyRushProjectBuilder
         if (bossLevelCount < 4)
         {
             failures.Add("Expected at least four authored boss levels.");
+        }
+        if (referencedObstacleDefinitions.Count < 7)
+        {
+            failures.Add("Authored levels do not reference every required obstacle variant.");
         }
     }
 
@@ -2137,10 +2367,14 @@ public static class ArmyRushProjectBuilder
             {
                 failures.Add(label + " has enemy group " + i + " with invalid combat values.");
             }
+            if (level.hasBoss && enemy.z >= GetBossApproachStart(level) - 4f)
+            {
+                failures.Add(label + " has enemy group " + i + " too close to the boss approach zone.");
+            }
         }
     }
 
-    private static void ValidateObstacleData(List<string> failures, LevelData level, string label, float trackHalfWidth)
+    private static void ValidateObstacleData(List<string> failures, LevelData level, string label, float trackHalfWidth, HashSet<ObstacleDefinition> referencedObstacleDefinitions)
     {
         if (level.obstacles == null)
         {
@@ -2168,7 +2402,38 @@ public static class ArmyRushProjectBuilder
             {
                 failures.Add(label + " has obstacle " + i + " with invalid combat values.");
             }
+            if (level.hasBoss && obstacle.z >= GetBossApproachStart(level) - 4f)
+            {
+                failures.Add(label + " has obstacle " + i + " too close to the boss approach zone.");
+            }
+            if (obstacle.definition == null)
+            {
+                failures.Add(label + " has obstacle " + i + " without an ObstacleDefinition.");
+            }
+            else
+            {
+                referencedObstacleDefinitions.Add(obstacle.definition);
+                if (obstacle.definition.prefab == null)
+                {
+                    failures.Add(label + " has obstacle " + i + " using an ObstacleDefinition without a prefab.");
+                }
+                if (obstacle.definition.width <= 0f)
+                {
+                    failures.Add(label + " has obstacle " + i + " using an ObstacleDefinition with invalid width.");
+                }
+            }
         }
+    }
+
+    private static float GetBossApproachStart(LevelData level)
+    {
+        if (level == null || !level.hasBoss)
+        {
+            return float.PositiveInfinity;
+        }
+
+        float activationDistance = level.bossDefinition != null ? Mathf.Max(1f, level.bossDefinition.activationDistance) : 18f;
+        return level.trackLength - 24f - activationDistance;
     }
 
     private static int EstimateBestGatePath(LevelData level, int startingSoldiers)
@@ -2873,6 +3138,41 @@ public static class ArmyRushProjectBuilder
         return definition;
     }
 
+    private static ObstacleDefinition CreateObstacleDefinition(
+        string assetName,
+        string displayName,
+        ObstacleKind kind,
+        GameObject prefab,
+        int baseHealth,
+        int healthPerLevel,
+        int collisionPenalty,
+        int baseCoinReward,
+        int coinRewardPerLevel,
+        float width,
+        bool explosive)
+    {
+        string path = $"{ObstacleDataPath}/{assetName}.asset";
+        ObstacleDefinition definition = AssetDatabase.LoadAssetAtPath<ObstacleDefinition>(path);
+        if (definition == null)
+        {
+            definition = ScriptableObject.CreateInstance<ObstacleDefinition>();
+            AssetDatabase.CreateAsset(definition, path);
+        }
+
+        definition.displayName = displayName;
+        definition.kind = kind;
+        definition.prefab = prefab;
+        definition.baseHealth = baseHealth;
+        definition.healthPerLevel = healthPerLevel;
+        definition.collisionPenalty = collisionPenalty;
+        definition.baseCoinReward = baseCoinReward;
+        definition.coinRewardPerLevel = coinRewardPerLevel;
+        definition.width = width;
+        definition.explosive = explosive;
+        EditorUtility.SetDirty(definition);
+        return definition;
+    }
+
     private static BossDefinition CreateBossDefinition(
         string assetName,
         string displayName,
@@ -3029,6 +3329,13 @@ public static class ArmyRushProjectBuilder
         public GameObject gate;
         public GameObject enemyGroup;
         public GameObject obstacle;
+        public GameObject obstacleCrateStack;
+        public GameObject obstacleBarrelCluster;
+        public GameObject obstacleConcreteBlock;
+        public GameObject obstacleMilitaryTruck;
+        public GameObject obstacleTurret;
+        public GameObject obstacleFuelTank;
+        public GameObject[] obstacleVariants;
         public GameObject bossTank;
         public GameObject bossHelicopter;
         public GameObject bossMech;

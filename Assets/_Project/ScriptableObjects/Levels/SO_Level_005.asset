@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_Level_005
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.LevelData
   levelIndex: 5
-  trackLength: 138.94737
+  trackLength: 152
   startingSoldiersOverride: 0
   baseCoinReward: 332
   difficultyRating: 5
@@ -49,11 +49,11 @@ MonoBehaviour:
     x: 1.45
     operation: 2
     value: 2
-  - z: 92.94737
+  - z: 106
     x: -1.45
     operation: 0
     value: 45
-  - z: 92.94737
+  - z: 106
     x: 1.45
     operation: 2
     value: 2
@@ -69,18 +69,10 @@ MonoBehaviour:
     healthPerUnit: 20
     width: 2.4
   obstacles:
-  - z: 64
+  - definition: {fileID: 11400000, guid: cb8cb33ec035848719cd127459b1c333, type: 2}
+    z: 64
     x: 1.4
     health: 245
     collisionPenalty: 10
-    width: 1.6
-  - z: 118
-    x: -1.6
-    health: 335
-    collisionPenalty: 13
-    width: 1.6
-  - z: 118
-    x: 1.6
-    health: 370
-    collisionPenalty: 13
-    width: 1.6
+    coinReward: 34
+    width: 1.8

@@ -74,8 +74,10 @@ MonoBehaviour:
     healthPerUnit: 18
     width: 2.4
   obstacles:
-  - z: 64
+  - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
+    z: 64
     x: 1.4
     health: 175
     collisionPenalty: 8
-    width: 1.6
+    coinReward: 14
+    width: 1.65

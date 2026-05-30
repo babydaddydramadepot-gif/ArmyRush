@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dfe3afc63d9749cf900e0521fd72b2b, type: 3}
+  m_Name: SO_Obstacle_CrateStack
+  m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.ObstacleDefinition
+  displayName: Crate Stack
+  kind: 1
+  prefab: {fileID: 5486729744030641882, guid: 2b8d3f60f71f94a79aa2555c73273d61, type: 3}
+  baseHealth: 112
+  healthPerLevel: 28
+  collisionPenalty: 8
+  baseCoinReward: 14
+  coinRewardPerLevel: 1
+  width: 1.7
+  explosive: 0

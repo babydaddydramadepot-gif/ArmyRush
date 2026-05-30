@@ -182,6 +182,7 @@ Implementation Pass 1 Result:
 - Added an animated generated 3D main-menu character showcase with hero squad, runway, gate, coin medal, and validation coverage for showcase wiring/content.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
 - Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, and validation coverage for all boss prefabs.
+- Added data-driven obstacle definitions, generated obstacle variant prefabs, authored-level obstacle variant coverage, endless obstacle variant reuse, boss-approach layout guardrails, and validation for obstacle prefabs/definitions.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
@@ -617,7 +618,7 @@ Acceptance Criteria:
 
 ## 2.1 Obstacle System
 
-Status: Functional Pass Implemented with Reward Payouts and Destruction Feedback; Device Balance QA Pending
+Status: Functional Pass Implemented with Data-Driven Variants, Reward Payouts, and Destruction Feedback; Device Balance QA Pending
 Priority: High
 
 Tasks:
@@ -640,7 +641,7 @@ Acceptance Criteria:
 
 ## 2.2 Production Obstacle Visuals
 
-Status: In Progress; Barricade/Crate Visual and Damage-State Feedback Implemented
+Status: Functional Variant Asset Pass Implemented; Device Readability and Balance QA Pending
 Priority: High
 
 Tasks:
@@ -649,13 +650,13 @@ Tasks:
 
 Create production visuals for:
 
-- Crates
-- Barrels
-- Barricades
-- Concrete blocks
-- Military trucks
-- Turrets
-- Fuel tanks
+- [x] Crates
+- [x] Barrels
+- [x] Barricades
+- [x] Concrete blocks
+- [x] Military trucks
+- [x] Turrets
+- [x] Fuel tanks
 
 Acceptance Criteria:
 

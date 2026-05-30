@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-74%
+75%
 
 Last Updated:
 
@@ -2157,6 +2157,40 @@ Manually play and balance boss levels 5, 10, 15, and 20 on device. Add authored 
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Obstacle Variant Content Pass
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scripts/Obstacles/ObstacleDefinition.cs
+Assets/_Project/Scripts/Level/LevelData.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Prefabs/Obstacles/
+Assets/_Project/ScriptableObjects/Obstacles/
+Assets/_Project/ScriptableObjects/Levels/
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added reusable obstacle definition assets and generated obstacle prefabs for barricades, crate stacks, barrel clusters, concrete blocks, military trucks, turrets, and fuel tanks. Level obstacle spawn data now carries an optional definition reference, `LevelManager` spawns definition-owned obstacle prefabs, authored levels reference all required obstacle variants, endless levels rotate through the authored obstacle definition set, and early boss levels keep regular combat props out of the boss approach zone.
+
+Result:
+
+Unity foundation generation and production validation both passed. The validator now checks obstacle prefab controller/health/trigger/label/mesh content, verifies obstacle definition balance data and prefab references, confirms authored levels reference every required obstacle variant, and rejects enemies or obstacles placed too close to boss approach zones.
+
+Follow Up:
+
+Run device readability and balance QA for obstacle silhouettes, health values, collision penalties, and reward pacing. Final authored obstacle art polish remains part of the broader art pass.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2169,7 +2203,7 @@ UI Systems
 
 Visual Systems
 
-55%
+57%
 
 Audio Systems
 
@@ -2177,7 +2211,7 @@ Audio Systems
 
 Level Systems
 
-35%
+36%
 
 Progression Systems
 
@@ -2193,7 +2227,7 @@ Optimization
 
 Polish
 
-40%
+41%
 
 Release Readiness
 

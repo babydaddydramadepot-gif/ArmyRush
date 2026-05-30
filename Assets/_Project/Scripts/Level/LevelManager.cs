@@ -173,11 +173,11 @@ namespace ArmyRush
             AddEndlessGatePair(16f, GateOperation.Add, Mathf.RoundToInt(18f * difficulty), GateOperation.Multiply, overflow % 3 == 0 ? 3 : 2);
             AddEndlessEnemy(34f, 0f, Mathf.RoundToInt(28f * difficulty), Mathf.RoundToInt(16f * difficulty));
             AddEndlessGatePair(52f, overflow % 2 == 0 ? GateOperation.Subtract : GateOperation.Add, Mathf.RoundToInt(14f * difficulty), GateOperation.Add, Mathf.RoundToInt(26f * difficulty));
-            AddEndlessObstacle(72f, overflow % 2 == 0 ? -1.45f : 1.45f, Mathf.RoundToInt(210f * difficulty), Mathf.RoundToInt(14f * difficulty));
+            AddEndlessObstacle(72f, overflow % 2 == 0 ? -1.45f : 1.45f, Mathf.RoundToInt(210f * difficulty), Mathf.RoundToInt(14f * difficulty), FindEndlessObstacleDefinition(overflow, 0));
             AddEndlessGatePair(94f, GateOperation.Multiply, overflow % 4 == 0 ? 3 : 2, GateOperation.Add, Mathf.RoundToInt(32f * difficulty));
             AddEndlessEnemy(118f, overflow % 2 == 0 ? 1.15f : -1.15f, Mathf.RoundToInt(42f * difficulty), Mathf.RoundToInt(18f * difficulty));
-            AddEndlessObstacle(142f, -1.55f, Mathf.RoundToInt(250f * difficulty), Mathf.RoundToInt(16f * difficulty));
-            AddEndlessObstacle(142f, 1.55f, Mathf.RoundToInt(270f * difficulty), Mathf.RoundToInt(16f * difficulty));
+            AddEndlessObstacle(142f, -1.55f, Mathf.RoundToInt(250f * difficulty), Mathf.RoundToInt(16f * difficulty), FindEndlessObstacleDefinition(overflow, 1));
+            AddEndlessObstacle(142f, 1.55f, Mathf.RoundToInt(270f * difficulty), Mathf.RoundToInt(16f * difficulty), FindEndlessObstacleDefinition(overflow, 2));
 
             if (_runtimeEndlessLevel.hasBoss)
             {
@@ -220,6 +220,35 @@ namespace ArmyRush
             return fallback;
         }
 
+        private ObstacleDefinition FindEndlessObstacleDefinition(int overflow, int salt)
+        {
+            List<ObstacleDefinition> definitions = new List<ObstacleDefinition>();
+            for (int i = 0; i < _levels.Length; i++)
+            {
+                LevelData level = _levels[i];
+                if (level == null || level.obstacles == null)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < level.obstacles.Count; j++)
+                {
+                    ObstacleDefinition definition = level.obstacles[j] != null ? level.obstacles[j].definition : null;
+                    if (definition != null && !definitions.Contains(definition))
+                    {
+                        definitions.Add(definition);
+                    }
+                }
+            }
+
+            if (definitions.Count == 0)
+            {
+                return null;
+            }
+
+            return definitions[Mathf.Abs((overflow + salt) % definitions.Count)];
+        }
+
         private void AddEndlessGatePair(float z, GateOperation leftOperation, int leftValue, GateOperation rightOperation, int rightValue)
         {
             _runtimeEndlessLevel.gates.Add(new GateSpawnData { z = z, x = -1.45f, operation = leftOperation, value = Mathf.Max(1, leftValue) });
@@ -231,9 +260,17 @@ namespace ArmyRush
             _runtimeEndlessLevel.enemyGroups.Add(new EnemyGroupSpawnData { z = z, x = x, count = Mathf.Max(1, count), healthPerUnit = Mathf.Max(1, healthPerUnit) });
         }
 
-        private void AddEndlessObstacle(float z, float x, int health, int penalty)
+        private void AddEndlessObstacle(float z, float x, int health, int penalty, ObstacleDefinition definition)
         {
-            _runtimeEndlessLevel.obstacles.Add(new ObstacleSpawnData { z = z, x = x, health = Mathf.Max(1, health), collisionPenalty = Mathf.Max(0, penalty) });
+            _runtimeEndlessLevel.obstacles.Add(new ObstacleSpawnData
+            {
+                definition = definition,
+                z = z,
+                x = x,
+                health = Mathf.Max(1, health),
+                collisionPenalty = Mathf.Max(0, penalty),
+                width = definition != null ? definition.width : 1.6f
+            });
         }
 
         private void BuildTrack(float length)
@@ -289,18 +326,22 @@ namespace ArmyRush
 
         private void SpawnObstacles()
         {
-            if (_obstaclePrefab == null)
-            {
-                return;
-            }
-
             RunManager runManager = FindAnyObjectByType<RunManager>();
             foreach (ObstacleSpawnData data in CurrentLevel.obstacles)
             {
-                GameObject obstacleObject = Instantiate(_obstaclePrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
+                ObstacleDefinition definition = data.definition;
+                GameObject obstaclePrefab = definition != null && definition.prefab != null ? definition.prefab : _obstaclePrefab;
+                if (obstaclePrefab == null)
+                {
+                    continue;
+                }
+
+                GameObject obstacleObject = Instantiate(obstaclePrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
                 ObstacleController obstacle = obstacleObject.GetComponent<ObstacleController>();
-                int reward = (_tuning != null ? _tuning.obstacleCoinValue : 12) + Mathf.Max(0, CurrentLevel.levelIndex - 1);
-                obstacle?.Configure(data.health, data.collisionPenalty, reward, runManager);
+                int health = definition != null ? definition.GetHealth(CurrentLevel.levelIndex, data.health) : Mathf.Max(1, data.health);
+                int penalty = definition != null ? definition.GetCollisionPenalty(data.collisionPenalty) : Mathf.Max(0, data.collisionPenalty);
+                int reward = definition != null ? definition.GetCoinReward(CurrentLevel.levelIndex, data.coinReward) : (_tuning != null ? _tuning.obstacleCoinValue : 12) + Mathf.Max(0, CurrentLevel.levelIndex - 1);
+                obstacle?.Configure(health, penalty, reward, runManager);
                 _spawned.Add(obstacleObject);
             }
         }
