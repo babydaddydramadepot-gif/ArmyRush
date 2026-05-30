@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeebaf2cdc6647b7a4f64cdcf4b9fad, type: 3}
+  m_Name: SO_Level_001
+  m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.LevelData
+  levelIndex: 1
+  trackLength: 120
+  startingSoldiersOverride: 10
+  baseCoinReward: 100
+  difficultyRating: 1
+  hasBoss: 0
+  bossHealth: 0
+  gates:
+  - z: 16
+    x: -1.45
+    operation: 0
+    value: 6
+  - z: 16
+    x: 1.45
+    operation: 0
+    value: 12
+  - z: 47
+    x: -1.45
+    operation: 2
+    value: 2
+  - z: 47
+    x: 1.45
+    operation: 0
+    value: 21
+  - z: 82
+    x: -1.45
+    operation: 0
+    value: 10
+  - z: 82
+    x: 1.45
+    operation: 2
+    value: 2
+  - z: 82
+    x: -1.45
+    operation: 0
+    value: 27
+  - z: 82
+    x: 1.45
+    operation: 2
+    value: 2
+  enemyGroups:
+  - z: 32
+    x: 0
+    count: 11
+    healthPerUnit: 9
+    width: 2.4
+  - z: 101
+    x: -1.2
+    count: 21
+    healthPerUnit: 12
+    width: 2.4
+  - z: 100
+    x: 0
+    count: 26
+    healthPerUnit: 14
+    width: 2.4
+  obstacles:
+  - z: 64
+    x: 1.4
+    health: 105
+    collisionPenalty: 6
+    width: 1.6

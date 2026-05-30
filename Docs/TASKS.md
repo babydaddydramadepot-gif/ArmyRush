@@ -131,57 +131,101 @@ Build a polished, playable, iOS-ready Last War-style crowd combat runner with:
 
 ---
 
+# Active Implementation Plan
+
+Date:
+
+2026-05-30
+
+Source-of-Truth Notes:
+
+- Documentation read pass is complete for all Markdown files in `Docs/`.
+- `Docs/.DS_Store` is a macOS metadata file and is not a design or engineering source.
+- Folder-structure conflict resolved by hierarchy: `TECH_ARCHITECTURE.md` outranks this task board, so new production work will use `Assets/_Project/` rather than the lower-priority `_ArmyRush` variant listed below.
+- Temporary construction assets may be used only while building systems. They must not be marked complete until replaced or upgraded to production-ready stylized assets with materials, animation, VFX, audio hooks, and QA.
+
+Initial Audit Summary:
+
+- Unity version: `6000.4.9f1`.
+- Render pipeline: URP package `17.4.0` is installed and active.
+- Input System package is installed.
+- Current project content is the default URP template with `Assets/Scenes/SampleScene.unity`.
+- No ArmyRush gameplay scripts, prefabs, level data, UI flow, save system, or production scenes exist yet.
+- iOS/iPad target data exists, but orientation still allows autorotation and landscape. Portrait-only setup is required.
+- Existing uncommitted settings changes are present and must be preserved unless directly superseded by production requirements.
+
+First Implementation Pass:
+
+1. Create `Assets/_Project/` production folder structure.
+2. Add core runtime scripts for services, save/economy/progression, run state, input, camera, crowd, gates, combat, enemies, obstacles, level generation, UI, audio, haptics, pooling, and utility.
+3. Add editor bootstrap tooling to generate scenes, prefabs, materials, tuning assets, upgrade assets, and 20 authored level data assets.
+4. Configure Boot, MainMenu, and Game scenes in build settings.
+5. Configure portrait orientation and mobile-safe project settings.
+6. Validate compilation through Unity batch mode.
+7. Run the generated Game scene in a form that is ready for manual Unity play-mode testing.
+8. Update `TASKS.md` and `DEVLOG.md`, then commit the milestone.
+
+Implementation Pass 1 Result:
+
+- Created `Assets/_Project/` folder structure, runtime scripts, generated materials, generated meshes, prefabs, three scenes, upgrade data, tuning data, and 20 level data assets.
+- Configured build scene order: Boot, MainMenu, Game.
+- Configured portrait-only orientation and iPhone/iPad target support.
+- Unity batch mode generation completed with no compiler errors or warnings in `/tmp/armyrush_unity_build.log`.
+- Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
+
+---
+
 # Phase 0: Project Foundation
 
 ## 0.1 Documentation Read Pass
 
-Status: Not Started
+Status: Completed
 Priority: Critical
 
 Tasks:
 
-- Read every file inside `Docs/`.
-- Build an internal understanding of the project scope.
-- Identify conflicts between documents.
-- Follow the highest-priority source of truth when conflicts exist.
-- Do not implement until documentation is understood.
+- [x] Read every file inside `Docs/`.
+- [x] Build an internal understanding of the project scope.
+- [x] Identify conflicts between documents.
+- [x] Follow the highest-priority source of truth when conflicts exist.
+- [x] Do not implement until documentation is understood.
 
 Acceptance Criteria:
 
-- Codex can summarize project scope.
-- Codex has identified all required systems.
-- No implementation begins before docs are read.
+- [x] Codex can summarize project scope.
+- [x] Codex has identified all required systems.
+- [x] No implementation begins before docs are read.
 
 ---
 
 ## 0.2 Unity Project Validation
 
-Status: Not Started
+Status: Completed for Editor Foundation; iOS/Xcode Validation Pending in Phase 9
 Priority: Critical
 
 Tasks:
 
-- Confirm Unity version is Unity 6 LTS or compatible.
-- Confirm project uses Universal Render Pipeline.
-- Confirm iOS is selected as target platform.
-- Confirm Portrait orientation is active.
-- Confirm iPhone and iPad compatibility.
-- Confirm safe area support requirements.
-- Confirm no broken packages.
-- Confirm no compiler errors before starting.
+- [x] Confirm Unity version is Unity 6 LTS or compatible.
+- [x] Confirm project uses Universal Render Pipeline.
+- [x] Confirm iOS is selected as target platform.
+- [x] Confirm Portrait orientation is active.
+- [x] Confirm iPhone and iPad compatibility.
+- [x] Confirm safe area support requirements.
+- [x] Confirm no broken packages.
+- [x] Confirm no compiler errors before starting.
 
 Acceptance Criteria:
 
-- Project opens without compile errors.
-- iOS target exists.
-- Portrait orientation is configured.
-- URP assets are valid.
+- [x] Project opens without compile errors.
+- [x] iOS target exists.
+- [x] Portrait orientation is configured.
+- [x] URP assets are valid.
 
 ---
 
 ## 0.3 Folder Structure Creation
 
-Status: Not Started
+Status: Completed using `Assets/_Project/` per `TECH_ARCHITECTURE.md`
 Priority: Critical
 
 Create or validate this structure:
@@ -248,15 +292,15 @@ Assets/
 
 Acceptance Criteria:
 
-- All production files live inside `Assets/_ArmyRush/`.
-- No random scripts are placed directly in `Assets/`.
-- No duplicate architecture folders are created.
+- [x] All new production files live inside `Assets/_Project/` by source-of-truth hierarchy.
+- [x] No random scripts are placed directly in `Assets/`.
+- [x] No duplicate architecture folders are created.
 
 ---
 
 ## 0.4 Scene Foundation
 
-Status: Not Started
+Status: Functional Pass Implemented; Play-Mode QA Pending
 Priority: Critical
 
 Tasks:
@@ -281,7 +325,7 @@ Acceptance Criteria:
 
 ## 0.5 Core Manager Setup
 
-Status: Not Started
+Status: Functional Pass Implemented; Architecture Polish Pending
 Priority: Critical
 
 Implement core managers:
@@ -312,7 +356,7 @@ Acceptance Criteria:
 
 ## 1.1 Player Runner Controller
 
-Status: Not Started
+Status: Functional Pass Implemented; Device Feel QA Pending
 Priority: Critical
 
 Tasks:
@@ -337,7 +381,7 @@ Acceptance Criteria:
 
 ## 1.2 Follow Camera
 
-Status: Not Started
+Status: Functional Pass Implemented; Framing QA Pending
 Priority: Critical
 
 Tasks:
@@ -360,7 +404,7 @@ Acceptance Criteria:
 
 ## 1.3 Crowd Unit System
 
-Status: Not Started
+Status: Functional Pass Implemented; Performance QA Pending
 Priority: Critical
 
 Tasks:
@@ -386,7 +430,7 @@ Acceptance Criteria:
 
 ## 1.4 Production Soldier Visuals
 
-Status: Not Started
+Status: In Progress; Procedural Low-Poly Visual Pass Implemented
 Priority: Critical
 
 Tasks:
@@ -411,7 +455,7 @@ Acceptance Criteria:
 
 ## 1.5 Gate System
 
-Status: Not Started
+Status: Functional Pass Implemented; Feedback Polish Pending
 Priority: Critical
 
 Tasks:
@@ -437,7 +481,7 @@ Acceptance Criteria:
 
 ## 1.6 Gate Visuals
 
-Status: Not Started
+Status: In Progress; Generated Visual Pass Implemented
 Priority: Critical
 
 Tasks:
@@ -460,7 +504,7 @@ Acceptance Criteria:
 
 ## 1.7 Enemy Crowd System
 
-Status: Not Started
+Status: Functional Pass Implemented; Combat QA Pending
 Priority: Critical
 
 Tasks:
@@ -484,7 +528,7 @@ Acceptance Criteria:
 
 ## 1.8 Production Enemy Visuals
 
-Status: Not Started
+Status: In Progress; Procedural Low-Poly Visual Pass Implemented
 Priority: Critical
 
 Tasks:
@@ -504,7 +548,7 @@ Acceptance Criteria:
 
 ## 1.9 Crowd Combat Resolution
 
-Status: Not Started
+Status: Functional Pass Implemented; VFX/Audio Polish Pending
 Priority: Critical
 
 Tasks:
@@ -528,7 +572,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Not Started
+Status: Functional Pass Implemented; Muzzle/Impact Polish Pending
 Priority: High
 
 Tasks:
@@ -554,7 +598,7 @@ Acceptance Criteria:
 
 ## 2.1 Obstacle System
 
-Status: Not Started
+Status: Functional Pass Implemented; Reward/VFX Polish Pending
 Priority: High
 
 Tasks:
@@ -577,7 +621,7 @@ Acceptance Criteria:
 
 ## 2.2 Production Obstacle Visuals
 
-Status: Not Started
+Status: In Progress; Barricade/Crate Visual Pass Implemented
 Priority: High
 
 Tasks:
@@ -626,7 +670,7 @@ Acceptance Criteria:
 
 ## 3.1 Level Data Architecture
 
-Status: Not Started
+Status: Functional Pass Implemented; Chunk/Boss Data Pending
 Priority: Critical
 
 Tasks:
@@ -650,7 +694,7 @@ Acceptance Criteria:
 
 ## 3.2 Level Builder
 
-Status: Not Started
+Status: Functional Pass Implemented; Bonus Section Pending
 Priority: Critical
 
 Tasks:
@@ -674,7 +718,7 @@ Acceptance Criteria:
 
 ## 3.3 Road and Bridge Visuals
 
-Status: Not Started
+Status: In Progress; Generated Road/Ocean Pass Implemented
 Priority: Critical
 
 Tasks:
@@ -698,7 +742,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: Not Started
+Status: In Progress; 20 Data-Driven Levels Generated
 Priority: Critical
 
 Tasks:
@@ -835,7 +879,7 @@ Acceptance Criteria:
 
 ## 5.1 Currency System
 
-Status: Not Started
+Status: Functional Pass Implemented; UI/QA Pending
 Priority: Critical
 
 Tasks:
@@ -856,7 +900,7 @@ Acceptance Criteria:
 
 ## 5.2 Upgrade System
 
-Status: Not Started
+Status: Functional Pass Implemented; Balance/Full Effect QA Pending
 Priority: Critical
 
 Tasks:
@@ -883,7 +927,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Not Started
+Status: In Progress; Completion/Survivor/Coin Multiplier Implemented
 Priority: High
 
 Tasks:
@@ -905,7 +949,7 @@ Acceptance Criteria:
 
 ## 5.4 Save System
 
-Status: Not Started
+Status: Functional Pass Implemented; Migration QA Pending
 Priority: Critical
 
 Tasks:
@@ -932,7 +976,7 @@ Acceptance Criteria:
 
 ## 6.1 HUD
 
-Status: Not Started
+Status: Functional Pass Implemented; Settings Button Pending
 Priority: Critical
 
 Tasks:
@@ -955,7 +999,7 @@ Acceptance Criteria:
 
 ## 6.2 Main Menu
 
-Status: Not Started
+Status: Functional Pass Implemented; Character Showcase Polish Pending
 Priority: Critical
 
 Tasks:
@@ -977,7 +1021,7 @@ Acceptance Criteria:
 
 ## 6.3 Upgrade Screen
 
-Status: Not Started
+Status: Functional Pass Implemented; Purchase Juice Polish Pending
 Priority: Critical
 
 Tasks:
@@ -1000,7 +1044,7 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Not Started
+Status: Functional Pass Implemented; Upgrade Shortcut/Rewarded Architecture Pending
 Priority: Critical
 
 Tasks:
@@ -1022,7 +1066,7 @@ Acceptance Criteria:
 
 ## 6.5 Defeat Screen
 
-Status: Not Started
+Status: Functional Pass Implemented; Upgrade/Revive Options Pending
 Priority: High
 
 Tasks:
@@ -1066,7 +1110,7 @@ Acceptance Criteria:
 
 ## 7.1 Audio System
 
-Status: Not Started
+Status: In Progress; Centralized Hooks Implemented, Audio Assets Pending
 Priority: High
 
 Tasks:
@@ -1087,7 +1131,7 @@ Acceptance Criteria:
 
 ## 7.2 Required SFX
 
-Status: Not Started
+Status: In Progress; Code Hooks Implemented, Final Clips Pending
 Priority: High
 
 Add SFX for:
@@ -1513,4 +1557,3 @@ This project is not aiming for a rough prototype.
 The target is a polished mobile game vertical slice.
 
 Codex must continue working until systems are complete, connected, polished, documented, and testable.
-

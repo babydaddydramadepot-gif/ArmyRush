@@ -87,19 +87,87 @@ Add combat VFX.
 
 Current Build Stage:
 
-Pre-Production
+Production Vertical Slice Foundation
 
 Current Focus:
 
-Core Gameplay Implementation
+Project structure, core gameplay architecture, generated scenes, and first playable runner loop
 
 Completion Estimate:
 
-0%
+14%
 
 Last Updated:
 
-Project Creation
+2026-05-30
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
+Documentation Read Pass and Repository Audit
+
+Files:
+
+Docs/GAME_VISION.md
+Docs/TECH_ARCHITECTURE.md
+Docs/GAMEPLAY_LOOP.md
+Docs/Visual_STYLE.md
+Docs/LEVEL_DESIGN.md
+Docs/PROGRESSION.md
+Docs/UI_UX.md
+Docs/MONETIZATION.md
+Docs/CONTENT_PIPELINE.md
+Docs/AI_AGENT_RULES.md
+Docs/QUALITY_BAR.md
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Completed the required source-of-truth read pass before implementation. Audited the Unity project and confirmed it is a fresh Unity 6 URP template with Input System installed, one SampleScene, no ArmyRush gameplay code, no production scenes, and no vertical-slice content yet.
+
+Result:
+
+Implementation plan added to `TASKS.md`. Folder-structure conflict resolved by hierarchy: new work will use `Assets/_Project/` from `TECH_ARCHITECTURE.md` rather than the lower-priority `_ArmyRush` variant in `TASKS.md`.
+
+Follow Up:
+
+Create project structure, runtime architecture, generated assets, Boot/MainMenu/Game scenes, data-driven levels, portrait iOS settings, and validate compilation in Unity batch mode.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
+Production Foundation and First Playable Runner Pass
+
+Files:
+
+Assets/_Project/
+ProjectSettings/EditorBuildSettings.asset
+ProjectSettings/ProjectSettings.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Created the `Assets/_Project/` production structure and added modular runtime systems for service bootstrapping, save data, economy, upgrades, touch/mouse input, player auto-run movement, camera follow, pooled crowd units, gates, projectile targeting, enemies, obstacles, level spawning, finish/reward flow, safe-area UI, menu UI, upgrade UI, audio hooks, and haptics hooks. Added an editor builder that generated URP-ready materials, procedural low-poly mesh assets, reusable prefabs, Boot/MainMenu/Game scenes, global tuning, eight upgrade definitions, and 20 data-driven level assets.
+
+Result:
+
+Unity batch mode successfully executed `ArmyRushProjectBuilder.BuildProductionFoundation` with no compiler errors or warnings. Build settings now include Boot, MainMenu, and Game scenes. Player settings are portrait-only with iPhone/iPad targeting and the `com.armyrush.game` bundle identifier.
+
+Follow Up:
+
+Run manual play-mode QA in Unity, tune lane/gate collision feel, add boss-specific behavior, add pooled VFX manager and final VFX assets, add real audio clips, improve UI reward animations, validate all 20 levels, and perform iOS/Xcode export testing.
 
 ---
 
@@ -107,39 +175,39 @@ Project Creation
 
 Gameplay Systems
 
-0%
+30%
 
 UI Systems
 
-0%
+22%
 
 Visual Systems
 
-0%
+18%
 
 Audio Systems
 
-0%
+8%
 
 Level Systems
 
-0%
+28%
 
 Progression Systems
 
-0%
+35%
 
 Optimization
 
-0%
+12%
 
 Polish
 
-0%
+8%
 
 Release Readiness
 
-0%
+4%
 
 ---
 
@@ -223,7 +291,7 @@ All gameplay-related changes belong here.
 
 ## Initial State
 
-No gameplay systems implemented.
+First functional pass implemented for runner movement, crowd count, gates, shooting, enemy groups, obstacles, finish, rewards, and run state. Manual play-mode QA remains pending.
 
 ---
 
@@ -235,7 +303,7 @@ All interface-related changes belong here.
 
 ## Initial State
 
-No UI systems implemented.
+First functional pass implemented for main menu, upgrade buttons, gameplay HUD, victory panel, defeat panel, and safe-area fitting.
 
 ---
 
@@ -247,7 +315,7 @@ All visual changes belong here.
 
 ## Initial State
 
-No visual systems implemented.
+Generated procedural low-poly materials, meshes, prefabs, road/ocean environment, soldiers, enemies, gates, obstacles, projectile tracers, and finish line. Final art polish and VFX pass remain pending.
 
 ---
 
@@ -259,7 +327,7 @@ All audio changes belong here.
 
 ## Initial State
 
-No audio systems implemented.
+Centralized audio cue hooks implemented. Final audio clips and pooled AudioSource playback remain pending.
 
 ---
 
@@ -271,7 +339,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-No effects implemented.
+Basic projectile tracer and gate pulse feedback implemented. Dedicated pooled VFX manager and final particle assets remain pending.
 
 ---
 
@@ -283,7 +351,7 @@ All progression updates belong here.
 
 ## Initial State
 
-No progression systems implemented.
+Save, economy, upgrade definitions, upgrade purchasing, current level progression, and coin rewards implemented.
 
 ---
 
@@ -295,7 +363,7 @@ All level-related work belongs here.
 
 ## Initial State
 
-No levels implemented.
+20 authored `LevelData` assets generated with gates, enemies, obstacles, finish distances, escalating rewards, and boss-level flags.
 
 ---
 
@@ -331,11 +399,35 @@ This section tracks unresolved issues.
 
 Issue ID:
 
-None
+AR-001
 
 Status:
 
-No known issues.
+Manual Unity play-mode QA has not been completed yet after generated scene creation.
+
+Issue ID:
+
+AR-002
+
+Status:
+
+Boss levels currently use high-pressure enemy encounters and boss flags, but no unique BossController, boss model, attack pattern, or boss health bar is implemented yet.
+
+Issue ID:
+
+AR-003
+
+Status:
+
+Audio and haptic call sites exist, but final SFX/music assets and pooled AudioSource playback are not implemented yet.
+
+Issue ID:
+
+AR-004
+
+Status:
+
+Final VFX assets are not complete; projectile tracers and simple gate/animation feedback are present, but hit sparks, coin bursts, debris, victory effects, and boss explosions remain pending.
 
 ---
 
@@ -347,7 +439,7 @@ Track shortcuts, temporary solutions, and future refactors.
 
 ## Initial State
 
-No technical debt recorded.
+`TASKS.md` still contains an older `_ArmyRush` folder skeleton. Implementation uses `Assets/_Project/` according to the higher-priority `TECH_ARCHITECTURE.md`.
 
 ---
 
@@ -403,4 +495,3 @@ Never leave major work undocumented.
 Never mark tasks complete without updating this file.
 
 This document serves as the historical source of truth for ArmyRush development.
-
