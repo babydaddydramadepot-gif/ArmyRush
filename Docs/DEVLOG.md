@@ -2250,6 +2250,32 @@ Run visual QA on small iPhone and iPad layouts to tune final HUD spacing and ico
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Post-UI Simulator Build Refresh
+
+Files:
+
+Docs/DEVLOG.md
+
+Summary:
+
+Ran a fresh Unity iOS simulator export and Xcode simulator build after the boss rotation, obstacle variant, camera framing, and gameplay HUD polish passes. Installed and launched the resulting `com.armyrush.game` simulator app on an iPhone 17 Pro simulator, captured a portrait screenshot, and scanned the app logs for common Unity runtime exception signatures.
+
+Result:
+
+Unity export, Xcode simulator build, simulator install, simulator launch, screenshot capture, and runtime exception scan all passed. Xcode emitted only Unity-generated simulator build warnings and run-script dependency warnings.
+
+Follow Up:
+
+Physical iPhone deployment remains pending until signing credentials and provisioning are available.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2290,7 +2316,7 @@ Polish
 
 Release Readiness
 
-23%
+24%
 
 ---
 
