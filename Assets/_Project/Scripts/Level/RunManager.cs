@@ -98,6 +98,21 @@ namespace ArmyRush
                 return;
             }
 
+            AddPendingRewardCoins(amount, worldPosition);
+        }
+
+        public void AddCombatCoins(int amount, Vector3 worldPosition)
+        {
+            if (amount <= 0 || State == RunState.None || State == RunState.PreRun || State == RunState.Victory || State == RunState.Defeat)
+            {
+                return;
+            }
+
+            AddPendingRewardCoins(amount, worldPosition);
+        }
+
+        private void AddPendingRewardCoins(int amount, Vector3 worldPosition)
+        {
             _bonusCoins += amount;
             VfxManager.SpawnFloatingText("+" + amount + " COINS", worldPosition + Vector3.up * 0.8f, new Color(1f, 0.78f, 0.12f));
         }

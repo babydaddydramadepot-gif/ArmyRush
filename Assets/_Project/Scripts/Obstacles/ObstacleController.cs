@@ -8,7 +8,10 @@ namespace ArmyRush
         [SerializeField] private Damageable _damageable;
         [SerializeField] private TextMesh _healthLabel;
         [SerializeField] private int _collisionPenalty = 8;
+        [SerializeField] private int _coinReward = 12;
         [SerializeField] private ParticleSystem _destroyEffect;
+
+        private RunManager _runManager;
 
         private void Awake()
         {
@@ -38,7 +41,14 @@ namespace ArmyRush
 
         public void Configure(int health, int collisionPenalty)
         {
+            Configure(health, collisionPenalty, _coinReward, _runManager);
+        }
+
+        public void Configure(int health, int collisionPenalty, int coinReward, RunManager runManager)
+        {
             _collisionPenalty = Mathf.Max(0, collisionPenalty);
+            _coinReward = Mathf.Max(0, coinReward);
+            _runManager = runManager;
             if (_damageable == null)
             {
                 _damageable = GetComponent<Damageable>();
@@ -62,6 +72,12 @@ namespace ArmyRush
         {
             VfxManager.Spawn(VfxCue.ObstacleDebris, transform.position + Vector3.up * 0.75f);
             VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 0.65f);
+            if (_coinReward > 0 && _runManager != null)
+            {
+                Vector3 rewardPosition = transform.position + Vector3.up * 1.1f;
+                _runManager.AddCombatCoins(_coinReward, rewardPosition);
+                VfxManager.Spawn(VfxCue.CoinBurst, rewardPosition);
+            }
             CameraFollowRig.Shake(CameraShakeCue.ObstacleBreak);
 
             if (_destroyEffect != null)

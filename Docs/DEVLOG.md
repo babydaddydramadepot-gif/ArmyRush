@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-50%
+51%
 
 Last Updated:
 
@@ -1048,6 +1048,36 @@ Date:
 
 System:
 
+Obstacle Reward Payouts
+
+Files:
+
+Assets/_Project/Scripts/Obstacles/ObstacleController.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added obstacle coin rewards that are configured from level/tuning context and paid into the run's pending reward pool when obstacles are destroyed. Obstacle clears now emit coin floating text and coin-burst VFX, and those earned coins are included in the final victory reward calculation.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. The obstacle system now covers health, damage receiving, destruction, VFX/audio/haptic feedback, data-driven placement, and reward payouts.
+
+Follow Up:
+
+Balance obstacle reward values against run length and upgrade costs during device playtesting.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1370,7 +1400,7 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 Gameplay Systems
 
-42%
+43%
 
 UI Systems
 
@@ -1390,7 +1420,7 @@ Level Systems
 
 Progression Systems
 
-44%
+45%
 
 Boss Systems
 

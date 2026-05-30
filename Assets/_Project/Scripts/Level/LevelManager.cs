@@ -291,11 +291,13 @@ namespace ArmyRush
                 return;
             }
 
+            RunManager runManager = FindAnyObjectByType<RunManager>();
             foreach (ObstacleSpawnData data in CurrentLevel.obstacles)
             {
                 GameObject obstacleObject = Instantiate(_obstaclePrefab, new Vector3(data.x, 0f, data.z), Quaternion.identity, _levelRoot);
                 ObstacleController obstacle = obstacleObject.GetComponent<ObstacleController>();
-                obstacle?.Configure(data.health, data.collisionPenalty);
+                int reward = (_tuning != null ? _tuning.obstacleCoinValue : 12) + Mathf.Max(0, CurrentLevel.levelIndex - 1);
+                obstacle?.Configure(data.health, data.collisionPenalty, reward, runManager);
                 _spawned.Add(obstacleObject);
             }
         }

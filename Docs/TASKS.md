@@ -613,17 +613,17 @@ Acceptance Criteria:
 
 ## 2.1 Obstacle System
 
-Status: Functional Pass Implemented; Reward/VFX Polish Pending
+Status: Functional Pass Implemented with Reward Payouts and Destruction Feedback; Device Balance QA Pending
 Priority: High
 
 Tasks:
 
-- Implement obstacle base class.
-- Add health system.
-- Add damage receiving.
-- Add destruction trigger.
-- Add obstacle rewards.
-- Add obstacle data assets.
+- [x] Implement obstacle base class.
+- [x] Add health system.
+- [x] Add damage receiving.
+- [x] Add destruction trigger.
+- [x] Add obstacle rewards.
+- [x] Add obstacle data assets.
 
 Acceptance Criteria:
 
