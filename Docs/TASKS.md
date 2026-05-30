@@ -175,6 +175,7 @@ Implementation Pass 1 Result:
 - Added pooled floating text feedback for gate changes, damage, enemy clears, and coin rewards.
 - Added first tank boss pass with generated boss prefab, boss spawning on levels 5/10/15/20, damageable boss health, collision pressure, world label, and HUD boss health bar.
 - Added runtime procedural SFX playback through pooled AudioSources for buttons, gates, shooting, hits, clears, destruction, coin rewards, upgrades, victory, and defeat.
+- Added repeatable iOS development export command and successfully generated an Xcode project at `ArmyRush_iOSBuild`.
 - Manual Unity play-mode QA, iOS export, physical device testing, final audio assets, final VFX assets, boss-specific behavior, and full art polish remain pending.
 
 ---
@@ -1368,7 +1369,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Not Started
+Status: Unity Xcode Export Passed; Xcode Build/Device Signing Pending
 Priority: Critical
 
 Tasks:

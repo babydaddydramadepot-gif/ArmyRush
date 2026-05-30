@@ -3,6 +3,7 @@ using System.Linq;
 using ArmyRush;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -61,6 +62,36 @@ public static class ArmyRushProjectBuilder
         }
 
         Debug.Log("ArmyRush production foundation validation passed.");
+    }
+
+    [MenuItem("ArmyRush/Build iOS Development Export")]
+    public static void BuildIOSDevelopmentExport()
+    {
+        ConfigureBuildSettings();
+        ConfigurePlayerSettings();
+
+        string[] scenes =
+        {
+            ScenePath + "/Boot.unity",
+            ScenePath + "/MainMenu.unity",
+            ScenePath + "/Game.unity"
+        };
+
+        BuildPlayerOptions options = new BuildPlayerOptions
+        {
+            scenes = scenes,
+            locationPathName = "ArmyRush_iOSBuild",
+            target = BuildTarget.iOS,
+            options = BuildOptions.Development
+        };
+
+        BuildReport report = BuildPipeline.BuildPlayer(options);
+        if (report.summary.result != BuildResult.Succeeded)
+        {
+            throw new System.Exception($"iOS development export failed: {report.summary.result}");
+        }
+
+        Debug.Log($"ArmyRush iOS development export succeeded: {report.summary.outputPath}");
     }
 
     private static void CreateFolders()

@@ -295,6 +295,34 @@ Replace procedural clips with final authored SFX/music assets during the audio p
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+iOS Development Export
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added `ArmyRushProjectBuilder.BuildIOSDevelopmentExport`, a repeatable Unity batch-mode export path for the iOS development build. The method configures build scenes, portrait/iPhone+iPad player settings, and exports the Unity project to an Xcode project folder.
+
+Result:
+
+Unity successfully exported the iOS Xcode project to `ArmyRush_iOSBuild` with build result `Success`. Signing, Xcode archive/build, simulator launch, and physical device deployment are still pending.
+
+Follow Up:
+
+Open/build the generated Xcode project with signing configured, then test on a physical iPhone.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -331,7 +359,7 @@ Polish
 
 Release Readiness
 
-4%
+8%
 
 ---
 
