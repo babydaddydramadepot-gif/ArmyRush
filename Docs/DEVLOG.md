@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-40%
+41%
 
 Last Updated:
 
@@ -747,6 +747,34 @@ Date:
 
 System:
 
+Crowd Formation Update Optimization
+
+Files:
+
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Reduced per-frame crowd overhead by moving player formation target recalculation off the normal Update path. The crowd now recalculates soldier local target slots only when the visible soldier count changes, while individual pooled soldiers continue interpolating toward their assigned slots.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Player crowd runtime work now avoids a full visible-soldier list pass every frame during steady movement.
+
+Follow Up:
+
+Profile large gate multipliers on device and consider centralizing per-unit animation updates if soldier Update cost becomes the next frame-time bottleneck.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1097,7 +1125,7 @@ Boss Systems
 
 Optimization
 
-18%
+20%
 
 Polish
 
@@ -1273,7 +1301,7 @@ All performance improvements belong here.
 
 ## Initial State
 
-No optimization work completed.
+Runtime frame pacing setup, pool prewarm top-ups, and player-crowd formation update reduction are implemented. Device profiling remains pending.
 
 ---
 

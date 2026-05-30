@@ -23,7 +23,6 @@ namespace ArmyRush
 
         private void Update()
         {
-            UpdateFormationTargets();
             if (_countLabel != null)
             {
                 _countLabel.transform.rotation = Quaternion.Euler(55f, 0f, 0f);
@@ -134,6 +133,7 @@ namespace ArmyRush
             }
 
             int visualTarget = Mathf.Min(_logicalCount, _tuning != null ? _tuning.maxVisualSoldiers : 120);
+            int previousVisualCount = _soldiers.Count;
 
             while (_soldiers.Count < visualTarget)
             {
@@ -148,6 +148,11 @@ namespace ArmyRush
                 SoldierUnitVisual soldier = _soldiers[lastIndex];
                 _soldiers.RemoveAt(lastIndex);
                 soldier.Despawn();
+            }
+
+            if (_soldiers.Count != previousVisualCount)
+            {
+                UpdateFormationTargets();
             }
         }
 

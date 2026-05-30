@@ -1335,7 +1335,7 @@ Acceptance Criteria:
 
 ## 9.1 Mobile Performance Pass
 
-Status: In Progress; Runtime Frame Pacing and Pool Prewarm Baseline Implemented
+Status: In Progress; Runtime Frame Pacing, Pool Prewarm, and Formation Update Baseline Implemented
 Priority: Critical
 
 Tasks:
@@ -1351,7 +1351,7 @@ Tasks:
 - Reduce draw calls where possible.
 - Use shared materials.
 - Verify object pooling.
-- Avoid excessive Update loops.
+- [x] Avoid excessive player-crowd formation Update loops.
 
 Acceptance Criteria:
 
