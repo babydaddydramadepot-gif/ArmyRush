@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-72%
+73%
 
 Last Updated:
 
@@ -1632,6 +1632,36 @@ Date:
 
 System:
 
+Main Menu Character Showcase
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scripts/UI/MenuShowcaseAnimator.cs
+Assets/_Project/Scenes/MainMenu.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a generated animated 3D main-menu showcase behind the UI with a hero squad, runway, gate banner, side harbor pieces, and floating coin medal. Added a lightweight runtime animator for soldier bob/sway, coin float/rotation, and banner pulse, then extended production validation to require the showcase root, animator, hero squad, and mesh content.
+
+Result:
+
+Unity production validation passed. The refreshed iOS simulator export and signing-independent Xcode simulator build completed successfully. The freshly built app installed and launched on the iPhone 17 Pro simulator, the screenshot confirmed the menu reaches the animated character showcase with readable controls, and a targeted simulator log scan found no Unity exception strings.
+
+Follow Up:
+
+Continue final font/brand polish, physical-device QA once signing is available, and later authored background art review.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Silhouette Polish
 
 Files:
@@ -2102,7 +2132,7 @@ UI Systems
 
 Visual Systems
 
-53%
+54%
 
 Audio Systems
 
@@ -2126,11 +2156,11 @@ Optimization
 
 Polish
 
-38%
+39%
 
 Release Readiness
 
-20%
+21%
 
 ---
 

@@ -179,6 +179,7 @@ Implementation Pass 1 Result:
 - Confirmed the generated Xcode project builds successfully with `CODE_SIGNING_ALLOWED=NO` for a Debug `iphoneos` build.
 - Added a generated branded ArmyRush iOS app icon, assigned all Unity iOS icon slots, and confirmed the simulator Xcode build no longer reports the missing 1024x1024 App Store icon warning.
 - Polished the main-menu upgrade tile layout for simulator-sized portrait screens, corrected the play icon direction, and added validation coverage for upgrade icon/text overlap.
+- Added an animated generated 3D main-menu character showcase with hero squad, runway, gate, coin medal, and validation coverage for showcase wiring/content.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
@@ -1018,17 +1019,17 @@ Acceptance Criteria:
 
 ## 6.2 Main Menu
 
-Status: Functional Pass Implemented; Character Showcase Polish Pending
+Status: Functional Pass Implemented with Animated Character Showcase; Final Brand/Device Polish Pending
 Priority: Critical
 
 Tasks:
 
-- Create polished main menu.
-- Add play button.
-- Add upgrade button.
-- Add settings button.
-- Add currency display.
-- Add animated background or character showcase.
+- [x] Create polished main menu.
+- [x] Add play button.
+- [x] Add upgrade button.
+- [x] Add settings button.
+- [x] Add currency display.
+- [x] Add animated background or character showcase.
 
 Acceptance Criteria:
 
@@ -1295,7 +1296,7 @@ Acceptance Criteria:
 
 ## 8.3 UI Art Pass
 
-Status: In Progress; Generated Sprite UI Art Pass, Branded iOS App Icon, and Main Menu Layout Polish Implemented; Final Font/Brand Polish Pending
+Status: In Progress; Generated Sprite UI Art Pass, Branded iOS App Icon, Main Menu Layout Polish, and Animated Character Showcase Implemented; Final Font/Brand Polish Pending
 Priority: Critical
 
 Tasks:
@@ -1310,6 +1311,7 @@ Tasks:
 - [x] Add branded iOS app icon.
 - [x] Fix upgrade tile text/icon crowding on simulator-sized portrait screens.
 - [x] Correct play button icon direction.
+- [x] Add animated main-menu character showcase/background.
 
 Acceptance Criteria:
 

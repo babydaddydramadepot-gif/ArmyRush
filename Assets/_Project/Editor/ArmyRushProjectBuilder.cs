@@ -39,7 +39,7 @@ public static class ArmyRushProjectBuilder
         LevelData[] levels = CreateLevels(bosses);
 
         CreateBootScene(upgrades);
-        CreateMainMenuScene(upgrades);
+        CreateMainMenuScene(upgrades, materials, meshes);
         CreateGameScene(tuning, upgrades, prefabs, levels, materials, meshes);
         PolishUiArt();
         GenerateAppIconAsset();
@@ -157,9 +157,12 @@ public static class ArmyRushProjectBuilder
     public static void PolishUiArt()
     {
         UiSpriteSet sprites = CreateUiSprites();
+        MaterialSet materials = LoadMaterialSet();
+        MeshSet meshes = LoadMeshSet();
 
         Scene mainMenu = EditorSceneManager.OpenScene(ScenePath + "/MainMenu.unity", OpenSceneMode.Single);
         ApplyUiArtToOpenScene(sprites);
+        BuildMainMenuShowcase(materials, meshes);
         EditorSceneManager.MarkSceneDirty(mainMenu);
         EditorSceneManager.SaveScene(mainMenu);
 
@@ -587,6 +590,57 @@ public static class ArmyRushProjectBuilder
         UpsertMeshPart(environment, $"{prefix}Container_B_{index:00}", meshes.box, materials.obstacleMetal, new Vector3(x + side * 0.85f, 0.29f, z + 1.8f), new Vector3(1.25f, 0.52f, 1.05f));
         UpsertMeshPart(environment, $"{prefix}BeaconPost_{index:00}", meshes.box, materials.rail, new Vector3(side * 6.15f, 1.05f, z + 6.2f), new Vector3(0.16f, 2.1f, 0.16f));
         UpsertMeshPart(environment, $"{prefix}BeaconLight_{index:00}", meshes.box, materials.coin, new Vector3(side * 6.15f, 2.18f, z + 6.2f), new Vector3(0.42f, 0.22f, 0.42f));
+    }
+
+    private static void BuildMainMenuShowcase(MaterialSet materials, MeshSet meshes)
+    {
+        GameObject existing = GameObject.Find("MenuShowcaseRoot");
+        if (existing != null)
+        {
+            Object.DestroyImmediate(existing);
+        }
+
+        GameObject root = new GameObject("MenuShowcaseRoot");
+        root.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+        UpsertMeshPart(root.transform, "OceanBackdrop", meshes.box, materials.ocean, new Vector3(0f, -0.58f, 8.6f), new Vector3(14f, 0.08f, 12f));
+        UpsertMeshPart(root.transform, "Runway", meshes.road, materials.track, new Vector3(0f, -0.46f, 6.35f), new Vector3(3.0f, 0.12f, 3.6f));
+        UpsertMeshPart(root.transform, "RunwayRail_L", meshes.box, materials.rail, new Vector3(-1.72f, -0.25f, 6.35f), new Vector3(0.1f, 0.28f, 3.7f));
+        UpsertMeshPart(root.transform, "RunwayRail_R", meshes.box, materials.rail, new Vector3(1.72f, -0.25f, 6.35f), new Vector3(0.1f, 0.28f, 3.7f));
+        UpsertMeshPart(root.transform, "RunwayStripe", meshes.box, materials.rail, new Vector3(0f, -0.38f, 6.35f), new Vector3(0.06f, 0.018f, 2.8f));
+        UpsertMeshPart(root.transform, "HarborBlock_L", meshes.box, materials.obstacleMetal, new Vector3(-3.05f, -0.36f, 6.4f), new Vector3(0.72f, 0.2f, 2.8f));
+        UpsertMeshPart(root.transform, "HarborBlock_R", meshes.box, materials.obstacleMetal, new Vector3(3.05f, -0.36f, 6.4f), new Vector3(0.72f, 0.2f, 2.8f));
+
+        Transform banner = UpsertMeshPart(root.transform, "HeroGateBanner", meshes.box, materials.gatePositive, new Vector3(0f, 0.58f, 8.8f), new Vector3(2.9f, 0.22f, 0.07f));
+        UpsertMeshPart(root.transform, "HeroGatePost_L", meshes.box, materials.rail, new Vector3(-1.56f, -0.1f, 8.8f), new Vector3(0.12f, 1.05f, 0.12f));
+        UpsertMeshPart(root.transform, "HeroGatePost_R", meshes.box, materials.rail, new Vector3(1.56f, -0.1f, 8.8f), new Vector3(0.12f, 1.05f, 0.12f));
+        UpsertMeshPart(root.transform, "HeroGateGlow", meshes.box, materials.projectile, new Vector3(0f, 0.25f, 8.74f), new Vector3(2.45f, 0.05f, 0.035f));
+
+        Transform coin = UpsertMeshPart(root.transform, "HeroCoinMedal", meshes.cylinder, materials.coin, new Vector3(-1.35f, 0.34f, 4.9f), new Vector3(0.24f, 0.05f, 0.24f));
+        coin.localRotation = Quaternion.Euler(74f, 0f, 0f);
+
+        Vector3[] soldierPositions =
+        {
+            new Vector3(0f, -0.28f, 5.55f),
+            new Vector3(-0.42f, -0.28f, 6.05f),
+            new Vector3(0.42f, -0.28f, 6.05f),
+            new Vector3(-0.82f, -0.28f, 6.55f),
+            new Vector3(0.82f, -0.28f, 6.55f)
+        };
+
+        List<Transform> soldiers = new List<Transform>(soldierPositions.Length);
+        for (int i = 0; i < soldierPositions.Length; i++)
+        {
+            Transform soldier = UpsertEmptyTransform(root.transform, $"HeroSoldier_{i:00}", soldierPositions[i], new Vector3(0f, 180f, 0f), Vector3.one * (i == 0 ? 0.62f : 0.54f));
+            Transform bodyRoot = UpsertEmptyTransform(soldier, "BodyRoot", Vector3.zero, Vector3.zero, Vector3.one);
+            BuildSoldierVisualParts(bodyRoot, true, materials, meshes);
+            soldiers.Add(soldier);
+        }
+
+        MenuShowcaseAnimator animator = root.AddComponent<MenuShowcaseAnimator>();
+        SetObjectArray(animator, "_soldiers", soldiers.ToArray());
+        SetObject(animator, "_coin", coin);
+        SetObject(animator, "_banner", banner);
     }
 
     private static UiSpriteSet CreateUiSprites()
@@ -1367,13 +1421,14 @@ public static class ArmyRushProjectBuilder
         EditorSceneManager.SaveScene(scene, ScenePath + "/Boot.unity");
     }
 
-    private static void CreateMainMenuScene(UpgradeDefinition[] upgrades)
+    private static void CreateMainMenuScene(UpgradeDefinition[] upgrades, MaterialSet materials, MeshSet meshes)
     {
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CreateLighting();
         Camera camera = CreateCamera(new Vector3(0f, 5.6f, -8f), Quaternion.Euler(32f, 0f, 0f));
         camera.clearFlags = CameraClearFlags.SolidColor;
         camera.backgroundColor = new Color(0.38f, 0.78f, 1f);
+        BuildMainMenuShowcase(materials, meshes);
 
         Canvas canvas = CreateCanvas("MainMenuCanvas");
         GameObject safe = CreateSafeArea(canvas.transform);
@@ -1386,7 +1441,7 @@ public static class ArmyRushProjectBuilder
         Button settingsButton = CreateButton("SettingsButton", safe.transform, "SETTINGS", new Vector2(0.16f, 0.955f), new Vector2(250f, 64f), new Color(0.05f, 0.13f, 0.24f));
         UnityEventTools.AddPersistentListener(settingsButton.onClick, settings.Open);
 
-        Button play = CreateButton("PlayButton", safe.transform, "PLAY", new Vector2(0.5f, 0.17f), new Vector2(520f, 122f), new Color(0.05f, 0.78f, 0.35f));
+        Button play = CreateButton("PlayButton", safe.transform, "PLAY", new Vector2(0.5f, 0.13f), new Vector2(520f, 122f), new Color(0.05f, 0.78f, 0.35f));
         UnityEventTools.AddPersistentListener(play.onClick, menu.Play);
 
         UpgradeType[] types =
@@ -1405,7 +1460,7 @@ public static class ArmyRushProjectBuilder
         {
             int row = i / 2;
             int column = i % 2;
-            Vector2 anchor = new Vector2(column == 0 ? 0.29f : 0.71f, 0.64f - row * 0.098f);
+            Vector2 anchor = new Vector2(column == 0 ? 0.29f : 0.71f, 0.565f - row * 0.096f);
             Button button = CreateButton("Upgrade_" + types[i], safe.transform, string.Empty, anchor, new Vector2(392f, 88f), new Color(0.08f, 0.28f, 0.95f));
             UpgradeButtonView view = button.gameObject.AddComponent<UpgradeButtonView>();
             Text titleText = CreateUIText("Title", button.transform, types[i].ToString().ToUpperInvariant(), 21, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.58f, 0.66f), new Vector2(245f, 32f));
@@ -1694,7 +1749,43 @@ public static class ArmyRushProjectBuilder
             failures.Add($"MainMenu exposes {upgradeButtonCount} upgrade buttons, but {requiredUpgradeCount} upgrade types exist.");
         }
 
+        ValidateMainMenuShowcase(failures);
         ValidateMainMenuUpgradeLayout(failures);
+    }
+
+    private static void ValidateMainMenuShowcase(List<string> failures)
+    {
+        GameObject showcaseRoot = GameObject.Find("MenuShowcaseRoot");
+        if (showcaseRoot == null)
+        {
+            failures.Add("MainMenu scene is missing MenuShowcaseRoot.");
+            return;
+        }
+
+        if (showcaseRoot.GetComponent<MenuShowcaseAnimator>() == null)
+        {
+            failures.Add("MenuShowcaseRoot is missing MenuShowcaseAnimator.");
+        }
+
+        int soldierCount = 0;
+        foreach (Transform child in showcaseRoot.transform)
+        {
+            if (child.name.StartsWith("HeroSoldier_"))
+            {
+                soldierCount++;
+            }
+        }
+
+        if (soldierCount < 5)
+        {
+            failures.Add("MainMenu character showcase has fewer than five hero soldiers.");
+        }
+
+        int meshRendererCount = showcaseRoot.GetComponentsInChildren<MeshRenderer>(true).Length;
+        if (meshRendererCount < 24)
+        {
+            failures.Add("MainMenu character showcase does not contain enough rendered visual parts.");
+        }
     }
 
     private static void ValidateMainMenuUpgradeLayout(List<string> failures)
