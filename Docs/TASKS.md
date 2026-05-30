@@ -494,7 +494,7 @@ Acceptance Criteria:
 
 ## 1.6 Gate Visuals
 
-Status: In Progress; Generated Visual and Activation Animation Pass Implemented
+Status: Functional Pass Implemented with Glow, Activation Animation, and Positive/Negative Variants; Device Readability QA Pending
 Priority: Critical
 
 Tasks:
@@ -502,9 +502,9 @@ Tasks:
 - Create production gate prefab.
 - Use bright translucent panels.
 - Use bold readable text.
-- Add glow effects.
+- [x] Add glow effects.
 - [x] Add activation animation.
-- Add positive and negative variants.
+- [x] Add positive and negative variants.
 
 Acceptance Criteria:
 

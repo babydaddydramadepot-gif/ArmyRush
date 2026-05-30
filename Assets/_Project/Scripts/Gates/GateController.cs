@@ -11,6 +11,9 @@ namespace ArmyRush
         [SerializeField] private Renderer _panelRenderer;
         [SerializeField] private ParticleSystem _burst;
         [SerializeField] private float _activationHalfWidth = 1.05f;
+        [SerializeField] private float _idleGlowSpeed = 4.2f;
+        [SerializeField] private float _idleGlowStrength = 0.18f;
+        [SerializeField] private float _emissionStrength = 0.85f;
 
         private bool _used;
         private Color _baseColor;
@@ -27,6 +30,14 @@ namespace ArmyRush
             if (_panelRenderer != null)
             {
                 _baseColor = _panelRenderer.sharedMaterial != null ? _panelRenderer.sharedMaterial.color : Color.white;
+            }
+        }
+
+        private void Update()
+        {
+            if (!_used)
+            {
+                UpdateIdleGlow();
             }
         }
 
@@ -165,7 +176,28 @@ namespace ArmyRush
             _panelRenderer.GetPropertyBlock(_propertyBlock);
             _propertyBlock.SetColor("_BaseColor", color);
             _propertyBlock.SetColor("_Color", color);
+            float emission = _emissionStrength * Mathf.Clamp01(color.a);
+            _propertyBlock.SetColor("_EmissionColor", new Color(color.r, color.g, color.b, 1f) * emission);
             _panelRenderer.SetPropertyBlock(_propertyBlock);
+        }
+
+        private void UpdateIdleGlow()
+        {
+            if (_panelRenderer == null)
+            {
+                return;
+            }
+
+            float phase = Time.time * _idleGlowSpeed + transform.position.z * 0.11f;
+            float pulse = 0.5f + Mathf.Sin(phase) * 0.5f;
+            Color glowColor = Color.Lerp(_baseColor, Color.white, _idleGlowStrength * pulse);
+            glowColor.a = _baseColor.a;
+            SetPanelColor(glowColor);
+
+            if (_label != null)
+            {
+                _label.color = Color.Lerp(Color.white, IsPositive() ? new Color(0.72f, 1f, 0.88f) : new Color(1f, 0.78f, 0.62f), pulse * 0.24f);
+            }
         }
 
         private void ResetAnimationState()

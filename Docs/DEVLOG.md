@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-45%
+46%
 
 Last Updated:
 
@@ -906,6 +906,34 @@ Date:
 
 System:
 
+Gate Glow and Variant Polish
+
+Files:
+
+Assets/_Project/Scripts/Gates/GateController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added idle glow pulsing to gate panels through reused material property blocks, with subtle label tinting for positive and negative gates. The existing data-driven positive/negative operation colors now read as intentional variants before activation, while the activation animation and VFX continue to own the high-impact moment after the player passes through.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Gate visuals now cover glow, activation animation, and positive/negative variant feedback without adding per-frame allocations or new scene dependencies.
+
+Follow Up:
+
+Tune glow strength on device after portrait readability QA, especially on smaller iPhones with dense obstacle layouts.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Procedural Unit Animation Polish
 
 Files:
@@ -1228,7 +1256,7 @@ Tune amplitudes on device to keep the effect satisfying without hurting portrait
 
 Gameplay Systems
 
-40%
+41%
 
 UI Systems
 
@@ -1236,7 +1264,7 @@ UI Systems
 
 Visual Systems
 
-40%
+41%
 
 Audio Systems
 
@@ -1260,7 +1288,7 @@ Optimization
 
 Polish
 
-31%
+32%
 
 Release Readiness
 
