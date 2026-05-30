@@ -2290,6 +2290,17 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(path + " is missing a boss health label.");
         }
+        if (path.EndsWith("PF_Boss_Helicopter.prefab", System.StringComparison.Ordinal))
+        {
+            if (prefab.transform.Find("MainRotor_A") == null || prefab.transform.Find("MainRotor_B") == null)
+            {
+                failures.Add(path + " is missing main rotor visual parts for helicopter motion/crash polish.");
+            }
+            if (prefab.transform.Find("TailRotor") == null)
+            {
+                failures.Add(path + " is missing tail rotor visual part for helicopter motion/crash polish.");
+            }
+        }
     }
 
     private static void ValidateObstaclePrefabs(List<string> failures)

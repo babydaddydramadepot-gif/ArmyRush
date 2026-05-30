@@ -181,7 +181,7 @@ Implementation Pass 1 Result:
 - Polished the main-menu upgrade tile layout for simulator-sized portrait screens, corrected the play icon direction, and added validation coverage for upgrade icon/text overlap.
 - Added an animated generated 3D main-menu character showcase with hero squad, runway, gate, coin medal, and validation coverage for showcase wiring/content.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
-- Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, and validation coverage for all boss prefabs.
+- Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, helicopter rotor/crash defeat polish, and validation coverage for all boss prefabs.
 - Added data-driven obstacle definitions, generated obstacle variant prefabs, authored-level obstacle variant coverage, endless obstacle variant reuse, boss-approach layout guardrails, and validation for obstacle prefabs/definitions.
 - Corrected gameplay camera rig double-offset, added speed-based camera look-ahead, and added validation for local-zero camera child framing under the follow rig.
 - Converted the in-run HUD settings control to a compact icon-led button and added validation for top-HUD overlap/readability.
@@ -191,7 +191,7 @@ Implementation Pass 1 Result:
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
 - Added pooled crowd gain/loss VFX bursts for army count changes after the initial spawn count.
 - Ran a post-mech iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted runtime exception scan all passed.
-- Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss animation/balance polish, and full art polish remain pending.
+- Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
 
@@ -872,7 +872,7 @@ Acceptance Criteria:
 
 ## 4.3 Helicopter Boss
 
-Status: Functional Visual and Attack Pass Implemented; Authored Crash Polish and Balance QA Pending
+Status: Functional Visual, Attack, Rotor Motion, and Crash Defeat Pass Implemented; Balance QA Pending
 Priority: Medium
 
 Tasks:
@@ -881,12 +881,13 @@ Tasks:
 - [x] Add lateral movement.
 - [x] Add missile attack.
 - [x] Add hit effects.
-- Add authored crash/destruction animation.
+- [x] Add authored crash/destruction animation.
 
 Acceptance Criteria:
 
 - Helicopter boss is visually distinct.
 - Fight differs from tank boss.
+- Helicopter defeat uses crash-specific motion and staged smoke/explosion feedback.
 
 ---
 

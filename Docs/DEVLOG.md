@@ -2574,6 +2574,35 @@ Physical iPhone deployment still requires signing/provisioning. Continue manual 
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Helicopter Boss Crash Polish
+
+Files:
+
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added helicopter-specific boss presentation polish. Missile-strike bosses now spin main and tail rotor parts during hover motion, then use a longer staged crash sequence on defeat with lateral fall, forward drift, yaw spin, rotor slowdown, `MAYDAY` callout, smoke trail, hit sparks, delayed crash explosion, camera shake, audio, and haptic feedback. Production validation now also checks the generated helicopter prefab has the rotor parts required by the animation.
+
+Result:
+
+Unity production validation passed. The helicopter boss no longer shares the generic tank defeat fall and reads as a distinct flying boss variant.
+
+Follow Up:
+
+Tune helicopter crash timing and readability during level 10/20 playthroughs on simulator or device.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2602,7 +2631,7 @@ Progression Systems
 
 Boss Systems
 
-43%
+45%
 
 Optimization
 
@@ -2610,7 +2639,7 @@ Optimization
 
 Polish
 
-44%
+45%
 
 Release Readiness
 
@@ -2818,7 +2847,7 @@ AR-002
 
 Status:
 
-Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, impact behavior, boss rewards, audio/haptics, procedural defeat motion, and mech-specific multi-phase escalation/collapse behavior. Remaining work includes balance, authored helicopter crash polish, final boss VFX styling, and physical device QA.
+Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, impact behavior, boss rewards, audio/haptics, helicopter-specific crash defeat motion, and mech-specific multi-phase escalation/collapse behavior. Remaining work includes balance, final boss VFX styling, and physical device QA.
 
 Issue ID:
 

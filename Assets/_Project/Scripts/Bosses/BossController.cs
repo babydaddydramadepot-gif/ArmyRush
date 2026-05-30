@@ -6,6 +6,10 @@ namespace ArmyRush
     [RequireComponent(typeof(Collider))]
     public sealed class BossController : MonoBehaviour
     {
+        private const string MainRotorAName = "MainRotor_A";
+        private const string MainRotorBName = "MainRotor_B";
+        private const string TailRotorName = "TailRotor";
+
         [SerializeField] private Damageable _damageable;
         [SerializeField] private TextMesh _healthLabel;
         [SerializeField] private BossDefinition _definition;
@@ -36,6 +40,12 @@ namespace ArmyRush
         private Coroutine _defeatRoutine;
         private int _damageState;
         private float _motionTimeOffset;
+        private Transform _mainRotorA;
+        private Transform _mainRotorB;
+        private Transform _tailRotor;
+        private Quaternion _mainRotorARestLocalRotation;
+        private Quaternion _mainRotorBRestLocalRotation;
+        private Quaternion _tailRotorRestLocalRotation;
 
         private void Awake()
         {
@@ -376,10 +386,8 @@ namespace ArmyRush
             {
                 _triggerCollider.enabled = false;
             }
-            VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 1.1f);
-            VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 1.05f);
-            VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.right * 0.75f);
-            VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.left * 0.75f);
+            BossAttackPattern pattern = GetCurrentPattern();
+            SpawnDefeatInitialFeedback(pattern);
             VfxManager.SpawnFloatingText("BOSS DOWN", transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
             CameraFollowRig.Shake(CameraShakeCue.BossDefeat);
             BossHealthChanged?.Invoke(this, 0f);
@@ -397,10 +405,13 @@ namespace ArmyRush
 
         private System.Collections.IEnumerator PlayDefeatAnimation()
         {
-            const float duration = 0.82f;
-            const float resumeDelay = 0.46f;
+            BossAttackPattern pattern = GetCurrentPattern();
+            float duration = GetDefeatDuration(pattern);
+            float resumeDelay = GetDefeatResumeDelay(pattern);
             bool resumed = false;
             bool smokeSpawned = false;
+            bool secondarySmokeSpawned = false;
+            bool crashImpactSpawned = false;
             float elapsed = 0f;
 
             while (elapsed < duration)
@@ -418,11 +429,7 @@ namespace ArmyRush
                     _healthLabel.color = labelColor;
                 }
 
-                if (!smokeSpawned && normalized >= 0.42f)
-                {
-                    smokeSpawned = true;
-                    VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.65f);
-                }
+                SpawnDefeatStageFeedback(pattern, normalized, ref smokeSpawned, ref secondarySmokeSpawned, ref crashImpactSpawned);
 
                 if (!resumed && elapsed >= resumeDelay)
                 {
@@ -455,7 +462,20 @@ namespace ArmyRush
 
         private void ApplyDefeatPose(float normalized, float eased, float shake)
         {
-            BossAttackPattern pattern = _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+            BossAttackPattern pattern = GetCurrentPattern();
+            if (pattern == BossAttackPattern.MissileStrike)
+            {
+                float lateralFall = Mathf.Sin(normalized * Mathf.PI * 2.6f + _motionTimeOffset) * Mathf.Lerp(0.08f, 0.92f, eased);
+                float forwardDrift = Mathf.Lerp(0f, 1.25f, eased);
+                float verticalDrop = Mathf.Lerp(0f, -1.18f, eased) + Mathf.Sin(normalized * Mathf.PI * 4f) * (1f - normalized) * 0.12f;
+                float spin = normalized * 470f + shake * 16f;
+                transform.localPosition = _restLocalPosition + new Vector3(lateralFall + shake * 0.07f, verticalDrop, forwardDrift);
+                transform.localRotation = _restLocalRotation * Quaternion.Euler(Mathf.Lerp(0f, 38f, eased) + shake * 6f, spin, Mathf.Lerp(0f, -76f, eased) + shake * 12f);
+                transform.localScale = Vector3.Lerp(_restLocalScale * 1.02f, new Vector3(_restLocalScale.x * 0.92f, _restLocalScale.y * 0.72f, _restLocalScale.z * 1.08f), eased);
+                SpinRotorVisuals(Mathf.Lerp(3.2f, 0.25f, eased) + Mathf.Abs(shake) * 0.45f);
+                return;
+            }
+
             if (pattern == BossAttackPattern.ShockwaveSlam)
             {
                 float hydraulicDrop = Mathf.Sin(normalized * Mathf.PI * 3f) * (1f - normalized) * 0.08f;
@@ -483,6 +503,7 @@ namespace ArmyRush
             _restLocalPosition = transform.localPosition;
             _restLocalRotation = transform.localRotation;
             _restLocalScale = transform.localScale;
+            CaptureRotorReferences();
         }
 
         private void RestoreRestPose()
@@ -490,6 +511,7 @@ namespace ArmyRush
             transform.localPosition = _restLocalPosition;
             transform.localRotation = _restLocalRotation;
             transform.localScale = _restLocalScale;
+            RestoreRotorPose();
         }
 
         private void UpdatePatternMotion()
@@ -499,7 +521,7 @@ namespace ArmyRush
                 return;
             }
 
-            BossAttackPattern pattern = _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+            BossAttackPattern pattern = GetCurrentPattern();
             float time = Time.time + _motionTimeOffset;
             switch (pattern)
             {
@@ -508,6 +530,7 @@ namespace ArmyRush
                     float hover = Mathf.Sin(time * 3.4f) * 0.08f;
                     transform.localPosition = _restLocalPosition + new Vector3(strafe, hover, 0f);
                     transform.localRotation = _restLocalRotation * Quaternion.Euler(0f, 0f, -strafe * 4.5f);
+                    SpinRotorVisuals(3.4f);
                     break;
 
                 case BossAttackPattern.ShockwaveSlam:
@@ -559,6 +582,148 @@ namespace ArmyRush
             }
 
             return radius;
+        }
+
+        private BossAttackPattern GetCurrentPattern()
+        {
+            return _definition != null ? _definition.attackPattern : BossAttackPattern.CannonVolley;
+        }
+
+        private void SpawnDefeatInitialFeedback(BossAttackPattern pattern)
+        {
+            if (pattern == BossAttackPattern.MissileStrike)
+            {
+                VfxManager.Spawn(VfxCue.HitSpark, transform.position + Vector3.up * 1.55f + Vector3.forward * 0.35f);
+                VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.45f + Vector3.right * 0.45f);
+                VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.35f + Vector3.left * 0.35f);
+                VfxManager.SpawnFloatingText("MAYDAY", transform.position + Vector3.up * 3.05f, new Color(1f, 0.42f, 0.12f));
+                return;
+            }
+
+            VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 1.1f);
+            VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 1.05f);
+            VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.right * 0.75f);
+            VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.65f + Vector3.left * 0.75f);
+        }
+
+        private void SpawnDefeatStageFeedback(BossAttackPattern pattern, float normalized, ref bool smokeSpawned, ref bool secondarySmokeSpawned, ref bool crashImpactSpawned)
+        {
+            if (pattern == BossAttackPattern.MissileStrike)
+            {
+                if (!secondarySmokeSpawned && normalized >= 0.22f)
+                {
+                    secondarySmokeSpawned = true;
+                    VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 1.15f + Vector3.back * 0.45f);
+                    CameraFollowRig.Shake(CameraShakeCue.ObstacleBreak);
+                    if (ServiceLocator.TryGet(out HapticsService warningHaptics))
+                    {
+                        warningHaptics.Play(HapticCue.Warning);
+                    }
+                }
+
+                if (!smokeSpawned && normalized >= 0.46f)
+                {
+                    smokeSpawned = true;
+                    VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 0.85f + Vector3.right * 0.55f);
+                    VfxManager.Spawn(VfxCue.SmokePuff, transform.position + Vector3.up * 1.25f + Vector3.left * 0.45f);
+                    VfxManager.Spawn(VfxCue.HitSpark, transform.position + Vector3.up * 1.0f);
+                }
+
+                if (!crashImpactSpawned && normalized >= 0.72f)
+                {
+                    crashImpactSpawned = true;
+                    VfxManager.Spawn(VfxCue.BossExplosion, transform.position + Vector3.up * 0.5f);
+                    VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.45f);
+                    CameraFollowRig.Shake(CameraShakeCue.BossDefeat);
+                    if (ServiceLocator.TryGet(out AudioService audio))
+                    {
+                        audio.Play(AudioCue.Hit);
+                    }
+                    if (ServiceLocator.TryGet(out HapticsService haptics))
+                    {
+                        haptics.Play(HapticCue.Medium);
+                    }
+                }
+                return;
+            }
+
+            if (!smokeSpawned && normalized >= 0.42f)
+            {
+                smokeSpawned = true;
+                VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.65f);
+            }
+        }
+
+        private float GetDefeatDuration(BossAttackPattern pattern)
+        {
+            return pattern == BossAttackPattern.MissileStrike ? 1.16f : pattern == BossAttackPattern.ShockwaveSlam ? 0.92f : 0.82f;
+        }
+
+        private float GetDefeatResumeDelay(BossAttackPattern pattern)
+        {
+            return pattern == BossAttackPattern.MissileStrike ? 0.64f : pattern == BossAttackPattern.ShockwaveSlam ? 0.5f : 0.46f;
+        }
+
+        private void CaptureRotorReferences()
+        {
+            if (_mainRotorA == null)
+            {
+                _mainRotorA = transform.Find(MainRotorAName);
+            }
+            if (_mainRotorB == null)
+            {
+                _mainRotorB = transform.Find(MainRotorBName);
+            }
+            if (_tailRotor == null)
+            {
+                _tailRotor = transform.Find(TailRotorName);
+            }
+
+            if (_mainRotorA != null)
+            {
+                _mainRotorARestLocalRotation = _mainRotorA.localRotation;
+            }
+            if (_mainRotorB != null)
+            {
+                _mainRotorBRestLocalRotation = _mainRotorB.localRotation;
+            }
+            if (_tailRotor != null)
+            {
+                _tailRotorRestLocalRotation = _tailRotor.localRotation;
+            }
+        }
+
+        private void RestoreRotorPose()
+        {
+            if (_mainRotorA != null)
+            {
+                _mainRotorA.localRotation = _mainRotorARestLocalRotation;
+            }
+            if (_mainRotorB != null)
+            {
+                _mainRotorB.localRotation = _mainRotorBRestLocalRotation;
+            }
+            if (_tailRotor != null)
+            {
+                _tailRotor.localRotation = _tailRotorRestLocalRotation;
+            }
+        }
+
+        private void SpinRotorVisuals(float speedMultiplier)
+        {
+            float spin = (Time.time + _motionTimeOffset) * 720f * Mathf.Max(0.1f, speedMultiplier);
+            if (_mainRotorA != null)
+            {
+                _mainRotorA.localRotation = _mainRotorARestLocalRotation * Quaternion.Euler(0f, spin, 0f);
+            }
+            if (_mainRotorB != null)
+            {
+                _mainRotorB.localRotation = _mainRotorBRestLocalRotation * Quaternion.Euler(0f, spin + 90f, 0f);
+            }
+            if (_tailRotor != null)
+            {
+                _tailRotor.localRotation = _tailRotorRestLocalRotation * Quaternion.Euler(0f, 0f, -spin * 1.45f);
+            }
         }
 
         private void StopDefeatAnimation()
