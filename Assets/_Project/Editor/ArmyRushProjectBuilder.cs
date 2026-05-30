@@ -3362,7 +3362,26 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Game scene validation spawned no bonus end trigger.");
         }
+        ValidatePooledLevelObjects<GateController>(failures, "gate");
+        ValidatePooledLevelObjects<EnemyGroup>(failures, "enemy group");
+        ValidatePooledLevelObjects<ObstacleController>(failures, "obstacle");
+        ValidatePooledLevelObjects<BossController>(failures, "boss");
+        ValidatePooledLevelObjects<FinishLineTrigger>(failures, "finish trigger");
+        ValidatePooledLevelObjects<BonusCrateController>(failures, "bonus crate");
+        ValidatePooledLevelObjects<BonusEndTrigger>(failures, "bonus end trigger");
         ValidateGameplayHudLayout(failures);
+    }
+
+    private static void ValidatePooledLevelObjects<T>(List<string> failures, string label) where T : Component
+    {
+        T[] components = Object.FindObjectsByType<T>(FindObjectsInactive.Exclude);
+        foreach (T component in components)
+        {
+            if (!component.TryGetComponent(out PooledObject pooled) || pooled.Owner == null || pooled.SourcePrefab == null)
+            {
+                failures.Add(component.name + " " + label + " is not spawned through PoolManager.");
+            }
+        }
     }
 
     private static bool HasEnoughEndlessPreviewContent(LevelData level)

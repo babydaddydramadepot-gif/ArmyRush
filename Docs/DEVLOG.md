@@ -2731,6 +2731,30 @@ Profile retry/next-level transitions on simulator and physical device to tune pr
 
 ---
 
+System:
+
+Pooled Fixture Validation Coverage
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Extended production validation so spawned level fixtures must be active `PooledObject` instances with a `PoolManager` owner and source prefab. The check now covers gates, enemy groups, obstacles, bosses when present, finish triggers, bonus crates, and bonus-end triggers.
+
+Result:
+
+Unity production validation passed. The pooling optimization now has an automated regression check instead of relying on code review alone.
+
+Follow Up:
+
+Expand performance validation with measured retry/next-level timings once simulator or device profiling instrumentation is added.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2763,7 +2787,7 @@ Boss Systems
 
 Optimization
 
-36%
+37%
 
 Polish
 

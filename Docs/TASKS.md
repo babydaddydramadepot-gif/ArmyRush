@@ -1399,6 +1399,7 @@ Tasks:
 - [x] Remove redundant crowd-label rotation updates and share main-camera lookup across billboard labels.
 - [x] Share main-camera lookup across pooled floating text feedback.
 - [x] Pool level fixtures for track segments, gates, enemy groups, obstacles, bosses, finish triggers, bonus crates, and bonus-end triggers across level rebuilds.
+- [x] Add production validation coverage ensuring spawned level fixtures are owned by `PoolManager`.
 
 Acceptance Criteria:
 
@@ -1411,6 +1412,7 @@ Acceptance Criteria:
 - World-space labels avoid duplicate per-frame camera/rotation work.
 - Pooled floating text avoids per-frame `Camera.main` lookups.
 - Level rebuilds reuse pooled fixture objects instead of destroying and instantiating the full level layout.
+- Production validation fails if active spawned fixtures bypass the pool manager.
 
 ---
 
