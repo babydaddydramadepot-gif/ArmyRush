@@ -1389,21 +1389,22 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Current Unity Xcode Export and Signing-Independent Xcode Build Passed After Art/UI Passes; Simulator/Device Launch Pending
+Status: Current Unity Xcode Export, Signing-Independent Xcode Build, and Simulator Launch Passed; Physical Device Launch Pending
 Priority: Critical
 
 Tasks:
 
 - [x] Export Unity project to Xcode.
 - [x] Confirm Xcode project builds without signing requirements.
-- [ ] Confirm app launches in simulator if available.
+- [x] Confirm app launches in simulator if available.
 - [ ] Confirm app launches on device if available.
 - [x] Fix signing-independent iOS build errors.
 
 Acceptance Criteria:
 
 - [x] Xcode project builds without signing-independent errors.
-- [ ] App launches successfully.
+- [x] App launches successfully in simulator.
+- [ ] App launches successfully on a physical device.
 - [x] No missing signing-independent build issues.
 
 ---
@@ -1435,11 +1436,12 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: Not Started
+Status: In Progress; Simulator Input System Console Exception Fixed
 Priority: Critical
 
 Tasks:
 
+- [x] Fix simulator launch `StandaloneInputModule` exception under Input System-only player settings.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

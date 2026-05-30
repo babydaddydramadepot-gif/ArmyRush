@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-69%
+70%
 
 Last Updated:
 
@@ -1542,6 +1542,36 @@ Date:
 
 System:
 
+Simulator Launch Input Fix
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/MainMenu.unity
+Assets/_Project/Scenes/Game.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a repeatable iOS simulator export path, repaired generated UI EventSystems to use `InputSystemUIInputModule`, assigned default UI actions, and extended production validation to fail if legacy `StandaloneInputModule` components return while Player Settings use Input System-only input.
+
+Result:
+
+Unity production validation passed. The refreshed simulator export and `xcodebuild` simulator build completed successfully. The app installed and launched on the iPhone 17 Pro simulator, reached the main menu, and no longer logs the previous `InvalidOperationException`. Simulator-only texture support warnings and a URP shadowmap warning remain as follow-up polish, but the blocking launch exception is fixed.
+
+Follow Up:
+
+Run physical iPhone deployment once signing credentials/provisioning are available, and address remaining nonfatal simulator warnings during the broader bug-fix/polish pass.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Silhouette Polish
 
 Files:
@@ -2040,7 +2070,7 @@ Polish
 
 Release Readiness
 
-16%
+18%
 
 ---
 

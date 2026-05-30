@@ -73,31 +73,50 @@ public static class ArmyRushProjectBuilder
     [MenuItem("ArmyRush/Build iOS Development Export")]
     public static void BuildIOSDevelopmentExport()
     {
-        ConfigureBuildSettings();
-        ConfigurePlayerSettings();
+        BuildIOSDevelopmentExport(iOSSdkVersion.DeviceSDK, "ArmyRush_iOSBuild", "iOS device");
+    }
 
-        string[] scenes =
-        {
-            ScenePath + "/Boot.unity",
-            ScenePath + "/MainMenu.unity",
-            ScenePath + "/Game.unity"
-        };
+    [MenuItem("ArmyRush/Build iOS Simulator Development Export")]
+    public static void BuildIOSSimulatorDevelopmentExport()
+    {
+        BuildIOSDevelopmentExport(iOSSdkVersion.SimulatorSDK, "ArmyRush_iOSSimulatorBuild", "iOS simulator");
+    }
 
-        BuildPlayerOptions options = new BuildPlayerOptions
+    private static void BuildIOSDevelopmentExport(iOSSdkVersion sdkVersion, string outputPath, string label)
+    {
+        try
         {
-            scenes = scenes,
-            locationPathName = "ArmyRush_iOSBuild",
-            target = BuildTarget.iOS,
-            options = BuildOptions.Development
-        };
+            ConfigureBuildSettings();
+            ConfigurePlayerSettings(sdkVersion);
 
-        BuildReport report = BuildPipeline.BuildPlayer(options);
-        if (report.summary.result != BuildResult.Succeeded)
-        {
-            throw new System.Exception($"iOS development export failed: {report.summary.result}");
+            string[] scenes =
+            {
+                ScenePath + "/Boot.unity",
+                ScenePath + "/MainMenu.unity",
+                ScenePath + "/Game.unity"
+            };
+
+            BuildPlayerOptions options = new BuildPlayerOptions
+            {
+                scenes = scenes,
+                locationPathName = outputPath,
+                target = BuildTarget.iOS,
+                options = BuildOptions.Development
+            };
+
+            BuildReport report = BuildPipeline.BuildPlayer(options);
+            if (report.summary.result != BuildResult.Succeeded)
+            {
+                throw new System.Exception($"{label} development export failed: {report.summary.result}");
+            }
+
+            Debug.Log($"ArmyRush {label} development export succeeded: {report.summary.outputPath}");
         }
-
-        Debug.Log($"ArmyRush iOS development export succeeded: {report.summary.outputPath}");
+        finally
+        {
+            ConfigurePlayerSettings(iOSSdkVersion.DeviceSDK);
+            AssetDatabase.SaveAssets();
+        }
     }
 
     [MenuItem("ArmyRush/Polish Character Prefabs")]
@@ -150,6 +169,28 @@ public static class ArmyRushProjectBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("ArmyRush UI art polish applied.");
+    }
+
+    [MenuItem("ArmyRush/Repair UI Input Modules")]
+    public static void RepairUiInputModules()
+    {
+        string[] scenePaths =
+        {
+            ScenePath + "/MainMenu.unity",
+            ScenePath + "/Game.unity"
+        };
+
+        foreach (string scenePath in scenePaths)
+        {
+            Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            EnsureEventSystem();
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("ArmyRush UI input modules repaired for Input System runtime.");
     }
 
     private static void CreateFolders()
@@ -1447,8 +1488,28 @@ public static class ArmyRushProjectBuilder
                 failures.Add($"{path}/{root.name} has {missing} missing scripts.");
             }
         }
+
+        ValidateInputModules(path, failures);
         validate(scene, failures);
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+    }
+
+    private static void ValidateInputModules(string path, List<string> failures)
+    {
+        UnityEngine.EventSystems.StandaloneInputModule[] legacyModules = Object.FindObjectsByType<UnityEngine.EventSystems.StandaloneInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        if (legacyModules.Length > 0)
+        {
+            failures.Add($"{path} uses StandaloneInputModule, which throws at runtime when Player Settings use Input System package input.");
+        }
+
+        UnityEngine.EventSystems.EventSystem[] eventSystems = Object.FindObjectsByType<UnityEngine.EventSystems.EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (UnityEngine.EventSystems.EventSystem eventSystem in eventSystems)
+        {
+            if (eventSystem.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>() == null)
+            {
+                failures.Add($"{path}/{eventSystem.name} is missing InputSystemUIInputModule.");
+            }
+        }
     }
 
     private static void ValidateBootScene(Scene scene, List<string> failures)
@@ -1823,6 +1884,11 @@ public static class ArmyRushProjectBuilder
 
     private static void ConfigurePlayerSettings()
     {
+        ConfigurePlayerSettings(iOSSdkVersion.DeviceSDK);
+    }
+
+    private static void ConfigurePlayerSettings(iOSSdkVersion sdkVersion)
+    {
         PlayerSettings.companyName = "ArmyRush";
         PlayerSettings.productName = "ArmyRush";
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
@@ -1832,6 +1898,7 @@ public static class ArmyRushProjectBuilder
         PlayerSettings.allowedAutorotateToLandscapeRight = false;
         PlayerSettings.accelerometerFrequency = 60;
         PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
+        PlayerSettings.iOS.sdkVersion = sdkVersion;
         PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, "com.armyrush.game");
     }
 
@@ -1892,13 +1959,34 @@ public static class ArmyRushProjectBuilder
 
     private static void EnsureEventSystem()
     {
-        if (Object.FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() != null)
+        UnityEngine.EventSystems.EventSystem eventSystem = Object.FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>();
+        GameObject eventSystemObject;
+        if (eventSystem == null)
         {
-            return;
+            eventSystemObject = new GameObject("EventSystem");
+            eventSystemObject.AddComponent<UnityEngine.EventSystems.EventSystem>();
         }
-        GameObject eventSystem = new GameObject("EventSystem");
-        eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
-        eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+        else
+        {
+            eventSystemObject = eventSystem.gameObject;
+        }
+
+        UnityEngine.EventSystems.StandaloneInputModule[] legacyModules = eventSystemObject.GetComponents<UnityEngine.EventSystems.StandaloneInputModule>();
+        foreach (UnityEngine.EventSystems.StandaloneInputModule legacyModule in legacyModules)
+        {
+            Object.DestroyImmediate(legacyModule);
+        }
+
+        UnityEngine.InputSystem.UI.InputSystemUIInputModule inputModule = eventSystemObject.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+        if (inputModule == null)
+        {
+            inputModule = eventSystemObject.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+        }
+
+        if (inputModule.actionsAsset == null)
+        {
+            inputModule.AssignDefaultActions();
+        }
     }
 
     private static Text CreateUIText(string name, Transform parent, string text, int size, FontStyle style, TextAnchor anchor, Color color, Vector2 anchorPosition, Vector2 dimensions)
