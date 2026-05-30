@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-27%
+28%
 
 Last Updated:
 
@@ -682,6 +682,34 @@ Add reward count-up timing and richer defeat transition polish after device UI f
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Victory Reward Count-Up
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a short unscaled-time count-up animation for the victory coin reward text. `GameplayUI` now counts from zero to the earned coin total with eased timing, cancels stale count routines when leaving victory state, and preserves the final reward value at the end.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Victory rewards now animate instead of appearing as a static final number.
+
+Follow Up:
+
+Device-test pacing against typical early and boss-level payouts, then tune duration or add coin icon motion if needed.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -690,7 +718,7 @@ Gameplay Systems
 
 UI Systems
 
-31%
+32%
 
 Visual Systems
 
@@ -718,7 +746,7 @@ Optimization
 
 Polish
 
-16%
+17%
 
 Release Readiness
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,9 +21,11 @@ namespace ArmyRush
         [SerializeField] private Text _defeatText;
         [SerializeField] private PlayerController _player;
         [SerializeField] private LevelManager _levelManager;
+        [SerializeField] private float _victoryCoinCountDuration = 0.65f;
 
         private EconomyService _economy;
         private ProgressionService _progression;
+        private Coroutine _victoryCoinRoutine;
 
         private void Start()
         {
@@ -87,6 +90,7 @@ namespace ArmyRush
             if (_victoryPanel != null && state != RunState.Victory)
             {
                 _victoryPanel.SetActive(false);
+                StopVictoryCoinCount();
             }
             if (_defeatPanel != null && state != RunState.Defeat)
             {
@@ -102,7 +106,8 @@ namespace ArmyRush
             }
             if (_victoryCoinsText != null)
             {
-                _victoryCoinsText.text = $"+{coinsEarned} COINS";
+                StopVictoryCoinCount();
+                _victoryCoinRoutine = StartCoroutine(CountVictoryCoins(Mathf.Max(0, coinsEarned)));
             }
         }
 
@@ -179,6 +184,35 @@ namespace ArmyRush
             {
                 _bossText.text = boss.DisplayName;
             }
+        }
+
+        private IEnumerator CountVictoryCoins(int targetCoins)
+        {
+            float duration = Mathf.Max(0.05f, _victoryCoinCountDuration);
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float eased = 1f - Mathf.Pow(1f - t, 3f);
+                int displayed = Mathf.RoundToInt(Mathf.Lerp(0f, targetCoins, eased));
+                _victoryCoinsText.text = $"+{displayed} COINS";
+                yield return null;
+            }
+
+            _victoryCoinsText.text = $"+{targetCoins} COINS";
+            _victoryCoinRoutine = null;
+        }
+
+        private void StopVictoryCoinCount()
+        {
+            if (_victoryCoinRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(_victoryCoinRoutine);
+            _victoryCoinRoutine = null;
         }
     }
 }

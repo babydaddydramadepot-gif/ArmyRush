@@ -1055,7 +1055,7 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Functional Pass Implemented with Animated Reveal; Upgrade Shortcut/Rewarded Architecture Pending
+Status: Functional Pass Implemented with Animated Reveal/Reward Count-Up; Upgrade Shortcut/Rewarded Architecture Pending
 Priority: Critical
 
 Tasks:
