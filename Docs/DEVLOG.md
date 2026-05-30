@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-67%
+68%
 
 Last Updated:
 
@@ -1487,6 +1487,33 @@ Date:
 
 System:
 
+Refreshed iOS Export After Art/UI Passes
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran the Unity iOS development export after the character, environment, and UI art passes. Xcode was open and caused Unity to pause at the project-close step; after asking Xcode to quit gracefully, the export completed successfully.
+
+Result:
+
+Unity produced a fresh `ArmyRush_iOSBuild` with `Build Finished, Result: Success` and `ArmyRush iOS development export succeeded`. Simulator and physical-device launch QA remain pending.
+
+Follow Up:
+
+Run signing-independent `xcodebuild` and simulator/device launch checks against the refreshed export.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Enemy Silhouette Polish
 
 Files:
@@ -1985,7 +2012,7 @@ Polish
 
 Release Readiness
 
-12%
+14%
 
 ---
 
