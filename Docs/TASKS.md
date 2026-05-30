@@ -181,7 +181,7 @@ Implementation Pass 1 Result:
 - Polished the main-menu upgrade tile layout for simulator-sized portrait screens, corrected the play icon direction, and added validation coverage for upgrade icon/text overlap.
 - Added an animated generated 3D main-menu character showcase with hero squad, runway, gate, coin medal, and validation coverage for showcase wiring/content.
 - Added data-driven tank boss definitions, boss-level references, contact-triggered combat pause, telegraphed cannon attacks, boss defeat resume flow, boss reward bonus, and active boss/obstacle/critical upgrade scaling.
-- Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, helicopter rotor/crash defeat polish, and validation coverage for all boss prefabs.
+- Added prefab-backed helicopter and mech boss definitions, generated visual prefabs, boss-level variant rotation, pattern-driven boss motion/impact behavior, pooled boss attack telegraphs, helicopter rotor/crash defeat polish, and validation coverage for all boss prefabs.
 - Added data-driven obstacle definitions, generated obstacle variant prefabs, authored-level obstacle variant coverage, endless obstacle variant reuse, boss-approach layout guardrails, and validation for obstacle prefabs/definitions.
 - Corrected gameplay camera rig double-offset, added speed-based camera look-ahead, and added validation for local-zero camera child framing under the follow rig.
 - Converted the in-run HUD settings control to a compact icon-led button and added validation for top-HUD overlap/readability.
@@ -825,7 +825,7 @@ Acceptance Criteria:
 
 ## 4.1 Boss Architecture
 
-Status: Functional Combat and Defeat Animation Pass Implemented with Prefab-Backed Variants; Balance QA Pending
+Status: Functional Combat, Defeat Animation, and Telegraph VFX Pass Implemented with Prefab-Backed Variants; Balance QA Pending
 Priority: High
 
 Tasks:
@@ -838,6 +838,7 @@ Tasks:
 - [x] Add boss defeat state.
 - [x] Add boss reward flow.
 - [x] Add prefab-backed boss variant definitions.
+- [x] Add readable pooled attack telegraph VFX.
 - [x] Validate boss prefab controller, health, trigger, label, and mesh content.
 
 Acceptance Criteria:
@@ -1207,7 +1208,7 @@ Acceptance Criteria:
 
 ## 7.3 VFX System
 
-Status: Functional Pass Implemented with Pooled Particle Prefabs; Library Expansion Pending
+Status: Functional Pass Implemented with Pooled Particle Prefabs and Boss Telegraph Support; Library Expansion Pending
 Priority: High
 
 Tasks:
@@ -1216,6 +1217,7 @@ Tasks:
 - Implement pooled effects.
 - Add reusable effect prefabs.
 - Add effect spawn helpers.
+- [x] Add radius/color/duration-controlled pooled boss telegraph helper.
 
 Acceptance Criteria:
 
@@ -1227,7 +1229,7 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: Functional Pass Implemented; Final Authored Styling Pending
+Status: Functional Pass Implemented with Boss Telegraph Readability; Final Authored Styling Pending
 Priority: High
 
 Add VFX for:
@@ -1242,6 +1244,7 @@ Add VFX for:
 - [x] Upgrade glow
 - Obstacle explosion
 - Boss explosion
+- [x] Boss attack telegraph
 - Victory fireworks
 - Defeat fade
 

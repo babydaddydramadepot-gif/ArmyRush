@@ -209,6 +209,8 @@ namespace ArmyRush
             string warning = _definition != null && !string.IsNullOrWhiteSpace(_definition.warningText) ? _definition.warningText : "CANNON";
             Color color = _definition != null ? _definition.warningColor : new Color(1f, 0.28f, 0.1f);
             VfxManager.SpawnFloatingText(warning, _attackMarker + Vector3.up * 2.4f, color);
+            VfxManager.SpawnBossTelegraph(_attackMarker + Vector3.up * 0.08f, color, GetCurrentAttackRadius(), warningDuration);
+            SpawnAttackWarningFeedback(GetCurrentPattern(), _attackMarker);
 
             if (ServiceLocator.TryGet(out AudioService audio))
             {
@@ -217,6 +219,32 @@ namespace ArmyRush
             if (ServiceLocator.TryGet(out HapticsService haptics))
             {
                 haptics.Play(HapticCue.Warning);
+            }
+        }
+
+        private void SpawnAttackWarningFeedback(BossAttackPattern pattern, Vector3 marker)
+        {
+            Vector3 bossCenter = transform.position + Vector3.up * 1.25f;
+            switch (pattern)
+            {
+                case BossAttackPattern.MissileStrike:
+                    VfxManager.Spawn(VfxCue.MuzzleFlash, bossCenter + Vector3.forward * 0.35f);
+                    VfxManager.Spawn(VfxCue.SmokePuff, bossCenter + Vector3.up * 0.35f);
+                    break;
+
+                case BossAttackPattern.ShockwaveSlam:
+                    VfxManager.Spawn(VfxCue.HeavySmoke, transform.position + Vector3.up * 0.36f);
+                    VfxManager.Spawn(VfxCue.HitSpark, marker + Vector3.up * 0.45f);
+                    break;
+
+                case BossAttackPattern.SuppressionBurst:
+                    VfxManager.Spawn(VfxCue.MuzzleFlash, bossCenter + Vector3.back * 0.25f);
+                    VfxManager.Spawn(VfxCue.HitSpark, marker + Vector3.up * 0.45f);
+                    break;
+
+                default:
+                    VfxManager.Spawn(VfxCue.MuzzleFlash, bossCenter + Vector3.back * 0.45f);
+                    break;
             }
         }
 

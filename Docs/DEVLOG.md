@@ -2603,6 +2603,33 @@ Tune helicopter crash timing and readability during level 10/20 playthroughs on 
 
 ---
 
+System:
+
+Boss Telegraph VFX Polish
+
+Files:
+
+Assets/_Project/Scripts/VFX/PooledBossTelegraphVfx.cs
+Assets/_Project/Scripts/VFX/VfxManager.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a pooled boss attack telegraph effect with runtime-controlled warning color, attack radius, and duration. Boss warnings now draw a ground danger marker before impact and add pattern-specific wind-up feedback for cannon, missile, suppression, and shockwave attacks. The production builder now generates `PF_VFX_BossTelegraph` and validation requires the pooled telegraph prefab/component.
+
+Result:
+
+Boss attacks are easier to read before damage resolves, and the tank, helicopter, and mech encounters no longer rely on floating text alone for their danger warning.
+
+Follow Up:
+
+Tune telegraph brightness and attack timing during hands-on boss-level playthroughs on simulator or physical device.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2615,7 +2642,7 @@ UI Systems
 
 Visual Systems
 
-57%
+59%
 
 Audio Systems
 
@@ -2631,7 +2658,7 @@ Progression Systems
 
 Boss Systems
 
-45%
+47%
 
 Optimization
 
@@ -2639,7 +2666,7 @@ Optimization
 
 Polish
 
-45%
+46%
 
 Release Readiness
 
@@ -2775,7 +2802,7 @@ All effects-related changes belong here.
 
 ## Initial State
 
-Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, smoke variants, coin reward bursts, victory bursts, upgrade glow feedback, and defeat fade implemented. Final authored particle styling remains pending.
+Projectile tracers, gate pulse feedback, pooled floating text, damage feedback, clear feedback, muzzle flashes, crowd gain/loss bursts, obstacle debris, smoke variants, boss attack telegraphs, coin reward bursts, victory bursts, upgrade glow feedback, and defeat fade implemented. Final authored particle styling remains pending.
 
 ---
 
@@ -2847,7 +2874,7 @@ AR-002
 
 Status:
 
-Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, impact behavior, boss rewards, audio/haptics, helicopter-specific crash defeat motion, and mech-specific multi-phase escalation/collapse behavior. Remaining work includes balance, final boss VFX styling, and physical device QA.
+Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, pooled attack telegraphs, impact behavior, boss rewards, audio/haptics, helicopter-specific crash defeat motion, and mech-specific multi-phase escalation/collapse behavior. Remaining work includes balance, final authored VFX tuning, and physical device QA.
 
 Issue ID:
 

@@ -584,6 +584,7 @@ public static class ArmyRushProjectBuilder
         prefabs.bossExplosion = CreateParticleVfxPrefab("PF_VFX_BossExplosion", new Color(1f, 0.34f, 0.08f), 1.1f, 0.72f, 4.2f, 46, 0.36f, 1.35f, materials.vfxParticle);
         prefabs.smokePuff = CreateSmokeVfxPrefab("PF_VFX_SmokePuff", new Color(0.36f, 0.39f, 0.42f, 0.56f), 1.05f, 0.72f, 0.68f, 12, 0.42f, 0.34f, materials.vfxParticle);
         prefabs.heavySmoke = CreateSmokeVfxPrefab("PF_VFX_HeavySmoke", new Color(0.25f, 0.26f, 0.28f, 0.62f), 1.42f, 1.05f, 0.52f, 20, 0.62f, 0.52f, materials.vfxParticle);
+        prefabs.bossTelegraph = CreateBossTelegraphVfxPrefab("PF_VFX_BossTelegraph", materials.vfxParticle);
         return prefabs;
     }
 
@@ -1659,6 +1660,31 @@ public static class ArmyRushProjectBuilder
         return prefab;
     }
 
+    private static GameObject CreateBossTelegraphVfxPrefab(string name, Material material)
+    {
+        GameObject root = new GameObject(name);
+        root.AddComponent<PooledObject>();
+        PooledBossTelegraphVfx telegraph = root.AddComponent<PooledBossTelegraphVfx>();
+        ParticleSystem outerRing = CreateBossTelegraphParticleChild("OuterWarningRing", root.transform, material);
+        ParticleSystem innerPulse = CreateBossTelegraphParticleChild("InnerPulse", root.transform, material);
+        ParticleSystem sparks = CreateBossTelegraphParticleChild("WarningSparks", root.transform, material);
+
+        telegraph.Configure(outerRing, innerPulse, sparks, 0.84f);
+
+        GameObject prefab = SavePrefab(root, PrefabPath + "/VFX/" + name + ".prefab");
+        Object.DestroyImmediate(root);
+        return prefab;
+    }
+
+    private static ParticleSystem CreateBossTelegraphParticleChild(string name, Transform parent, Material material)
+    {
+        GameObject child = new GameObject(name);
+        child.transform.SetParent(parent, false);
+        ParticleSystem particles = child.AddComponent<ParticleSystem>();
+        VfxManager.ConfigureBossTelegraphParticleSystem(particles, material);
+        return particles;
+    }
+
     private static LevelData[] CreateLevels(BossDefinition[] bosses, LevelChunkData[] chunks)
     {
         List<LevelData> levels = new List<LevelData>();
@@ -2160,7 +2186,7 @@ public static class ArmyRushProjectBuilder
 
         playerController.Configure(tuning, input, crowd, run);
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
-        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.obstacleExplosion, prefabs.victoryBurst, prefabs.bossExplosion, prefabs.smokePuff, prefabs.heavySmoke);
+        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.obstacleExplosion, prefabs.victoryBurst, prefabs.bossExplosion, prefabs.smokePuff, prefabs.heavySmoke, prefabs.bossTelegraph);
 
         levelManager.Configure(tuning, levels, pool, crowd, run, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
@@ -2251,6 +2277,8 @@ public static class ArmyRushProjectBuilder
         {
             ValidatePooledPrefab(failures, path, typeof(PooledParticleVfx));
         }
+
+        ValidatePooledPrefab(failures, PrefabPath + "/VFX/PF_VFX_BossTelegraph.prefab", typeof(PooledBossTelegraphVfx));
     }
 
     private static void ValidateBossPrefabs(List<string> failures)
@@ -3224,7 +3252,8 @@ public static class ArmyRushProjectBuilder
             PrefabPath + "/VFX/PF_VFX_CoinBurst.prefab",
             PrefabPath + "/VFX/PF_VFX_ObstacleDebris.prefab",
             PrefabPath + "/VFX/PF_VFX_VictoryBurst.prefab",
-            PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab"
+            PrefabPath + "/VFX/PF_VFX_BossExplosion.prefab",
+            PrefabPath + "/VFX/PF_VFX_BossTelegraph.prefab"
         };
         foreach (string vfxPath in requiredVfx)
         {
@@ -4140,5 +4169,6 @@ public static class ArmyRushProjectBuilder
         public GameObject bossExplosion;
         public GameObject smokePuff;
         public GameObject heavySmoke;
+        public GameObject bossTelegraph;
     }
 }

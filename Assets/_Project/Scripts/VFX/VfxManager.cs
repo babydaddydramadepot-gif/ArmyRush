@@ -36,6 +36,7 @@ namespace ArmyRush
         [SerializeField] private GameObject _bossExplosionPrefab;
         [SerializeField] private GameObject _smokePuffPrefab;
         [SerializeField] private GameObject _heavySmokePrefab;
+        [SerializeField] private GameObject _bossTelegraphPrefab;
 
         private static VfxManager _active;
         private Material _runtimeSmokeMaterial;
@@ -45,6 +46,7 @@ namespace ArmyRush
             _active = this;
             EnsureSmokePrefabs();
             EnsureObstacleExplosionPrefab();
+            EnsureBossTelegraphPrefab();
             if (_poolManager != null && _floatingTextPrefab != null)
             {
                 _poolManager.Prewarm(_floatingTextPrefab, 24);
@@ -62,6 +64,7 @@ namespace ArmyRush
             Prewarm(_bossExplosionPrefab, 4);
             Prewarm(_smokePuffPrefab, 8);
             Prewarm(_heavySmokePrefab, 4);
+            Prewarm(_bossTelegraphPrefab, 6);
         }
 
         private void OnDestroy()
@@ -87,7 +90,8 @@ namespace ArmyRush
             GameObject victoryBurstPrefab,
             GameObject bossExplosionPrefab,
             GameObject smokePuffPrefab,
-            GameObject heavySmokePrefab)
+            GameObject heavySmokePrefab,
+            GameObject bossTelegraphPrefab = null)
         {
             _poolManager = poolManager;
             _floatingTextPrefab = floatingTextPrefab;
@@ -104,6 +108,7 @@ namespace ArmyRush
             _bossExplosionPrefab = bossExplosionPrefab;
             _smokePuffPrefab = smokePuffPrefab;
             _heavySmokePrefab = heavySmokePrefab;
+            _bossTelegraphPrefab = bossTelegraphPrefab;
         }
 
         public static void SpawnFloatingText(string text, Vector3 position, Color color)
@@ -132,6 +137,30 @@ namespace ArmyRush
 
             PooledParticleVfx vfx = _active._poolManager.Get<PooledParticleVfx>(prefab, position, Quaternion.identity);
             vfx.Play();
+        }
+
+        public static void SpawnBossTelegraph(Vector3 position, Color color, float radius, float duration)
+        {
+            if (_active == null || _active._poolManager == null)
+            {
+                return;
+            }
+
+            if (_active._bossTelegraphPrefab == null)
+            {
+                _active.EnsureBossTelegraphPrefab();
+            }
+
+            if (_active._bossTelegraphPrefab == null)
+            {
+                return;
+            }
+
+            PooledBossTelegraphVfx telegraph = _active._poolManager.Get<PooledBossTelegraphVfx>(_active._bossTelegraphPrefab, position, Quaternion.Euler(90f, 0f, 0f));
+            if (telegraph != null)
+            {
+                telegraph.Play(color, radius, duration);
+            }
         }
 
         private void Prewarm(GameObject prefab, int count)
@@ -206,6 +235,34 @@ namespace ArmyRush
             {
                 _heavySmokePrefab = CreateRuntimeSmokePrefab("PF_RuntimeHeavySmoke", new Color(0.25f, 0.26f, 0.28f, 0.62f), 1.42f, 1.05f, 0.52f, 20, 0.62f, 0.52f);
             }
+        }
+
+        private void EnsureBossTelegraphPrefab()
+        {
+            if (_bossTelegraphPrefab != null)
+            {
+                return;
+            }
+
+            GameObject root = new GameObject("PF_RuntimeBossTelegraph");
+            root.SetActive(false);
+            root.transform.SetParent(transform, false);
+            root.AddComponent<PooledObject>();
+            PooledBossTelegraphVfx telegraph = root.AddComponent<PooledBossTelegraphVfx>();
+            ParticleSystem outerRing = CreateTelegraphParticleChild("OuterWarningRing", root.transform);
+            ParticleSystem innerPulse = CreateTelegraphParticleChild("InnerPulse", root.transform);
+            ParticleSystem sparks = CreateTelegraphParticleChild("WarningSparks", root.transform);
+            telegraph.Configure(outerRing, innerPulse, sparks, 0.84f);
+            _bossTelegraphPrefab = root;
+        }
+
+        private ParticleSystem CreateTelegraphParticleChild(string name, Transform parent)
+        {
+            GameObject child = new GameObject(name);
+            child.transform.SetParent(parent, false);
+            ParticleSystem particles = child.AddComponent<ParticleSystem>();
+            ConfigureBossTelegraphParticleSystem(particles, RuntimeSmokeMaterial);
+            return particles;
         }
 
         private static void ConfigureExplosionParticleSystem(
@@ -372,6 +429,64 @@ namespace ArmyRush
                 new Keyframe(0.55f, 1.12f),
                 new Keyframe(1f, 1.38f));
             sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
+
+            ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            if (material != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+        }
+
+        public static void ConfigureBossTelegraphParticleSystem(ParticleSystem particles, Material material)
+        {
+            ParticleSystem.MainModule main = particles.main;
+            main.duration = 0.84f;
+            main.loop = false;
+            main.playOnAwake = false;
+            main.startLifetime = 0.84f;
+            main.startSpeed = 0.02f;
+            main.startSize = 0.08f;
+            main.startColor = new Color(1f, 0.42f, 0.1f, 0.78f);
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.gravityModifier = 0f;
+            main.stopAction = ParticleSystemStopAction.None;
+
+            ParticleSystem.EmissionModule emission = particles.emission;
+            emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 48) });
+
+            ParticleSystem.ShapeModule shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = 1f;
+            shape.randomDirectionAmount = 0f;
+
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particles.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(new Color(1f, 0.78f, 0.18f), 0f),
+                    new GradientColorKey(new Color(1f, 0.36f, 0.1f), 0.45f),
+                    new GradientColorKey(new Color(0.7f, 0.04f, 0.02f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0f, 0f),
+                    new GradientAlphaKey(0.76f, 0.2f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            colorOverLifetime.color = gradient;
+
+            ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particles.sizeOverLifetime;
+            sizeOverLifetime.enabled = true;
+            sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(
+                new Keyframe(0f, 0.72f),
+                new Keyframe(0.46f, 1.08f),
+                new Keyframe(1f, 0.12f)));
 
             ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
             renderer.renderMode = ParticleSystemRenderMode.Billboard;

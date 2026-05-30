@@ -12153,6 +12153,7 @@ MonoBehaviour:
   _bossExplosionPrefab: {fileID: 7121988251430592088, guid: 96102f3270bd9403bbfbc33040df2768, type: 3}
   _smokePuffPrefab: {fileID: 466207278072155299, guid: c06c3c95d1b54482a9b9cb984618c04a, type: 3}
   _heavySmokePrefab: {fileID: 6811262938730499391, guid: fa1ad8246500f47cabe94dc4da2ed43f, type: 3}
+  _bossTelegraphPrefab: {fileID: 4999305986095029672, guid: 14a70104861e34d79bc33ec2e2c3a9fa, type: 3}
 --- !u!4 &1680441965
 Transform:
   m_ObjectHideFlags: 0
