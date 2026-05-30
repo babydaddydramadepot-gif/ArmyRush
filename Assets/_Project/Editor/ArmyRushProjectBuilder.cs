@@ -98,6 +98,18 @@ public static class ArmyRushProjectBuilder
         Debug.Log($"ArmyRush iOS development export succeeded: {report.summary.outputPath}");
     }
 
+    [MenuItem("ArmyRush/Polish Character Prefabs")]
+    public static void PolishCharacterPrefabs()
+    {
+        MaterialSet materials = LoadMaterialSet();
+        MeshSet meshes = LoadMeshSet();
+        ApplyCharacterPolish(PrefabPath + "/Player/PF_SoldierUnit_Blue.prefab", true, materials, meshes);
+        ApplyCharacterPolish(PrefabPath + "/Enemies/PF_EnemyUnit_Red.prefab", false, materials, meshes);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("ArmyRush character prefab polish applied.");
+    }
+
     private static void CreateFolders()
     {
         string[] folders =
@@ -181,6 +193,29 @@ public static class ArmyRushProjectBuilder
         };
     }
 
+    private static MaterialSet LoadMaterialSet()
+    {
+        return new MaterialSet
+        {
+            playerBlue = LoadRequiredAsset<Material>(MaterialPath + "/MAT_PlayerBlue.mat"),
+            playerNavy = LoadRequiredAsset<Material>(MaterialPath + "/MAT_PlayerNavy.mat"),
+            enemyRed = LoadRequiredAsset<Material>(MaterialPath + "/MAT_EnemyRed.mat"),
+            enemyCrimson = LoadRequiredAsset<Material>(MaterialPath + "/MAT_EnemyCrimson.mat"),
+            skin = LoadRequiredAsset<Material>(MaterialPath + "/MAT_StylizedSkin.mat"),
+            track = LoadRequiredAsset<Material>(MaterialPath + "/MAT_TrackGray.mat"),
+            rail = LoadRequiredAsset<Material>(MaterialPath + "/MAT_RailWhite.mat"),
+            ocean = LoadRequiredAsset<Material>(MaterialPath + "/MAT_OceanBlue.mat"),
+            gatePositive = LoadRequiredAsset<Material>(MaterialPath + "/MAT_GatePositive.mat"),
+            gateNegative = LoadRequiredAsset<Material>(MaterialPath + "/MAT_GateNegative.mat"),
+            projectile = LoadRequiredAsset<Material>(MaterialPath + "/MAT_ProjectileYellow.mat"),
+            coin = LoadRequiredAsset<Material>(MaterialPath + "/MAT_CoinGold.mat"),
+            obstacle = LoadRequiredAsset<Material>(MaterialPath + "/MAT_ObstacleWood.mat"),
+            obstacleMetal = LoadRequiredAsset<Material>(MaterialPath + "/MAT_ObstacleMetal.mat"),
+            uiBlue = LoadRequiredAsset<Material>(MaterialPath + "/MAT_UIBlue.mat"),
+            vfxParticle = LoadRequiredAsset<Material>(MaterialPath + "/MAT_VFXParticle.mat")
+        };
+    }
+
     private static MeshSet CreateMeshes()
     {
         return new MeshSet
@@ -190,6 +225,18 @@ public static class ArmyRushProjectBuilder
             cylinder = CreateMesh("MSH_Cylinder12", BuildCylinderMesh(12)),
             road = CreateMesh("MSH_RoadSegment", BuildBoxMesh()),
             wedge = CreateMesh("MSH_Wedge", BuildWedgeMesh())
+        };
+    }
+
+    private static MeshSet LoadMeshSet()
+    {
+        return new MeshSet
+        {
+            box = LoadRequiredAsset<Mesh>(MeshPath + "/MSH_Box.asset"),
+            panel = LoadRequiredAsset<Mesh>(MeshPath + "/MSH_GatePanel.asset"),
+            cylinder = LoadRequiredAsset<Mesh>(MeshPath + "/MSH_Cylinder12.asset"),
+            road = LoadRequiredAsset<Mesh>(MeshPath + "/MSH_RoadSegment.asset"),
+            wedge = LoadRequiredAsset<Mesh>(MeshPath + "/MSH_Wedge.asset")
         };
     }
 
@@ -284,20 +331,7 @@ public static class ArmyRushProjectBuilder
         Transform bodyRoot = new GameObject("BodyRoot").transform;
         bodyRoot.SetParent(root.transform, false);
 
-        Material primary = player ? materials.playerBlue : materials.enemyRed;
-        Material dark = player ? materials.playerNavy : materials.enemyCrimson;
-
-        AddMeshPart(bodyRoot, "Boots_L", meshes.box, dark, new Vector3(-0.12f, 0.12f, 0f), new Vector3(0.13f, 0.24f, 0.16f));
-        AddMeshPart(bodyRoot, "Boots_R", meshes.box, dark, new Vector3(0.12f, 0.12f, 0f), new Vector3(0.13f, 0.24f, 0.16f));
-        AddMeshPart(bodyRoot, "Leg_L", meshes.box, primary, new Vector3(-0.11f, 0.38f, 0f), new Vector3(0.12f, 0.32f, 0.14f));
-        AddMeshPart(bodyRoot, "Leg_R", meshes.box, primary, new Vector3(0.11f, 0.38f, 0f), new Vector3(0.12f, 0.32f, 0.14f));
-        AddMeshPart(bodyRoot, "Torso", meshes.box, primary, new Vector3(0f, 0.75f, 0f), new Vector3(0.42f, 0.46f, 0.24f));
-        AddMeshPart(bodyRoot, "Vest", meshes.box, dark, new Vector3(0f, 0.78f, -0.03f), new Vector3(0.46f, 0.32f, 0.08f));
-        AddMeshPart(bodyRoot, "Head", meshes.box, materials.skin, new Vector3(0f, 1.14f, 0f), new Vector3(0.28f, 0.28f, 0.25f));
-        AddMeshPart(bodyRoot, "Helmet", meshes.wedge, dark, new Vector3(0f, 1.31f, 0f), new Vector3(0.34f, 0.16f, 0.29f));
-        AddMeshPart(bodyRoot, "Arm_L", meshes.box, primary, new Vector3(-0.3f, 0.76f, -0.02f), new Vector3(0.1f, 0.38f, 0.12f));
-        AddMeshPart(bodyRoot, "Arm_R", meshes.box, primary, new Vector3(0.3f, 0.76f, -0.02f), new Vector3(0.1f, 0.38f, 0.12f));
-        Transform weapon = AddMeshPart(bodyRoot, "Rifle", meshes.box, dark, new Vector3(0f, 0.83f, 0.22f), new Vector3(0.12f, 0.12f, 0.55f));
+        Transform weapon = BuildSoldierVisualParts(bodyRoot, player, materials, meshes);
 
         SetObject(visual, "_bodyRoot", bodyRoot);
         SetObject(visual, "_weaponRoot", weapon);
@@ -305,6 +339,76 @@ public static class ArmyRushProjectBuilder
         GameObject prefab = SavePrefab(root, path);
         Object.DestroyImmediate(root);
         return prefab;
+    }
+
+    private static void ApplyCharacterPolish(string path, bool player, MaterialSet materials, MeshSet meshes)
+    {
+        GameObject root = PrefabUtility.LoadPrefabContents(path);
+        try
+        {
+            SoldierUnitVisual visual = root.GetComponent<SoldierUnitVisual>();
+            if (visual == null)
+            {
+                visual = root.AddComponent<SoldierUnitVisual>();
+            }
+
+            Transform bodyRoot = root.transform.Find("BodyRoot");
+            if (bodyRoot == null)
+            {
+                bodyRoot = new GameObject("BodyRoot").transform;
+                bodyRoot.SetParent(root.transform, false);
+            }
+
+            Transform weapon = BuildSoldierVisualParts(bodyRoot, player, materials, meshes);
+            SetObject(visual, "_bodyRoot", bodyRoot);
+            SetObject(visual, "_weaponRoot", weapon);
+            PrefabUtility.SaveAsPrefabAsset(root, path);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
+    private static Transform BuildSoldierVisualParts(Transform bodyRoot, bool player, MaterialSet materials, MeshSet meshes)
+    {
+        Material primary = player ? materials.playerBlue : materials.enemyRed;
+        Material dark = player ? materials.playerNavy : materials.enemyCrimson;
+        Material accent = player ? materials.rail : materials.obstacleMetal;
+
+        UpsertMeshPart(bodyRoot, "Boots_L", meshes.box, dark, new Vector3(-0.12f, 0.12f, 0f), new Vector3(0.15f, 0.24f, 0.18f));
+        UpsertMeshPart(bodyRoot, "Boots_R", meshes.box, dark, new Vector3(0.12f, 0.12f, 0f), new Vector3(0.15f, 0.24f, 0.18f));
+        UpsertMeshPart(bodyRoot, "Leg_L", meshes.box, primary, new Vector3(-0.11f, 0.38f, 0f), new Vector3(0.12f, 0.32f, 0.14f));
+        UpsertMeshPart(bodyRoot, "Leg_R", meshes.box, primary, new Vector3(0.11f, 0.38f, 0f), new Vector3(0.12f, 0.32f, 0.14f));
+        UpsertMeshPart(bodyRoot, "Torso", meshes.box, primary, new Vector3(0f, 0.75f, 0f), new Vector3(0.44f, 0.48f, 0.26f));
+        UpsertMeshPart(bodyRoot, "Vest", meshes.box, dark, new Vector3(0f, 0.8f, -0.04f), new Vector3(0.48f, 0.34f, 0.09f));
+        UpsertMeshPart(bodyRoot, "VestAccent", meshes.box, accent, new Vector3(0f, 0.88f, 0.1f), new Vector3(0.34f, 0.07f, 0.04f));
+        UpsertMeshPart(bodyRoot, "Belt", meshes.box, dark, new Vector3(0f, 0.55f, 0.01f), new Vector3(0.46f, 0.08f, 0.27f));
+        UpsertMeshPart(bodyRoot, "Backpack", meshes.box, dark, new Vector3(0f, 0.79f, -0.19f), new Vector3(0.34f, 0.4f, 0.1f));
+        UpsertMeshPart(bodyRoot, "Head", meshes.box, materials.skin, new Vector3(0f, 1.14f, 0f), new Vector3(0.3f, 0.3f, 0.27f));
+        UpsertMeshPart(bodyRoot, "FaceVisor", meshes.box, dark, new Vector3(0f, 1.15f, 0.16f), new Vector3(0.2f, 0.06f, 0.03f));
+        UpsertMeshPart(bodyRoot, "Helmet", meshes.wedge, dark, new Vector3(0f, 1.32f, 0f), new Vector3(0.36f, 0.17f, 0.31f));
+        UpsertMeshPart(bodyRoot, "HelmetStripe", meshes.box, accent, new Vector3(0f, 1.39f, 0.03f), new Vector3(0.08f, 0.04f, 0.28f));
+        UpsertMeshPart(bodyRoot, "HelmetBrim", meshes.box, dark, new Vector3(0f, 1.26f, 0.16f), new Vector3(0.38f, 0.05f, 0.09f));
+        UpsertMeshPart(bodyRoot, "Arm_L", meshes.box, primary, new Vector3(-0.31f, 0.76f, -0.02f), new Vector3(0.11f, 0.38f, 0.12f));
+        UpsertMeshPart(bodyRoot, "Arm_R", meshes.box, primary, new Vector3(0.31f, 0.76f, -0.02f), new Vector3(0.11f, 0.38f, 0.12f));
+        UpsertMeshPart(bodyRoot, "Shoulder_L", meshes.box, dark, new Vector3(-0.31f, 0.98f, 0f), new Vector3(0.17f, 0.1f, 0.16f));
+        UpsertMeshPart(bodyRoot, "Shoulder_R", meshes.box, dark, new Vector3(0.31f, 0.98f, 0f), new Vector3(0.17f, 0.1f, 0.16f));
+        UpsertMeshPart(bodyRoot, "Glove_L", meshes.box, dark, new Vector3(-0.31f, 0.54f, 0.04f), new Vector3(0.12f, 0.09f, 0.13f));
+        UpsertMeshPart(bodyRoot, "Glove_R", meshes.box, dark, new Vector3(0.31f, 0.54f, 0.04f), new Vector3(0.12f, 0.09f, 0.13f));
+
+        Transform weaponRoot = UpsertEmptyTransform(bodyRoot, "WeaponRoot", new Vector3(0f, 0.83f, 0.22f), Vector3.zero, Vector3.one);
+        Transform legacyRifle = bodyRoot.Find("Rifle");
+        if (legacyRifle != null && legacyRifle.parent != weaponRoot)
+        {
+            legacyRifle.SetParent(weaponRoot, false);
+        }
+
+        UpsertMeshPart(weaponRoot, "Rifle", meshes.box, dark, Vector3.zero, new Vector3(0.13f, 0.12f, 0.46f));
+        UpsertMeshPart(weaponRoot, "RifleStock", meshes.box, dark, new Vector3(0f, 0f, -0.28f), new Vector3(0.19f, 0.15f, 0.16f));
+        UpsertMeshPart(weaponRoot, "RifleBarrel", meshes.box, materials.obstacleMetal, new Vector3(0f, 0f, 0.31f), new Vector3(0.07f, 0.07f, 0.26f));
+        UpsertMeshPart(weaponRoot, "RifleMuzzle", meshes.box, accent, new Vector3(0f, 0f, 0.48f), new Vector3(0.09f, 0.09f, 0.05f));
+        return weaponRoot;
     }
 
     private static GameObject CreateProjectilePrefab(MaterialSet materials, MeshSet meshes)
@@ -1641,6 +1745,51 @@ public static class ArmyRushProjectBuilder
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         return part.transform;
+    }
+
+    private static Transform UpsertEmptyTransform(Transform parent, string name, Vector3 localPosition, Vector3 localEuler, Vector3 localScale)
+    {
+        Transform existing = parent.Find(name);
+        GameObject obj = existing != null ? existing.gameObject : new GameObject(name);
+        obj.transform.SetParent(parent, false);
+        obj.transform.localPosition = localPosition;
+        obj.transform.localRotation = Quaternion.Euler(localEuler);
+        obj.transform.localScale = localScale;
+        return obj.transform;
+    }
+
+    private static Transform UpsertMeshPart(Transform parent, string name, Mesh mesh, Material material, Vector3 localPosition, Vector3 localScale)
+    {
+        Transform transform = UpsertEmptyTransform(parent, name, localPosition, Vector3.zero, localScale);
+        MeshFilter filter = transform.GetComponent<MeshFilter>();
+        if (filter == null)
+        {
+            filter = transform.gameObject.AddComponent<MeshFilter>();
+        }
+
+        filter.sharedMesh = mesh;
+
+        MeshRenderer renderer = transform.GetComponent<MeshRenderer>();
+        if (renderer == null)
+        {
+            renderer = transform.gameObject.AddComponent<MeshRenderer>();
+        }
+
+        renderer.sharedMaterial = material;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        return transform;
+    }
+
+    private static T LoadRequiredAsset<T>(string path) where T : Object
+    {
+        T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+        if (asset == null)
+        {
+            throw new System.Exception($"Required asset missing: {path}");
+        }
+
+        return asset;
     }
 
     private static Material CreateMaterial(string name, Shader shader, Color color, float alpha)

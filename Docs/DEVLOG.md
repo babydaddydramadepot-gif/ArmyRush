@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-64%
+65%
 
 Last Updated:
 
@@ -1487,6 +1487,36 @@ Date:
 
 System:
 
+Character Prefab Equipment Polish
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Prefabs/Player/PF_SoldierUnit_Blue.prefab
+Assets/_Project/Prefabs/Enemies/PF_EnemyUnit_Red.prefab
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added an idempotent character-prefab polish pass to the project builder and applied it to both player and enemy soldier prefabs. Soldiers now include stronger low-poly equipment silhouettes: vest accents, belts, backpacks, helmet brim/stripe, face visor, shoulder pads, gloves, and multi-part rifles with stock, barrel, and muzzle details.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. Player and enemy units now better satisfy the visual-style requirement for readable stylized soldier equipment, team variants, and non-placeholder character assets.
+
+Follow Up:
+
+Review readability on device from the gameplay camera and tune small equipment proportions if dense crowds become visually noisy.
+
+---
+
+Date:
+
+2026-05-30
+
+System:
+
 Required SFX Checklist Sync
 
 Files:
@@ -1838,7 +1868,7 @@ UI Systems
 
 Visual Systems
 
-46%
+49%
 
 Audio Systems
 

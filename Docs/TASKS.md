@@ -442,13 +442,13 @@ Acceptance Criteria:
 
 ## 1.4 Production Soldier Visuals
 
-Status: In Progress; Procedural Low-Poly Visual and Full Gameplay Animation Pass Implemented; Final Authored Polish Pending
+Status: Functional Character Asset Pass Implemented with Equipment Polish and Full Gameplay Animation Pass; Device QA Pending
 Priority: Critical
 
 Tasks:
 
-- Create stylized blue soldier prefab.
-- Soldier must include body, head, helmet, vest, weapon, boots, and team color material.
+- [x] Create stylized blue soldier prefab.
+- [x] Soldier must include body, head, helmet, vest, weapon, boots, and team color material.
 - [x] Add run animation.
 - [x] Add shooting animation.
 - [x] Add hit reaction animation.
@@ -1252,16 +1252,16 @@ Acceptance Criteria:
 
 ## 8.1 Character Asset Pass
 
-Status: Not Started
+Status: Functional Pass Implemented with Player/Enemy Equipment, Materials, Animations, and Team Variants; Final Authored Polish and Device QA Pending
 Priority: Critical
 
 Tasks:
 
-- Replace all placeholder player units.
-- Replace all placeholder enemy units.
-- Add final materials.
-- Add final animations.
-- Add team variants.
+- [x] Replace all placeholder player units.
+- [x] Replace all placeholder enemy units.
+- [x] Add final materials.
+- [x] Add final animations.
+- [x] Add team variants.
 
 Acceptance Criteria:
 
