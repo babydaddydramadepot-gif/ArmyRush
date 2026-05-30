@@ -22,6 +22,7 @@ namespace ArmyRush
 
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            ConfigureRuntimePerformance();
             EnsureServices(_upgradeDefinitions);
         }
 
@@ -68,6 +69,14 @@ namespace ArmyRush
             {
                 ServiceLocator.Register(new HapticsService(save));
             }
+        }
+
+        private static void ConfigureRuntimePerformance()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            Input.multiTouchEnabled = true;
         }
     }
 }

@@ -95,7 +95,7 @@ Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-20%
+21%
 
 Last Updated:
 
@@ -455,6 +455,34 @@ Add music controls after music exists, add privacy/terms/restore entries for mon
 
 ---
 
+Date:
+
+2026-05-30
+
+System:
+
+Runtime Performance Baseline
+
+Files:
+
+Assets/_Project/Scripts/Core/GameBootstrapper.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added bootstrap-time runtime performance configuration for mobile play: vSync is disabled, `Application.targetFrameRate` is set to 60, device sleep is disabled during play sessions, and multitouch remains enabled for mobile input.
+
+Result:
+
+Unity production validation passes with no C# compiler errors or warnings. The app now explicitly targets the documented 60 FPS mobile baseline at runtime.
+
+Follow Up:
+
+Profile real iPhone frame time, crowd scaling, projectile pooling, VFX pooling, draw calls, and thermal behavior.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -487,7 +515,7 @@ Boss Systems
 
 Optimization
 
-12%
+15%
 
 Polish
 

@@ -1329,7 +1329,7 @@ Acceptance Criteria:
 
 ## 9.1 Mobile Performance Pass
 
-Status: Not Started
+Status: In Progress; Runtime Frame Pacing Baseline Implemented
 Priority: Critical
 
 Tasks:
@@ -1337,6 +1337,9 @@ Tasks:
 - Profile crowd counts.
 - Profile projectile pooling.
 - Profile VFX pooling.
+- [x] Set runtime 60 FPS target.
+- [x] Disable runtime vSync dependency.
+- [x] Prevent device sleep during play sessions.
 - Reduce draw calls where possible.
 - Use shared materials.
 - Verify object pooling.
