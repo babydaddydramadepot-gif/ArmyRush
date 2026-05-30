@@ -2877,6 +2877,7 @@ public static class ArmyRushProjectBuilder
         GlobalTuning tuning = AssetDatabase.LoadAssetAtPath<GlobalTuning>(TuningPath + "/SO_GlobalTuning.asset");
         int defaultStartingSoldiers = tuning != null ? Mathf.Max(1, tuning.defaultStartingSoldiers) : 10;
         float trackHalfWidth = tuning != null ? Mathf.Max(1f, tuning.trackHalfWidth) : 3.2f;
+        float forwardSpeed = tuning != null ? Mathf.Max(1f, tuning.forwardSpeed) : 7.5f;
         HashSet<int> seenIndices = new HashSet<int>();
         HashSet<ObstacleDefinition> referencedObstacleDefinitions = new HashSet<ObstacleDefinition>();
         int bossLevelCount = 0;
@@ -2928,6 +2929,7 @@ public static class ArmyRushProjectBuilder
             ValidateGateData(failures, level, label, trackHalfWidth);
             ValidateEnemyData(failures, level, label, trackHalfWidth);
             ValidateObstacleData(failures, level, label, trackHalfWidth, referencedObstacleDefinitions);
+            ValidateEncounterCadence(failures, level, label, forwardSpeed);
 
             if (level.hasBoss)
             {
@@ -2946,6 +2948,89 @@ public static class ArmyRushProjectBuilder
         if (referencedObstacleDefinitions.Count < 7)
         {
             failures.Add("Authored levels do not reference every required obstacle variant.");
+        }
+    }
+
+    private static void ValidateEncounterCadence(List<string> failures, LevelData level, string label, float forwardSpeed)
+    {
+        const float DecisionCadenceSeconds = 5.5f;
+        float maxGap = Mathf.Max(28f, forwardSpeed * DecisionCadenceSeconds);
+        int capacity = (level.gates != null ? level.gates.Count : 0) + (level.enemyGroups != null ? level.enemyGroups.Count : 0) + (level.obstacles != null ? level.obstacles.Count : 0) + 2;
+        List<float> encounterPositions = new List<float>(capacity);
+
+        AddEncounterPositions(level.gates, encounterPositions);
+        AddEncounterPositions(level.enemyGroups, encounterPositions);
+        AddEncounterPositions(level.obstacles, encounterPositions);
+        if (level.hasBoss)
+        {
+            encounterPositions.Add(GetBossApproachStart(level));
+        }
+        encounterPositions.Add(level.trackLength);
+        encounterPositions.Sort();
+
+        float previousZ = 0f;
+        for (int i = 0; i < encounterPositions.Count; i++)
+        {
+            float z = encounterPositions[i];
+            if (z <= previousZ + 0.25f)
+            {
+                continue;
+            }
+
+            float gap = z - previousZ;
+            if (gap > maxGap)
+            {
+                failures.Add(label + " has a " + gap.ToString("0.0") + "m empty stretch before z=" + z.ToString("0.0") + ", exceeding the " + maxGap.ToString("0.0") + "m decision cadence target.");
+            }
+            previousZ = z;
+        }
+    }
+
+    private static void AddEncounterPositions(List<GateSpawnData> gates, List<float> positions)
+    {
+        if (gates == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < gates.Count; i++)
+        {
+            if (gates[i] != null)
+            {
+                positions.Add(gates[i].z);
+            }
+        }
+    }
+
+    private static void AddEncounterPositions(List<EnemyGroupSpawnData> enemies, List<float> positions)
+    {
+        if (enemies == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i] != null)
+            {
+                positions.Add(enemies[i].z);
+            }
+        }
+    }
+
+    private static void AddEncounterPositions(List<ObstacleSpawnData> obstacles, List<float> positions)
+    {
+        if (obstacles == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < obstacles.Count; i++)
+        {
+            if (obstacles[i] != null)
+            {
+                positions.Add(obstacles[i].z);
+            }
         }
     }
 

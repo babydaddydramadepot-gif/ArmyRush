@@ -18,3 +18,11 @@ MemoryCaptures/
 *.user
 *.pidb
 *.booproj
+# iOS Build Output
+ArmyRush_iOSBuild/
+*_iOSBuild/
+Build/
+Builds/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
