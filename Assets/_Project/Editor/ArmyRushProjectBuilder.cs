@@ -1729,7 +1729,10 @@ public static class ArmyRushProjectBuilder
             data.chunks.Clear();
 
             AddDesignedLevelData(data, i, chunks);
-            PopulateLevelListsFromChunks(data);
+            if (data.chunks.Count > 0)
+            {
+                PopulateLevelListsFromChunks(data);
+            }
             EditorUtility.SetDirty(data);
             levels.Add(data);
         }
@@ -1750,9 +1753,7 @@ public static class ArmyRushProjectBuilder
 
         if (level == 1)
         {
-            AddLevelChunk(data, intro, 8f, false, 1f);
-            AddLevelChunk(data, gateEnemy, 30f, false, 0.5f);
-            AddLevelChunk(data, obstacleCorridor, 58f, true, 0.45f);
+            AddLevelOneTutorialData(data, chunks);
             return;
         }
 
@@ -1792,6 +1793,43 @@ public static class ArmyRushProjectBuilder
             if (chunks[i] != null && chunks[i].kind == kind)
             {
                 return chunks[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static void AddLevelOneTutorialData(LevelData data, LevelChunkData[] chunks)
+    {
+        data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 5 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 10 });
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 36f, x = 0f, count = 8, healthPerUnit = 6, width = 2.4f });
+        data.gates.Add(new GateSpawnData { z = 54f, x = 0f, operation = GateOperation.Multiply, value = 2 });
+        AddObstacle(data, 72f, 0f, 40, 4, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
+    }
+
+    private static ObstacleDefinition FindObstacleDefinitionInChunks(LevelChunkData[] chunks, ObstacleKind kind)
+    {
+        if (chunks == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            LevelChunkData chunk = chunks[i];
+            if (chunk == null || chunk.obstacles == null)
+            {
+                continue;
+            }
+
+            for (int j = 0; j < chunk.obstacles.Count; j++)
+            {
+                ObstacleDefinition definition = chunk.obstacles[j] != null ? chunk.obstacles[j].definition : null;
+                if (definition != null && definition.kind == kind)
+                {
+                    return definition;
+                }
             }
         }
 
@@ -3036,11 +3074,12 @@ public static class ArmyRushProjectBuilder
             {
                 failures.Add(label + " has invalid bonus-run reward data.");
             }
-            if (level.chunks == null || level.chunks.Count < 3)
+            bool directLevelOneTutorial = level.levelIndex == 1 && (level.chunks == null || level.chunks.Count == 0);
+            if (!directLevelOneTutorial && (level.chunks == null || level.chunks.Count < 3))
             {
                 failures.Add(label + " does not reference enough reusable level chunks.");
             }
-            else
+            else if (!directLevelOneTutorial)
             {
                 ValidateChunkPlacements(failures, level, label, trackHalfWidth);
             }
@@ -3056,6 +3095,10 @@ public static class ArmyRushProjectBuilder
             ValidateGateData(failures, level, label, trackHalfWidth);
             ValidateEnemyData(failures, level, label, trackHalfWidth);
             ValidateObstacleData(failures, level, label, trackHalfWidth, referencedObstacleDefinitions);
+            if (level.levelIndex == 1)
+            {
+                ValidateLevelOneTutorialLayout(failures, level, label);
+            }
             ValidateEncounterCadence(failures, level, label, forwardSpeed);
 
             if (level.hasBoss)
@@ -3075,6 +3118,77 @@ public static class ArmyRushProjectBuilder
         if (referencedObstacleDefinitions.Count < 7)
         {
             failures.Add("Authored levels do not reference every required obstacle variant.");
+        }
+    }
+
+    private static void ValidateLevelOneTutorialLayout(List<string> failures, LevelData level, string label)
+    {
+        if (level.startingSoldiersOverride != 10)
+        {
+            failures.Add(label + " must start with exactly 10 soldiers for the documented tutorial.");
+        }
+
+        if (level.chunks != null && level.chunks.Count > 0)
+        {
+            failures.Add(label + " should use direct tutorial spawns so the first-run teaching sequence stays document-accurate.");
+        }
+
+        List<GateSpawnData> gates = level.gates != null
+            ? level.gates.Where(gate => gate != null).OrderBy(gate => gate.z).ToList()
+            : new List<GateSpawnData>();
+        List<EnemyGroupSpawnData> enemies = level.enemyGroups != null
+            ? level.enemyGroups.Where(enemy => enemy != null).OrderBy(enemy => enemy.z).ToList()
+            : new List<EnemyGroupSpawnData>();
+        List<ObstacleSpawnData> obstacles = level.obstacles != null
+            ? level.obstacles.Where(obstacle => obstacle != null).OrderBy(obstacle => obstacle.z).ToList()
+            : new List<ObstacleSpawnData>();
+
+        bool hasPlusFive = gates.Any(gate => Mathf.Abs(gate.z - 16f) <= 1f && gate.operation == GateOperation.Add && gate.value == 5);
+        bool hasPlusTen = gates.Any(gate => Mathf.Abs(gate.z - 16f) <= 1f && gate.operation == GateOperation.Add && gate.value == 10);
+        if (!hasPlusFive || !hasPlusTen)
+        {
+            failures.Add(label + " must teach the first choice as +5 vs +10 near the start.");
+        }
+
+        EnemyGroupSpawnData firstEnemy = enemies.FirstOrDefault();
+        if (firstEnemy == null)
+        {
+            failures.Add(label + " is missing the documented first small enemy group.");
+        }
+        else
+        {
+            if (firstEnemy.count != 8 || firstEnemy.healthPerUnit > 8)
+            {
+                failures.Add(label + " first enemy must stay at 8 low-health units for tutorial safety.");
+            }
+            if (firstEnemy.z <= 18f)
+            {
+                failures.Add(label + " first enemy appears before the opening gate choice can teach growth.");
+            }
+        }
+
+        float firstObstacleZ = obstacles.Count > 0 ? obstacles[0].z : float.MaxValue;
+        bool hasPostEnemyX2 = firstEnemy != null && gates.Any(gate => gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Multiply && gate.value == 2);
+        if (!hasPostEnemyX2)
+        {
+            failures.Add(label + " must present an x2 gate after the first enemy and before the first crate.");
+        }
+
+        ObstacleSpawnData firstObstacle = obstacles.FirstOrDefault();
+        if (firstObstacle == null)
+        {
+            failures.Add(label + " is missing the documented first crate wall.");
+        }
+        else
+        {
+            if (firstObstacle.definition == null || firstObstacle.definition.kind != ObstacleKind.CrateStack)
+            {
+                failures.Add(label + " first obstacle should be a crate stack.");
+            }
+            if (firstObstacle.health != 40)
+            {
+                failures.Add(label + " first crate wall must stay at 40 HP.");
+            }
         }
     }
 

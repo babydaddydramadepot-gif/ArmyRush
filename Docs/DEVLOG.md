@@ -95,7 +95,7 @@ Core gameplay feel, early onboarding balance, manual QA, iOS device readiness, a
 
 Completion Estimate:
 
-78%
+79%
 
 Last Updated:
 
@@ -2821,6 +2821,35 @@ Retest the first three levels on a physical iPhone. The first fight should resol
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Level 1 Tutorial Onboarding Alignment
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Levels/SO_Level_001.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Aligned the first playable run with the higher-priority `GAMEPLAY_LOOP.md` tutorial sequence. Level 1 now uses direct authored spawn data instead of reusable chunks so the opener teaches `+5` vs `+10`, a small 8-count red enemy, a post-enemy `x2` gate, and a 40 HP crate wall before the finish. The project builder preserves that direct Level 1 layout on regeneration while keeping reusable chunk composition for later authored and endless levels.
+
+Result:
+
+Added production-validator coverage for the exact Level 1 teaching sequence and kept the first-fight survivability guard. A static no-upgrade estimate reaches the first enemy with 20 soldiers, deals enough damage to clear the 8-unit group before contact, and then presents the `x2` recovery/power gate. `git diff --check` passed. Unity production validation was retried with log `/tmp/armyrush_unity_level1_validate.log`, but the local Unity Licensing Client issue tracked as AR-009 again prevented `ArmyRushProjectBuilder.ValidateProductionFoundation` from starting.
+
+Follow Up:
+
+Retest Level 1 on the physical iPhone to verify the first run now feels readable, generous, and aligned with the intended onboarding beat.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -3113,7 +3142,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, and static simulation estimates Levels 1-3 clear their first enemy before contact with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Level 1 now follows the direct `GAMEPLAY_LOOP.md` tutorial sequence, and static simulation estimates Levels 1-3 clear their first enemy before contact with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, and first-run power fantasy.
 
 Issue ID:
 
@@ -3121,7 +3150,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level1_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

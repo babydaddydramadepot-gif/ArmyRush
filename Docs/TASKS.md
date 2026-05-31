@@ -193,6 +193,7 @@ Implementation Pass 1 Result:
 - Ran a post-mech iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted runtime exception scan all passed.
 - Fixed physical iPhone gameplay-start blocking risk by moving runner touch handling onto the Unity Input System path, disabling passive gameplay HUD raycast targets, clamping world-space TextMesh labels, and adding production validation for UI/world-text safety.
 - Tuned early physical-device combat feel by restoring documented base-fire cadence, scaling volley damage by logical army count, extending first-contact targeting responsiveness, softening Level 1's first enemy/obstacle beats, and adding validator coverage for first-enemy onboarding survivability.
+- Aligned Level 1 with the higher-priority `GAMEPLAY_LOOP.md` tutorial sequence as a direct authored layout: `+5` vs `+10`, first enemy count 8, post-enemy `x2`, and a 40 HP crate wall, with production validation guarding that sequence.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
@@ -780,7 +781,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Level 1 Onboarding Balance Pass
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Level 1 Tutorial Alignment
 Priority: Critical
 
 Tasks:
@@ -796,6 +797,7 @@ Tasks:
 - Create Levels 16-20 risk/reward mastery.
 - Create Level 20 major boss.
 - [x] Retune Level 1 first enemy and first obstacle corridor from physical iPhone feedback so the opener teaches power rather than causing early failure.
+- [x] Convert Level 1 to a direct authored tutorial layout matching `GAMEPLAY_LOOP.md`: `+5` vs `+10`, first enemy count 8, `x2`, 40 HP crate, finish.
 
 Acceptance Criteria:
 
@@ -1488,6 +1490,7 @@ Tasks:
 
 - [x] Add automated authored level data validation.
 - [x] Add static early-combat survivability estimate for Levels 1-3.
+- [x] Add production validation for the exact Level 1 tutorial sequence.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
