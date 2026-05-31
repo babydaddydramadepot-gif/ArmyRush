@@ -95,7 +95,7 @@ Core gameplay feel, early onboarding balance, manual QA, iOS device readiness, a
 
 Completion Estimate:
 
-82%
+84%
 
 Last Updated:
 
@@ -3011,11 +3011,44 @@ Retest Levels 1-15 on the physical iPhone. The run should now start cleanly, sho
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Levels 16-20 Risk/Reward Mastery and Major Boss Milestone
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Levels/SO_Level_016.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_017.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_018.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_019.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_020.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Converted Levels 16-19 into direct authored risk/reward mastery layouts with x3 power routes, high-risk negative gates, elite enemy waves, and heavier truck/turret/fuel obstacle pressure. Converted Level 20 into a direct authored major helicopter boss milestone with MissileStrike validation, 14500 HP tuning, a readable pre-boss gauntlet, and a long clean boss approach.
+
+Result:
+
+`git diff --check` passed. Static authored-level validation passed for Levels 16-20: Levels 16-19 use direct data with no boss, Level 20 references the helicopter boss with 14500 HP, best-gate counts resolve to 300 on all five levels, and obstacle collision penalties stay at or below 24. A conservative no-upgrade balance estimate for Levels 1-20 passed; Levels 16-20 end with final counts of 288, 264, 300, 241, and 226, and the Level 20 boss engagement lasts about 6.42 seconds after the pre-boss route. Unity production validation was retried with log `/tmp/armyrush_unity_level20_validate.log`, but the local Unity Licensing Client issue tracked as AR-009 again failed with unsupported protocol version `1.18.1` before `ArmyRushProjectBuilder.ValidateProductionFoundation` could execute.
+
+Follow Up:
+
+Retest Levels 1-20 on the physical iPhone. Confirm the run still starts cleanly, late mastery gate text remains readable in portrait, elite waves feel survivable without upgrades, and the Level 20 helicopter fight feels like a major milestone without blocking first-session progression. Re-run Unity production validation once local Unity licensing is healthy.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-49%
+50%
 
 UI Systems
 
@@ -3031,7 +3064,7 @@ Audio Systems
 
 Level Systems
 
-53%
+58%
 
 Progression Systems
 
@@ -3039,7 +3072,7 @@ Progression Systems
 
 Boss Systems
 
-52%
+54%
 
 Optimization
 
@@ -3051,7 +3084,7 @@ Polish
 
 Release Readiness
 
-32%
+33%
 
 ---
 
@@ -3255,7 +3288,7 @@ AR-002
 
 Status:
 
-Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, pooled attack telegraphs, impact behavior, boss rewards, audio/haptics, helicopter-specific crash defeat motion, and mech-specific multi-phase escalation/collapse behavior. Remaining work includes balance, final authored VFX tuning, and physical device QA.
+Boss levels now rotate between tank, helicopter, and mech definitions with generated prefabs, pattern motion, pooled attack telegraphs, impact behavior, boss rewards, audio/haptics, helicopter-specific crash defeat motion, mech-specific multi-phase escalation/collapse behavior, and direct Level 20 helicopter major-boss tuning. Remaining work includes balance, final authored VFX tuning, and physical device QA.
 
 Issue ID:
 
@@ -3303,7 +3336,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, and Level 15 now uses a direct mech boss milestone. Static simulation estimates Levels 1-15 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, and boss beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, Level 15 boss pacing, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, and first-run power fantasy.
 
 Issue ID:
 
@@ -3311,7 +3344,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level15_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level20_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 
@@ -3339,7 +3372,7 @@ RB-001
 
 Status:
 
-Physical iPhone launch/menu/gameplay-start smoke has been user-confirmed, but full physical iPhone/iPad playthrough and balance QA still need device testing.
+Physical iPhone launch/menu/gameplay-start smoke has been user-confirmed, but full physical iPhone/iPad Levels 1-20 playthrough and balance QA still need device testing.
 
 ---
 

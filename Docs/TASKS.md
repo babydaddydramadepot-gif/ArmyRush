@@ -202,7 +202,9 @@ Implementation Pass 1 Result:
 - Converted Level 5 into a direct authored first tank boss milestone with generous pre-boss growth gates, a safe enemy check, a turret obstacle check, a final boss lead-in power gate, and boss targetability gated until the encounter actually engages.
 - Converted Levels 6-9 into direct authored advanced-gate layouts with x2/x3 growth, negative-gate refresh, heavier enemies, and advanced obstacle checks.
 - Converted Level 10 into a direct authored first true helicopter boss milestone with pre-boss combat checks, truck/turret pressure, final growth gate, 6000 HP boss tuning, and validation guardrails.
-- Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
+- Converted Levels 16-19 into direct authored risk/reward mastery layouts with x3 routes, high-risk negative lanes, elite groups, truck/turret/fuel pressure, and production validation guardrails.
+- Converted Level 20 into a direct authored major helicopter boss milestone with 14500 HP tuning, readable pre-boss gauntlet pressure, and static no-upgrade survivability coverage.
+- Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
 
@@ -790,7 +792,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-15 First-Session/Heavier-Combat Alignment
+Status: Completed for Direct Authored Levels 1-20; Manual Full Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -803,8 +805,8 @@ Tasks:
 - [x] Create direct Levels 6-10 advanced gate and true boss ramp.
 - [x] Create direct Levels 11-15 heavier combat and mech boss ramp.
 - [x] Create direct Level 15 mech boss variant.
-- Create Levels 16-20 risk/reward mastery.
-- Create Level 20 major boss.
+- [x] Create direct Levels 16-19 risk/reward mastery.
+- [x] Create direct Level 20 major helicopter boss.
 - [x] Retune Level 1 first enemy and first obstacle corridor from physical iPhone feedback so the opener teaches power rather than causing early failure.
 - [x] Convert Level 1 to a direct authored tutorial layout matching `GAMEPLAY_LOOP.md`: `+5` vs `+10`, first enemy count 8, `x2`, 40 HP crate, finish.
 - [x] Convert Levels 2 and 3 to direct authored onboarding layouts matching `GAMEPLAY_LOOP.md` and add validation coverage for their exact teaching beats.
@@ -814,6 +816,8 @@ Tasks:
 - [x] Convert Level 10 to a direct authored helicopter boss milestone with 6000 HP tuning, truck/turret pressure, and validation coverage for the boss approach.
 - [x] Convert Levels 11-14 to direct authored heavier-combat layouts with larger enemy groups, x3/risk gates, military obstacle variants, and validation coverage for the exact ramp beats.
 - [x] Convert Level 15 to a direct authored mech boss milestone with 10500 HP tuning, ShockwaveSlam validation, truck/turret/fuel pressure, and conservative no-upgrade balance coverage.
+- [x] Convert Levels 16-19 to direct authored risk/reward mastery layouts with x3 routes, high-risk negative gates, elite enemy waves, and heavy obstacle pressure.
+- [x] Convert Level 20 to a direct authored major helicopter boss milestone with 14500 HP tuning, MissileStrike validation, and a long clean boss approach.
 
 Acceptance Criteria:
 
@@ -899,7 +903,7 @@ Acceptance Criteria:
 
 ## 4.3 Helicopter Boss
 
-Status: Functional Visual, Attack, Rotor Motion, and Crash Defeat Pass Implemented; Balance QA Pending
+Status: Functional Visual, Attack, Rotor Motion, Crash Defeat, Level 10 Intro, and Level 20 Major Boss Tuning Implemented; Balance QA Pending
 Priority: Medium
 
 Tasks:
@@ -909,6 +913,7 @@ Tasks:
 - [x] Add missile attack.
 - [x] Add hit effects.
 - [x] Add authored crash/destruction animation.
+- [x] Tune Level 20 as a major direct helicopter boss milestone with 14500 HP and guarded MissileStrike validation.
 
 Acceptance Criteria:
 
@@ -1502,7 +1507,7 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA and Levels 1-15 First-Session/Heavier-Combat Simulation Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA and Levels 1-20 First-Session/Mastery Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1513,6 +1518,8 @@ Tasks:
 - [x] Add static no-upgrade balance checks for the direct Levels 6-10 advanced-gate and first true boss ramp.
 - [x] Add production validation for the exact direct Levels 11-14 heavier-combat ramp and Level 15 mech boss milestone.
 - [x] Add static no-upgrade balance checks for direct Levels 11-15 including Level 15 boss engagement timing.
+- [x] Add production validation for direct Levels 16-19 risk/reward mastery and the Level 20 major helicopter boss milestone.
+- [x] Add static no-upgrade balance checks for direct Levels 16-20 including Level 20 boss engagement timing.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
@@ -1530,7 +1537,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Early Balance, Boss Engagement, and Levels 1-15 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Early Balance, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1553,6 +1560,7 @@ Tasks:
 - [x] Record physical iPhone launch/menu/gameplay-scene smoke result and continue balance fixes through the Levels 6-10 first-session ramp.
 - [x] Record physical iPhone launch/menu/gameplay-start smoke result: the game now reaches gameplay and Drag To Start begins the run on device.
 - [x] Tighten physical-device combat cadence/readability after no-upgrade feedback and extend balance fixes through the Levels 11-15 heavier-combat/mech boss ramp.
+- [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.
