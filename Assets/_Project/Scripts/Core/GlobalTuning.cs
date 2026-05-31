@@ -57,6 +57,10 @@ namespace ArmyRush
         public int earlyDefeatRewardLevelLimit = 5;
         [Range(0f, 1f)] public float earlyDefeatRewardFraction = 0.4f;
         public int earlyDefeatMinimumCoins = 100;
+        public int earlyRetryBoostLevelLimit = 5;
+        public float earlyRetryBoostDuration = 20f;
+        public float earlyRetryBoostDamageMultiplier = 1.45f;
+        public float earlyRetryBoostFireRateMultiplier = 1.45f;
         public int earlyRallyAssistLevelLimit = 5;
         public int earlyRallyAssistMinimumSoldiers = 8;
         public int earlyRallyAssistTargetSoldiers = 15;

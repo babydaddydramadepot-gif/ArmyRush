@@ -109,7 +109,10 @@ namespace ArmyRush
             _lastDefeatConsolationCoins = 0;
             _levelCompleted = false;
             ResetRunBoosts();
-            ApplyOnboardingCombatBoost();
+            if (!ApplyEarlyRetryCombatBoost())
+            {
+                ApplyOnboardingCombatBoost();
+            }
             _gameplayUI?.SetRunCoinPreview(0);
             SetState(RunState.Running);
             if (ServiceLocator.TryGet(out AudioService audio))
@@ -290,6 +293,7 @@ namespace ArmyRush
             }
 
             AwardDefeatCoins();
+            RecordEarlyLevelFailure();
             SetState(RunState.Defeat);
             _gameplayUI?.SetRunCoinPreview(0);
             _gameplayUI?.ShowDefeat(_runCoins, BuildDefeatRewardBreakdown());
@@ -522,25 +526,61 @@ namespace ArmyRush
             HideRunBoostIndicator();
         }
 
-        private void ApplyOnboardingCombatBoost()
+        private bool ApplyOnboardingCombatBoost()
         {
             if (_tuning == null || _crowd == null)
             {
-                return;
+                return false;
             }
 
             LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
             if (currentLevel == null || currentLevel.levelIndex > Mathf.Max(0, _tuning.onboardingCombatBoostLevelLimit))
             {
-                return;
+                return false;
             }
 
-            float duration = Mathf.Max(0f, _tuning.onboardingCombatBoostDuration);
-            float damageBoost = Mathf.Max(1f, _tuning.onboardingCombatDamageMultiplier);
-            float fireRateBoost = Mathf.Max(1f, _tuning.onboardingCombatFireRateMultiplier);
+            return ApplyTimedCombatBoost(
+                _tuning.onboardingCombatBoostDuration,
+                _tuning.onboardingCombatDamageMultiplier,
+                _tuning.onboardingCombatFireRateMultiplier,
+                "POWER START",
+                new Color(0.28f, 1f, 0.82f));
+        }
+
+        private bool ApplyEarlyRetryCombatBoost()
+        {
+            if (_tuning == null || _crowd == null || _progression == null)
+            {
+                return false;
+            }
+
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            if (currentLevel == null || currentLevel.levelIndex > Mathf.Max(0, _tuning.earlyRetryBoostLevelLimit))
+            {
+                return false;
+            }
+
+            if (_progression.GetFailureStreak(currentLevel.levelIndex) <= 0)
+            {
+                return false;
+            }
+
+            return ApplyTimedCombatBoost(
+                _tuning.earlyRetryBoostDuration,
+                _tuning.earlyRetryBoostDamageMultiplier,
+                _tuning.earlyRetryBoostFireRateMultiplier,
+                "RETRY POWER",
+                new Color(1f, 0.78f, 0.12f));
+        }
+
+        private bool ApplyTimedCombatBoost(float durationValue, float damageMultiplier, float fireRateMultiplier, string label, Color labelColor)
+        {
+            float duration = Mathf.Max(0f, durationValue);
+            float damageBoost = Mathf.Max(1f, damageMultiplier);
+            float fireRateBoost = Mathf.Max(1f, fireRateMultiplier);
             if (duration <= 0f || (damageBoost <= 1f && fireRateBoost <= 1f))
             {
-                return;
+                return false;
             }
 
             float endTime = Time.time + duration;
@@ -550,8 +590,20 @@ namespace ArmyRush
             _fireRateBoostEndTime = Mathf.Max(_fireRateBoostEndTime, endTime);
             _damageBoostDuration = Mathf.Max(_damageBoostDuration, duration);
             _fireRateBoostDuration = Mathf.Max(_fireRateBoostDuration, duration);
-            VfxManager.SpawnFloatingText("POWER START", _crowd.transform.position + Vector3.up * 2.7f, new Color(0.28f, 1f, 0.82f));
+            VfxManager.SpawnFloatingText(label, _crowd.transform.position + Vector3.up * 2.7f, labelColor);
             RefreshRunBoostIndicator();
+            return true;
+        }
+
+        private void RecordEarlyLevelFailure()
+        {
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            if (currentLevel == null || _tuning == null || currentLevel.levelIndex > Mathf.Max(0, _tuning.earlyRetryBoostLevelLimit))
+            {
+                return;
+            }
+
+            _progression?.RecordLevelFailure(currentLevel.levelIndex);
         }
 
         private float CalculateRunBoostMultiplier(int value)

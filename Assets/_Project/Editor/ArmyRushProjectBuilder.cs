@@ -413,6 +413,10 @@ public static class ArmyRushProjectBuilder
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
+        tuning.earlyRetryBoostLevelLimit = 5;
+        tuning.earlyRetryBoostDuration = 20f;
+        tuning.earlyRetryBoostDamageMultiplier = 1.45f;
+        tuning.earlyRetryBoostFireRateMultiplier = 1.45f;
         tuning.earlyRallyAssistLevelLimit = 5;
         tuning.earlyRallyAssistMinimumSoldiers = 8;
         tuning.earlyRallyAssistTargetSoldiers = 15;
@@ -3317,6 +3321,22 @@ public static class ArmyRushProjectBuilder
         if (damageUpgrade != null && tuning.earlyDefeatMinimumCoins < damageUpgrade.GetCost(0))
         {
             failures.Add("Early defeat minimum coins should fund the first Damage upgrade so first-session failures still progress.");
+        }
+        if (tuning.earlyRetryBoostLevelLimit < 3 || tuning.earlyRetryBoostLevelLimit > tuning.earlyDefeatRewardLevelLimit)
+        {
+            failures.Add("Early retry combat boost should cover onboarding retries but not outlast early defeat reward support.");
+        }
+        if (tuning.earlyRetryBoostDuration < 12f || tuning.earlyRetryBoostDuration > tuning.onboardingCombatBoostDuration)
+        {
+            failures.Add("Early retry combat boost should cover the next opener without exceeding the normal onboarding boost window.");
+        }
+        if (tuning.earlyRetryBoostDamageMultiplier < tuning.onboardingCombatDamageMultiplier || tuning.earlyRetryBoostDamageMultiplier > 1.6f)
+        {
+            failures.Add("Early retry damage boost should be a stronger post-failure safety valve without becoming permanent progression.");
+        }
+        if (tuning.earlyRetryBoostFireRateMultiplier < tuning.onboardingCombatFireRateMultiplier || tuning.earlyRetryBoostFireRateMultiplier > 1.6f)
+        {
+            failures.Add("Early retry fire-rate boost should make a repeated opener feel clearly more responsive without replacing upgrades.");
         }
         if (tuning.earlyRallyAssistLevelLimit < 3 || tuning.earlyRallyAssistLevelLimit > 8)
         {

@@ -57,6 +57,10 @@ MonoBehaviour:
   earlyDefeatRewardLevelLimit: 5
   earlyDefeatRewardFraction: 0.4
   earlyDefeatMinimumCoins: 100
+  earlyRetryBoostLevelLimit: 5
+  earlyRetryBoostDuration: 20
+  earlyRetryBoostDamageMultiplier: 1.45
+  earlyRetryBoostFireRateMultiplier: 1.45
   earlyRallyAssistLevelLimit: 5
   earlyRallyAssistMinimumSoldiers: 8
   earlyRallyAssistTargetSoldiers: 15

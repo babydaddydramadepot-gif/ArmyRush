@@ -20,6 +20,8 @@ namespace ArmyRush
         public int obstacleDamageLevel;
         public int criticalChanceLevel;
         public int criticalDamageLevel;
+        public int lastFailedLevelIndex;
+        public int consecutiveLevelFailures;
         public bool tutorialCompleted;
         public float musicVolume = 1f;
         public float sfxVolume = 1f;
@@ -40,6 +42,13 @@ namespace ArmyRush
             changed |= SetIfChanged(ref obstacleDamageLevel, Mathf.Max(0, obstacleDamageLevel));
             changed |= SetIfChanged(ref criticalChanceLevel, Mathf.Max(0, criticalChanceLevel));
             changed |= SetIfChanged(ref criticalDamageLevel, Mathf.Max(0, criticalDamageLevel));
+            changed |= SetIfChanged(ref lastFailedLevelIndex, Mathf.Max(0, lastFailedLevelIndex));
+            changed |= SetIfChanged(ref consecutiveLevelFailures, Mathf.Clamp(consecutiveLevelFailures, 0, 50));
+            if (lastFailedLevelIndex == 0 && consecutiveLevelFailures != 0)
+            {
+                consecutiveLevelFailures = 0;
+                changed = true;
+            }
             changed |= SetIfChanged(ref musicVolume, ClampVolume(musicVolume));
             changed |= SetIfChanged(ref sfxVolume, ClampVolume(sfxVolume));
             return changed;

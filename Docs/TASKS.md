@@ -1605,7 +1605,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Early Retry Power, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1638,6 +1638,7 @@ Tasks:
 - [x] Add bounded close-range combat urgency assist so Levels 1-5 apply a small fire-rate/damage boost only when non-bonus targets are near contact.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
+- [x] Add save-backed early retry combat boost so failed Levels 1-5 retry with visible stronger damage/fire-rate support until the level is cleared.
 - [x] Add guarded early gate guidance markers for Levels 1-3 to reduce first-session wrong-route confusion on physical-device playthroughs.
 - [x] Add data-driven early rally assist so low-count first-session survivors can recover momentum without making defeat impossible.
 - [x] Add one-use early contact mercy for near-win onboarding enemy collisions so projectile travel/contact timing cannot instantly erase a close clear.
@@ -1667,7 +1668,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Boss Victory Result Polish, Result Reward Breakdown Polish, Main Menu Boss Milestone Beacon, and Production Debug-Control Audit
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Early Retry Power, Boss Victory Result Polish, Result Reward Breakdown Polish, Main Menu Boss Milestone Beacon, and Production Debug-Control Audit
 Priority: Critical
 
 Tasks:
@@ -1678,6 +1679,7 @@ Tasks:
 - [x] Add temporary run boost gates that make post-boss combat and boss preparation feel more powerful.
 - [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
 - [x] Add bounded first-session combat boost feedback so the tutorial starts with visible power rather than a hidden difficulty assist.
+- [x] Add bounded retry-power feedback so early failed runs restart with a readable recovery boost instead of feeling stuck.
 - [x] Add boss victory milestone reward polish to the result screen.
 - [x] Add compact reward breakdown polish to victory and defeat result screens.
 - [x] Add main-menu boss milestone beacon to reinforce first-session progression goals.
