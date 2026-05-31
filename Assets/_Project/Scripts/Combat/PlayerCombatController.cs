@@ -202,7 +202,8 @@ namespace ArmyRush
 
             if (ServiceLocator.TryGet(out AudioService audio))
             {
-                audio.Play(AudioCue.Shoot);
+                int audioIntensity = projectileCount + (openingVolley || powerSpikeVolley ? 2 : 0);
+                audio.PlayShootBurst(audioIntensity);
             }
         }
 

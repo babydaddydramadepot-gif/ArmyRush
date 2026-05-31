@@ -109,6 +109,35 @@ Date:
 
 System:
 
+Shoot Burst Audio Feedback
+
+Files:
+
+Assets/_Project/Scripts/Audio/AudioService.cs
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added capped shoot-burst audio layering for player volleys. `AudioService` now exposes `PlayShootBurst(intensity)`, keeps the existing shoot throttle, uses the existing pooled runtime AudioSources, and caps gunfire at three pitch-varied voices with lower volume on secondary layers. `PlayerCombatController` now passes projectile burst intensity plus opening-salvo/power-spike emphasis into the audio call, so dense visual volleys sound denser without changing damage, fire rate, target selection, or progression balance.
+
+Result:
+
+Physical-device combat should read as more active and punchy during the first enemy, post-gate power spikes, and larger crowds while preserving the documented balance model. `git diff --check` passed. Unity production validation passed with log `/tmp/armyrush_unity_shoot_burst_audio_validate.log`; a targeted scan found no compile errors, Unity exceptions, null references, missing references, fatal signatures, or validation failures.
+
+Follow Up:
+
+Retest Levels 1-3 and early post-gate fights on a physical iPhone to confirm the layered shoot cue improves perceived fire cadence without becoming too loud or masking enemy defeat/count feedback.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Enemy Defeat Burst Feedback
 
 Files:
@@ -4326,7 +4355,7 @@ AR-003
 
 Status:
 
-Audio and haptic call sites exist with pooled procedural SFX playback including centralized coin reward audio, boss intro/defeat cues, boss pattern attack variants, helicopter crash audio, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
+Audio and haptic call sites exist with pooled procedural SFX playback including capped shoot-burst layering keyed to volley intensity, centralized coin reward audio, boss intro/defeat cues, boss pattern attack variants, helicopter crash audio, plus a procedural music loop with settings control, but final authored SFX and music are not implemented yet.
 
 Issue ID:
 
@@ -4366,7 +4395,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades, and Levels 1-3 first-enemy validation now uses a target-lock timeline that accounts for pre-gate shots, gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, onboarding combat boost, and projectile travel. A bounded visible 24-second `POWER START` boost now gives Levels 1-3 35% faster fire rate and 35% stronger damage during the first combat window, opening/power-spike volleys now make newly acquired targets and post-gate growth feel immediately pressured, immediate hit-confirmation damage makes target health respond before projectile travel completes, bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact, threat-first target priority prevents farther obstacles from stealing volleys from closer enemy contacts, pooled multi-muzzle flashes make aggregate volleys read denser on physical screens, enemy count labels now stay as remaining-unit counts instead of raw HP after damage and pulse red when unit counts drop, enemy clears now spawn a pooled red defeat burst, and run boost/onboarding boost HUD fill now uses the active boost duration. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, save-backed early retry power, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm `POWER START` readability/impact, `RETRY POWER` readability/impact after an early loss, enemy count label readability and damage-pulse feedback, enemy-defeat burst readability, perceived fire rate, muzzle-flash readability, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, target-priority readability in mixed lanes, active run-boost HUD readability/impact, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades, and Levels 1-3 first-enemy validation now uses a target-lock timeline that accounts for pre-gate shots, gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, onboarding combat boost, and projectile travel. A bounded visible 24-second `POWER START` boost now gives Levels 1-3 35% faster fire rate and 35% stronger damage during the first combat window, opening/power-spike volleys now make newly acquired targets and post-gate growth feel immediately pressured, capped shoot-burst audio layering makes those dense volleys sound closer to their visual cadence without changing DPS, immediate hit-confirmation damage makes target health respond before projectile travel completes, bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact, threat-first target priority prevents farther obstacles from stealing volleys from closer enemy contacts, pooled multi-muzzle flashes make aggregate volleys read denser on physical screens, enemy count labels now stay as remaining-unit counts instead of raw HP after damage and pulse red when unit counts drop, enemy clears now spawn a pooled red defeat burst, and run boost/onboarding boost HUD fill now uses the active boost duration. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, save-backed early retry power, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm `POWER START` readability/impact, `RETRY POWER` readability/impact after an early loss, shoot-burst audio mix/perceived fire cadence, enemy count label readability and damage-pulse feedback, enemy-defeat burst readability, perceived fire rate, muzzle-flash readability, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, target-priority readability in mixed lanes, active run-boost HUD readability/impact, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -4374,7 +4403,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol noise in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the enemy defeat burst feedback pass. Latest successful validation log: `/tmp/armyrush_unity_enemy_defeat_vfx_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding overdrive tuning pass, with screenshot `/tmp/armyrush_onboarding_overdrive_smoke.png` and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
+Unity batch validation has had intermittent workstation licensing protocol noise in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the shoot-burst audio feedback pass. Latest successful validation log: `/tmp/armyrush_unity_shoot_burst_audio_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding overdrive tuning pass, with screenshot `/tmp/armyrush_onboarding_overdrive_smoke.png` and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
 
 ---
 

@@ -221,6 +221,8 @@ Implementation Pass 1 Result:
 - Fixed enemy group count label readability so damage can no longer overwrite remaining-unit labels with raw HP values, and added production validation for that physical-device combat-readability regression.
 - Added red pulse/lift feedback to enemy count labels when enemy units drop so physical-device damage output reads more clearly without adding another hidden balance buff.
 - Added a pooled red enemy-defeat burst cue, runtime fallback, and future generated prefab wiring so cleared enemy groups get a stronger visual payoff beyond count pulses, clear text, audio, and coins.
+- Added capped shoot-burst audio layering keyed to volley intensity so dense physical-device combat sounds closer to its multi-projectile/multi-muzzle visual cadence without increasing DPS.
+- Unity production validation passed after the shoot-burst audio feedback pass with no targeted compile, exception, missing-reference, fatal, or validation-failure signatures.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
@@ -659,6 +661,7 @@ Tasks:
 - [x] Tighten physical-device perceived combat cadence with faster baseline volleys, longer targeting, faster projectiles, stronger immediate confirmation, and denser visual bursts.
 - [x] Add bounded close-range urgency assist for onboarding combat targets so imminent enemy/obstacle contact feels responsive on physical devices.
 - [x] Add data-driven multi-muzzle volley feedback so aggregate crowd shooting reads as several soldiers firing instead of one tiny flash.
+- [x] Add capped shoot-burst audio layering so volley intensity, opening salvos, and post-gate power spikes sound denser on physical devices without changing combat balance.
 - [x] Correct target priority so closer enemies are not ignored in favor of farther obstacles while still shooting the nearest blocking obstacle first.
 - [x] Add validator coverage for early first-enemy survivability.
 - [x] Add projectile pooling.
@@ -1280,6 +1283,7 @@ Add SFX for:
 - [x] Positive gate
 - [x] Negative gate
 - [x] Shooting
+- [x] Shooting burst layering
 - [x] Hit impact
 - [x] Enemy defeat
 - [x] Obstacle damage
@@ -1659,6 +1663,8 @@ Tasks:
 - [x] Add production validation that damages a spawned enemy and confirms its count label remains a unit count.
 - [x] Add enemy count damage-pulse feedback and production validation so dropping enemy units visibly reads as progress on physical iPhone.
 - [x] Add pooled enemy defeat burst feedback so cleared red groups produce a visible payoff on physical iPhone without changing combat balance.
+- [x] Add capped shoot-burst audio feedback so physical-device volleys sound denser without globally increasing damage or fire rate.
+- [x] Confirm shoot-burst audio production validation has no targeted compile, Unity exception, null-reference, missing-reference, fatal, or validation-failure signatures.
 - Fix console errors.
 - [x] Fix missing references covered by the production validation pass.
 - Fix animation errors.

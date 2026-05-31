@@ -32,6 +32,11 @@ namespace ArmyRush
 
     public sealed class AudioService
     {
+        private const float ShootCueThrottleSeconds = 0.08f;
+        private const int MaxShootBurstVoices = 3;
+        private const float ShootBurstSecondaryVolume = 0.58f;
+        private const float ShootBurstTertiaryVolume = 0.42f;
+
         private readonly SaveService _saveService;
         private readonly Dictionary<AudioCue, AudioClip> _clips = new Dictionary<AudioCue, AudioClip>();
         private readonly List<AudioSource> _sources = new List<AudioSource>();
@@ -52,12 +57,13 @@ namespace ArmyRush
 
         public void Play(AudioCue cue)
         {
-            if (_saveService.Data.sfxVolume <= 0.01f)
+            if (cue == AudioCue.Shoot)
             {
+                PlayShootBurst(1);
                 return;
             }
 
-            if (cue == AudioCue.Shoot && Time.unscaledTime - _lastShootTime < 0.08f)
+            if (_saveService.Data.sfxVolume <= 0.01f)
             {
                 return;
             }
@@ -79,11 +85,7 @@ namespace ArmyRush
                 return;
             }
 
-            if (cue == AudioCue.Shoot)
-            {
-                _lastShootTime = Time.unscaledTime;
-            }
-            else if (cue == AudioCue.Hit)
+            if (cue == AudioCue.Hit)
             {
                 _lastHitTime = Time.unscaledTime;
             }
@@ -100,6 +102,43 @@ namespace ArmyRush
                 _lastCrowdChangeTime = Time.unscaledTime;
             }
 
+            PlayCue(cue, 1f);
+        }
+
+        public void PlayShootBurst(int intensity)
+        {
+            if (_saveService.Data.sfxVolume <= 0.01f)
+            {
+                return;
+            }
+
+            if (Time.unscaledTime - _lastShootTime < ShootCueThrottleSeconds)
+            {
+                return;
+            }
+
+            _lastShootTime = Time.unscaledTime;
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
+            EnsureRuntimeAudio();
+            if (!_clips.TryGetValue(AudioCue.Shoot, out AudioClip clip) || clip == null || _sources.Count == 0)
+            {
+                return;
+            }
+
+            int voices = Mathf.Clamp(1 + Mathf.Max(0, intensity - 1) / 3, 1, MaxShootBurstVoices);
+            for (int i = 0; i < voices; i++)
+            {
+                float volumeScale = i == 0 ? 1f : i == 1 ? ShootBurstSecondaryVolume : ShootBurstTertiaryVolume;
+                PlayClip(AudioCue.Shoot, clip, volumeScale);
+            }
+        }
+
+        private void PlayCue(AudioCue cue, float volumeScale)
+        {
             if (!Application.isPlaying)
             {
                 return;
@@ -111,11 +150,16 @@ namespace ArmyRush
                 return;
             }
 
+            PlayClip(cue, clip, volumeScale);
+        }
+
+        private void PlayClip(AudioCue cue, AudioClip clip, float volumeScale)
+        {
             AudioSource source = _sources[_nextSourceIndex];
             _nextSourceIndex = (_nextSourceIndex + 1) % _sources.Count;
             Vector2 pitchRange = GetPitchRange(cue);
             source.pitch = Random.Range(pitchRange.x, pitchRange.y);
-            source.volume = Mathf.Clamp01(_saveService.Data.sfxVolume) * GetCueVolume(cue);
+            source.volume = Mathf.Clamp01(_saveService.Data.sfxVolume) * GetCueVolume(cue) * Mathf.Clamp01(volumeScale);
             source.PlayOneShot(clip);
         }
 
