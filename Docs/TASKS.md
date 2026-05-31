@@ -223,6 +223,7 @@ Implementation Pass 1 Result:
 - Added a pooled red enemy-defeat burst cue, runtime fallback, and future generated prefab wiring so cleared enemy groups get a stronger visual payoff beyond count pulses, clear text, audio, and coins.
 - Added capped shoot-burst audio layering keyed to volley intensity so dense physical-device combat sounds closer to its multi-projectile/multi-muzzle visual cadence without increasing DPS.
 - Unity production validation passed after the shoot-burst audio feedback pass with no targeted compile, exception, missing-reference, fatal, or validation-failure signatures.
+- Moved Levels 1-3 first enemy beats later so target lock begins after the opening growth gate on physical-device tuning, and added production validation for that grow-before-fight spacing.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
@@ -850,6 +851,7 @@ Tasks:
 - [x] Retune Level 1 first enemy and first obstacle corridor from physical iPhone feedback so the opener teaches power rather than causing early failure.
 - [x] Convert Level 1 to a direct authored tutorial layout matching `GAMEPLAY_LOOP.md`: `+5` vs `+10`, first enemy count 8, `x2`, 40 HP crate, finish.
 - [x] Convert Levels 2 and 3 to direct authored onboarding layouts matching `GAMEPLAY_LOOP.md` and add validation coverage for their exact teaching beats.
+- [x] Space Levels 1-3 first enemies far enough after the opening gates that the current physical-device target range locks enemies after the player grows, not before.
 - [x] Convert Level 4 to a direct authored obstacle intro with forgiving lane blockers, a central concrete blocker, safe follow-up combat, and validation coverage for the exact teaching beats.
 - [x] Convert Level 5 to a direct authored first boss milestone with `+30` vs `x2`, safe enemy check, second power gate, turret obstacle, final `+50` vs `x2`, and 3000 HP tank boss tuning.
 - [x] Convert Levels 6-9 to direct authored advanced-gate layouts with x2/x3 growth, one negative-gate refresh, heavier enemies, and advanced obstacle checks.
@@ -1590,6 +1592,7 @@ Tasks:
 - [x] Add static early-combat survivability estimate for Levels 1-3.
 - [x] Replace the optimistic Levels 1-3 first-enemy estimate with a target-lock timeline that accounts for pre-gate shots, best-gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, and projectile travel before contact.
 - [x] Harden the Levels 1-3 first-enemy validator so the opening enemy must clear before physical contact, not merely leave enough survivors after collision.
+- [x] Add target-lock spacing validation so Levels 1-3 first enemies cannot engage before the opening growth gate is crossed.
 - [x] Add production validation for the exact Levels 1-10 tutorial/teaching/advanced-gate/boss milestone sequences.
 - [x] Add static no-upgrade balance checks for the direct Levels 6-10 advanced-gate and first true boss ramp.
 - [x] Add production validation for the exact direct Levels 11-14 heavier-combat ramp and Level 15 mech boss milestone.
@@ -1665,6 +1668,8 @@ Tasks:
 - [x] Add pooled enemy defeat burst feedback so cleared red groups produce a visible payoff on physical iPhone without changing combat balance.
 - [x] Add capped shoot-burst audio feedback so physical-device volleys sound denser without globally increasing damage or fire rate.
 - [x] Confirm shoot-burst audio production validation has no targeted compile, Unity exception, null-reference, missing-reference, fatal, or validation-failure signatures.
+- [x] Fix Levels 1-3 first-enemy spacing so physical-device target lock begins after the first growth gate rather than spending the opening salvo at the starting squad size.
+- [x] Confirm onboarding-spacing production validation has no targeted compile, Unity exception, null-reference, missing-reference, fatal, or validation-failure signatures.
 - Fix console errors.
 - [x] Fix missing references covered by the production validation pass.
 - Fix animation errors.

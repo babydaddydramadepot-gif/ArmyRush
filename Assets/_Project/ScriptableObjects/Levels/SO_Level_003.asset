@@ -35,24 +35,24 @@ MonoBehaviour:
     x: 1.45
     operation: 1
     value: 10
-  - z: 58
+  - z: 72
     x: -1.45
     operation: 2
     value: 2
     tutorialHighlight: 1
-  - z: 58
+  - z: 72
     x: 1.45
     operation: 0
     value: 30
   enemyGroups:
-  - z: 38
+  - z: 50
     x: 0
     count: 25
     healthPerUnit: 10
     width: 2.8
   obstacles:
   - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
-    z: 90
+    z: 104
     x: 0
     health: 150
     collisionPenalty: 8

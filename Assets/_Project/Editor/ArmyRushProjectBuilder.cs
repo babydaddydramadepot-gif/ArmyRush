@@ -1930,29 +1930,29 @@ public static class ArmyRushProjectBuilder
     {
         data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 5 });
         data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 10, tutorialHighlight = true });
-        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 36f, x = 0f, count = 8, healthPerUnit = 6, width = 2.4f });
-        data.gates.Add(new GateSpawnData { z = 54f, x = 0f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
-        AddObstacle(data, 88f, 0f, 40, 4, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 46f, x = 0f, count = 8, healthPerUnit = 6, width = 2.4f });
+        data.gates.Add(new GateSpawnData { z = 66f, x = 0f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
+        AddObstacle(data, 94f, 0f, 40, 4, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
     }
 
     private static void AddLevelTwoTutorialData(LevelData data, LevelChunkData[] chunks)
     {
         data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 10 });
         data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 15, tutorialHighlight = true });
-        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 36f, x = 0f, count = 20, healthPerUnit = 8, width = 2.6f });
-        data.gates.Add(new GateSpawnData { z = 54f, x = -1.45f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
-        data.gates.Add(new GateSpawnData { z = 54f, x = 1.45f, operation = GateOperation.Add, value = 20 });
-        AddObstacle(data, 86f, 0f, 100, 6, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 48f, x = 0f, count = 20, healthPerUnit = 8, width = 2.6f });
+        data.gates.Add(new GateSpawnData { z = 68f, x = -1.45f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
+        data.gates.Add(new GateSpawnData { z = 68f, x = 1.45f, operation = GateOperation.Add, value = 20 });
+        AddObstacle(data, 98f, 0f, 100, 6, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
     }
 
     private static void AddLevelThreeTutorialData(LevelData data, LevelChunkData[] chunks)
     {
         data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 20, tutorialHighlight = true });
         data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Subtract, value = 10 });
-        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 25, healthPerUnit = 10, width = 2.8f });
-        data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
-        data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Add, value = 30 });
-        AddObstacle(data, 90f, 0f, 150, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 50f, x = 0f, count = 25, healthPerUnit = 10, width = 2.8f });
+        data.gates.Add(new GateSpawnData { z = 72f, x = -1.45f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
+        data.gates.Add(new GateSpawnData { z = 72f, x = 1.45f, operation = GateOperation.Add, value = 30 });
+        AddObstacle(data, 104f, 0f, 150, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
     }
 
     private static void AddLevelFourObstacleIntroData(LevelData data, LevelChunkData[] chunks)
@@ -3468,6 +3468,17 @@ public static class ArmyRushProjectBuilder
             }
 
             FirstEnemyCombatEstimate estimate = EstimateFirstEnemyCombatTimeline(level, firstEnemy, tuning, damagePerSoldier, fireRateMultiplier);
+            GateSpawnData firstGate = level.gates != null
+                ? level.gates.Where(gate => gate != null && gate.z < firstEnemy.z - 0.1f).OrderBy(gate => gate.z).FirstOrDefault()
+                : null;
+            if (firstGate != null)
+            {
+                float targetLockZ = Mathf.Max(0f, firstEnemy.z - Mathf.Max(0f, tuning.targetRange));
+                if (targetLockZ < firstGate.z + 2f)
+                {
+                    failures.Add(level.name + " first enemy target lock should start after the opening growth gate so physical-device onboarding reads as grow-before-fight.");
+                }
+            }
             if (estimate.TargetLocksBeforeFirstGate)
             {
                 if (estimate.FirstGateGrowthBeforeEnemy > 0 && tuning.powerSpikeVolleyMinimumGain > estimate.FirstGateGrowthBeforeEnemy)
@@ -4321,7 +4332,8 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(label + " must present an x2 gate after the first enemy and before the first crate.");
         }
-        if (!HasHighlightedGate(gates, 54f, GateOperation.Multiply, 2))
+        bool hasHighlightedPostEnemyX2 = firstEnemy != null && gates.Any(gate => gate.tutorialHighlight && gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Multiply && gate.value == 2);
+        if (!hasHighlightedPostEnemyX2)
         {
             failures.Add(label + " must highlight the post-enemy x2 tutorial gate.");
         }
@@ -4370,11 +4382,15 @@ public static class ArmyRushProjectBuilder
             failures.Add(label + " must present a tutorial-safe 20-count first enemy.");
         }
 
-        if (!HasGate(gates, 54f, GateOperation.Multiply, 2) || !HasGate(gates, 54f, GateOperation.Add, 20))
+        float firstObstacleZ = obstacles.Count > 0 ? obstacles[0].z : float.MaxValue;
+        bool hasRecoveryX2 = firstEnemy != null && gates.Any(gate => gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Multiply && gate.value == 2);
+        bool hasRecoveryAdd = firstEnemy != null && gates.Any(gate => gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Add && gate.value == 20);
+        if (!hasRecoveryX2 || !hasRecoveryAdd)
         {
             failures.Add(label + " must present the documented x2 vs +20 recovery choice.");
         }
-        if (!HasHighlightedGate(gates, 54f, GateOperation.Multiply, 2))
+        bool hasHighlightedRecoveryX2 = firstEnemy != null && gates.Any(gate => gate.tutorialHighlight && gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Multiply && gate.value == 2);
+        if (!hasHighlightedRecoveryX2)
         {
             failures.Add(label + " must highlight Level 2's x2 recovery gate.");
         }
@@ -4412,11 +4428,15 @@ public static class ArmyRushProjectBuilder
             failures.Add(label + " must present a tutorial-safe 25-count first enemy.");
         }
 
-        if (!HasGate(gates, 58f, GateOperation.Multiply, 2) || !HasGate(gates, 58f, GateOperation.Add, 30))
+        float firstObstacleZ = obstacles.Count > 0 ? obstacles[0].z : float.MaxValue;
+        bool hasFollowUpX2 = firstEnemy != null && gates.Any(gate => gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Multiply && gate.value == 2);
+        bool hasFollowUpAdd = firstEnemy != null && gates.Any(gate => gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Add && gate.value == 30);
+        if (!hasFollowUpX2 || !hasFollowUpAdd)
         {
             failures.Add(label + " must present the documented x2 vs +30 follow-up choice.");
         }
-        if (!HasHighlightedGate(gates, 58f, GateOperation.Multiply, 2))
+        bool hasHighlightedFollowUpX2 = firstEnemy != null && gates.Any(gate => gate.tutorialHighlight && gate.z > firstEnemy.z + 0.1f && gate.z < firstObstacleZ - 0.1f && gate.operation == GateOperation.Multiply && gate.value == 2);
+        if (!hasHighlightedFollowUpX2)
         {
             failures.Add(label + " must highlight Level 3's x2 follow-up gate.");
         }
