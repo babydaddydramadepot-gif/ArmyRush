@@ -126,22 +126,45 @@ namespace ArmyRush
 
             int extraProjectiles = openingVolley ? Mathf.Max(0, _tuning.openingVolleyExtraProjectiles) : 0;
             int projectileCount = Mathf.Clamp(_crowd.Count / 8 + 1 + extraProjectiles, 1, _tuning.projectileVisualBurst);
-            int damagePerProjectile = Mathf.Max(1, Mathf.CeilToInt(totalDamage / (float)projectileCount));
+            int immediateDamage = CalculateImmediateDamage(totalDamage, openingVolley);
+            if (immediateDamage > 0 && target.IsAlive)
+            {
+                target.ApplyDamage(immediateDamage);
+            }
+
+            int projectileDamage = Mathf.Max(1, totalDamage - immediateDamage);
+            int damagePerProjectile = Mathf.Max(1, Mathf.CeilToInt(projectileDamage / (float)projectileCount));
             Vector3 origin = _aimOrigin != null ? _aimOrigin.position : transform.position + Vector3.up * 0.8f;
             _crowd.PlayShootFeedback(projectileCount + 1);
             VfxManager.Spawn(VfxCue.MuzzleFlash, origin + Vector3.forward * 0.35f);
 
-            for (int i = 0; i < projectileCount; i++)
+            if (target.IsAlive)
             {
-                Vector3 jitter = new Vector3(Random.Range(-0.45f, 0.45f), Random.Range(-0.05f, 0.25f), Random.Range(-0.35f, 0.1f));
-                Projectile projectile = _poolManager.Get<Projectile>(_projectilePrefab, origin + jitter, Quaternion.identity);
-                projectile.Fire(target, damagePerProjectile, _tuning.projectileSpeed, _tuning.projectileLifetime);
+                for (int i = 0; i < projectileCount; i++)
+                {
+                    Vector3 jitter = new Vector3(Random.Range(-0.45f, 0.45f), Random.Range(-0.05f, 0.25f), Random.Range(-0.35f, 0.1f));
+                    Projectile projectile = _poolManager.Get<Projectile>(_projectilePrefab, origin + jitter, Quaternion.identity);
+                    projectile.Fire(target, damagePerProjectile, _tuning.projectileSpeed, _tuning.projectileLifetime);
+                }
             }
 
             if (ServiceLocator.TryGet(out AudioService audio))
             {
                 audio.Play(AudioCue.Shoot);
             }
+        }
+
+        private int CalculateImmediateDamage(int totalDamage, bool openingVolley)
+        {
+            if (totalDamage <= 1 || _tuning == null)
+            {
+                return 0;
+            }
+
+            float fraction = openingVolley
+                ? Mathf.Max(_tuning.volleyImmediateDamageFraction, _tuning.openingVolleyImmediateDamageFraction)
+                : _tuning.volleyImmediateDamageFraction;
+            return Mathf.Clamp(Mathf.RoundToInt(totalDamage * Mathf.Clamp01(fraction)), 0, totalDamage - 1);
         }
     }
 }

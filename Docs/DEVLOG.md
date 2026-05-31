@@ -109,6 +109,37 @@ Date:
 
 System:
 
+Immediate Combat Hit Confirmation
+
+Files:
+
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Scripts/Core/GlobalTuning.cs
+Assets/_Project/ScriptableObjects/Tuning/SO_GlobalTuning.asset
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added data-driven immediate hit-confirmation damage to player combat volleys. Each volley now applies a bounded portion of its army-scaled damage immediately, then carries the remaining damage through the existing pooled projectile tracers. Opening salvos use a stronger immediate fraction than steady volleys so newly acquired enemies, obstacles, bosses, and bonus crates show health feedback as soon as the army starts firing on physical devices.
+
+Result:
+
+Combat keeps the existing projectile visuals, muzzle feedback, damage scaling, upgrade scaling, and pooling path, but target health no longer waits entirely on projectile travel before responding. This reduces the physical-device case where combat math is strong enough but contact timing makes shooting feel late. Production validation now includes guardrails for the steady and opening immediate-damage fractions, and the early onboarding static estimate accounts for immediate damage separately from projectile-hit travel.
+
+Follow Up:
+
+Physical iPhone QA should verify that first-contact enemies, obstacle barriers, and boss openings now feel responsive without reading as pure hitscan. Static validation passed with `git diff --check` and an immediate volley damage smoke check. Unity production validation was retried with log `/tmp/armyrush_unity_immediate_damage_validate.log`, but AR-009 Unity Licensing Client protocol failures again prevented `ArmyRushProjectBuilder.ValidateProductionFoundation` from starting.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Early Contact Mercy
 
 Files:
@@ -3614,7 +3645,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm perceived fire rate, opening-salvo readability, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over, and immediate hit-confirmation damage makes target health respond before projectile travel completes. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm perceived fire rate, immediate hit-confirmation readability, opening-salvo readability, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3622,7 +3653,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_contact_mercy_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_immediate_damage_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

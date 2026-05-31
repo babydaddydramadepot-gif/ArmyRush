@@ -31,6 +31,8 @@ namespace ArmyRush
         public float openingVolleyDamageMultiplier = 1.35f;
         public int openingVolleyExtraProjectiles = 2;
         public float openingVolleyCooldown = 0.6f;
+        [Range(0f, 1f)] public float volleyImmediateDamageFraction = 0.3f;
+        [Range(0f, 1f)] public float openingVolleyImmediateDamageFraction = 0.5f;
 
         [Header("Rewards")]
         public int soldierCoinValue = 2;

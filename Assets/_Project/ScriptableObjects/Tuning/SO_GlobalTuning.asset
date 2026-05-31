@@ -33,6 +33,8 @@ MonoBehaviour:
   openingVolleyDamageMultiplier: 1.35
   openingVolleyExtraProjectiles: 2
   openingVolleyCooldown: 0.6
+  volleyImmediateDamageFraction: 0.3
+  openingVolleyImmediateDamageFraction: 0.5
   soldierCoinValue: 2
   enemyCoinValue: 2
   obstacleCoinValue: 12

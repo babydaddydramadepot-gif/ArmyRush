@@ -371,6 +371,8 @@ public static class ArmyRushProjectBuilder
         tuning.openingVolleyDamageMultiplier = 1.35f;
         tuning.openingVolleyExtraProjectiles = 2;
         tuning.openingVolleyCooldown = 0.6f;
+        tuning.volleyImmediateDamageFraction = 0.3f;
+        tuning.openingVolleyImmediateDamageFraction = 0.5f;
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
@@ -3130,6 +3132,18 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Opening volley cooldown should prevent spam while preserving fast target-acquisition feel.");
         }
+        if (tuning.volleyImmediateDamageFraction < 0.2f || tuning.volleyImmediateDamageFraction > 0.45f)
+        {
+            failures.Add("Volley immediate damage fraction should make combat responsive while preserving projectile impact value.");
+        }
+        if (tuning.openingVolleyImmediateDamageFraction < 0.4f || tuning.openingVolleyImmediateDamageFraction > 0.65f)
+        {
+            failures.Add("Opening volley immediate damage fraction should create first-contact hit confirmation without becoming pure hitscan.");
+        }
+        if (tuning.openingVolleyImmediateDamageFraction < tuning.volleyImmediateDamageFraction)
+        {
+            failures.Add("Opening volley immediate damage should be at least as responsive as steady volley damage.");
+        }
         if (tuning.earlyDefeatRewardLevelLimit < 3)
         {
             failures.Add("Early defeat rewards should cover at least the first three onboarding levels.");
@@ -3266,8 +3280,10 @@ public static class ArmyRushProjectBuilder
         float fireInterval = Mathf.Max(tuning.minFireInterval, baseFireInterval / fireRateMultiplier);
         float projectileDelay = tuning.projectileSpeed > 0f ? tuning.targetRange / tuning.projectileSpeed : 0f;
         float contactWindow = tuning.forwardSpeed > 0f ? tuning.targetRange / tuning.forwardSpeed : 0f;
-        float damageWindow = Mathf.Max(0.05f, contactWindow - projectileDelay);
-        int volleyCount = Mathf.Max(1, Mathf.FloorToInt(damageWindow / fireInterval) + 1);
+        int volleysStartedBeforeContact = Mathf.Max(1, Mathf.FloorToInt(contactWindow / fireInterval) + 1);
+        int projectileVolleysHitBeforeContact = contactWindow >= projectileDelay
+            ? Mathf.Max(1, Mathf.FloorToInt((contactWindow - projectileDelay) / fireInterval) + 1)
+            : 0;
 
         foreach (LevelData level in levels)
         {
@@ -3284,7 +3300,15 @@ public static class ArmyRushProjectBuilder
             int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
             int damagePerVolley = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, soldiersAtEnemy) * baseFireInterval));
             int openingVolleyDamage = Mathf.RoundToInt(damagePerVolley * Mathf.Max(1f, tuning.openingVolleyDamageMultiplier));
-            int damageBeforeContact = openingVolleyDamage + damagePerVolley * Mathf.Max(0, volleyCount - 1);
+            int standardImmediateDamage = CalculateImmediateDamage(damagePerVolley, tuning.volleyImmediateDamageFraction);
+            int openingImmediateDamage = CalculateImmediateDamage(openingVolleyDamage, Mathf.Max(tuning.volleyImmediateDamageFraction, tuning.openingVolleyImmediateDamageFraction));
+            int standardProjectileDamage = Mathf.Max(1, damagePerVolley - standardImmediateDamage);
+            int openingProjectileDamage = Mathf.Max(1, openingVolleyDamage - openingImmediateDamage);
+            int damageBeforeContact = openingImmediateDamage + standardImmediateDamage * Mathf.Max(0, volleysStartedBeforeContact - 1);
+            if (projectileVolleysHitBeforeContact > 0)
+            {
+                damageBeforeContact += openingProjectileDamage + standardProjectileDamage * Mathf.Max(0, projectileVolleysHitBeforeContact - 1);
+            }
             int remainingHealth = Mathf.Max(0, enemyHealth - damageBeforeContact);
             int remainingEnemies = Mathf.CeilToInt(remainingHealth / (float)Mathf.Max(1, firstEnemy.healthPerUnit));
             int survivors = soldiersAtEnemy - remainingEnemies;
@@ -3300,6 +3324,16 @@ public static class ArmyRushProjectBuilder
                 failures.Add("Level 1 first enemy should remain a tutorial-safe light group near 8 enemies with low health.");
             }
         }
+    }
+
+    private static int CalculateImmediateDamage(int totalDamage, float fraction)
+    {
+        if (totalDamage <= 1)
+        {
+            return 0;
+        }
+
+        return Mathf.Clamp(Mathf.RoundToInt(totalDamage * Mathf.Clamp01(fraction)), 0, totalDamage - 1);
     }
 
     private static int EstimateBestGatePathBefore(LevelData level, int startingSoldiers, float zLimit)
