@@ -22,8 +22,14 @@ namespace ArmyRush
 
         public static Damageable FindBestTarget(Vector3 origin, float range, float lateralRange)
         {
-            Damageable best = null;
-            float bestScore = float.MaxValue;
+            Damageable closestObstacle = null;
+            Damageable closestEnemy = null;
+            Damageable closestBoss = null;
+            Damageable closestBonus = null;
+            float closestObstacleScore = float.MaxValue;
+            float closestEnemyScore = float.MaxValue;
+            float closestBossScore = float.MaxValue;
+            float closestBonusScore = float.MaxValue;
 
             for (int i = Targets.Count - 1; i >= 0; i--)
             {
@@ -44,16 +50,64 @@ namespace ArmyRush
                     continue;
                 }
 
-                float priority = target.Kind == CombatTargetKind.Obstacle ? -8f : target.Kind == CombatTargetKind.Bonus ? 6f : 0f;
-                float score = offset.z + Mathf.Abs(offset.x) * 1.5f + priority;
-                if (score < bestScore)
+                float score = offset.z + Mathf.Abs(offset.x) * 1.5f;
+                switch (target.Kind)
                 {
-                    bestScore = score;
-                    best = target;
+                    case CombatTargetKind.Obstacle:
+                        if (score < closestObstacleScore)
+                        {
+                            closestObstacleScore = score;
+                            closestObstacle = target;
+                        }
+                        break;
+
+                    case CombatTargetKind.Enemy:
+                        if (score < closestEnemyScore)
+                        {
+                            closestEnemyScore = score;
+                            closestEnemy = target;
+                        }
+                        break;
+
+                    case CombatTargetKind.Boss:
+                        if (score < closestBossScore)
+                        {
+                            closestBossScore = score;
+                            closestBoss = target;
+                        }
+                        break;
+
+                    case CombatTargetKind.Bonus:
+                        if (score < closestBonusScore)
+                        {
+                            closestBonusScore = score;
+                            closestBonus = target;
+                        }
+                        break;
                 }
             }
 
-            return best;
+            if (closestObstacle != null && (closestEnemy == null || closestObstacleScore <= closestEnemyScore))
+            {
+                return closestObstacle;
+            }
+
+            if (closestEnemy != null)
+            {
+                return closestEnemy;
+            }
+
+            if (closestObstacle != null)
+            {
+                return closestObstacle;
+            }
+
+            if (closestBoss != null)
+            {
+                return closestBoss;
+            }
+
+            return closestBonus;
         }
     }
 }

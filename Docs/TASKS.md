@@ -210,6 +210,7 @@ Implementation Pass 1 Result:
 - Added bounded early close-range combat urgency assist so Levels 1-5 fire faster and hit slightly harder near imminent contact, with one-time `PUSH` feedback and validator guardrails.
 - Added functional run boost gates for temporary damage, fire-rate, and coin power-ups, then introduced fire-rate/damage boost pickups in Levels 6, 7, and 10 to extend the first-session power fantasy beyond raw army count.
 - Added a compact active run-boost HUD indicator with countdown fill, safe-area placement, nonblocking raycasts, runtime fallback creation for older scenes, and production validation coverage.
+- Corrected combat target priority so volleys focus the nearest enemy/obstacle threat instead of letting farther obstacles steal target lock, and lowered the boost HUD fallback band so it no longer overlaps the boss health panel in production validation.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -624,7 +625,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Army-Scaled DPS, Faster Physical Cadence, Opening Salvo Punch, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, Faster Physical Cadence, Opening Salvo Punch, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
@@ -638,6 +639,7 @@ Tasks:
 - [x] Add data-driven opening salvos so each newly acquired target gets a stronger first volley and denser tracer burst.
 - [x] Add data-driven immediate hit-confirmation damage so target health responds before projectile travel can make physical-device combat feel late.
 - [x] Add bounded close-range urgency assist for onboarding combat targets so imminent enemy/obstacle contact feels responsive on physical devices.
+- [x] Correct target priority so closer enemies are not ignored in favor of farther obstacles while still shooting the nearest blocking obstacle first.
 - [x] Add validator coverage for early first-enemy survivability.
 - [x] Add projectile pooling.
 - [x] Add bullet trails.
@@ -1569,7 +1571,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Target Priority, Opening Salvo Feel, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1601,6 +1603,8 @@ Tasks:
 - [x] Add data-driven early rally assist so low-count first-session survivors can recover momentum without making defeat impossible.
 - [x] Add one-use early contact mercy for near-win onboarding enemy collisions so projectile travel/contact timing cannot instantly erase a close clear.
 - [x] Add persistent, safe-area active run-boost HUD feedback so boost pickups do not rely only on one-shot floating labels.
+- [x] Fix target acquisition priority so a farther obstacle cannot steal fire from a closer enemy contact threat.
+- [x] Fix active boost HUD fallback placement so production validation confirms it does not overlap the boss health panel.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

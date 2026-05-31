@@ -48,6 +48,8 @@ namespace ArmyRush
         private static readonly Color ResultUpgradeMenuColor = new Color(0.08f, 0.28f, 0.95f);
         private static readonly Color ResultRecommendedUpgradeColor = new Color(0.96f, 0.62f, 0.08f);
         private static readonly Color BoostPanelColor = new Color(0.03f, 0.11f, 0.19f, 0.88f);
+        private static readonly Vector2 BoostIndicatorAnchor = new Vector2(0.5f, 0.755f);
+        private static readonly Vector2 BoostIndicatorSize = new Vector2(440f, 48f);
 
         private void Start()
         {
@@ -346,6 +348,7 @@ namespace ArmyRush
             {
                 return;
             }
+            ConfigureBoostIndicatorRect(_boostIndicatorRoot.GetComponent<RectTransform>());
 
             if (_boostIndicatorFrame == null)
             {
@@ -389,10 +392,7 @@ namespace ArmyRush
             GameObject root = new GameObject("BoostIndicator", typeof(RectTransform), typeof(Image));
             RectTransform rect = root.GetComponent<RectTransform>();
             rect.SetParent(parent, false);
-            rect.anchorMin = new Vector2(0.5f, 0.835f);
-            rect.anchorMax = new Vector2(0.5f, 0.835f);
-            rect.sizeDelta = new Vector2(460f, 54f);
-            rect.anchoredPosition = Vector2.zero;
+            ConfigureBoostIndicatorRect(rect);
 
             Image frame = root.GetComponent<Image>();
             frame.color = BoostPanelColor;
@@ -406,7 +406,7 @@ namespace ArmyRush
             fillRect.anchorMax = new Vector2(0f, 0.5f);
             fillRect.pivot = new Vector2(0f, 0.5f);
             fillRect.anchoredPosition = new Vector2(6f, 0f);
-            fillRect.sizeDelta = new Vector2(0f, 42f);
+            fillRect.sizeDelta = new Vector2(0f, 36f);
             Image fill = fillObject.GetComponent<Image>();
             fill.color = new Color(0.32f, 0.92f, 1f, 0.62f);
             fill.raycastTarget = false;
@@ -427,18 +427,32 @@ namespace ArmyRush
                 text.font = font;
             }
             text.text = string.Empty;
-            text.fontSize = 26;
+            text.fontSize = 24;
             text.fontStyle = FontStyle.Bold;
             text.alignment = TextAnchor.MiddleCenter;
             text.color = Color.white;
             text.resizeTextForBestFit = true;
-            text.resizeTextMinSize = 14;
-            text.resizeTextMaxSize = 26;
+            text.resizeTextMinSize = 13;
+            text.resizeTextMaxSize = 24;
             text.raycastTarget = false;
             _boostIndicatorText = text;
 
             root.SetActive(false);
             return root;
+        }
+
+        private static void ConfigureBoostIndicatorRect(RectTransform rect)
+        {
+            if (rect == null)
+            {
+                return;
+            }
+
+            rect.anchorMin = BoostIndicatorAnchor;
+            rect.anchorMax = BoostIndicatorAnchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = BoostIndicatorSize;
+            rect.anchoredPosition = Vector2.zero;
         }
 
         private void SetBoostIndicatorFill(float normalized)

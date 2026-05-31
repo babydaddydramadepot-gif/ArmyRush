@@ -5188,7 +5188,7 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Gameplay boost indicator must stay compact for portrait phone layouts.");
         }
-        if (boostRect.anchorMin.y < 0.78f || boostRect.anchorMin.y > 0.87f)
+        if (boostRect.anchorMin.y < 0.72f || boostRect.anchorMin.y > 0.82f)
         {
             failures.Add("Gameplay boost indicator should sit below boss/progress HUD without covering the run view.");
         }
@@ -5409,9 +5409,10 @@ public static class ArmyRushProjectBuilder
         GameObject root = new GameObject("BoostIndicator");
         RectTransform rect = root.AddComponent<RectTransform>();
         rect.SetParent(parent, false);
-        rect.anchorMin = new Vector2(0.5f, 0.835f);
-        rect.anchorMax = new Vector2(0.5f, 0.835f);
-        rect.sizeDelta = new Vector2(460f, 54f);
+        rect.anchorMin = new Vector2(0.5f, 0.755f);
+        rect.anchorMax = new Vector2(0.5f, 0.755f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = new Vector2(440f, 48f);
         rect.anchoredPosition = Vector2.zero;
 
         frame = root.AddComponent<Image>();
@@ -5425,14 +5426,14 @@ public static class ArmyRushProjectBuilder
         fillRect.anchorMax = new Vector2(0f, 0.5f);
         fillRect.pivot = new Vector2(0f, 0.5f);
         fillRect.anchoredPosition = new Vector2(6f, 0f);
-        fillRect.sizeDelta = new Vector2(0f, 42f);
+        fillRect.sizeDelta = new Vector2(0f, 36f);
         fill = fillObject.AddComponent<Image>();
         fill.color = new Color(0.32f, 0.92f, 1f, 0.62f);
         fill.raycastTarget = false;
 
-        label = CreateUIText("BoostText", root.transform, string.Empty, 26, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(432f, 48f));
-        label.resizeTextMinSize = 14;
-        label.resizeTextMaxSize = 26;
+        label = CreateUIText("BoostText", root.transform, string.Empty, 24, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(416f, 42f));
+        label.resizeTextMinSize = 13;
+        label.resizeTextMaxSize = 24;
         label.raycastTarget = false;
 
         root.SetActive(false);
