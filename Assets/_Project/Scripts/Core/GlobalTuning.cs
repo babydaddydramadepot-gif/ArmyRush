@@ -20,28 +20,32 @@ namespace ArmyRush
         public int maxFormationColumns = 13;
 
         [Header("Combat")]
-        public float targetRange = 24f;
+        public float targetRange = 26f;
         public float targetLateralRange = 3.8f;
-        public float projectileSpeed = 36f;
+        public float projectileSpeed = 42f;
         public float projectileLifetime = 1.6f;
-        public float baseFireInterval = 0.3f;
+        public float baseFireInterval = 0.24f;
         public float minFireInterval = 0.08f;
         public int baseDamage = 10;
-        public int projectileVisualBurst = 6;
-        public int muzzleFlashVisualBurst = 4;
-        public float openingVolleyDamageMultiplier = 1.35f;
-        public int openingVolleyExtraProjectiles = 2;
-        public float openingVolleyCooldown = 0.6f;
+        public int projectileVisualBurst = 7;
+        public int muzzleFlashVisualBurst = 5;
+        public float openingVolleyDamageMultiplier = 1.5f;
+        public int openingVolleyExtraProjectiles = 3;
+        public float openingVolleyCooldown = 0.45f;
         public int powerSpikeVolleyMinimumGain = 5;
-        public float powerSpikeVolleyDamageMultiplier = 1.25f;
-        public int powerSpikeVolleyExtraProjectiles = 1;
-        public float powerSpikeVolleyCooldown = 0.35f;
-        [Range(0f, 1f)] public float volleyImmediateDamageFraction = 0.3f;
-        [Range(0f, 1f)] public float openingVolleyImmediateDamageFraction = 0.5f;
+        public float powerSpikeVolleyDamageMultiplier = 1.35f;
+        public int powerSpikeVolleyExtraProjectiles = 2;
+        public float powerSpikeVolleyCooldown = 0.25f;
+        [Range(0f, 1f)] public float volleyImmediateDamageFraction = 0.38f;
+        [Range(0f, 1f)] public float openingVolleyImmediateDamageFraction = 0.58f;
+        public int onboardingCombatBoostLevelLimit = 3;
+        public float onboardingCombatBoostDuration = 22f;
+        public float onboardingCombatDamageMultiplier = 1.25f;
+        public float onboardingCombatFireRateMultiplier = 1.25f;
         public int earlyCloseRangeAssistLevelLimit = 5;
-        public float closeRangeAssistDistance = 8.5f;
-        public float closeRangeFireRateMultiplier = 1.35f;
-        public float closeRangeDamageMultiplier = 1.15f;
+        public float closeRangeAssistDistance = 9.5f;
+        public float closeRangeFireRateMultiplier = 1.45f;
+        public float closeRangeDamageMultiplier = 1.2f;
         public float runBoostGateDuration = 10f;
         public float maxRunBoostGateMultiplier = 1.75f;
 
@@ -54,15 +58,15 @@ namespace ArmyRush
         [Range(0f, 1f)] public float earlyDefeatRewardFraction = 0.4f;
         public int earlyDefeatMinimumCoins = 100;
         public int earlyRallyAssistLevelLimit = 5;
-        public int earlyRallyAssistMinimumSoldiers = 6;
-        public int earlyRallyAssistTargetSoldiers = 12;
+        public int earlyRallyAssistMinimumSoldiers = 8;
+        public int earlyRallyAssistTargetSoldiers = 15;
         public int earlyRallyAssistMaxUsesPerRun = 2;
         public float earlyRallyAssistCooldown = 4f;
         public int earlyContactMercyLevelLimit = 5;
-        public int earlyContactMercyMinimumSoldiers = 4;
-        public int earlyContactMercyEnemyBuffer = 6;
-        public int earlyContactMercySurvivors = 3;
-        public int earlyContactMercyMaxUsesPerRun = 1;
+        public int earlyContactMercyMinimumSoldiers = 6;
+        public int earlyContactMercyEnemyBuffer = 8;
+        public int earlyContactMercySurvivors = 4;
+        public int earlyContactMercyMaxUsesPerRun = 2;
 
         [Header("Camera")]
         public Vector3 cameraOffset = new Vector3(0f, 10f, -10.5f);

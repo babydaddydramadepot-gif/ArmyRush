@@ -215,6 +215,7 @@ Implementation Pass 1 Result:
 - Corrected combat target priority so volleys focus the nearest enemy/obstacle threat instead of letting farther obstacles steal target lock, and lowered the boost HUD fallback band so it no longer overlaps the boss health panel in production validation.
 - Hardened production validation so nested prefab/scene missing scripts, missing serialized object references, and ScriptableObject broken asset references are checked across the ArmyRush production content set.
 - Hardened level rebuild state by clearing transient pooled combat/VFX objects and the static target registry on level rebuild, with production validation for repeated rebuild target consistency.
+- Added a bounded first-session `POWER START` combat boost for Levels 1-3, tightened perceived fire cadence/targeting/projectile response, strengthened opening and post-gate volley feedback, increased early rally/contact mercy margins, and refreshed production validation after physical iPhone balance feedback.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -629,7 +630,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, Faster Physical Cadence, Multi-Muzzle Volley Feedback, Opening Salvo Punch, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, First-Session POWER START Boost, Faster Physical Cadence, Multi-Muzzle Volley Feedback, Opening Salvo Punch, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
@@ -643,6 +644,8 @@ Tasks:
 - [x] Add data-driven opening salvos so each newly acquired target gets a stronger first volley and denser tracer burst.
 - [x] Add data-driven post-gate power-spike volleys so meaningful army gains immediately strengthen fire on targets that were already locked before the gate.
 - [x] Add data-driven immediate hit-confirmation damage so target health responds before projectile travel can make physical-device combat feel late.
+- [x] Add bounded visible first-session `POWER START` damage/fire-rate boost for Levels 1-3 so the tutorial opener feels empowering on physical iPhone.
+- [x] Tighten physical-device perceived combat cadence with faster baseline volleys, longer targeting, faster projectiles, stronger immediate confirmation, and denser visual bursts.
 - [x] Add bounded close-range urgency assist for onboarding combat targets so imminent enemy/obstacle contact feels responsive on physical devices.
 - [x] Add data-driven multi-muzzle volley feedback so aggregate crowd shooting reads as several soldiers firing instead of one tiny flash.
 - [x] Correct target priority so closer enemies are not ignored in favor of farther obstacles while still shooting the nearest blocking obstacle first.
@@ -1588,7 +1591,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, First-Session POWER START Boost, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1615,6 +1618,7 @@ Tasks:
 - [x] Add opening-salvo first-contact feedback to make newly acquired enemies, obstacles, and bosses feel immediately pressured on device.
 - [x] Add post-gate power-spike volley feedback so early enemies already targeted before the first gate still feel pressured by the new crowd size immediately after gate collection.
 - [x] Add immediate volley hit-confirmation damage so projectile travel and contact timing cannot make responsive combat appear delayed on physical iPhone.
+- [x] Add visible first-session `POWER START` damage/fire-rate boost for Levels 1-3 and retune baseline firing/targeting/projectile feedback after physical iPhone balance feedback that the first encounter still felt too punishing.
 - [x] Add bounded close-range combat urgency assist so Levels 1-5 apply a small fire-rate/damage boost only when non-bonus targets are near contact.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
@@ -1657,6 +1661,7 @@ Tasks:
 - [x] Add early close-range combat urgency feedback for first-session near-contact pressure.
 - [x] Add temporary run boost gates that make post-boss combat and boss preparation feel more powerful.
 - [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
+- [x] Add bounded first-session combat boost feedback so the tutorial starts with visible power rather than a hidden difficulty assist.
 - [x] Add boss victory milestone reward polish to the result screen.
 - [x] Add result panel UI validation for milestone header fit and action/status overlap.
 - [x] Limit keyboard-only runner steering to Unity Editor builds so production iOS builds keep the documented touch/mouse input surface without hidden debug controls.

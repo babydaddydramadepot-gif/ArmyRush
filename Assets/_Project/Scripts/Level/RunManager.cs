@@ -99,6 +99,7 @@ namespace ArmyRush
             _bonusCoins = 0;
             _levelCompleted = false;
             ResetRunBoosts();
+            ApplyOnboardingCombatBoost();
             _gameplayUI?.SetRunCoinPreview(0);
             SetState(RunState.Running);
             if (ServiceLocator.TryGet(out AudioService audio))
@@ -434,6 +435,36 @@ namespace ArmyRush
             HideRunBoostIndicator();
         }
 
+        private void ApplyOnboardingCombatBoost()
+        {
+            if (_tuning == null || _crowd == null)
+            {
+                return;
+            }
+
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            if (currentLevel == null || currentLevel.levelIndex > Mathf.Max(0, _tuning.onboardingCombatBoostLevelLimit))
+            {
+                return;
+            }
+
+            float duration = Mathf.Max(0f, _tuning.onboardingCombatBoostDuration);
+            float damageBoost = Mathf.Max(1f, _tuning.onboardingCombatDamageMultiplier);
+            float fireRateBoost = Mathf.Max(1f, _tuning.onboardingCombatFireRateMultiplier);
+            if (duration <= 0f || (damageBoost <= 1f && fireRateBoost <= 1f))
+            {
+                return;
+            }
+
+            float endTime = Time.time + duration;
+            _damageBoostMultiplier = Mathf.Max(_damageBoostMultiplier, damageBoost);
+            _fireRateBoostMultiplier = Mathf.Max(_fireRateBoostMultiplier, fireRateBoost);
+            _damageBoostEndTime = Mathf.Max(_damageBoostEndTime, endTime);
+            _fireRateBoostEndTime = Mathf.Max(_fireRateBoostEndTime, endTime);
+            VfxManager.SpawnFloatingText("POWER START", _crowd.transform.position + Vector3.up * 2.7f, new Color(0.28f, 1f, 0.82f));
+            RefreshRunBoostIndicator();
+        }
+
         private float CalculateRunBoostMultiplier(int value)
         {
             float boost = 1f + Mathf.Max(1, value) / 100f;
@@ -489,7 +520,7 @@ namespace ArmyRush
             {
                 kind = RunBoostHudKind.Power;
                 remaining = Mathf.Max(damageRemaining, fireRateRemaining, coinRemaining);
-                multiplier = activeCount;
+                multiplier = Mathf.Max(_damageBoostMultiplier, _fireRateBoostMultiplier, _coinBoostMultiplier);
                 color = new Color(0.28f, 1f, 0.82f);
             }
             else if (fireRateActive)
@@ -515,7 +546,7 @@ namespace ArmyRush
             }
 
             int seconds = Mathf.Max(1, Mathf.CeilToInt(remaining));
-            int percent = kind == RunBoostHudKind.Power ? activeCount : Mathf.Max(1, Mathf.RoundToInt((Mathf.Max(1f, multiplier) - 1f) * 100f));
+            int percent = Mathf.Max(1, Mathf.RoundToInt((Mathf.Max(1f, multiplier) - 1f) * 100f));
             if (!_boostHudVisible || kind != _boostHudKind || seconds != _boostHudSeconds || percent != _boostHudPercent || activeCount != _boostHudActiveCount)
             {
                 _boostHudLabel = BuildRunBoostHudLabel(kind, percent, seconds, activeCount);
@@ -560,7 +591,7 @@ namespace ArmyRush
                 case RunBoostHudKind.Coins:
                     return "COIN +" + percentOrCount + "%  " + seconds + "s";
                 case RunBoostHudKind.Power:
-                    return "POWER x" + Mathf.Max(2, activeCount) + "  " + seconds + "s";
+                    return "POWER +" + percentOrCount + "%  " + seconds + "s";
                 default:
                     return string.Empty;
             }

@@ -364,41 +364,45 @@ public static class ArmyRushProjectBuilder
             tuning = ScriptableObject.CreateInstance<GlobalTuning>();
             AssetDatabase.CreateAsset(tuning, path);
         }
-        tuning.targetRange = 24f;
-        tuning.projectileSpeed = 36f;
-        tuning.baseFireInterval = 0.3f;
+        tuning.targetRange = 26f;
+        tuning.projectileSpeed = 42f;
+        tuning.baseFireInterval = 0.24f;
         tuning.minFireInterval = 0.08f;
         tuning.baseDamage = 10;
-        tuning.projectileVisualBurst = 6;
-        tuning.muzzleFlashVisualBurst = 4;
-        tuning.openingVolleyDamageMultiplier = 1.35f;
-        tuning.openingVolleyExtraProjectiles = 2;
-        tuning.openingVolleyCooldown = 0.6f;
+        tuning.projectileVisualBurst = 7;
+        tuning.muzzleFlashVisualBurst = 5;
+        tuning.openingVolleyDamageMultiplier = 1.5f;
+        tuning.openingVolleyExtraProjectiles = 3;
+        tuning.openingVolleyCooldown = 0.45f;
         tuning.powerSpikeVolleyMinimumGain = 5;
-        tuning.powerSpikeVolleyDamageMultiplier = 1.25f;
-        tuning.powerSpikeVolleyExtraProjectiles = 1;
-        tuning.powerSpikeVolleyCooldown = 0.35f;
-        tuning.volleyImmediateDamageFraction = 0.3f;
-        tuning.openingVolleyImmediateDamageFraction = 0.5f;
+        tuning.powerSpikeVolleyDamageMultiplier = 1.35f;
+        tuning.powerSpikeVolleyExtraProjectiles = 2;
+        tuning.powerSpikeVolleyCooldown = 0.25f;
+        tuning.volleyImmediateDamageFraction = 0.38f;
+        tuning.openingVolleyImmediateDamageFraction = 0.58f;
+        tuning.onboardingCombatBoostLevelLimit = 3;
+        tuning.onboardingCombatBoostDuration = 22f;
+        tuning.onboardingCombatDamageMultiplier = 1.25f;
+        tuning.onboardingCombatFireRateMultiplier = 1.25f;
         tuning.earlyCloseRangeAssistLevelLimit = 5;
-        tuning.closeRangeAssistDistance = 8.5f;
-        tuning.closeRangeFireRateMultiplier = 1.35f;
-        tuning.closeRangeDamageMultiplier = 1.15f;
+        tuning.closeRangeAssistDistance = 9.5f;
+        tuning.closeRangeFireRateMultiplier = 1.45f;
+        tuning.closeRangeDamageMultiplier = 1.2f;
         tuning.runBoostGateDuration = 10f;
         tuning.maxRunBoostGateMultiplier = 1.75f;
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
         tuning.earlyRallyAssistLevelLimit = 5;
-        tuning.earlyRallyAssistMinimumSoldiers = 6;
-        tuning.earlyRallyAssistTargetSoldiers = 12;
+        tuning.earlyRallyAssistMinimumSoldiers = 8;
+        tuning.earlyRallyAssistTargetSoldiers = 15;
         tuning.earlyRallyAssistMaxUsesPerRun = 2;
         tuning.earlyRallyAssistCooldown = 4f;
         tuning.earlyContactMercyLevelLimit = 5;
-        tuning.earlyContactMercyMinimumSoldiers = 4;
-        tuning.earlyContactMercyEnemyBuffer = 6;
-        tuning.earlyContactMercySurvivors = 3;
-        tuning.earlyContactMercyMaxUsesPerRun = 1;
+        tuning.earlyContactMercyMinimumSoldiers = 6;
+        tuning.earlyContactMercyEnemyBuffer = 8;
+        tuning.earlyContactMercySurvivors = 4;
+        tuning.earlyContactMercyMaxUsesPerRun = 2;
         tuning.cameraShakeGlobalScale = 0.7f;
         tuning.cameraShakeMaxAmplitude = 0.16f;
         tuning.cameraShakeFrequency = 26f;
@@ -3176,31 +3180,31 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Global combat base damage is below the documented first-session power target.");
         }
-        if (tuning.baseFireInterval <= 0f || tuning.baseFireInterval > 0.34f)
+        if (tuning.baseFireInterval < 0.2f || tuning.baseFireInterval > 0.3f)
         {
             failures.Add("Global combat base fire interval should stay fast enough for the first-session power fantasy.");
         }
-        if (tuning.targetRange < 24f)
+        if (tuning.targetRange < 26f)
         {
             failures.Add("Combat target range is too short for physical-device onboarding fights.");
         }
-        if (tuning.projectileSpeed < 34f)
+        if (tuning.projectileSpeed < 40f)
         {
             failures.Add("Projectile speed is too low for responsive physical-device combat feedback.");
         }
-        if (tuning.projectileVisualBurst < 6)
+        if (tuning.projectileVisualBurst < 7)
         {
             failures.Add("Projectile visual burst count is too low for readable small-crowd combat on device.");
         }
-        if (tuning.muzzleFlashVisualBurst < 2 || tuning.muzzleFlashVisualBurst > tuning.projectileVisualBurst)
+        if (tuning.muzzleFlashVisualBurst < 4 || tuning.muzzleFlashVisualBurst > tuning.projectileVisualBurst)
         {
             failures.Add("Muzzle flash visual burst count should make aggregate volleys readable without exceeding projectile density.");
         }
-        if (tuning.openingVolleyDamageMultiplier < 1.25f || tuning.openingVolleyDamageMultiplier > 1.8f)
+        if (tuning.openingVolleyDamageMultiplier < 1.45f || tuning.openingVolleyDamageMultiplier > 1.8f)
         {
             failures.Add("Opening volley damage multiplier should add a clear first-contact punch without replacing upgrade progression.");
         }
-        if (tuning.openingVolleyExtraProjectiles < 2)
+        if (tuning.openingVolleyExtraProjectiles < 3)
         {
             failures.Add("Opening volley extra projectiles should make first contact visibly denser on device.");
         }
@@ -3212,11 +3216,11 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Power-spike volley minimum gain should catch meaningful onboarding gates without firing on tiny count changes.");
         }
-        if (tuning.powerSpikeVolleyDamageMultiplier < 1.1f || tuning.powerSpikeVolleyDamageMultiplier > tuning.openingVolleyDamageMultiplier)
+        if (tuning.powerSpikeVolleyDamageMultiplier < 1.25f || tuning.powerSpikeVolleyDamageMultiplier > tuning.openingVolleyDamageMultiplier)
         {
             failures.Add("Power-spike volley damage should make post-gate strength readable without outpacing first-contact opening volleys.");
         }
-        if (tuning.powerSpikeVolleyExtraProjectiles < 1 || tuning.powerSpikeVolleyExtraProjectiles > tuning.openingVolleyExtraProjectiles)
+        if (tuning.powerSpikeVolleyExtraProjectiles < 2 || tuning.powerSpikeVolleyExtraProjectiles > tuning.openingVolleyExtraProjectiles)
         {
             failures.Add("Power-spike volley projectiles should visibly thicken post-gate fire without exceeding opening salvo density.");
         }
@@ -3224,17 +3228,33 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Power-spike volley cooldown should prevent spam while still making gate gains feel immediate.");
         }
-        if (tuning.volleyImmediateDamageFraction < 0.2f || tuning.volleyImmediateDamageFraction > 0.45f)
+        if (tuning.volleyImmediateDamageFraction < 0.32f || tuning.volleyImmediateDamageFraction > 0.5f)
         {
             failures.Add("Volley immediate damage fraction should make combat responsive while preserving projectile impact value.");
         }
-        if (tuning.openingVolleyImmediateDamageFraction < 0.4f || tuning.openingVolleyImmediateDamageFraction > 0.65f)
+        if (tuning.openingVolleyImmediateDamageFraction < 0.5f || tuning.openingVolleyImmediateDamageFraction > 0.7f)
         {
             failures.Add("Opening volley immediate damage fraction should create first-contact hit confirmation without becoming pure hitscan.");
         }
         if (tuning.openingVolleyImmediateDamageFraction < tuning.volleyImmediateDamageFraction)
         {
             failures.Add("Opening volley immediate damage should be at least as responsive as steady volley damage.");
+        }
+        if (tuning.onboardingCombatBoostLevelLimit < 3 || tuning.onboardingCombatBoostLevelLimit > 5)
+        {
+            failures.Add("Onboarding combat boost should protect the first-session tutorial without becoming a permanent difficulty override.");
+        }
+        if (tuning.onboardingCombatBoostDuration < 14f || tuning.onboardingCombatBoostDuration > 30f)
+        {
+            failures.Add("Onboarding combat boost duration should cover the first enemy and obstacle beats without covering full runs.");
+        }
+        if (tuning.onboardingCombatDamageMultiplier < 1.15f || tuning.onboardingCombatDamageMultiplier > 1.45f)
+        {
+            failures.Add("Onboarding combat damage boost should make the opener feel powerful without replacing upgrades.");
+        }
+        if (tuning.onboardingCombatFireRateMultiplier < 1.15f || tuning.onboardingCombatFireRateMultiplier > 1.45f)
+        {
+            failures.Add("Onboarding combat fire-rate boost should make the opener feel active without replacing upgrades.");
         }
         if (tuning.earlyCloseRangeAssistLevelLimit < 3 || tuning.earlyCloseRangeAssistLevelLimit > 8)
         {
@@ -3244,11 +3264,11 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Close-range combat assist distance should only activate when an onboarding target is near contact.");
         }
-        if (tuning.closeRangeFireRateMultiplier < 1.15f || tuning.closeRangeFireRateMultiplier > 1.75f)
+        if (tuning.closeRangeFireRateMultiplier < 1.25f || tuning.closeRangeFireRateMultiplier > 1.75f)
         {
             failures.Add("Close-range combat fire-rate assist should make imminent contact feel urgent without replacing upgrades.");
         }
-        if (tuning.closeRangeDamageMultiplier < 1.05f || tuning.closeRangeDamageMultiplier > 1.35f)
+        if (tuning.closeRangeDamageMultiplier < 1.1f || tuning.closeRangeDamageMultiplier > 1.35f)
         {
             failures.Add("Close-range combat damage assist should be a small onboarding safety margin, not a full balance override.");
         }
@@ -3303,7 +3323,7 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Early contact mercy minimum soldiers should require a real surviving squad before saving a near-win.");
         }
-        if (tuning.earlyContactMercyEnemyBuffer < 2 || tuning.earlyContactMercyEnemyBuffer > 8)
+        if (tuning.earlyContactMercyEnemyBuffer < 4 || tuning.earlyContactMercyEnemyBuffer > 8)
         {
             failures.Add("Early contact mercy enemy buffer should catch near-wins without forgiving hopeless contacts.");
         }
@@ -3450,7 +3470,11 @@ public static class ArmyRushProjectBuilder
         float targetLockZ = Mathf.Max(0f, firstEnemy.z - targetRange);
         float contactTime = Mathf.Max(0f, (firstEnemy.z - targetLockZ) / forwardSpeed);
         float baseFireInterval = Mathf.Max(tuning.minFireInterval, tuning.baseFireInterval);
-        float fireInterval = Mathf.Max(tuning.minFireInterval, baseFireInterval / Mathf.Max(1f, fireRateMultiplier));
+        bool onboardingBoostEligible = level.levelIndex <= Mathf.Max(0, tuning.onboardingCombatBoostLevelLimit)
+            && firstEnemy.z / forwardSpeed <= Mathf.Max(0f, tuning.onboardingCombatBoostDuration);
+        float onboardingFireRateMultiplier = onboardingBoostEligible ? Mathf.Max(1f, tuning.onboardingCombatFireRateMultiplier) : 1f;
+        float onboardingDamageMultiplier = onboardingBoostEligible ? Mathf.Max(1f, tuning.onboardingCombatDamageMultiplier) : 1f;
+        float fireInterval = Mathf.Max(tuning.minFireInterval, baseFireInterval / (Mathf.Max(1f, fireRateMultiplier) * onboardingFireRateMultiplier));
         float projectileSpeed = Mathf.Max(0.01f, tuning.projectileSpeed);
         float nextFireTime = 0f;
         float nextPowerSpikeVolleyTime = 0f;
@@ -3512,7 +3536,7 @@ public static class ArmyRushProjectBuilder
             bool openingVolley = firstShot && tuning.openingVolleyDamageMultiplier > 1f;
             bool powerSpikeVolley = !openingVolley && powerSpikeQueued && shotTime >= nextPowerSpikeVolleyTime && tuning.powerSpikeVolleyDamageMultiplier > 1f;
             float volleyMultiplier = openingVolley ? Mathf.Max(1f, tuning.openingVolleyDamageMultiplier) : powerSpikeVolley ? Mathf.Max(1f, tuning.powerSpikeVolleyDamageMultiplier) : 1f;
-            int totalDamage = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, damagePerSoldier) * Mathf.Max(1, currentSoldiers) * baseFireInterval * volleyMultiplier));
+            int totalDamage = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, damagePerSoldier) * Mathf.Max(1, currentSoldiers) * baseFireInterval * volleyMultiplier * onboardingDamageMultiplier));
             int immediateDamage = CalculateImmediateDamage(totalDamage, openingVolley || powerSpikeVolley ? Mathf.Max(tuning.volleyImmediateDamageFraction, tuning.openingVolleyImmediateDamageFraction) : tuning.volleyImmediateDamageFraction);
             damageBeforeContact += immediateDamage;
 
