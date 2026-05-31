@@ -27,6 +27,10 @@ namespace ArmyRush
         [SerializeField] private Text _defeatStatusText;
         [SerializeField] private Button _defeatUpgradeButton;
         [SerializeField] private Image _defeatFadeImage;
+        [SerializeField] private GameObject _boostIndicatorRoot;
+        [SerializeField] private Image _boostIndicatorFrame;
+        [SerializeField] private Image _boostIndicatorFill;
+        [SerializeField] private Text _boostIndicatorText;
         [SerializeField] private PlayerController _player;
         [SerializeField] private LevelManager _levelManager;
         [SerializeField] private float _victoryCoinCountDuration = 0.65f;
@@ -39,9 +43,11 @@ namespace ArmyRush
         private Coroutine _defeatFadeRoutine;
         private int _displayedCoins;
         private int _runPreviewCoins;
+        private bool _boostIndicatorRaycastsConfigured;
         private static readonly Color DefeatFadeColor = new Color(0.24f, 0.02f, 0.04f, 0.54f);
         private static readonly Color ResultUpgradeMenuColor = new Color(0.08f, 0.28f, 0.95f);
         private static readonly Color ResultRecommendedUpgradeColor = new Color(0.96f, 0.62f, 0.08f);
+        private static readonly Color BoostPanelColor = new Color(0.03f, 0.11f, 0.19f, 0.88f);
 
         private void Start()
         {
@@ -58,6 +64,7 @@ namespace ArmyRush
                 int level = _progression != null ? _progression.CurrentLevelIndex : 1;
                 _levelText.text = $"Level {level}";
             }
+            EnsureBoostIndicator();
             EnsureDefeatFadeImage();
             EnsureResultUpgradeButtons();
             EnsureResultAdPlaceholders();
@@ -92,6 +99,8 @@ namespace ArmyRush
             {
                 _progressSlider.value = Mathf.Clamp01(_player.ProgressZ / Mathf.Max(1f, _levelManager.CurrentLevel.trackLength));
             }
+
+            UpdateBoostIndicatorPulse();
         }
 
         public void Configure(PlayerController player, LevelManager levelManager)
@@ -127,6 +136,10 @@ namespace ArmyRush
             {
                 HideDefeatFade();
             }
+            if (state == RunState.PreRun || state == RunState.Victory || state == RunState.Defeat)
+            {
+                SetBoostIndicator(false, string.Empty, 0f, Color.clear);
+            }
         }
 
         public void ShowVictory(int coinsEarned)
@@ -148,6 +161,53 @@ namespace ArmyRush
         {
             _runPreviewCoins = Mathf.Max(0, coins);
             RefreshCoinText();
+        }
+
+        public void SetBoostIndicator(bool visible, string label, float normalizedTime, Color accentColor)
+        {
+            EnsureBoostIndicator();
+            if (_boostIndicatorRoot == null)
+            {
+                return;
+            }
+
+            if (!visible)
+            {
+                _boostIndicatorRoot.SetActive(false);
+                _boostIndicatorRoot.transform.localScale = Vector3.one;
+                SetBoostIndicatorFill(0f);
+                return;
+            }
+
+            _boostIndicatorRoot.SetActive(true);
+            if (_boostIndicatorText != null)
+            {
+                string displayLabel = string.IsNullOrWhiteSpace(label) ? "BOOST" : label;
+                if (_boostIndicatorText.text != displayLabel)
+                {
+                    _boostIndicatorText.text = displayLabel;
+                }
+            }
+
+            float normalized = Mathf.Clamp01(normalizedTime);
+            SetBoostIndicatorFill(normalized);
+            if (_boostIndicatorFrame != null)
+            {
+                _boostIndicatorFrame.color = Color.Lerp(BoostPanelColor, accentColor, 0.18f);
+                _boostIndicatorFrame.raycastTarget = false;
+            }
+            if (_boostIndicatorFill != null)
+            {
+                Color fillColor = accentColor;
+                fillColor.a = 0.66f;
+                _boostIndicatorFill.color = fillColor;
+                _boostIndicatorFill.raycastTarget = false;
+            }
+            if (_boostIndicatorText != null)
+            {
+                _boostIndicatorText.color = Color.white;
+                _boostIndicatorText.raycastTarget = false;
+            }
         }
 
         public void ShowDefeat(int coinsEarned)
@@ -253,6 +313,157 @@ namespace ArmyRush
             }
 
             return amount.ToString();
+        }
+
+        private void EnsureBoostIndicator()
+        {
+            if (_boostIndicatorRoot == null)
+            {
+                Canvas canvas = GetComponent<Canvas>();
+                if (canvas == null)
+                {
+                    return;
+                }
+
+                Transform parent = canvas.transform.Find("SafeArea");
+                if (parent == null)
+                {
+                    parent = canvas.transform;
+                }
+
+                Transform existing = parent.Find("BoostIndicator");
+                if (existing != null)
+                {
+                    _boostIndicatorRoot = existing.gameObject;
+                }
+                else
+                {
+                    _boostIndicatorRoot = CreateBoostIndicator(parent);
+                }
+            }
+
+            if (_boostIndicatorRoot == null)
+            {
+                return;
+            }
+
+            if (_boostIndicatorFrame == null)
+            {
+                _boostIndicatorFrame = _boostIndicatorRoot.GetComponent<Image>();
+            }
+            if (_boostIndicatorFill == null)
+            {
+                Transform fill = _boostIndicatorRoot.transform.Find("BoostFill");
+                if (fill != null)
+                {
+                    _boostIndicatorFill = fill.GetComponent<Image>();
+                }
+            }
+            if (_boostIndicatorText == null)
+            {
+                Transform text = _boostIndicatorRoot.transform.Find("BoostText");
+                if (text != null)
+                {
+                    _boostIndicatorText = text.GetComponent<Text>();
+                }
+            }
+
+            if (_boostIndicatorRaycastsConfigured)
+            {
+                return;
+            }
+
+            Graphic[] graphics = _boostIndicatorRoot.GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                if (graphics[i] != null)
+                {
+                    graphics[i].raycastTarget = false;
+                }
+            }
+            _boostIndicatorRaycastsConfigured = true;
+        }
+
+        private GameObject CreateBoostIndicator(Transform parent)
+        {
+            GameObject root = new GameObject("BoostIndicator", typeof(RectTransform), typeof(Image));
+            RectTransform rect = root.GetComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = new Vector2(0.5f, 0.835f);
+            rect.anchorMax = new Vector2(0.5f, 0.835f);
+            rect.sizeDelta = new Vector2(460f, 54f);
+            rect.anchoredPosition = Vector2.zero;
+
+            Image frame = root.GetComponent<Image>();
+            frame.color = BoostPanelColor;
+            frame.raycastTarget = false;
+            _boostIndicatorFrame = frame;
+
+            GameObject fillObject = new GameObject("BoostFill", typeof(RectTransform), typeof(Image));
+            RectTransform fillRect = fillObject.GetComponent<RectTransform>();
+            fillRect.SetParent(root.transform, false);
+            fillRect.anchorMin = new Vector2(0f, 0.5f);
+            fillRect.anchorMax = new Vector2(0f, 0.5f);
+            fillRect.pivot = new Vector2(0f, 0.5f);
+            fillRect.anchoredPosition = new Vector2(6f, 0f);
+            fillRect.sizeDelta = new Vector2(0f, 42f);
+            Image fill = fillObject.GetComponent<Image>();
+            fill.color = new Color(0.32f, 0.92f, 1f, 0.62f);
+            fill.raycastTarget = false;
+            _boostIndicatorFill = fill;
+
+            GameObject textObject = new GameObject("BoostText", typeof(RectTransform), typeof(Text));
+            RectTransform textRect = textObject.GetComponent<RectTransform>();
+            textRect.SetParent(root.transform, false);
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            Text text = textObject.GetComponent<Text>();
+            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (font != null)
+            {
+                text.font = font;
+            }
+            text.text = string.Empty;
+            text.fontSize = 26;
+            text.fontStyle = FontStyle.Bold;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = Color.white;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 14;
+            text.resizeTextMaxSize = 26;
+            text.raycastTarget = false;
+            _boostIndicatorText = text;
+
+            root.SetActive(false);
+            return root;
+        }
+
+        private void SetBoostIndicatorFill(float normalized)
+        {
+            if (_boostIndicatorRoot == null || _boostIndicatorFill == null)
+            {
+                return;
+            }
+
+            RectTransform rootRect = _boostIndicatorRoot.GetComponent<RectTransform>();
+            RectTransform fillRect = _boostIndicatorFill.rectTransform;
+            float rootWidth = rootRect.rect.width > 1f ? rootRect.rect.width : rootRect.sizeDelta.x;
+            float rootHeight = rootRect.rect.height > 1f ? rootRect.rect.height : rootRect.sizeDelta.y;
+            fillRect.sizeDelta = new Vector2(Mathf.Max(0f, (rootWidth - 12f) * Mathf.Clamp01(normalized)), Mathf.Max(8f, rootHeight - 12f));
+        }
+
+        private void UpdateBoostIndicatorPulse()
+        {
+            if (_boostIndicatorRoot == null || !_boostIndicatorRoot.activeSelf)
+            {
+                return;
+            }
+
+            float pulse = 1f + Mathf.Sin(Time.unscaledTime * 8f) * 0.025f;
+            _boostIndicatorRoot.transform.localScale = Vector3.one * pulse;
         }
 
         private void OnBossSpawned(BossController boss)

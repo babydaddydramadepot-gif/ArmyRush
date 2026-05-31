@@ -209,6 +209,7 @@ Implementation Pass 1 Result:
 - Added data-driven immediate hit-confirmation damage to player volleys so physical-device combat responds as soon as a target is acquired while keeping projectile tracers and impact damage meaningful.
 - Added bounded early close-range combat urgency assist so Levels 1-5 fire faster and hit slightly harder near imminent contact, with one-time `PUSH` feedback and validator guardrails.
 - Added functional run boost gates for temporary damage, fire-rate, and coin power-ups, then introduced fire-rate/damage boost pickups in Levels 6, 7, and 10 to extend the first-session power fantasy beyond raw army count.
+- Added a compact active run-boost HUD indicator with countdown fill, safe-area placement, nonblocking raycasts, runtime fallback creation for older scenes, and production validation coverage.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1071,7 +1072,7 @@ Acceptance Criteria:
 
 ## 6.1 HUD
 
-Status: Functional Pass Implemented with Compact Icon Settings Control, Run Coin Preview, and Animated Crowd Count Feedback; Device Layout QA Pending
+Status: Functional Pass Implemented with Compact Icon Settings Control, Run Coin Preview, Active Boost Feedback, and Animated Crowd Count Feedback; Device Layout QA Pending
 Priority: Critical
 
 Tasks:
@@ -1083,6 +1084,7 @@ Tasks:
 - Add settings button.
 - Respect safe areas.
 - [x] Show pending run-earned coins in the gameplay HUD as rewards are collected.
+- [x] Show active temporary run boosts with a compact countdown indicator that does not block gameplay input.
 - [x] Animate the above-crowd soldier count on gains and losses.
 - [x] Use compact icon-led settings control during gameplay.
 - [x] Validate top-HUD settings/progress/coin/level overlap.
@@ -1459,6 +1461,7 @@ Tasks:
 - [x] Share main-camera lookup across pooled floating text feedback.
 - [x] Pool level fixtures for track segments, gates, enemy groups, obstacles, bosses, finish triggers, bonus crates, and bonus-end triggers across level rebuilds.
 - [x] Add production validation coverage ensuring spawned level fixtures are owned by `PoolManager`.
+- [x] Keep active boost HUD refresh allocation-conscious by reusing the active label between second/count changes.
 
 Acceptance Criteria:
 
@@ -1490,6 +1493,7 @@ Tasks:
 - [x] Confirm gameplay UI CanvasScaler remains portrait `1080x1920` with balanced width/height matching.
 - [x] Disable passive HUD text/images from blocking gameplay input raycasts.
 - [x] Add production validation coverage for passive gameplay UI raycast targets.
+- [x] Validate active run-boost HUD placement, size, countdown fill, label, and nonblocking raycast behavior.
 
 Acceptance Criteria:
 
@@ -1565,7 +1569,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1596,6 +1600,7 @@ Tasks:
 - [x] Add guarded early gate guidance markers for Levels 1-3 to reduce first-session wrong-route confusion on physical-device playthroughs.
 - [x] Add data-driven early rally assist so low-count first-session survivors can recover momentum without making defeat impossible.
 - [x] Add one-use early contact mercy for near-win onboarding enemy collisions so projectile travel/contact timing cannot instantly erase a close clear.
+- [x] Add persistent, safe-area active run-boost HUD feedback so boost pickups do not rely only on one-shot floating labels.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.
@@ -1614,7 +1619,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, and Run Boost Gates
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, and Active Boost Feedback
 Priority: Critical
 
 Tasks:
@@ -1623,6 +1628,7 @@ Tasks:
 - [x] Add camera shake tuning.
 - [x] Add early close-range combat urgency feedback for first-session near-contact pressure.
 - [x] Add temporary run boost gates that make post-boss combat and boss preparation feel more powerful.
+- [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
 - Add reward polish.
 - Add UI polish.
 - Add VFX polish.

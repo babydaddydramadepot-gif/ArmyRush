@@ -109,6 +109,36 @@ Date:
 
 System:
 
+Active Run Boost HUD Feedback
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added persistent gameplay HUD feedback for temporary run boost gates. `RunManager` now tracks active damage, fire-rate, coin, and combined boost states and updates a compact safe-area boost indicator with a countdown label and fill. `GameplayUI` owns the noninteractive indicator, creates a runtime fallback for older scenes, disables all boost graphics as raycast targets, and hides the indicator cleanly before runs and on result states. The project builder now generates serialized boost indicator references for future Game scene rebuilds and production validation checks compact placement, fill, label, boss/progress overlap, and passive raycast behavior.
+
+Result:
+
+Temporary `FIRE`, `DMG`, `COIN`, and combined `POWER` boosts no longer rely only on one-shot floating text. The player gets readable portrait-safe feedback while the boost is active, and the coin preview is refreshed when a coin boost expires so the HUD does not keep an inflated pending reward value. Static validation passed with `git diff --check` plus targeted source checks for the boost indicator, runtime fallback, and validator wiring.
+
+Follow Up:
+
+Physical iPhone QA should verify the boost indicator remains readable during Levels 6, 7, and 10 without covering gates, boss UI, or the crowd. Unity production validation was retried with log `/tmp/armyrush_unity_active_boost_hud_validate.log`, but AR-009 Unity Licensing Client protocol failures again prevented `ArmyRushProjectBuilder.ValidateProductionFoundation` from starting, so iOS simulator export/launch was not retried in this pass.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Run Boost Gates and Post-Boss Power Ramp
 
 Files:
@@ -3714,7 +3744,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over, immediate hit-confirmation damage makes target health respond before projectile travel completes, bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact, and run boost gates now add temporary fire-rate/damage spikes in the post-first-boss ramp. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm perceived fire rate, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, run-boost gate readability/impact, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over, immediate hit-confirmation damage makes target health respond before projectile travel completes, bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact, and run boost gates now add temporary fire-rate/damage spikes in the post-first-boss ramp with persistent active HUD countdown feedback. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm perceived fire rate, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, active run-boost HUD readability/impact, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3722,7 +3752,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_run_boost_gate_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_active_boost_hud_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

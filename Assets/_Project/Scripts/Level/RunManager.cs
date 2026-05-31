@@ -5,6 +5,15 @@ namespace ArmyRush
 {
     public sealed class RunManager : MonoBehaviour
     {
+        private enum RunBoostHudKind
+        {
+            None,
+            Damage,
+            FireRate,
+            Coins,
+            Power
+        }
+
         [SerializeField] private GlobalTuning _tuning;
         [SerializeField] private LevelManager _levelManager;
         [SerializeField] private CrowdManager _crowd;
@@ -25,6 +34,13 @@ namespace ArmyRush
         private float _damageBoostEndTime;
         private float _fireRateBoostEndTime;
         private float _coinBoostEndTime;
+        private bool _boostHudVisible;
+        private bool _coinBoostPreviewWasActive;
+        private RunBoostHudKind _boostHudKind = RunBoostHudKind.None;
+        private int _boostHudSeconds = -1;
+        private int _boostHudPercent = -1;
+        private int _boostHudActiveCount = -1;
+        private string _boostHudLabel = string.Empty;
 
         public event Action<RunState> StateChanged;
         public RunState State { get; private set; } = RunState.None;
@@ -54,6 +70,11 @@ namespace ArmyRush
             {
                 _crowd.CountChanged -= OnCrowdCountChanged;
             }
+        }
+
+        private void Update()
+        {
+            RefreshRunBoostIndicator();
         }
 
         public void Configure(GlobalTuning tuning, LevelManager levelManager, CrowdManager crowd, GameplayUI gameplayUI)
@@ -190,6 +211,8 @@ namespace ArmyRush
             {
                 haptics.Play(HapticCue.Light);
             }
+
+            RefreshRunBoostIndicator();
         }
 
         public void WinRun()
@@ -407,6 +430,8 @@ namespace ArmyRush
             _damageBoostEndTime = 0f;
             _fireRateBoostEndTime = 0f;
             _coinBoostEndTime = 0f;
+            _coinBoostPreviewWasActive = false;
+            HideRunBoostIndicator();
         }
 
         private float CalculateRunBoostMultiplier(int value)
@@ -419,6 +444,131 @@ namespace ArmyRush
         private static float GetActiveBoostMultiplier(float multiplier, float endTime)
         {
             return Time.time <= endTime ? Mathf.Max(1f, multiplier) : 1f;
+        }
+
+        private void RefreshRunBoostIndicator()
+        {
+            if (_gameplayUI == null)
+            {
+                return;
+            }
+
+            bool canShowBoost = State == RunState.Running || State == RunState.CombatPaused || State == RunState.FinishSequence;
+            if (!canShowBoost)
+            {
+                HideRunBoostIndicator();
+                return;
+            }
+
+            float duration = Mathf.Max(1f, _tuning != null ? _tuning.runBoostGateDuration : 10f);
+            float damageRemaining = GetActiveBoostRemaining(_damageBoostMultiplier, _damageBoostEndTime);
+            float fireRateRemaining = GetActiveBoostRemaining(_fireRateBoostMultiplier, _fireRateBoostEndTime);
+            float coinRemaining = GetActiveBoostRemaining(_coinBoostMultiplier, _coinBoostEndTime);
+            bool damageActive = damageRemaining > 0f;
+            bool fireRateActive = fireRateRemaining > 0f;
+            bool coinActive = coinRemaining > 0f;
+
+            if (coinActive != _coinBoostPreviewWasActive)
+            {
+                _gameplayUI.SetRunCoinPreview(GetPreviewRewardCoins());
+                _coinBoostPreviewWasActive = coinActive;
+            }
+
+            int activeCount = (damageActive ? 1 : 0) + (fireRateActive ? 1 : 0) + (coinActive ? 1 : 0);
+            if (activeCount == 0)
+            {
+                HideRunBoostIndicator();
+                return;
+            }
+
+            RunBoostHudKind kind;
+            float remaining;
+            float multiplier;
+            Color color;
+            if (activeCount > 1)
+            {
+                kind = RunBoostHudKind.Power;
+                remaining = Mathf.Max(damageRemaining, fireRateRemaining, coinRemaining);
+                multiplier = activeCount;
+                color = new Color(0.28f, 1f, 0.82f);
+            }
+            else if (fireRateActive)
+            {
+                kind = RunBoostHudKind.FireRate;
+                remaining = fireRateRemaining;
+                multiplier = _fireRateBoostMultiplier;
+                color = new Color(0.32f, 0.92f, 1f);
+            }
+            else if (damageActive)
+            {
+                kind = RunBoostHudKind.Damage;
+                remaining = damageRemaining;
+                multiplier = _damageBoostMultiplier;
+                color = new Color(1f, 0.45f, 0.24f);
+            }
+            else
+            {
+                kind = RunBoostHudKind.Coins;
+                remaining = coinRemaining;
+                multiplier = _coinBoostMultiplier;
+                color = new Color(1f, 0.78f, 0.12f);
+            }
+
+            int seconds = Mathf.Max(1, Mathf.CeilToInt(remaining));
+            int percent = kind == RunBoostHudKind.Power ? activeCount : Mathf.Max(1, Mathf.RoundToInt((Mathf.Max(1f, multiplier) - 1f) * 100f));
+            if (!_boostHudVisible || kind != _boostHudKind || seconds != _boostHudSeconds || percent != _boostHudPercent || activeCount != _boostHudActiveCount)
+            {
+                _boostHudLabel = BuildRunBoostHudLabel(kind, percent, seconds, activeCount);
+                _boostHudKind = kind;
+                _boostHudSeconds = seconds;
+                _boostHudPercent = percent;
+                _boostHudActiveCount = activeCount;
+            }
+
+            _boostHudVisible = true;
+            _gameplayUI.SetBoostIndicator(true, _boostHudLabel, remaining / duration, color);
+        }
+
+        private void HideRunBoostIndicator()
+        {
+            if (!_boostHudVisible)
+            {
+                _boostHudKind = RunBoostHudKind.None;
+                _boostHudSeconds = -1;
+                _boostHudPercent = -1;
+                _boostHudActiveCount = -1;
+                return;
+            }
+
+            _boostHudVisible = false;
+            _boostHudKind = RunBoostHudKind.None;
+            _boostHudSeconds = -1;
+            _boostHudPercent = -1;
+            _boostHudActiveCount = -1;
+            _boostHudLabel = string.Empty;
+            _gameplayUI?.SetBoostIndicator(false, string.Empty, 0f, Color.clear);
+        }
+
+        private static string BuildRunBoostHudLabel(RunBoostHudKind kind, int percentOrCount, int seconds, int activeCount)
+        {
+            switch (kind)
+            {
+                case RunBoostHudKind.FireRate:
+                    return "FIRE +" + percentOrCount + "%  " + seconds + "s";
+                case RunBoostHudKind.Damage:
+                    return "DMG +" + percentOrCount + "%  " + seconds + "s";
+                case RunBoostHudKind.Coins:
+                    return "COIN +" + percentOrCount + "%  " + seconds + "s";
+                case RunBoostHudKind.Power:
+                    return "POWER x" + Mathf.Max(2, activeCount) + "  " + seconds + "s";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        private static float GetActiveBoostRemaining(float multiplier, float endTime)
+        {
+            return multiplier > 1f ? Mathf.Max(0f, endTime - Time.time) : 0f;
         }
 
         private void SetState(RunState state)

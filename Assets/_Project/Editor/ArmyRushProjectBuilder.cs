@@ -2657,6 +2657,7 @@ public static class ArmyRushProjectBuilder
         Text bossText = CreateUIText("BossText", bossPanel.transform, "TANK BOSS", 24, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.68f), new Vector2(560f, 32f));
         Slider bossSlider = CreateProgressBar("BossHealth", bossPanel.transform, new Vector2(0.5f, 0.28f), new Vector2(560f, 22f));
         bossPanel.SetActive(false);
+        GameObject boostIndicator = CreateBoostIndicator(safe.transform, out Image boostFrame, out Image boostFill, out Text boostText);
         GameObject prompt = CreatePanel("StartPrompt", safe.transform, new Vector2(0.5f, 0.36f), new Vector2(530f, 98f), new Color(0.05f, 0.13f, 0.24f, 0.82f));
         Text promptText = CreateUIText("PromptText", prompt.transform, "DRAG TO START", 38, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(480f, 80f));
         GameObject victoryPanel = CreateResultPanel("VictoryPanel", safe.transform, "VICTORY", out Text victoryCoins, out Button nextButton, out Button victoryUpgradeButton, out Button victoryRewardedButton, out Text victoryStatusText);
@@ -2700,6 +2701,10 @@ public static class ArmyRushProjectBuilder
         SetObject(gameplayUI, "_defeatStatusText", defeatStatusText);
         SetObject(gameplayUI, "_defeatUpgradeButton", defeatUpgradeButton);
         SetObject(gameplayUI, "_defeatFadeImage", defeatFade);
+        SetObject(gameplayUI, "_boostIndicatorRoot", boostIndicator);
+        SetObject(gameplayUI, "_boostIndicatorFrame", boostFrame);
+        SetObject(gameplayUI, "_boostIndicatorFill", boostFill);
+        SetObject(gameplayUI, "_boostIndicatorText", boostText);
         SetObject(gameplayUI, "_player", playerController);
         SetObject(gameplayUI, "_levelManager", levelManager);
         CreateSettingsPanel(safe.transform, settings);
@@ -5131,6 +5136,9 @@ public static class ArmyRushProjectBuilder
             }
         }
 
+        GameplayUI ui = canvas != null ? canvas.GetComponent<GameplayUI>() : null;
+        ValidateBoostIndicator(ui, safe, failures);
+        GameplayUI.DisablePassiveRaycastTargets(safe);
         ValidatePassiveRaycastTargets(safe, failures);
 
         if (!TryGetChildRect(safe, "SettingsButton", out RectTransform settingsRect))
@@ -5159,6 +5167,49 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Gameplay HUD SettingsButton overlaps the coin counter.");
         }
+    }
+
+    private static void ValidateBoostIndicator(GameplayUI ui, Transform safe, List<string> failures)
+    {
+        if (ui == null)
+        {
+            failures.Add("Game scene is missing GameplayUI on the runtime canvas.");
+            return;
+        }
+
+        ui.SetBoostIndicator(true, "FIRE +30%  10s", 0.75f, new Color(0.32f, 0.92f, 1f));
+        if (!TryGetChildRect(safe, "BoostIndicator", out RectTransform boostRect))
+        {
+            failures.Add("Gameplay HUD is missing the active run boost indicator.");
+            return;
+        }
+
+        if (boostRect.sizeDelta.x > 520f || boostRect.sizeDelta.y > 70f)
+        {
+            failures.Add("Gameplay boost indicator must stay compact for portrait phone layouts.");
+        }
+        if (boostRect.anchorMin.y < 0.78f || boostRect.anchorMin.y > 0.87f)
+        {
+            failures.Add("Gameplay boost indicator should sit below boss/progress HUD without covering the run view.");
+        }
+        if (FindDeepChild(boostRect.transform, "BoostFill") == null)
+        {
+            failures.Add("Gameplay boost indicator is missing its countdown fill.");
+        }
+        if (FindDeepChild(boostRect.transform, "BoostText") == null)
+        {
+            failures.Add("Gameplay boost indicator is missing its readable boost label.");
+        }
+        if (TryGetChildRect(safe, "ProgressBar", out RectTransform progressRect) && RectTransformsOverlap(boostRect, progressRect))
+        {
+            failures.Add("Gameplay boost indicator overlaps the progress bar.");
+        }
+        if (TryGetChildRect(safe, "BossPanel", out RectTransform bossRect) && RectTransformsOverlap(boostRect, bossRect))
+        {
+            failures.Add("Gameplay boost indicator overlaps the boss health panel.");
+        }
+
+        ui.SetBoostIndicator(false, string.Empty, 0f, Color.clear);
     }
 
     private static void ValidatePassiveRaycastTargets(Transform root, List<string> failures)
@@ -5351,6 +5402,41 @@ public static class ArmyRushProjectBuilder
         Image image = obj.AddComponent<Image>();
         image.color = color;
         return obj;
+    }
+
+    private static GameObject CreateBoostIndicator(Transform parent, out Image frame, out Image fill, out Text label)
+    {
+        GameObject root = new GameObject("BoostIndicator");
+        RectTransform rect = root.AddComponent<RectTransform>();
+        rect.SetParent(parent, false);
+        rect.anchorMin = new Vector2(0.5f, 0.835f);
+        rect.anchorMax = new Vector2(0.5f, 0.835f);
+        rect.sizeDelta = new Vector2(460f, 54f);
+        rect.anchoredPosition = Vector2.zero;
+
+        frame = root.AddComponent<Image>();
+        frame.color = new Color(0.03f, 0.11f, 0.19f, 0.88f);
+        frame.raycastTarget = false;
+
+        GameObject fillObject = new GameObject("BoostFill");
+        RectTransform fillRect = fillObject.AddComponent<RectTransform>();
+        fillRect.SetParent(root.transform, false);
+        fillRect.anchorMin = new Vector2(0f, 0.5f);
+        fillRect.anchorMax = new Vector2(0f, 0.5f);
+        fillRect.pivot = new Vector2(0f, 0.5f);
+        fillRect.anchoredPosition = new Vector2(6f, 0f);
+        fillRect.sizeDelta = new Vector2(0f, 42f);
+        fill = fillObject.AddComponent<Image>();
+        fill.color = new Color(0.32f, 0.92f, 1f, 0.62f);
+        fill.raycastTarget = false;
+
+        label = CreateUIText("BoostText", root.transform, string.Empty, 26, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.5f), new Vector2(432f, 48f));
+        label.resizeTextMinSize = 14;
+        label.resizeTextMaxSize = 26;
+        label.raycastTarget = false;
+
+        root.SetActive(false);
+        return root;
     }
 
     private static Image CreateFullscreenImage(string name, Transform parent, Color color)
