@@ -109,6 +109,34 @@ Date:
 
 System:
 
+Crowd Count Feedback Polish
+
+Files:
+
+Assets/_Project/Scripts/Crowd/CrowdManager.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added polished animation feedback to the above-crowd soldier count. After the initial spawn, every count gain or loss now briefly shifts the label, eases it back from a smaller scale, and flashes the text green or red before returning to its safe resting color. The pulse stays below the existing `WorldTextGuard` scale limit, so it improves readability without risking the oversized world-text regression seen on physical iPhone.
+
+Result:
+
+Army growth and attrition now have a clearer visible count response alongside existing soldier spawn/despawn, pooled crowd VFX, floating text, audio, and haptics. This satisfies the gameplay/UI requirement that the visible crowd count animate when changed while preserving the portrait-device world-text safeguards.
+
+Follow Up:
+
+Run physical iPhone QA to tune the pulse timing and color strength during large gates, rally assists, enemy contact, and boss hits. Static validation passed with `git diff --check` and a crowd-count feedback smoke check. Unity production validation was attempted with log `/tmp/armyrush_unity_count_pulse_validate.log`, but AR-009 Unity Licensing Client protocol failures again prevented `ArmyRushProjectBuilder.ValidateProductionFoundation` from starting.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 First-Session Rally Assist
 
 Files:
@@ -3494,7 +3522,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, and bounded early rally assist now ensure first-session mistakes still produce visible recovery or progression. Physical iPhone retest is still required to confirm perceived fire rate, opening-salvo readability, rally-assist readability/generosity, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early rally assist, and animated soldier-count feedback now ensure first-session mistakes and recovery beats stay readable. Physical iPhone retest is still required to confirm perceived fire rate, opening-salvo readability, rally-assist readability/generosity, crowd-count pulse readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3502,7 +3530,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_rally_assist_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_count_pulse_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

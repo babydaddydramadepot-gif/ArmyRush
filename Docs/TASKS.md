@@ -443,7 +443,7 @@ Acceptance Criteria:
 
 ## 1.3 Crowd Unit System
 
-Status: Functional Pass Implemented with Early Rally Assist; Performance QA Pending
+Status: Functional Pass Implemented with Animated Count Feedback and Early Rally Assist; Performance QA Pending
 Priority: Critical
 
 Tasks:
@@ -455,6 +455,7 @@ Tasks:
 - Implement unit pooling.
 - Implement crowd count tracking.
 - Implement above-crowd count label.
+- [x] Add count-label pulse/color feedback so visible army count changes animate without exceeding world-text safety bounds.
 - [x] Add bounded first-session rally assist for low-count survivors in early levels.
 
 Acceptance Criteria:
@@ -1060,7 +1061,7 @@ Acceptance Criteria:
 
 ## 6.1 HUD
 
-Status: Functional Pass Implemented with Compact Icon Settings Control; Device Layout QA Pending
+Status: Functional Pass Implemented with Compact Icon Settings Control and Animated Crowd Count Feedback; Device Layout QA Pending
 Priority: Critical
 
 Tasks:
@@ -1071,6 +1072,7 @@ Tasks:
 - Add soldier count indicator.
 - Add settings button.
 - Respect safe areas.
+- [x] Animate the above-crowd soldier count on gains and losses.
 - [x] Use compact icon-led settings control during gameplay.
 - [x] Validate top-HUD settings/progress/coin/level overlap.
 

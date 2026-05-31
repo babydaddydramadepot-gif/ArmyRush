@@ -12,14 +12,41 @@ namespace ArmyRush
         [SerializeField] private Transform _anchor;
         [SerializeField] private TextMesh _countLabel;
 
+        private const float CountLabelPulseDuration = 0.34f;
+        private const float CountLabelGainRise = 0.18f;
+        private const float CountLabelLossDip = -0.08f;
+        private const float CountLabelStartScale = 0.88f;
+
         private readonly List<SoldierUnitVisual> _soldiers = new List<SoldierUnitVisual>();
         private int _logicalCount;
         private int _shootFeedbackCursor;
         private bool _hasInitializedCount;
+        private bool _countLabelPoseCached;
+        private float _countLabelPulseTimer;
+        private Vector3 _countLabelBaseScale = Vector3.one;
+        private Vector3 _countLabelBaseLocalPosition;
+        private Color _countLabelRestColor = Color.white;
+        private Color _countLabelPulseColor = Color.white;
+        private float _countLabelVerticalOffset;
 
         public event Action<int> CountChanged;
         public int Count => _logicalCount;
         public Transform Anchor => _anchor != null ? _anchor : transform;
+
+        private void Awake()
+        {
+            CacheCountLabelPose();
+        }
+
+        private void Update()
+        {
+            UpdateCountLabelAnimation();
+        }
+
+        private void OnDisable()
+        {
+            ResetCountLabelAnimation();
+        }
 
         public void Configure(GlobalTuning tuning, GameObject soldierPrefab, PoolManager poolManager, TextMesh countLabel)
         {
@@ -27,7 +54,9 @@ namespace ArmyRush
             _soldierPrefab = soldierPrefab;
             _poolManager = poolManager;
             _countLabel = countLabel;
+            _countLabelPoseCached = false;
             WorldTextGuard.Clamp(_countLabel);
+            CacheCountLabelPose();
             if (_anchor == null)
             {
                 _anchor = transform;
@@ -50,8 +79,13 @@ namespace ArmyRush
             int hardCap = _tuning != null ? _tuning.hardSoldierCap : 300;
             int previousCount = _logicalCount;
             _logicalCount = Mathf.Clamp(count, 0, hardCap);
+            bool shouldAnimateLabel = _hasInitializedCount && previousCount != _logicalCount;
             SyncVisualCount();
             UpdateLabel();
+            if (shouldAnimateLabel)
+            {
+                PlayCountLabelChangeAnimation(previousCount, _logicalCount);
+            }
             SpawnCountChangeVfx(previousCount, _logicalCount);
             CountChanged?.Invoke(_logicalCount);
         }
@@ -197,9 +231,85 @@ namespace ArmyRush
             if (_countLabel != null)
             {
                 _countLabel.text = _logicalCount.ToString();
-                _countLabel.color = _logicalCount <= 5 ? new Color(1f, 0.35f, 0.25f) : Color.white;
+                _countLabelRestColor = _logicalCount <= 5 ? new Color(1f, 0.35f, 0.25f) : Color.white;
+                if (_countLabelPulseTimer <= 0f)
+                {
+                    _countLabel.color = _countLabelRestColor;
+                }
                 WorldTextGuard.Clamp(_countLabel);
+                CacheCountLabelPose();
             }
+        }
+
+        private void PlayCountLabelChangeAnimation(int previousCount, int nextCount)
+        {
+            if (_countLabel == null || previousCount == nextCount)
+            {
+                return;
+            }
+
+            CacheCountLabelPose();
+            bool gained = nextCount > previousCount;
+            _countLabelPulseTimer = CountLabelPulseDuration;
+            _countLabelPulseColor = gained ? new Color(0.22f, 1f, 0.64f) : new Color(1f, 0.32f, 0.16f);
+            _countLabelVerticalOffset = gained ? CountLabelGainRise : CountLabelLossDip;
+        }
+
+        private void UpdateCountLabelAnimation()
+        {
+            if (_countLabel == null || _countLabelPulseTimer <= 0f)
+            {
+                return;
+            }
+
+            CacheCountLabelPose();
+            _countLabelPulseTimer = Mathf.Max(0f, _countLabelPulseTimer - Time.deltaTime);
+            float normalized = 1f - Mathf.Clamp01(_countLabelPulseTimer / CountLabelPulseDuration);
+            float eased = EaseOutCubic(normalized);
+            float hop = Mathf.Sin(normalized * Mathf.PI);
+            float scale = Mathf.Lerp(CountLabelStartScale, 1f, eased);
+            _countLabel.transform.localScale = _countLabelBaseScale * scale;
+            _countLabel.transform.localPosition = _countLabelBaseLocalPosition + Vector3.up * (_countLabelVerticalOffset * hop);
+            _countLabel.color = Color.Lerp(_countLabelPulseColor, _countLabelRestColor, eased);
+
+            if (_countLabelPulseTimer <= 0f)
+            {
+                ResetCountLabelAnimation();
+            }
+        }
+
+        private void ResetCountLabelAnimation()
+        {
+            if (_countLabel == null || !_countLabelPoseCached)
+            {
+                return;
+            }
+
+            _countLabelPulseTimer = 0f;
+            _countLabel.transform.localScale = _countLabelBaseScale;
+            _countLabel.transform.localPosition = _countLabelBaseLocalPosition;
+            _countLabel.color = _countLabelRestColor;
+        }
+
+        private void CacheCountLabelPose()
+        {
+            if (_countLabel == null || _countLabelPoseCached)
+            {
+                return;
+            }
+
+            WorldTextGuard.Clamp(_countLabel);
+            Transform labelTransform = _countLabel.transform;
+            _countLabelBaseScale = labelTransform.localScale;
+            _countLabelBaseLocalPosition = labelTransform.localPosition;
+            _countLabelRestColor = _countLabel.color;
+            _countLabelPoseCached = true;
+        }
+
+        private static float EaseOutCubic(float value)
+        {
+            float inverse = 1f - Mathf.Clamp01(value);
+            return 1f - inverse * inverse * inverse;
         }
 
         private void SpawnCountChangeVfx(int previousCount, int nextCount)
