@@ -17,6 +17,7 @@ namespace ArmyRush
         [SerializeField] private Text _bossText;
         [SerializeField] private GameObject _startPrompt;
         [SerializeField] private GameObject _victoryPanel;
+        [SerializeField] private Text _victoryHeaderText;
         [SerializeField] private Text _victoryCoinsText;
         [SerializeField] private Button _victoryRewardedButton;
         [SerializeField] private Text _victoryStatusText;
@@ -48,6 +49,8 @@ namespace ArmyRush
         private static readonly Color ResultUpgradeMenuColor = new Color(0.08f, 0.28f, 0.95f);
         private static readonly Color ResultRecommendedUpgradeColor = new Color(0.96f, 0.62f, 0.08f);
         private static readonly Color BoostPanelColor = new Color(0.03f, 0.11f, 0.19f, 0.88f);
+        private static readonly Color VictoryHeaderColor = Color.white;
+        private static readonly Color BossVictoryHeaderColor = new Color(1f, 0.84f, 0.18f);
         private static readonly Vector2 BoostIndicatorAnchor = new Vector2(0.5f, 0.755f);
         private static readonly Vector2 BoostIndicatorSize = new Vector2(440f, 48f);
 
@@ -155,7 +158,7 @@ namespace ArmyRush
                 StopVictoryCoinCount();
                 _victoryCoinRoutine = StartCoroutine(CountVictoryCoins(Mathf.Max(0, coinsEarned)));
             }
-            SetResultStatus(_victoryStatusText, string.Empty);
+            ApplyVictoryPresentation();
             RefreshResultUpgradeButtons();
         }
 
@@ -590,8 +593,60 @@ namespace ArmyRush
         {
             _victoryRewardedButton = EnsureResultPlaceholderButton(_victoryPanel, _victoryRewardedButton, "RewardedButton", "2X REWARD");
             _defeatReviveButton = EnsureResultPlaceholderButton(_defeatPanel, _defeatReviveButton, "ReviveButton", "REVIVE");
+            _victoryHeaderText = EnsureVictoryHeaderText();
             _victoryStatusText = EnsureResultStatusText(_victoryPanel, _victoryStatusText);
             _defeatStatusText = EnsureResultStatusText(_defeatPanel, _defeatStatusText);
+        }
+
+        private void ApplyVictoryPresentation()
+        {
+            bool bossVictory = IsBossVictory();
+            Text headerText = EnsureVictoryHeaderText();
+            if (headerText != null)
+            {
+                headerText.text = bossVictory ? "BOSS DEFEATED" : "VICTORY";
+                headerText.color = bossVictory ? BossVictoryHeaderColor : VictoryHeaderColor;
+                headerText.resizeTextForBestFit = true;
+                headerText.resizeTextMinSize = 30;
+                headerText.resizeTextMaxSize = Mathf.Max(headerText.resizeTextMaxSize, headerText.fontSize);
+            }
+
+            SetResultStatus(_victoryStatusText, bossVictory ? BuildBossVictoryStatus() : string.Empty);
+        }
+
+        private Text EnsureVictoryHeaderText()
+        {
+            if (_victoryHeaderText != null || _victoryPanel == null)
+            {
+                return _victoryHeaderText;
+            }
+
+            Transform existing = _victoryPanel.transform.Find("Header");
+            if (existing != null && existing.TryGetComponent(out Text existingText))
+            {
+                _victoryHeaderText = existingText;
+            }
+
+            return _victoryHeaderText;
+        }
+
+        private bool IsBossVictory()
+        {
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            return currentLevel != null && currentLevel.hasBoss;
+        }
+
+        private string BuildBossVictoryStatus()
+        {
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            BossDefinition boss = currentLevel != null ? currentLevel.bossDefinition : null;
+            if (boss == null)
+            {
+                return "MILESTONE CLEARED";
+            }
+
+            int bossReward = boss.GetCoinReward(currentLevel.levelIndex);
+            return bossReward > 0 ? $"+{FormatCoinAmount(bossReward)} BOSS BONUS" : "MILESTONE CLEARED";
         }
 
         private void RepositionResultActionButtons(GameObject panel)
@@ -601,8 +656,23 @@ namespace ArmyRush
                 return;
             }
 
-            SetResultChildRect(panel.transform.Find("ActionButton"), new Vector2(0.32f, 0.16f), new Vector2(286f, 78f));
-            SetResultChildRect(panel.transform.Find("UpgradeButton"), new Vector2(0.68f, 0.16f), new Vector2(286f, 78f));
+            NormalizeResultPanelLayout(panel.transform);
+        }
+
+        public static void NormalizeResultPanelLayout(Transform panel)
+        {
+            if (panel == null)
+            {
+                return;
+            }
+
+            SetResultChildRect(panel.Find("Header"), new Vector2(0.5f, 0.78f), new Vector2(620f, 100f));
+            SetResultChildRect(panel.Find("Coins"), new Vector2(0.5f, 0.55f), new Vector2(620f, 80f));
+            SetResultChildRect(panel.Find("RewardedButton"), new Vector2(0.5f, 0.36f), new Vector2(620f, 70f));
+            SetResultChildRect(panel.Find("ReviveButton"), new Vector2(0.5f, 0.36f), new Vector2(620f, 70f));
+            SetResultChildRect(panel.Find("StatusText"), new Vector2(0.5f, 0.27f), new Vector2(620f, 44f));
+            SetResultChildRect(panel.Find("ActionButton"), new Vector2(0.3f, 0.13f), new Vector2(268f, 78f));
+            SetResultChildRect(panel.Find("UpgradeButton"), new Vector2(0.7f, 0.13f), new Vector2(268f, 78f));
         }
 
         private Button EnsureResultUpgradeButton(GameObject panel, Button currentButton)
@@ -615,12 +685,13 @@ namespace ArmyRush
             Transform existing = panel.transform.Find("UpgradeButton");
             if (existing != null && existing.TryGetComponent(out Button existingButton))
             {
+                NormalizeResultPanelLayout(panel.transform);
                 return existingButton;
             }
 
-            SetResultChildRect(panel.transform.Find("ActionButton"), new Vector2(0.32f, 0.16f), new Vector2(286f, 78f));
+            SetResultChildRect(panel.transform.Find("ActionButton"), new Vector2(0.3f, 0.13f), new Vector2(268f, 78f));
 
-            return CreateResultButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.68f, 0.16f), new Vector2(286f, 78f), new Color(0.08f, 0.28f, 0.95f));
+            return CreateResultButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.7f, 0.13f), new Vector2(268f, 78f), new Color(0.08f, 0.28f, 0.95f));
         }
 
         private Button EnsureResultPlaceholderButton(GameObject panel, Button currentButton, string name, string text)

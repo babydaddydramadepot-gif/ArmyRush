@@ -40,7 +40,7 @@ namespace ArmyRush
 
         public static void ClampSceneText()
         {
-            TextMesh[] labels = Object.FindObjectsByType<TextMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            TextMesh[] labels = Object.FindObjectsByType<TextMesh>(FindObjectsInactive.Include);
             for (int i = 0; i < labels.Length; i++)
             {
                 Clamp(labels[i]);

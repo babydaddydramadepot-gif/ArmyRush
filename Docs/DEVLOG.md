@@ -109,6 +109,36 @@ Date:
 
 System:
 
+Boss Victory Result Polish
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Scripts/Utility/WorldTextGuard.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added boss-specific result presentation so milestone levels no longer resolve through the same generic victory copy. `GameplayUI` now self-heals its victory header reference in existing scenes, swaps boss clears to `BOSS DEFEATED`, colors the milestone header gold, shows the boss bonus amount in the result status line, and normalizes result action spacing while preserving normal victory, rewarded-placeholder, and quick-upgrade flows. Future builder-generated scenes serialize the victory header reference directly, and production validation now checks result panel header/reward/status/action layout plus enough header fit range for boss milestone copy. Also removed obsolete `FindObjectsByType` validation calls from the world-text guard path so the production validator runs without C# warnings.
+
+Result:
+
+Boss victories should read as meaningful first-session progression payoffs instead of ordinary level clears, which aligns the reward screen with the documented boss milestone UX. `git diff --check` passed, and Unity production validation passed with log `/tmp/armyrush_unity_boss_victory_validate.log`.
+
+Follow Up:
+
+Retest Level 5 on physical iPhone after the next build: defeat the tank, confirm the result header reads `BOSS DEFEATED`, confirm the bonus copy fits in portrait, and confirm the quick-upgrade/result buttons remain tappable.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Combat Target Priority and Boost HUD Validation
 
 Files:

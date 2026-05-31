@@ -873,7 +873,7 @@ Acceptance Criteria:
 
 ## 4.1 Boss Architecture
 
-Status: Functional Combat, Defeat Animation, and Telegraph VFX Pass Implemented with Prefab-Backed Variants; Balance QA Pending
+Status: Functional Combat, Defeat Animation, Telegraph VFX Pass, and Milestone Result Presentation Implemented with Prefab-Backed Variants; Balance QA Pending
 Priority: High
 
 Tasks:
@@ -885,6 +885,7 @@ Tasks:
 - [x] Add boss damage receiving.
 - [x] Add boss defeat state.
 - [x] Add boss reward flow.
+- [x] Add boss-specific victory result presentation for milestone clears.
 - [x] Add prefab-backed boss variant definitions.
 - [x] Add readable pooled attack telegraph VFX.
 - [x] Validate boss prefab controller, health, trigger, label, and mesh content.
@@ -894,6 +895,7 @@ Acceptance Criteria:
 - Bosses are data-driven.
 - Boss fights are readable.
 - Boss defeat resumes the run after the combat pause.
+- Boss victories clearly read as milestone clears with reward feedback.
 
 ---
 
@@ -1149,7 +1151,7 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Functional Pass Implemented with Animated Reveal, Rewarded Placeholder, Upgrade Shortcut, and Recommended Quick Purchase; Device Fit QA Pending
+Status: Functional Pass Implemented with Animated Reveal, Boss Milestone Header, Rewarded Placeholder, Upgrade Shortcut, and Recommended Quick Purchase; Device Fit QA Pending
 Priority: Critical
 
 Tasks:
@@ -1161,12 +1163,14 @@ Tasks:
 - [x] Add upgrade shortcut.
 - [x] Add direct recommended upgrade purchase when the player can immediately afford one.
 - [x] Add optional rewarded ad placeholder architecture.
+- [x] Add boss-level `BOSS DEFEATED` result header and boss bonus status copy.
 
 Acceptance Criteria:
 
 - Victory screen celebrates success.
 - Player understands rewards.
 - Flow to next level is fast.
+- Boss victories feel like progression milestones instead of generic clears.
 
 ---
 
@@ -1605,6 +1609,7 @@ Tasks:
 - [x] Add persistent, safe-area active run-boost HUD feedback so boost pickups do not rely only on one-shot floating labels.
 - [x] Fix target acquisition priority so a farther obstacle cannot steal fire from a closer enemy contact threat.
 - [x] Fix active boost HUD fallback placement so production validation confirms it does not overlap the boss health panel.
+- [x] Add result panel validation for victory/defeat header, reward, status, and action layout so boss milestone copy stays portrait-safe.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.
@@ -1623,7 +1628,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, and Active Boost Feedback
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, and Boss Victory Result Polish
 Priority: Critical
 
 Tasks:
@@ -1633,6 +1638,8 @@ Tasks:
 - [x] Add early close-range combat urgency feedback for first-session near-contact pressure.
 - [x] Add temporary run boost gates that make post-boss combat and boss preparation feel more powerful.
 - [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
+- [x] Add boss victory milestone reward polish to the result screen.
+- [x] Add result panel UI validation for milestone header fit and action/status overlap.
 - Add reward polish.
 - Add UI polish.
 - Add VFX polish.
