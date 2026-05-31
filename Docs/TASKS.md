@@ -1009,7 +1009,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, Early Defeat Consolation, and Automated Early-Economy Validation; Manual Balance QA Pending
+Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, Live Run Reward Preview, Early Defeat Consolation, and Automated Early-Economy Validation; Manual Balance QA Pending
 Priority: High
 
 Tasks:
@@ -1020,6 +1020,7 @@ Tasks:
 - [x] Calculate boss rewards.
 - [x] Calculate bonus run crate rewards.
 - [x] Apply coin multipliers.
+- [x] Preview pending earned run coins in the HUD before the result screen payout.
 - [x] Add validator simulation for early one-upgrade-per-run affordability.
 - [x] Add data-driven early defeat consolation coins for Levels 1-5 so failed first-session runs still fund visible progression.
 
@@ -1061,7 +1062,7 @@ Acceptance Criteria:
 
 ## 6.1 HUD
 
-Status: Functional Pass Implemented with Compact Icon Settings Control and Animated Crowd Count Feedback; Device Layout QA Pending
+Status: Functional Pass Implemented with Compact Icon Settings Control, Run Coin Preview, and Animated Crowd Count Feedback; Device Layout QA Pending
 Priority: Critical
 
 Tasks:
@@ -1072,6 +1073,7 @@ Tasks:
 - Add soldier count indicator.
 - Add settings button.
 - Respect safe areas.
+- [x] Show pending run-earned coins in the gameplay HUD as rewards are collected.
 - [x] Animate the above-crowd soldier count on gains and losses.
 - [x] Use compact icon-led settings control during gameplay.
 - [x] Validate top-HUD settings/progress/coin/level overlap.

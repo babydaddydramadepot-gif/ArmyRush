@@ -62,6 +62,10 @@ namespace ArmyRush
 
             _rallyAssistUses = 0;
             _nextRallyAssistTime = 0f;
+            _runCoins = 0;
+            _bonusCoins = 0;
+            _levelCompleted = false;
+            _gameplayUI?.SetRunCoinPreview(0);
             SetState(RunState.Running);
             if (ServiceLocator.TryGet(out AudioService audio))
             {
@@ -122,11 +126,18 @@ namespace ArmyRush
         private void AddPendingRewardCoins(int amount, Vector3 worldPosition)
         {
             _bonusCoins += amount;
+            _gameplayUI?.SetRunCoinPreview(GetPreviewRewardCoins());
             VfxManager.SpawnFloatingText("+" + amount + " COINS", worldPosition + Vector3.up * 0.8f, new Color(1f, 0.78f, 0.12f));
             if (ServiceLocator.TryGet(out AudioService audio))
             {
                 audio.Play(AudioCue.CoinReward);
             }
+        }
+
+        private int GetPreviewRewardCoins()
+        {
+            float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
+            return Mathf.RoundToInt(Mathf.Max(0, _bonusCoins) * coinMultiplier);
         }
 
         public void WinRun()
@@ -152,6 +163,7 @@ namespace ArmyRush
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
             _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus + _bonusCoins) * coinMultiplier);
 
+            _gameplayUI?.SetRunCoinPreview(0);
             _economy?.AddCoins(_runCoins);
             _progression?.CompleteCurrentLevel();
 
@@ -185,6 +197,7 @@ namespace ArmyRush
 
             AwardDefeatCoins();
             SetState(RunState.Defeat);
+            _gameplayUI?.SetRunCoinPreview(0);
             _gameplayUI?.ShowDefeat(_runCoins);
 
             if (ServiceLocator.TryGet(out AudioService audio))

@@ -109,6 +109,35 @@ Date:
 
 System:
 
+Gameplay Run Coin Preview
+
+Files:
+
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a live pending-reward coin preview to the gameplay HUD. Enemy clears, obstacle clears, and bonus crates now update the top coin display with the wallet total plus run-earned coins before the result screen, using the active coin multiplier for the preview. The preview resets cleanly at run start and when victory or defeat resolves the payout.
+
+Result:
+
+Run rewards are now visible during play instead of being hidden until the result panel, reinforcing progression and making early enemy/obstacle rewards feel more immediate. Large wallet or run values use compact `K`/`M` formatting so the portrait HUD remains easier to fit.
+
+Follow Up:
+
+Physical iPhone QA should verify that the combined coin text does not crowd the top HUD on small devices and that reward preview values feel clear during bonus crates and early defeat payouts. Static validation passed with `git diff --check` and a run coin preview smoke check. Unity production validation remains pending behind AR-009; the latest Unity retry in this session failed before project validation with log `/tmp/armyrush_unity_count_pulse_validate.log`.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Crowd Count Feedback Polish
 
 Files:

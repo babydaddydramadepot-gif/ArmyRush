@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -36,6 +37,8 @@ namespace ArmyRush
         private UpgradeService _upgrades;
         private Coroutine _victoryCoinRoutine;
         private Coroutine _defeatFadeRoutine;
+        private int _displayedCoins;
+        private int _runPreviewCoins;
         private static readonly Color DefeatFadeColor = new Color(0.24f, 0.02f, 0.04f, 0.54f);
         private static readonly Color ResultUpgradeMenuColor = new Color(0.08f, 0.28f, 0.95f);
         private static readonly Color ResultRecommendedUpgradeColor = new Color(0.96f, 0.62f, 0.08f);
@@ -99,6 +102,10 @@ namespace ArmyRush
 
         public void SetRunState(RunState state)
         {
+            if (state == RunState.PreRun || state == RunState.Victory || state == RunState.Defeat)
+            {
+                SetRunCoinPreview(0);
+            }
             if (_startPrompt != null)
             {
                 _startPrompt.SetActive(state == RunState.PreRun);
@@ -135,6 +142,12 @@ namespace ArmyRush
             }
             SetResultStatus(_victoryStatusText, string.Empty);
             RefreshResultUpgradeButtons();
+        }
+
+        public void SetRunCoinPreview(int coins)
+        {
+            _runPreviewCoins = Mathf.Max(0, coins);
+            RefreshCoinText();
         }
 
         public void ShowDefeat(int coinsEarned)
@@ -208,11 +221,38 @@ namespace ArmyRush
 
         private void OnCoinsChanged(int coins)
         {
-            if (_coinText != null)
-            {
-                _coinText.text = coins.ToString();
-            }
+            _displayedCoins = Mathf.Max(0, coins);
+            RefreshCoinText();
             RefreshResultUpgradeButtons();
+        }
+
+        private void RefreshCoinText()
+        {
+            if (_coinText == null)
+            {
+                return;
+            }
+
+            _coinText.text = _runPreviewCoins > 0
+                ? FormatCoinAmount(_displayedCoins) + " +" + FormatCoinAmount(_runPreviewCoins)
+                : FormatCoinAmount(_displayedCoins);
+        }
+
+        private static string FormatCoinAmount(int amount)
+        {
+            amount = Mathf.Max(0, amount);
+            if (amount >= 1000000)
+            {
+                float compact = Mathf.FloorToInt(amount / 100000f) / 10f;
+                return compact.ToString("0.#", CultureInfo.InvariantCulture) + "M";
+            }
+            if (amount >= 10000)
+            {
+                float compact = Mathf.FloorToInt(amount / 100f) / 10f;
+                return compact.ToString("0.#", CultureInfo.InvariantCulture) + "K";
+            }
+
+            return amount.ToString();
         }
 
         private void OnBossSpawned(BossController boss)
