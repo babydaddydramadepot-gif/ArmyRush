@@ -367,6 +367,9 @@ public static class ArmyRushProjectBuilder
         tuning.minFireInterval = 0.08f;
         tuning.baseDamage = 10;
         tuning.projectileVisualBurst = 6;
+        tuning.openingVolleyDamageMultiplier = 1.35f;
+        tuning.openingVolleyExtraProjectiles = 2;
+        tuning.openingVolleyCooldown = 0.6f;
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
@@ -3093,6 +3096,18 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Projectile visual burst count is too low for readable small-crowd combat on device.");
         }
+        if (tuning.openingVolleyDamageMultiplier < 1.25f || tuning.openingVolleyDamageMultiplier > 1.8f)
+        {
+            failures.Add("Opening volley damage multiplier should add a clear first-contact punch without replacing upgrade progression.");
+        }
+        if (tuning.openingVolleyExtraProjectiles < 2)
+        {
+            failures.Add("Opening volley extra projectiles should make first contact visibly denser on device.");
+        }
+        if (tuning.openingVolleyCooldown < 0.25f || tuning.openingVolleyCooldown > 1.25f)
+        {
+            failures.Add("Opening volley cooldown should prevent spam while preserving fast target-acquisition feel.");
+        }
         if (tuning.earlyDefeatRewardLevelLimit < 3)
         {
             failures.Add("Early defeat rewards should cover at least the first three onboarding levels.");
@@ -3153,7 +3168,8 @@ public static class ArmyRushProjectBuilder
             int soldiersAtEnemy = EstimateBestGatePathBefore(level, startingSoldiers, firstEnemy.z);
             int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
             int damagePerVolley = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, soldiersAtEnemy) * baseFireInterval));
-            int damageBeforeContact = damagePerVolley * volleyCount;
+            int openingVolleyDamage = Mathf.RoundToInt(damagePerVolley * Mathf.Max(1f, tuning.openingVolleyDamageMultiplier));
+            int damageBeforeContact = openingVolleyDamage + damagePerVolley * Mathf.Max(0, volleyCount - 1);
             int remainingHealth = Mathf.Max(0, enemyHealth - damageBeforeContact);
             int remainingEnemies = Mathf.CeilToInt(remainingHealth / (float)Mathf.Max(1, firstEnemy.healthPerUnit));
             int survivors = soldiersAtEnemy - remainingEnemies;

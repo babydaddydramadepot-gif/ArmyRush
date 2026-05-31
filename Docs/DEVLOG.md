@@ -109,6 +109,37 @@ Date:
 
 System:
 
+Opening Salvo Combat Feel
+
+Files:
+
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Scripts/Core/GlobalTuning.cs
+Assets/_Project/ScriptableObjects/Tuning/SO_GlobalTuning.asset
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a data-driven opening salvo to make first contact feel more powerful on physical devices. When the player army acquires a new enemy, obstacle, boss, or bonus target, the first volley can bypass the remaining steady-fire cooldown, apply a bounded damage multiplier, and add extra tracer projectiles while preserving the existing army-count DPS and upgrade scaling model.
+
+Result:
+
+New encounters now produce a stronger immediate firing beat instead of only entering the steady 0.30s cadence. The global tuning asset and project builder now serialize `openingVolleyDamageMultiplier`, `openingVolleyExtraProjectiles`, and `openingVolleyCooldown`, and combat validation guards the first-contact tuning range. Static smoke estimates still clear the first enemies in Levels 1-3 with no upgrades after accounting for the opening salvo.
+
+Follow Up:
+
+Physical iPhone QA should verify that first-contact shooting reads as faster and stronger without becoming visually noisy, especially in Levels 1-5 and boss milestones. Static validation passed with `git diff --check` and a Level 1-3 first-enemy smoke estimate; Unity production validation was attempted but remains blocked before project validation by AR-009 licensing protocol failures. Latest retry log: `/tmp/armyrush_unity_opening_salvo_validate.log`.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Result Screen Recommended Upgrade Purchase
 
 Files:
@@ -3432,7 +3463,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Early defeat consolation, recommended upgrade guidance, and result-screen quick purchase now ensure first-session failures still produce visible progression. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over. Early defeat consolation, recommended upgrade guidance, and result-screen quick purchase now ensure first-session failures still produce visible progression. Physical iPhone retest is still required to confirm perceived fire rate, opening-salvo readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3440,7 +3471,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_result_upgrade_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_opening_salvo_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

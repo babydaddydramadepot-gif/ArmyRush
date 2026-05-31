@@ -12,6 +12,8 @@ namespace ArmyRush
         [SerializeField] private Transform _aimOrigin;
 
         private float _nextFireTime;
+        private float _nextOpeningVolleyTime;
+        private Damageable _currentTarget;
         private UpgradeService _upgradeService;
 
         private void Start()
@@ -30,13 +32,23 @@ namespace ArmyRush
                 return;
             }
 
-            if (Time.time < _nextFireTime)
+            Damageable target = TargetRegistry.FindBestTarget(_aimOrigin != null ? _aimOrigin.position : transform.position, _tuning.targetRange, _tuning.targetLateralRange);
+            if (target == null)
             {
+                _currentTarget = null;
                 return;
             }
 
-            Damageable target = TargetRegistry.FindBestTarget(_aimOrigin != null ? _aimOrigin.position : transform.position, _tuning.targetRange, _tuning.targetLateralRange);
-            if (target == null)
+            bool acquiredNewTarget = target != _currentTarget;
+            if (acquiredNewTarget)
+            {
+                _currentTarget = target;
+            }
+
+            bool openingVolley = acquiredNewTarget
+                && Time.time >= _nextOpeningVolleyTime
+                && _tuning.openingVolleyDamageMultiplier > 1f;
+            if (Time.time < _nextFireTime && !openingVolley)
             {
                 return;
             }
@@ -52,12 +64,17 @@ namespace ArmyRush
             float baseFireInterval = Mathf.Max(_tuning.minFireInterval, _tuning.baseFireInterval);
             float fireInterval = Mathf.Max(_tuning.minFireInterval, baseFireInterval / fireRateMultiplier);
             float targetMultiplier = GetTargetMultiplier(target, out bool critical);
-            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, _crowd.Count) * baseFireInterval * targetMultiplier));
+            float openingMultiplier = openingVolley ? Mathf.Max(1f, _tuning.openingVolleyDamageMultiplier) : 1f;
+            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, _crowd.Count) * baseFireInterval * targetMultiplier * openingMultiplier));
             if (critical)
             {
                 VfxManager.SpawnFloatingText("CRIT", target.AimPoint + Vector3.up * 0.65f, new Color(1f, 0.9f, 0.15f));
             }
-            FireVisualBurst(target, armyScaledDamage);
+            FireVisualBurst(target, armyScaledDamage, openingVolley);
+            if (openingVolley)
+            {
+                _nextOpeningVolleyTime = Time.time + Mathf.Max(0f, _tuning.openingVolleyCooldown);
+            }
             _nextFireTime = Time.time + fireInterval;
         }
 
@@ -99,7 +116,7 @@ namespace ArmyRush
             return multiplier;
         }
 
-        private void FireVisualBurst(Damageable target, int totalDamage)
+        private void FireVisualBurst(Damageable target, int totalDamage, bool openingVolley)
         {
             if (_poolManager == null || _projectilePrefab == null || target == null)
             {
@@ -107,7 +124,8 @@ namespace ArmyRush
                 return;
             }
 
-            int projectileCount = Mathf.Clamp(_crowd.Count / 8 + 1, 1, _tuning.projectileVisualBurst);
+            int extraProjectiles = openingVolley ? Mathf.Max(0, _tuning.openingVolleyExtraProjectiles) : 0;
+            int projectileCount = Mathf.Clamp(_crowd.Count / 8 + 1 + extraProjectiles, 1, _tuning.projectileVisualBurst);
             int damagePerProjectile = Mathf.Max(1, Mathf.CeilToInt(totalDamage / (float)projectileCount));
             Vector3 origin = _aimOrigin != null ? _aimOrigin.position : transform.position + Vector3.up * 0.8f;
             _crowd.PlayShootFeedback(projectileCount + 1);

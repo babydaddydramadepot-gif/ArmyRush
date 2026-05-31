@@ -30,6 +30,9 @@ MonoBehaviour:
   minFireInterval: 0.08
   baseDamage: 10
   projectileVisualBurst: 6
+  openingVolleyDamageMultiplier: 1.35
+  openingVolleyExtraProjectiles: 2
+  openingVolleyCooldown: 0.6
   soldierCoinValue: 2
   enemyCoinValue: 2
   obstacleCoinValue: 12
