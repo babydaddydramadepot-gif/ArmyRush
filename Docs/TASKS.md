@@ -443,7 +443,7 @@ Acceptance Criteria:
 
 ## 1.3 Crowd Unit System
 
-Status: Functional Pass Implemented; Performance QA Pending
+Status: Functional Pass Implemented with Early Rally Assist; Performance QA Pending
 Priority: Critical
 
 Tasks:
@@ -455,6 +455,7 @@ Tasks:
 - Implement unit pooling.
 - Implement crowd count tracking.
 - Implement above-crowd count label.
+- [x] Add bounded first-session rally assist for low-count survivors in early levels.
 
 Acceptance Criteria:
 
@@ -1551,7 +1552,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Early Balance, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Early Balance, Rally Assist, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1578,6 +1579,7 @@ Tasks:
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
 - [x] Add guarded early gate guidance markers for Levels 1-3 to reduce first-session wrong-route confusion on physical-device playthroughs.
+- [x] Add data-driven early rally assist so low-count first-session survivors can recover momentum without making defeat impossible.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

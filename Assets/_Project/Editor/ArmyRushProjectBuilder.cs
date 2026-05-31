@@ -373,6 +373,11 @@ public static class ArmyRushProjectBuilder
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
+        tuning.earlyRallyAssistLevelLimit = 5;
+        tuning.earlyRallyAssistMinimumSoldiers = 6;
+        tuning.earlyRallyAssistTargetSoldiers = 12;
+        tuning.earlyRallyAssistMaxUsesPerRun = 2;
+        tuning.earlyRallyAssistCooldown = 4f;
         EditorUtility.SetDirty(tuning);
         return tuning;
     }
@@ -3122,6 +3127,26 @@ public static class ArmyRushProjectBuilder
         if (damageUpgrade != null && tuning.earlyDefeatMinimumCoins < damageUpgrade.GetCost(0))
         {
             failures.Add("Early defeat minimum coins should fund the first Damage upgrade so first-session failures still progress.");
+        }
+        if (tuning.earlyRallyAssistLevelLimit < 3 || tuning.earlyRallyAssistLevelLimit > 8)
+        {
+            failures.Add("Early rally assist should cover onboarding but remain bounded to the first-session levels.");
+        }
+        if (tuning.earlyRallyAssistMinimumSoldiers < 3 || tuning.earlyRallyAssistMinimumSoldiers >= tuning.earlyRallyAssistTargetSoldiers)
+        {
+            failures.Add("Early rally assist minimum soldiers must be a low-count danger threshold below the recovery target.");
+        }
+        if (tuning.earlyRallyAssistTargetSoldiers < 8 || tuning.earlyRallyAssistTargetSoldiers > 20)
+        {
+            failures.Add("Early rally assist target soldiers should recover momentum without replacing gate/upgrades power.");
+        }
+        if (tuning.earlyRallyAssistMaxUsesPerRun < 1 || tuning.earlyRallyAssistMaxUsesPerRun > 3)
+        {
+            failures.Add("Early rally assist uses per run should be limited so failure remains possible.");
+        }
+        if (tuning.earlyRallyAssistCooldown < 1f || tuning.earlyRallyAssistCooldown > 8f)
+        {
+            failures.Add("Early rally assist cooldown should prevent rapid repeated top-ups while preserving onboarding forgiveness.");
         }
     }
 

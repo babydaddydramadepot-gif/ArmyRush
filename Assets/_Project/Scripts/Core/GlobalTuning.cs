@@ -40,6 +40,11 @@ namespace ArmyRush
         public int earlyDefeatRewardLevelLimit = 5;
         [Range(0f, 1f)] public float earlyDefeatRewardFraction = 0.4f;
         public int earlyDefeatMinimumCoins = 100;
+        public int earlyRallyAssistLevelLimit = 5;
+        public int earlyRallyAssistMinimumSoldiers = 6;
+        public int earlyRallyAssistTargetSoldiers = 12;
+        public int earlyRallyAssistMaxUsesPerRun = 2;
+        public float earlyRallyAssistCooldown = 4f;
 
         [Header("Camera")]
         public Vector3 cameraOffset = new Vector3(0f, 10f, -10.5f);

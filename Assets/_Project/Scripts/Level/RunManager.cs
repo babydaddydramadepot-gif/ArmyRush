@@ -16,6 +16,8 @@ namespace ArmyRush
         private EconomyService _economy;
         private ProgressionService _progression;
         private UpgradeService _upgrades;
+        private int _rallyAssistUses;
+        private float _nextRallyAssistTime;
 
         public event Action<RunState> StateChanged;
         public RunState State { get; private set; } = RunState.None;
@@ -58,6 +60,8 @@ namespace ArmyRush
                 return;
             }
 
+            _rallyAssistUses = 0;
+            _nextRallyAssistTime = 0f;
             SetState(RunState.Running);
             if (ServiceLocator.TryGet(out AudioService audio))
             {
@@ -198,6 +202,56 @@ namespace ArmyRush
             if (count <= 0 && (State == RunState.Running || State == RunState.CombatPaused))
             {
                 LoseRun();
+                return;
+            }
+
+            TryApplyEarlyRallyAssist(count);
+        }
+
+        private void TryApplyEarlyRallyAssist(int count)
+        {
+            if (_tuning == null || _crowd == null)
+            {
+                return;
+            }
+
+            if (State != RunState.Running && State != RunState.CombatPaused)
+            {
+                return;
+            }
+
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            if (currentLevel == null || currentLevel.levelIndex > Mathf.Max(0, _tuning.earlyRallyAssistLevelLimit))
+            {
+                return;
+            }
+
+            int maxUses = Mathf.Max(0, _tuning.earlyRallyAssistMaxUsesPerRun);
+            if (maxUses == 0 || _rallyAssistUses >= maxUses || Time.time < _nextRallyAssistTime)
+            {
+                return;
+            }
+
+            int minimum = Mathf.Max(1, _tuning.earlyRallyAssistMinimumSoldiers);
+            int target = Mathf.Clamp(_tuning.earlyRallyAssistTargetSoldiers, minimum + 1, Mathf.Max(minimum + 1, _tuning.hardSoldierCap));
+            if (count <= 0 || count >= minimum || count >= target)
+            {
+                return;
+            }
+
+            int amount = target - count;
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            _rallyAssistUses++;
+            _nextRallyAssistTime = Time.time + Mathf.Max(0.1f, _tuning.earlyRallyAssistCooldown);
+            _crowd.Add(amount);
+            VfxManager.SpawnFloatingText("RALLY +" + amount, _crowd.transform.position + Vector3.up * 2.55f, new Color(0.28f, 1f, 0.68f));
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Light);
             }
         }
 

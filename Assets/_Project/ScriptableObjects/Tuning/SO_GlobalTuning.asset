@@ -40,6 +40,11 @@ MonoBehaviour:
   earlyDefeatRewardLevelLimit: 5
   earlyDefeatRewardFraction: 0.4
   earlyDefeatMinimumCoins: 100
+  earlyRallyAssistLevelLimit: 5
+  earlyRallyAssistMinimumSoldiers: 6
+  earlyRallyAssistTargetSoldiers: 12
+  earlyRallyAssistMaxUsesPerRun: 2
+  earlyRallyAssistCooldown: 4
   cameraOffset: {x: 0, y: 10, z: -10.5}
   cameraEuler: {x: 42, y: 0, z: 0}
   cameraSmooth: 9
