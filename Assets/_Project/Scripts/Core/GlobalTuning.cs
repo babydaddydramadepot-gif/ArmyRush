@@ -20,14 +20,14 @@ namespace ArmyRush
         public int maxFormationColumns = 13;
 
         [Header("Combat")]
-        public float targetRange = 18f;
+        public float targetRange = 24f;
         public float targetLateralRange = 3.8f;
-        public float projectileSpeed = 26f;
+        public float projectileSpeed = 36f;
         public float projectileLifetime = 1.6f;
-        public float baseFireInterval = 0.35f;
+        public float baseFireInterval = 0.3f;
         public float minFireInterval = 0.08f;
         public int baseDamage = 10;
-        public int projectileVisualBurst = 5;
+        public int projectileVisualBurst = 6;
 
         [Header("Rewards")]
         public int soldierCoinValue = 2;

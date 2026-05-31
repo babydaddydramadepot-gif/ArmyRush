@@ -188,6 +188,9 @@ Implementation Pass 1 Result:
 - Added runtime dependency and pooling optimization passes, removed normal-play scene-wide object searches, cached pooled component lookups, optimized world-label camera work, and reconfirmed Unity production validation plus iOS simulator export.
 - Added pooled particle VFX prefabs and cue-based spawning for hit sparks, gate bursts, coin bursts, and boss explosions.
 - Added finish-line bonus run flow with data-driven bonus crate counts, crate health, crate coin rewards, generated crate/claim prefabs, pooled reward VFX/audio, and validation coverage for spawned bonus objects.
+- Tightened physical-device combat feel with 0.30s baseline volleys, 24m targeting, 36 speed projectiles, a 6-shot visual burst cap, and denser small-crowd projectile feedback.
+- Converted Levels 11-14 into direct heavier-combat ramp layouts with larger growth gates, x3/risk choices, military obstacle variants, and no-upgrade validation coverage.
+- Converted Level 15 into a direct mech boss milestone with ShockwaveSlam boss validation, 10500 HP tuning, stronger pre-boss reads, and conservative no-upgrade survivability checks.
 - Added pooled muzzle flash, obstacle debris, and victory burst VFX cues with generated particle prefabs and validation coverage.
 - Added pooled crowd gain/loss VFX bursts for army count changes after the initial spawn count.
 - Ran a post-mech iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted runtime exception scan all passed.
@@ -607,7 +610,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Army-Scaled DPS, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Faster Physical Cadence, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
@@ -617,6 +620,7 @@ Tasks:
 - [x] Apply documented army-count damage scaling so early crowds feel powerful.
 - [x] Use global base-fire cadence as the no-upgrade baseline and let fire-rate upgrades multiply it.
 - [x] Increase early target acquisition/projectile responsiveness for physical-device combat readability.
+- [x] Tighten physical-device no-upgrade combat cadence/readability with 0.30s baseline volleys, 24m targeting, 36 speed projectiles, and a 6-shot visual burst cap.
 - [x] Add validator coverage for early first-enemy survivability.
 - [x] Add projectile pooling.
 - [x] Add bullet trails.
@@ -786,7 +790,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-10 First-Session Alignment
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-15 First-Session/Heavier-Combat Alignment
 Priority: Critical
 
 Tasks:
@@ -797,8 +801,8 @@ Tasks:
 - [x] Create direct Level 4 obstacle-chain intro per `LEVEL_DESIGN.md` first-session ramp.
 - [x] Create direct Level 5 tank boss milestone.
 - [x] Create direct Levels 6-10 advanced gate and true boss ramp.
-- Create Levels 11-15 heavier combat.
-- Create Level 15 boss variant.
+- [x] Create direct Levels 11-15 heavier combat and mech boss ramp.
+- [x] Create direct Level 15 mech boss variant.
 - Create Levels 16-20 risk/reward mastery.
 - Create Level 20 major boss.
 - [x] Retune Level 1 first enemy and first obstacle corridor from physical iPhone feedback so the opener teaches power rather than causing early failure.
@@ -808,6 +812,8 @@ Tasks:
 - [x] Convert Level 5 to a direct authored first boss milestone with `+30` vs `x2`, safe enemy check, second power gate, turret obstacle, final `+50` vs `x2`, and 3000 HP tank boss tuning.
 - [x] Convert Levels 6-9 to direct authored advanced-gate layouts with x2/x3 growth, one negative-gate refresh, heavier enemies, and advanced obstacle checks.
 - [x] Convert Level 10 to a direct authored helicopter boss milestone with 6000 HP tuning, truck/turret pressure, and validation coverage for the boss approach.
+- [x] Convert Levels 11-14 to direct authored heavier-combat layouts with larger enemy groups, x3/risk gates, military obstacle variants, and validation coverage for the exact ramp beats.
+- [x] Convert Level 15 to a direct authored mech boss milestone with 10500 HP tuning, ShockwaveSlam validation, truck/turret/fuel pressure, and conservative no-upgrade balance coverage.
 
 Acceptance Criteria:
 
@@ -914,7 +920,7 @@ Acceptance Criteria:
 
 ## 4.4 Mech Boss
 
-Status: Functional Visual, Shockwave, Multi-Phase, and Collapse Defeat Pass Implemented; Device Balance QA Pending
+Status: Functional Visual, Shockwave, Multi-Phase, Collapse Defeat, and Level 15 Milestone Tuning Implemented; Device Balance QA Pending
 Priority: Medium
 
 Tasks:
@@ -923,6 +929,7 @@ Tasks:
 - [x] Add multi-phase attack behavior.
 - [x] Add heavy impact VFX.
 - [x] Add unique defeat animation.
+- [x] Tune Level 15 as the first direct mech boss variant milestone with 10500 HP and guarded ShockwaveSlam validation.
 
 Acceptance Criteria:
 
@@ -1463,7 +1470,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Physical-Fix Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Gameplay-Scene Load Passed; Physical Gameplay-Start Retest Pending
+Status: Latest Physical-Fix Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1478,7 +1485,7 @@ Tasks:
 - [x] Run refreshed post-mech Xcode simulator build, install, launch, screenshot, and targeted runtime log scan.
 - [x] Run refreshed post-boss Xcode simulator build, install, launch, screenshot, and targeted runtime log scan after boss telegraph, boss audio, and floating-text optimization work.
 - [x] Run refreshed physical-input/world-text fix Xcode simulator export, signing-independent build, install, and launch smoke test.
-- [x] Record user-reported physical iPhone smoke result: main menu opens and Start Game reaches gameplay; Drag To Start physical retest remains pending after the input/world-text fix.
+- [x] Record user-reported physical iPhone smoke result: main menu opens, Start Game reaches gameplay, and Drag To Start begins the run after the input/world-text fix; full balance playthrough remains pending.
 
 Acceptance Criteria:
 
@@ -1495,7 +1502,7 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA and Levels 1-10 First-Session Simulation Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA and Levels 1-15 First-Session/Heavier-Combat Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1504,6 +1511,8 @@ Tasks:
 - [x] Add static early-combat survivability estimate for Levels 1-3.
 - [x] Add production validation for the exact Levels 1-10 tutorial/teaching/advanced-gate/boss milestone sequences.
 - [x] Add static no-upgrade balance checks for the direct Levels 6-10 advanced-gate and first true boss ramp.
+- [x] Add production validation for the exact direct Levels 11-14 heavier-combat ramp and Level 15 mech boss milestone.
+- [x] Add static no-upgrade balance checks for direct Levels 11-15 including Level 15 boss engagement timing.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
@@ -1521,7 +1530,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Early Combat Balance, Boss Engagement, and Levels 6-10 First-Session Ramp Fixes Implemented; Physical Gameplay-Start Retest Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Early Balance, Boss Engagement, and Levels 1-15 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1542,6 +1551,8 @@ Tasks:
 - [x] Add production validation for combat tuning and early onboarding survivability.
 - [x] Fix boss pre-engagement targetability so combat volleys cannot damage boss entities before the trigger starts the encounter.
 - [x] Record physical iPhone launch/menu/gameplay-scene smoke result and continue balance fixes through the Levels 6-10 first-session ramp.
+- [x] Record physical iPhone launch/menu/gameplay-start smoke result: the game now reaches gameplay and Drag To Start begins the run on device.
+- [x] Tighten physical-device combat cadence/readability after no-upgrade feedback and extend balance fixes through the Levels 11-15 heavier-combat/mech boss ramp.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

@@ -22,14 +22,14 @@ MonoBehaviour:
   soldierSpacingX: 0.48
   soldierSpacingZ: 0.46
   maxFormationColumns: 13
-  targetRange: 22
+  targetRange: 24
   targetLateralRange: 3.8
-  projectileSpeed: 32
+  projectileSpeed: 36
   projectileLifetime: 1.6
-  baseFireInterval: 0.35
+  baseFireInterval: 0.3
   minFireInterval: 0.08
   baseDamage: 10
-  projectileVisualBurst: 5
+  projectileVisualBurst: 6
   soldierCoinValue: 2
   enemyCoinValue: 2
   obstacleCoinValue: 12
