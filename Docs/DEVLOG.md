@@ -109,6 +109,36 @@ Date:
 
 System:
 
+Result Reward Breakdown Polish
+
+Files:
+
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added compact reward breakdown copy to the victory and defeat result panels so players can understand why a run paid out. `RunManager` now tracks combat loot separately from bonus-run crate coins, keeps survivor/base/boss contributions available for the final result, records early consolation floors on defeat, and passes a compact breakdown string into `GameplayUI`. Result status text now uses best-fit sizing for phone-safe breakdown copy, and production validation checks the result status label is configured for compact reward text.
+
+Result:
+
+`git diff --check` passed. Unity production validation passed with log `/tmp/armyrush_unity_reward_breakdown_validate.log`. The result flow now reinforces the progression loop with visible base rewards, loot, bonus coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra screens or taps.
+
+Follow Up:
+
+Physical iPhone QA should verify the breakdown line remains readable on victory, boss victory, bonus-run victory, and early defeat states, especially when quick-purchase upgrade buttons are available.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Physical iPhone Onboarding Combat Boost
 
 Files:
@@ -4080,7 +4110,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the level rebuild cleanup pass. Latest successful validation log: `/tmp/armyrush_unity_level_rebuild_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the result reward breakdown polish pass. Latest successful validation log: `/tmp/armyrush_unity_reward_breakdown_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
 
 ---
 

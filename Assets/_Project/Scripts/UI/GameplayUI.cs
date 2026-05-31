@@ -149,6 +149,11 @@ namespace ArmyRush
 
         public void ShowVictory(int coinsEarned)
         {
+            ShowVictory(coinsEarned, string.Empty);
+        }
+
+        public void ShowVictory(int coinsEarned, string rewardBreakdown)
+        {
             if (_victoryPanel != null)
             {
                 _victoryPanel.SetActive(true);
@@ -158,7 +163,7 @@ namespace ArmyRush
                 StopVictoryCoinCount();
                 _victoryCoinRoutine = StartCoroutine(CountVictoryCoins(Mathf.Max(0, coinsEarned)));
             }
-            ApplyVictoryPresentation();
+            ApplyVictoryPresentation(rewardBreakdown);
             RefreshResultUpgradeButtons();
         }
 
@@ -217,6 +222,11 @@ namespace ArmyRush
 
         public void ShowDefeat(int coinsEarned)
         {
+            ShowDefeat(coinsEarned, string.Empty);
+        }
+
+        public void ShowDefeat(int coinsEarned, string rewardBreakdown)
+        {
             if (_defeatPanel != null)
             {
                 _defeatPanel.SetActive(true);
@@ -225,7 +235,7 @@ namespace ArmyRush
             {
                 _defeatText.text = coinsEarned > 0 ? $"TRY AGAIN\n+{coinsEarned} COINS" : "TRY AGAIN";
             }
-            SetResultStatus(_defeatStatusText, string.Empty);
+            SetResultStatus(_defeatStatusText, rewardBreakdown);
             RefreshResultUpgradeButtons();
             StartDefeatFade();
         }
@@ -598,7 +608,7 @@ namespace ArmyRush
             _defeatStatusText = EnsureResultStatusText(_defeatPanel, _defeatStatusText);
         }
 
-        private void ApplyVictoryPresentation()
+        private void ApplyVictoryPresentation(string rewardBreakdown)
         {
             bool bossVictory = IsBossVictory();
             Text headerText = EnsureVictoryHeaderText();
@@ -611,7 +621,10 @@ namespace ArmyRush
                 headerText.resizeTextMaxSize = Mathf.Max(headerText.resizeTextMaxSize, headerText.fontSize);
             }
 
-            SetResultStatus(_victoryStatusText, bossVictory ? BuildBossVictoryStatus() : string.Empty);
+            string status = !string.IsNullOrWhiteSpace(rewardBreakdown)
+                ? rewardBreakdown
+                : (bossVictory ? BuildBossVictoryStatus() : string.Empty);
+            SetResultStatus(_victoryStatusText, status);
         }
 
         private Text EnsureVictoryHeaderText()
@@ -727,6 +740,9 @@ namespace ArmyRush
 
             Text status = CreateResultText("StatusText", panel.transform, string.Empty, 24, FontStyle.Bold, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.27f), new Vector2(620f, 44f));
             status.color = new Color(1f, 0.78f, 0.12f);
+            status.resizeTextForBestFit = true;
+            status.resizeTextMinSize = 14;
+            status.resizeTextMaxSize = Mathf.Max(status.resizeTextMaxSize, status.fontSize);
             return status;
         }
 
@@ -1057,6 +1073,9 @@ namespace ArmyRush
             label.alignment = alignment;
             label.horizontalOverflow = HorizontalWrapMode.Wrap;
             label.verticalOverflow = VerticalWrapMode.Truncate;
+            label.resizeTextForBestFit = true;
+            label.resizeTextMinSize = 14;
+            label.resizeTextMaxSize = fontSize;
             Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (font != null)
             {

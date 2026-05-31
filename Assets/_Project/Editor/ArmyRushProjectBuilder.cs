@@ -5580,6 +5580,16 @@ public static class ArmyRushProjectBuilder
             return;
         }
 
+        Text statusText = statusRect.GetComponent<Text>();
+        if (statusText == null)
+        {
+            failures.Add(panelName + " status text is missing a Text component.");
+        }
+        else if (!statusText.resizeTextForBestFit || statusText.resizeTextMinSize > 16 || statusText.resizeTextMaxSize < 24)
+        {
+            failures.Add(panelName + " status text must use best-fit sizing for compact reward breakdown copy.");
+        }
+
         if (RectTransformsOverlap(actionRect, upgradeRect) || RectTransformsOverlap(statusRect, actionRect) || RectTransformsOverlap(statusRect, upgradeRect))
         {
             failures.Add(panelName + " result actions overlap each other or the status text.");

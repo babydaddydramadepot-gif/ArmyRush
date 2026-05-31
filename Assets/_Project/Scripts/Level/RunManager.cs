@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace ArmyRush
@@ -21,6 +22,9 @@ namespace ArmyRush
 
         private int _runCoins;
         private int _bonusCoins;
+        private int _combatRewardCoins;
+        private int _bonusRunCoins;
+        private int _lastDefeatConsolationCoins;
         private bool _levelCompleted;
         private EconomyService _economy;
         private ProgressionService _progression;
@@ -97,6 +101,9 @@ namespace ArmyRush
             _nextRallyAssistTime = 0f;
             _runCoins = 0;
             _bonusCoins = 0;
+            _combatRewardCoins = 0;
+            _bonusRunCoins = 0;
+            _lastDefeatConsolationCoins = 0;
             _levelCompleted = false;
             ResetRunBoosts();
             ApplyOnboardingCombatBoost();
@@ -145,6 +152,7 @@ namespace ArmyRush
                 return;
             }
 
+            _bonusRunCoins += amount;
             AddPendingRewardCoins(amount, worldPosition);
         }
 
@@ -155,6 +163,7 @@ namespace ArmyRush
                 return;
             }
 
+            _combatRewardCoins += amount;
             AddPendingRewardCoins(amount, worldPosition);
         }
 
@@ -237,7 +246,9 @@ namespace ArmyRush
             }
             int survivorBonus = (_crowd != null ? _crowd.Count : 0) * (_tuning != null ? _tuning.soldierCoinValue : 2);
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus + _bonusCoins) * coinMultiplier * ActiveCoinBoostMultiplier);
+            float totalMultiplier = coinMultiplier * ActiveCoinBoostMultiplier;
+            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus + _bonusCoins) * totalMultiplier);
+            string rewardBreakdown = BuildVictoryRewardBreakdown(baseReward, survivorBonus, _combatRewardCoins, _bonusRunCoins, bossBonus, totalMultiplier);
 
             _gameplayUI?.SetRunCoinPreview(0);
             _economy?.AddCoins(_runCoins);
@@ -261,7 +272,7 @@ namespace ArmyRush
                 VfxManager.SpawnFloatingText("+" + _runCoins + " COINS", _crowd.transform.position + Vector3.up * 2.8f, new Color(1f, 0.78f, 0.12f));
             }
             CameraFollowRig.Shake(CameraShakeCue.Victory);
-            _gameplayUI?.ShowVictory(_runCoins);
+            _gameplayUI?.ShowVictory(_runCoins, rewardBreakdown);
         }
 
         public void LoseRun()
@@ -274,7 +285,7 @@ namespace ArmyRush
             AwardDefeatCoins();
             SetState(RunState.Defeat);
             _gameplayUI?.SetRunCoinPreview(0);
-            _gameplayUI?.ShowDefeat(_runCoins);
+            _gameplayUI?.ShowDefeat(_runCoins, BuildDefeatRewardBreakdown());
 
             if (ServiceLocator.TryGet(out AudioService audio))
             {
@@ -402,10 +413,12 @@ namespace ArmyRush
 
             int pendingCoins = Mathf.Max(0, _bonusCoins);
             LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            _lastDefeatConsolationCoins = 0;
             if (currentLevel != null && _tuning != null && currentLevel.levelIndex <= Mathf.Max(0, _tuning.earlyDefeatRewardLevelLimit))
             {
                 int consolation = Mathf.RoundToInt(Mathf.Max(0, currentLevel.baseCoinReward) * Mathf.Clamp01(_tuning.earlyDefeatRewardFraction));
                 consolation = Mathf.Max(consolation, Mathf.Max(0, _tuning.earlyDefeatMinimumCoins));
+                _lastDefeatConsolationCoins = Mathf.Max(0, consolation);
                 pendingCoins = Mathf.Max(pendingCoins, consolation);
             }
 
@@ -421,6 +434,70 @@ namespace ArmyRush
             {
                 VfxManager.SpawnFloatingText("+" + _runCoins + " COINS", _crowd.transform.position + Vector3.up * 2.2f, new Color(1f, 0.78f, 0.12f));
             }
+        }
+
+        private string BuildVictoryRewardBreakdown(int baseReward, int survivorBonus, int combatCoins, int bonusRunCoins, int bossBonus, float multiplier)
+        {
+            string result = "BASE " + FormatCompactCoins(baseReward);
+            if (combatCoins > 0)
+            {
+                result += "  LOOT " + FormatCompactCoins(combatCoins);
+            }
+            if (bonusRunCoins > 0)
+            {
+                result += "  BONUS " + FormatCompactCoins(bonusRunCoins);
+            }
+            if (survivorBonus > 0)
+            {
+                result += "  SURV " + FormatCompactCoins(survivorBonus);
+            }
+            if (bossBonus > 0)
+            {
+                result += "  BOSS " + FormatCompactCoins(bossBonus);
+            }
+            if (multiplier > 1.01f)
+            {
+                result += "  x" + multiplier.ToString("0.##", CultureInfo.InvariantCulture);
+            }
+
+            return result;
+        }
+
+        private string BuildDefeatRewardBreakdown()
+        {
+            if (_runCoins <= 0)
+            {
+                return "UPGRADE AND TRY AGAIN";
+            }
+
+            string result = string.Empty;
+            if (_bonusCoins > 0)
+            {
+                result = "LOOT " + FormatCompactCoins(_bonusCoins);
+            }
+            if (_lastDefeatConsolationCoins > _bonusCoins)
+            {
+                result = string.IsNullOrEmpty(result)
+                    ? "CONSOLATION " + FormatCompactCoins(_lastDefeatConsolationCoins)
+                    : result + "  SAFE FLOOR " + FormatCompactCoins(_lastDefeatConsolationCoins);
+            }
+
+            return string.IsNullOrEmpty(result) ? "CONSOLATION " + FormatCompactCoins(_runCoins) : result;
+        }
+
+        private static string FormatCompactCoins(int amount)
+        {
+            amount = Mathf.Max(0, amount);
+            if (amount >= 1000000)
+            {
+                return (Mathf.FloorToInt(amount / 100000f) / 10f).ToString("0.#", CultureInfo.InvariantCulture) + "M";
+            }
+            if (amount >= 10000)
+            {
+                return (Mathf.FloorToInt(amount / 100f) / 10f).ToString("0.#", CultureInfo.InvariantCulture) + "K";
+            }
+
+            return amount.ToString(CultureInfo.InvariantCulture);
         }
 
         private void ResetRunBoosts()

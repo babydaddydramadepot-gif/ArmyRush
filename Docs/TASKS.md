@@ -216,6 +216,7 @@ Implementation Pass 1 Result:
 - Hardened production validation so nested prefab/scene missing scripts, missing serialized object references, and ScriptableObject broken asset references are checked across the ArmyRush production content set.
 - Hardened level rebuild state by clearing transient pooled combat/VFX objects and the static target registry on level rebuild, with production validation for repeated rebuild target consistency.
 - Added a bounded first-session `POWER START` combat boost for Levels 1-3, tightened perceived fire cadence/targeting/projectile response, strengthened opening and post-gate volley feedback, increased early rally/contact mercy margins, and refreshed production validation after physical iPhone balance feedback.
+- Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1032,7 +1033,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, Live Run Reward Preview, Early Defeat Consolation, and Automated Early-Economy Validation; Manual Balance QA Pending
+Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, Live Run Reward Preview, Result Reward Breakdown, Early Defeat Consolation, and Automated Early-Economy Validation; Manual Balance QA Pending
 Priority: High
 
 Tasks:
@@ -1044,6 +1045,7 @@ Tasks:
 - [x] Calculate bonus run crate rewards.
 - [x] Apply coin multipliers.
 - [x] Preview pending earned run coins in the HUD before the result screen payout.
+- [x] Show compact victory/defeat reward breakdowns on result panels so players understand base rewards, combat loot, bonus coins, survivor value, boss bonuses, multipliers, and consolation floors.
 - [x] Add validator simulation for early one-upgrade-per-run affordability.
 - [x] Add data-driven early defeat consolation coins for Levels 1-5 so failed first-session runs still fund visible progression.
 
@@ -1651,7 +1653,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Boss Victory Result Polish, and Production Debug-Control Audit
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Boss Victory Result Polish, Result Reward Breakdown Polish, and Production Debug-Control Audit
 Priority: Critical
 
 Tasks:
@@ -1663,6 +1665,7 @@ Tasks:
 - [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
 - [x] Add bounded first-session combat boost feedback so the tutorial starts with visible power rather than a hidden difficulty assist.
 - [x] Add boss victory milestone reward polish to the result screen.
+- [x] Add compact reward breakdown polish to victory and defeat result screens.
 - [x] Add result panel UI validation for milestone header fit and action/status overlap.
 - [x] Limit keyboard-only runner steering to Unity Editor builds so production iOS builds keep the documented touch/mouse input surface without hidden debug controls.
 - [x] Audit runtime scripts for production-visible debug UI, cheat shortcuts, and `OnGUI` overlays.
