@@ -1545,13 +1545,14 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA and Levels 1-20 First-Session/Mastery Simulation Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA, First-Enemy Target-Lock Timeline Validation, and Levels 1-20 First-Session/Mastery Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
 
 - [x] Add automated authored level data validation.
 - [x] Add static early-combat survivability estimate for Levels 1-3.
+- [x] Replace the optimistic Levels 1-3 first-enemy estimate with a target-lock timeline that accounts for pre-gate shots, best-gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, and projectile travel before contact.
 - [x] Add production validation for the exact Levels 1-10 tutorial/teaching/advanced-gate/boss milestone sequences.
 - [x] Add static no-upgrade balance checks for the direct Levels 6-10 advanced-gate and first true boss ramp.
 - [x] Add production validation for the exact direct Levels 11-14 heavier-combat ramp and Level 15 mech boss milestone.
@@ -1595,6 +1596,7 @@ Tasks:
 - [x] Fix physical iPhone early run balance where the first enemy encounter could feel effectively unbeatable.
 - [x] Fix no-upgrade combat cadence regression that made fire rate feel too slow.
 - [x] Add production validation for combat tuning and early onboarding survivability.
+- [x] Harden first-enemy production validation so the physical-device pre-gate target-lock case cannot be masked by assuming the full grown army fires for the entire contact window.
 - [x] Fix boss pre-engagement targetability so combat volleys cannot damage boss entities before the trigger starts the encounter.
 - [x] Record physical iPhone launch/menu/gameplay-scene smoke result and continue balance fixes through the Levels 6-10 first-session ramp.
 - [x] Record physical iPhone launch/menu/gameplay-start smoke result: the game now reaches gameplay and Drag To Start begins the run on device.

@@ -3335,14 +3335,6 @@ public static class ArmyRushProjectBuilder
         UpgradeDefinition fireRateUpgrade = definitions.FirstOrDefault(definition => definition.type == UpgradeType.FireRate);
         int damagePerSoldier = Mathf.RoundToInt(Mathf.Max(tuning.baseDamage, damageUpgrade != null ? damageUpgrade.GetValue(0) : tuning.baseDamage));
         float fireRateMultiplier = Mathf.Max(1f, fireRateUpgrade != null ? fireRateUpgrade.GetValue(0) : 1f);
-        float baseFireInterval = Mathf.Max(tuning.minFireInterval, tuning.baseFireInterval);
-        float fireInterval = Mathf.Max(tuning.minFireInterval, baseFireInterval / fireRateMultiplier);
-        float projectileDelay = tuning.projectileSpeed > 0f ? tuning.targetRange / tuning.projectileSpeed : 0f;
-        float contactWindow = tuning.forwardSpeed > 0f ? tuning.targetRange / tuning.forwardSpeed : 0f;
-        int volleysStartedBeforeContact = Mathf.Max(1, Mathf.FloorToInt(contactWindow / fireInterval) + 1);
-        int projectileVolleysHitBeforeContact = contactWindow >= projectileDelay
-            ? Mathf.Max(1, Mathf.FloorToInt((contactWindow - projectileDelay) / fireInterval) + 1)
-            : 0;
 
         foreach (LevelData level in levels)
         {
@@ -3354,43 +3346,25 @@ public static class ArmyRushProjectBuilder
                 continue;
             }
 
-            int startingSoldiers = level.startingSoldiersOverride > 0 ? level.startingSoldiersOverride : Mathf.Max(1, tuning.defaultStartingSoldiers);
-            int soldiersAtEnemy = EstimateBestGatePathBefore(level, startingSoldiers, firstEnemy.z);
-            GateSpawnData firstGateBeforeEnemy = level.gates != null
-                ? level.gates.Where(gate => gate != null && gate.z < firstEnemy.z).OrderBy(gate => gate.z).FirstOrDefault()
-                : null;
-            if (firstGateBeforeEnemy != null && firstEnemy.z - tuning.targetRange < firstGateBeforeEnemy.z - 0.1f)
+            FirstEnemyCombatEstimate estimate = EstimateFirstEnemyCombatTimeline(level, firstEnemy, tuning, damagePerSoldier, fireRateMultiplier);
+            if (estimate.TargetLocksBeforeFirstGate)
             {
-                int gateGrowthBeforeEnemy = Mathf.Max(0, soldiersAtEnemy - startingSoldiers);
-                if (gateGrowthBeforeEnemy > 0 && tuning.powerSpikeVolleyMinimumGain > gateGrowthBeforeEnemy)
+                if (estimate.FirstGateGrowthBeforeEnemy > 0 && tuning.powerSpikeVolleyMinimumGain > estimate.FirstGateGrowthBeforeEnemy)
                 {
                     failures.Add(level.name + " first enemy can be target-locked before the first gate, but power-spike volley gain tuning will not trigger from that gate.");
                 }
-                if (gateGrowthBeforeEnemy >= tuning.powerSpikeVolleyMinimumGain && tuning.powerSpikeVolleyDamageMultiplier < 1.15f)
+                if (estimate.FirstGateGrowthBeforeEnemy >= tuning.powerSpikeVolleyMinimumGain && tuning.powerSpikeVolleyDamageMultiplier < 1.15f)
                 {
                     failures.Add(level.name + " first enemy can be target-locked before gate growth, so power-spike volley damage must make the post-gate strength change readable.");
                 }
             }
-            int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
-            int damagePerVolley = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, soldiersAtEnemy) * baseFireInterval));
-            int openingVolleyDamage = Mathf.RoundToInt(damagePerVolley * Mathf.Max(1f, tuning.openingVolleyDamageMultiplier));
-            int standardImmediateDamage = CalculateImmediateDamage(damagePerVolley, tuning.volleyImmediateDamageFraction);
-            int openingImmediateDamage = CalculateImmediateDamage(openingVolleyDamage, Mathf.Max(tuning.volleyImmediateDamageFraction, tuning.openingVolleyImmediateDamageFraction));
-            int standardProjectileDamage = Mathf.Max(1, damagePerVolley - standardImmediateDamage);
-            int openingProjectileDamage = Mathf.Max(1, openingVolleyDamage - openingImmediateDamage);
-            int damageBeforeContact = openingImmediateDamage + standardImmediateDamage * Mathf.Max(0, volleysStartedBeforeContact - 1);
-            if (projectileVolleysHitBeforeContact > 0)
-            {
-                damageBeforeContact += openingProjectileDamage + standardProjectileDamage * Mathf.Max(0, projectileVolleysHitBeforeContact - 1);
-            }
-            int remainingHealth = Mathf.Max(0, enemyHealth - damageBeforeContact);
-            int remainingEnemies = Mathf.CeilToInt(remainingHealth / (float)Mathf.Max(1, firstEnemy.healthPerUnit));
-            int survivors = soldiersAtEnemy - remainingEnemies;
-            int requiredSurvivors = Mathf.CeilToInt(soldiersAtEnemy * (level.levelIndex == 1 ? 0.8f : 0.55f));
 
-            if (survivors < requiredSurvivors)
+            int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
+            int requiredSurvivors = Mathf.CeilToInt(estimate.SoldiersAtEnemy * (level.levelIndex == 1 ? 0.8f : 0.55f));
+
+            if (estimate.Survivors < requiredSurvivors)
             {
-                failures.Add(level.name + " first enemy leaves only " + survivors + "/" + soldiersAtEnemy + " soldiers in the no-upgrade onboarding estimate.");
+                failures.Add(level.name + " first enemy leaves only " + estimate.Survivors + "/" + estimate.SoldiersAtEnemy + " soldiers in the no-upgrade first-enemy timeline estimate after " + estimate.DamageBeforeContact + "/" + enemyHealth + " pre-contact damage.");
             }
 
             if (level.levelIndex == 1 && (firstEnemy.count > 10 || firstEnemy.healthPerUnit > 8))
@@ -3398,6 +3372,128 @@ public static class ArmyRushProjectBuilder
                 failures.Add("Level 1 first enemy should remain a tutorial-safe light group near 8 enemies with low health.");
             }
         }
+    }
+
+    private struct FirstEnemyCombatEstimate
+    {
+        public int SoldiersAtEnemy;
+        public int DamageBeforeContact;
+        public int Survivors;
+        public bool TargetLocksBeforeFirstGate;
+        public int FirstGateGrowthBeforeEnemy;
+    }
+
+    private static FirstEnemyCombatEstimate EstimateFirstEnemyCombatTimeline(LevelData level, EnemyGroupSpawnData firstEnemy, GlobalTuning tuning, int damagePerSoldier, float fireRateMultiplier)
+    {
+        int startingSoldiers = level.startingSoldiersOverride > 0 ? level.startingSoldiersOverride : Mathf.Max(1, tuning.defaultStartingSoldiers);
+        int soldiersAtEnemy = EstimateBestGatePathBefore(level, startingSoldiers, firstEnemy.z);
+        int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
+        float forwardSpeed = Mathf.Max(0.01f, tuning.forwardSpeed);
+        float targetRange = Mathf.Max(0f, tuning.targetRange);
+        float targetLockZ = Mathf.Max(0f, firstEnemy.z - targetRange);
+        float contactTime = Mathf.Max(0f, (firstEnemy.z - targetLockZ) / forwardSpeed);
+        float baseFireInterval = Mathf.Max(tuning.minFireInterval, tuning.baseFireInterval);
+        float fireInterval = Mathf.Max(tuning.minFireInterval, baseFireInterval / Mathf.Max(1f, fireRateMultiplier));
+        float projectileSpeed = Mathf.Max(0.01f, tuning.projectileSpeed);
+        float nextFireTime = 0f;
+        float nextPowerSpikeVolleyTime = 0f;
+        bool firstShot = true;
+        bool powerSpikeQueued = false;
+        int currentSoldiers = Mathf.Max(1, startingSoldiers);
+        int damageBeforeContact = 0;
+
+        List<GateSpawnData> gates = level.gates != null
+            ? level.gates.Where(gate => gate != null && gate.z < firstEnemy.z - 0.1f).OrderBy(gate => gate.z).ToList()
+            : new List<GateSpawnData>();
+
+        bool targetLocksBeforeFirstGate = gates.Count > 0 && targetLockZ < gates[0].z - 0.1f;
+        int firstGateGrowthBeforeEnemy = 0;
+        int gateIndex = 0;
+        while (true)
+        {
+            float nextGateTime = gateIndex < gates.Count ? Mathf.Max(0f, (gates[gateIndex].z - targetLockZ) / forwardSpeed) : float.PositiveInfinity;
+            float nextShotTime = nextFireTime;
+            if (nextGateTime > contactTime && nextShotTime > contactTime)
+            {
+                break;
+            }
+
+            if (nextGateTime <= nextShotTime && nextGateTime <= contactTime)
+            {
+                int previousCount = currentSoldiers;
+                float gateZ = gates[gateIndex].z;
+                int bestCount = currentSoldiers;
+                while (gateIndex < gates.Count && Mathf.Abs(gates[gateIndex].z - gateZ) <= 0.1f)
+                {
+                    bestCount = Mathf.Max(bestCount, ApplyGateEstimate(currentSoldiers, gates[gateIndex]));
+                    gateIndex++;
+                }
+
+                currentSoldiers = Mathf.Max(0, bestCount);
+                int gained = currentSoldiers - previousCount;
+                if (firstGateGrowthBeforeEnemy == 0 && gained > 0)
+                {
+                    firstGateGrowthBeforeEnemy = gained;
+                }
+
+                int minimumGain = Mathf.Max(1, tuning.powerSpikeVolleyMinimumGain);
+                bool meaningfulGrowth = gained >= minimumGain || currentSoldiers >= Mathf.CeilToInt(previousCount * 1.35f);
+                if (meaningfulGrowth && nextGateTime >= nextPowerSpikeVolleyTime)
+                {
+                    powerSpikeQueued = true;
+                    nextFireTime = Mathf.Min(nextFireTime, nextGateTime);
+                }
+                continue;
+            }
+
+            float shotTime = nextShotTime;
+            if (shotTime > contactTime)
+            {
+                break;
+            }
+
+            bool openingVolley = firstShot && tuning.openingVolleyDamageMultiplier > 1f;
+            bool powerSpikeVolley = !openingVolley && powerSpikeQueued && shotTime >= nextPowerSpikeVolleyTime && tuning.powerSpikeVolleyDamageMultiplier > 1f;
+            float volleyMultiplier = openingVolley ? Mathf.Max(1f, tuning.openingVolleyDamageMultiplier) : powerSpikeVolley ? Mathf.Max(1f, tuning.powerSpikeVolleyDamageMultiplier) : 1f;
+            int totalDamage = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, damagePerSoldier) * Mathf.Max(1, currentSoldiers) * baseFireInterval * volleyMultiplier));
+            int immediateDamage = CalculateImmediateDamage(totalDamage, openingVolley || powerSpikeVolley ? Mathf.Max(tuning.volleyImmediateDamageFraction, tuning.openingVolleyImmediateDamageFraction) : tuning.volleyImmediateDamageFraction);
+            damageBeforeContact += immediateDamage;
+
+            int projectileDamage = Mathf.Max(1, totalDamage - immediateDamage);
+            float playerZAtShot = targetLockZ + shotTime * forwardSpeed;
+            float distanceAtShot = Mathf.Max(0f, firstEnemy.z - playerZAtShot);
+            float projectileHitTime = shotTime + distanceAtShot / projectileSpeed;
+            if (projectileHitTime <= contactTime + 0.001f)
+            {
+                damageBeforeContact += projectileDamage;
+            }
+
+            if (firstShot)
+            {
+                firstShot = false;
+            }
+            if (openingVolley || powerSpikeVolley)
+            {
+                powerSpikeQueued = false;
+            }
+            if (powerSpikeVolley)
+            {
+                nextPowerSpikeVolleyTime = shotTime + Mathf.Max(0f, tuning.powerSpikeVolleyCooldown);
+            }
+
+            nextFireTime = shotTime + fireInterval;
+        }
+
+        int remainingHealth = Mathf.Max(0, enemyHealth - damageBeforeContact);
+        int remainingEnemies = Mathf.CeilToInt(remainingHealth / (float)Mathf.Max(1, firstEnemy.healthPerUnit));
+        return new FirstEnemyCombatEstimate
+        {
+            SoldiersAtEnemy = soldiersAtEnemy,
+            DamageBeforeContact = damageBeforeContact,
+            Survivors = soldiersAtEnemy - remainingEnemies,
+            TargetLocksBeforeFirstGate = targetLocksBeforeFirstGate,
+            FirstGateGrowthBeforeEnemy = firstGateGrowthBeforeEnemy
+        };
     }
 
     private static int CalculateImmediateDamage(int totalDamage, float fraction)
