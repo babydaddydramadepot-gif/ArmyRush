@@ -224,6 +224,7 @@ Implementation Pass 1 Result:
 - Added capped shoot-burst audio layering keyed to volley intensity so dense physical-device combat sounds closer to its multi-projectile/multi-muzzle visual cadence without increasing DPS.
 - Unity production validation passed after the shoot-burst audio feedback pass with no targeted compile, exception, missing-reference, fatal, or validation-failure signatures.
 - Moved Levels 1-3 first enemy beats later so target lock begins after the opening growth gate on physical-device tuning, and added production validation for that grow-before-fight spacing.
+- Ran a post-onboarding-spacing iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, settled portrait menu screenshot capture at `/tmp/armyrush_onboarding_spacing_smoke.png`, and targeted runtime exception/fatal scan all passed.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
@@ -1547,7 +1548,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Post-Onboarding-Overdrive Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
+Status: Latest Post-Onboarding-Spacing Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1567,6 +1568,7 @@ Tasks:
 - [x] Run refreshed post-result-reward-breakdown Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception/fatal scan.
 - [x] Run refreshed post-menu-beacon Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted runtime exception/fatal scan.
 - [x] Run refreshed post-onboarding-overdrive Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted runtime exception/fatal scan.
+- [x] Run refreshed post-onboarding-spacing Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, portrait Info.plist check, and targeted runtime exception/fatal scan.
 
 Acceptance Criteria:
 
@@ -1670,6 +1672,7 @@ Tasks:
 - [x] Confirm shoot-burst audio production validation has no targeted compile, Unity exception, null-reference, missing-reference, fatal, or validation-failure signatures.
 - [x] Fix Levels 1-3 first-enemy spacing so physical-device target lock begins after the first growth gate rather than spending the opening salvo at the starting squad size.
 - [x] Confirm onboarding-spacing production validation has no targeted compile, Unity exception, null-reference, missing-reference, fatal, or validation-failure signatures.
+- [x] Confirm post-onboarding-spacing simulator export/build/install/launch has no targeted Unity exception, null-reference, missing-reference, or fatal signatures.
 - Fix console errors.
 - [x] Fix missing references covered by the production validation pass.
 - Fix animation errors.

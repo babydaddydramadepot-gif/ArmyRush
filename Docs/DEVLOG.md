@@ -109,6 +109,33 @@ Date:
 
 System:
 
+Post-Onboarding-Spacing iOS Simulator Smoke Validation
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran a fresh simulator validation chain after the Levels 1-3 onboarding first-enemy spacing pass. Unity exported `ArmyRush_iOSSimulatorBuild`, Xcode built the generated `Unity-iPhone` scheme with signing disabled into `/tmp/armyrush_iossim_onboarding_spacing_derived/Build/Products/Debug-iphonesimulator/ArmyRush.app`, the app installed and launched as `com.armyrush.game` on the booted iPhone 17 Pro simulator, and a settled portrait menu screenshot was captured at `/tmp/armyrush_onboarding_spacing_smoke.png`.
+
+Result:
+
+Unity simulator export completed with `Build Finished, Result: Success` in `/tmp/armyrush_unity_onboarding_spacing_iossim_export.log`. Xcode simulator build completed successfully on rerun after the first long compile attempt was manually interrupted during valid IL2CPP work; the rerun used the cached IL2CPP artifacts and an explicit iPhone 17 Pro destination. Simulator install and launch returned cleanly, the screenshot confirms the portrait main menu renders after the latest onboarding spacing change, the built app Info.plist is portrait-only and targets iPhone plus iPad, and a targeted ArmyRush runtime log scan found no `Exception`, `NullReference`, `MissingReference`, `Fatal`, `Stacktrace`, or `Crash` signatures. Remaining build noise was limited to expected Unity-generated simulator deprecation/linker/run-script warnings.
+
+Follow Up:
+
+Use this build as the next physical iPhone retest candidate for Levels 1-3. Simulator validation confirms export/build/launch and portrait menu rendering, but physical iPhone play remains the authoritative check for touch feel, grow-before-fight spacing, combat readability, audio mix, and full Levels 1-20 balance.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Onboarding First-Enemy Spacing
 
 Files:
@@ -4434,7 +4461,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol noise in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the onboarding first-enemy spacing pass. Latest successful validation log: `/tmp/armyrush_unity_onboarding_spacing_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding overdrive tuning pass, with screenshot `/tmp/armyrush_onboarding_overdrive_smoke.png` and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
+Unity batch validation has had intermittent workstation licensing protocol noise in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the onboarding first-enemy spacing pass. Latest successful validation log: `/tmp/armyrush_unity_onboarding_spacing_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding first-enemy spacing pass, with screenshot `/tmp/armyrush_onboarding_spacing_smoke.png`, portrait-only Info.plist confirmation, and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
 
 ---
 
