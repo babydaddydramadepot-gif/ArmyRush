@@ -5434,6 +5434,7 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Game scene validation spawned no enemy groups.");
         }
+        ValidateEnemyCountLabelDamageReadability(failures);
         if (Object.FindObjectsByType<ObstacleController>(FindObjectsInactive.Exclude).Length == 0)
         {
             failures.Add("Game scene validation spawned no obstacles.");
@@ -5510,6 +5511,41 @@ public static class ArmyRushProjectBuilder
         ValidateLevelRebuildState(levelManager, failures);
         ValidateWorldTextSafety(failures);
         ValidateGameplayHudLayout(failures);
+    }
+
+    private static void ValidateEnemyCountLabelDamageReadability(List<string> failures)
+    {
+        EnemyGroup enemy = Object.FindObjectsByType<EnemyGroup>(FindObjectsInactive.Exclude).FirstOrDefault();
+        if (enemy == null)
+        {
+            return;
+        }
+
+        Damageable damageable = enemy.GetComponent<Damageable>();
+        TextMesh label = enemy.GetComponentsInChildren<TextMesh>(true).FirstOrDefault(text => text != null && text.name == "CountLabel");
+        if (damageable == null || label == null)
+        {
+            failures.Add("Spawned enemy group is missing Damageable or CountLabel for count readability validation.");
+            return;
+        }
+
+        if (!int.TryParse(label.text, out int displayedUnits) || displayedUnits <= 0)
+        {
+            failures.Add("Enemy group count label should display a positive unit count before damage.");
+            return;
+        }
+
+        int startingHealth = damageable.Health;
+        if (startingHealth <= displayedUnits)
+        {
+            return;
+        }
+
+        damageable.ApplyDamage(1);
+        if (label.text != displayedUnits.ToString())
+        {
+            failures.Add("Enemy group count label switched from unit count to raw health after damage, making combat look weaker on device.");
+        }
     }
 
     private static void ValidateLevelRebuildState(LevelManager levelManager, List<string> failures)

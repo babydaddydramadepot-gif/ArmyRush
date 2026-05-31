@@ -218,6 +218,7 @@ Implementation Pass 1 Result:
 - Added a bounded first-session `POWER START` combat boost for Levels 1-3, tightened perceived fire cadence/targeting/projectile response, strengthened opening and post-gate volley feedback, increased early rally/contact mercy margins, and refreshed production validation after physical iPhone balance feedback.
 - Strengthened the first-session `POWER START` onboarding window for physical iPhone feel with 35% damage/fire-rate boosts, 28m targeting, 48-speed projectiles, denser opening/power-spike volleys, boost-duration-aware HUD fill, and validation that Levels 1-3 clear their first enemy before contact.
 - Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
+- Fixed enemy group count label readability so damage can no longer overwrite remaining-unit labels with raw HP values, and added production validation for that physical-device combat-readability regression.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
@@ -1605,7 +1606,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Early Retry Power, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Enemy Count Label Readability, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Early Retry Power, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1650,6 +1651,8 @@ Tasks:
 - [x] Add result panel validation for victory/defeat header, reward, status, and action layout so boss milestone copy stays portrait-safe.
 - [x] Add production validation for nested missing scripts and missing serialized object references across prefabs, scenes, and ScriptableObject data.
 - [x] Confirm current production validation finds no missing serialized references or broken production prefabs.
+- [x] Fix enemy group count labels so damage updates cannot replace remaining-unit counts with raw HP values on physical-device screens.
+- [x] Add production validation that damages a spawned enemy and confirms its count label remains a unit count.
 - Fix console errors.
 - [x] Fix missing references covered by the production validation pass.
 - Fix animation errors.

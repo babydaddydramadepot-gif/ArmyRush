@@ -108,6 +108,12 @@ namespace ArmyRush
         {
             if (_label != null)
             {
+                if (_kind == CombatTargetKind.Enemy)
+                {
+                    WorldTextGuard.Clamp(_label);
+                    return;
+                }
+
                 _label.text = Mathf.Max(0, _health).ToString();
                 WorldTextGuard.Clamp(_label);
             }

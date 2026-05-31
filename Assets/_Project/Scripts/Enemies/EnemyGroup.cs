@@ -199,6 +199,7 @@ namespace ArmyRush
             if (_countLabel != null && _damageable != null)
             {
                 _countLabel.text = Mathf.CeilToInt(_damageable.Health / (float)_healthPerUnit).ToString();
+                WorldTextGuard.Clamp(_countLabel);
             }
         }
 
