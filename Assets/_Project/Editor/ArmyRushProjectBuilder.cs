@@ -1771,6 +1771,11 @@ public static class ArmyRushProjectBuilder
             AddLevelFourObstacleIntroData(data, chunks);
             return;
         }
+        if (level == 5)
+        {
+            AddLevelFiveTankBossData(data, chunks);
+            return;
+        }
 
         AddLevelChunk(data, intro, 8f, false, Mathf.Max(1f, difficultyMultiplier * 0.85f));
         AddLevelChunk(data, gateEnemy, 30f, mirror, difficultyMultiplier);
@@ -1856,6 +1861,21 @@ public static class ArmyRushProjectBuilder
         data.enemyGroups.Add(new EnemyGroupSpawnData { z = 98f, x = 0f, count = 30, healthPerUnit = 12, width = 3f });
         data.gates.Add(new GateSpawnData { z = 116f, x = -1.45f, operation = GateOperation.Add, value = 30 });
         data.gates.Add(new GateSpawnData { z = 116f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+    }
+
+    private static void AddLevelFiveTankBossData(LevelData data, LevelChunkData[] chunks)
+    {
+        data.trackLength = Mathf.Max(data.trackLength, 160f);
+        data.hasBoss = true;
+        data.bossHealth = 3000;
+        data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 30 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 28, healthPerUnit = 12, width = 3f });
+        data.gates.Add(new GateSpawnData { z = 56f, x = -1.45f, operation = GateOperation.Add, value = 30 });
+        data.gates.Add(new GateSpawnData { z = 56f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        AddObstacle(data, 80f, 0f, 520, 12, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Turret));
+        data.gates.Add(new GateSpawnData { z = 106f, x = -1.45f, operation = GateOperation.Add, value = 50 });
+        data.gates.Add(new GateSpawnData { z = 106f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
     }
 
     private static ObstacleDefinition FindObstacleDefinitionInChunks(LevelChunkData[] chunks, ObstacleKind kind)
@@ -3161,6 +3181,10 @@ public static class ArmyRushProjectBuilder
             {
                 ValidateLevelFourObstacleIntroLayout(failures, level, label);
             }
+            else if (level.levelIndex == 5)
+            {
+                ValidateLevelFiveTankBossLayout(failures, level, label);
+            }
             ValidateEncounterCadence(failures, level, label, forwardSpeed);
 
             if (level.hasBoss)
@@ -3185,7 +3209,7 @@ public static class ArmyRushProjectBuilder
 
     private static bool IsDirectTeachingLevel(LevelData level)
     {
-        return level != null && level.levelIndex >= 1 && level.levelIndex <= 4 && (level.chunks == null || level.chunks.Count == 0);
+        return level != null && level.levelIndex >= 1 && level.levelIndex <= 5 && (level.chunks == null || level.chunks.Count == 0);
     }
 
     private static void ValidateLevelOneTutorialLayout(List<string> failures, LevelData level, string label)
@@ -3374,6 +3398,58 @@ public static class ArmyRushProjectBuilder
         if (!HasGate(gates, 116f, GateOperation.Add, 30) || !HasGate(gates, 116f, GateOperation.Multiply, 2))
         {
             failures.Add(label + " must end the teaching sequence with a final +30 vs x2 power choice.");
+        }
+    }
+
+    private static void ValidateLevelFiveTankBossLayout(List<string> failures, LevelData level, string label)
+    {
+        if (level.chunks != null && level.chunks.Count > 0)
+        {
+            failures.Add(label + " should use direct teaching spawns so the first tank boss ramp stays clean and readable.");
+        }
+        if (!level.hasBoss || level.bossDefinition == null || level.bossDefinition.attackPattern != BossAttackPattern.CannonVolley)
+        {
+            failures.Add(label + " must be the first tank boss milestone.");
+        }
+        if (level.bossHealth < 2400 || level.bossHealth > 3600)
+        {
+            failures.Add(label + " first boss health should create a short real fight without overwhelming the first session.");
+        }
+
+        List<GateSpawnData> gates = GetOrderedGates(level);
+        List<EnemyGroupSpawnData> enemies = GetOrderedEnemies(level);
+        List<ObstacleSpawnData> obstacles = GetOrderedObstacles(level);
+
+        if (!HasGate(gates, 16f, GateOperation.Add, 30) || !HasGate(gates, 16f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must open the boss milestone with a generous +30 vs x2 power choice.");
+        }
+
+        EnemyGroupSpawnData firstEnemy = enemies.FirstOrDefault();
+        if (firstEnemy == null || firstEnemy.count != 28 || firstEnemy.healthPerUnit > 12)
+        {
+            failures.Add(label + " must include a safe pre-boss enemy check before the tank.");
+        }
+
+        if (!HasGate(gates, 56f, GateOperation.Add, 30) || !HasGate(gates, 56f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must provide a second power spike before the turret obstacle.");
+        }
+
+        ObstacleSpawnData turret = obstacles.FirstOrDefault();
+        if (turret == null || turret.definition == null || turret.definition.kind != ObstacleKind.Turret || turret.health < 450 || turret.health > 600)
+        {
+            failures.Add(label + " must introduce a larger turret obstacle before the tank boss.");
+        }
+
+        if (!HasGate(gates, 106f, GateOperation.Add, 50) || !HasGate(gates, 106f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must include the final boss lead-in power gate as +50 vs x2.");
+        }
+
+        if (level.trackLength < 156f)
+        {
+            failures.Add(label + " needs enough track length for a readable first boss arena.");
         }
     }
 

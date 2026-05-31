@@ -196,6 +196,7 @@ Implementation Pass 1 Result:
 - Aligned Level 1 with the higher-priority `GAMEPLAY_LOOP.md` tutorial sequence as a direct authored layout: `+5` vs `+10`, first enemy count 8, post-enemy `x2`, and a 40 HP crate wall, with production validation guarding that sequence.
 - Aligned Levels 2 and 3 with the higher-priority `GAMEPLAY_LOOP.md` onboarding sequence as direct authored layouts, resolving the lower-priority `LEVEL_DESIGN.md` intro-label conflict in favor of gameplay source-of-truth pacing.
 - Aligned Level 4 with the documented obstacle-chain teaching ramp as a direct authored layout: `+25` vs `x2`, forgiving lane obstacles, recovery gate, central concrete blocker, safe enemy follow-up, and a final power gate, with production validation guarding that sequence.
+- Converted Level 5 into a direct authored first tank boss milestone with generous pre-boss growth gates, a safe enemy check, a turret obstacle check, a final boss lead-in power gate, and boss targetability gated until the encounter actually engages.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
@@ -783,7 +784,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-4 Teaching Alignment
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-5 First-Session Alignment
 Priority: Critical
 
 Tasks:
@@ -792,7 +793,7 @@ Tasks:
 - [x] Create direct Level 2 slightly harder choice intro per `GAMEPLAY_LOOP.md`.
 - [x] Create direct Level 3 negative gate intro per `GAMEPLAY_LOOP.md`.
 - [x] Create direct Level 4 obstacle-chain intro per `LEVEL_DESIGN.md` first-session ramp.
-- Create Level 5 tank boss.
+- [x] Create direct Level 5 tank boss milestone.
 - Create Levels 6-10 advanced gates.
 - Create Levels 11-15 heavier combat.
 - Create Level 15 boss variant.
@@ -802,6 +803,7 @@ Tasks:
 - [x] Convert Level 1 to a direct authored tutorial layout matching `GAMEPLAY_LOOP.md`: `+5` vs `+10`, first enemy count 8, `x2`, 40 HP crate, finish.
 - [x] Convert Levels 2 and 3 to direct authored onboarding layouts matching `GAMEPLAY_LOOP.md` and add validation coverage for their exact teaching beats.
 - [x] Convert Level 4 to a direct authored obstacle intro with forgiving lane blockers, a central concrete blocker, safe follow-up combat, and validation coverage for the exact teaching beats.
+- [x] Convert Level 5 to a direct authored first boss milestone with `+30` vs `x2`, safe enemy check, second power gate, turret obstacle, final `+50` vs `x2`, and 3000 HP tank boss tuning.
 
 Acceptance Criteria:
 
@@ -864,7 +866,7 @@ Acceptance Criteria:
 
 ## 4.2 Tank Boss
 
-Status: Functional Pass Implemented with Damage States and Defeat Animation; Balance QA Pending
+Status: Functional Pass Implemented with Damage States, Defeat Animation, and First-Session Level 5 Tuning; Balance QA Pending
 Priority: High
 
 Tasks:
@@ -875,6 +877,7 @@ Tasks:
 - [x] Add damage states.
 - [x] Add destruction animation.
 - [x] Add explosion VFX.
+- [x] Gate tank boss targetability until combat engagement so the first boss cannot be pre-melted before the fight begins.
 
 Acceptance Criteria:
 
@@ -1487,14 +1490,14 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA and Early Combat Simulation Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA and Early Combat/Boss Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
 
 - [x] Add automated authored level data validation.
 - [x] Add static early-combat survivability estimate for Levels 1-3.
-- [x] Add production validation for the exact Levels 1-4 tutorial/teaching sequences.
+- [x] Add production validation for the exact Levels 1-5 tutorial/teaching/boss milestone sequences.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
@@ -1512,7 +1515,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, and Early Combat Balance Fixes Implemented; Device Retest Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Early Combat Balance, and Boss Engagement Fixes Implemented; Device Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1531,6 +1534,7 @@ Tasks:
 - [x] Fix physical iPhone early run balance where the first enemy encounter could feel effectively unbeatable.
 - [x] Fix no-upgrade combat cadence regression that made fire rate feel too slow.
 - [x] Add production validation for combat tuning and early onboarding survivability.
+- [x] Fix boss pre-engagement targetability so combat volleys cannot damage boss entities before the trigger starts the encounter.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

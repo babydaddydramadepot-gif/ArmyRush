@@ -91,6 +91,7 @@ namespace ArmyRush
         {
             if (_damageable != null)
             {
+                _damageable.SetTargetable(false);
                 _damageable.Damaged += OnDamaged;
                 _damageable.Died += OnDied;
             }
@@ -100,6 +101,7 @@ namespace ArmyRush
         {
             if (_damageable != null)
             {
+                _damageable.SetTargetable(false);
                 _damageable.Damaged -= OnDamaged;
                 _damageable.Died -= OnDied;
             }
@@ -158,6 +160,7 @@ namespace ArmyRush
                 _damageable = GetComponent<Damageable>();
             }
             _damageable.Configure(CombatTargetKind.Boss, MaxHealth, _healthLabel);
+            _damageable.SetTargetable(false);
             UpdateLabel();
             BossSpawned?.Invoke(this);
             BossHealthChanged?.Invoke(this, 1f);
@@ -184,6 +187,7 @@ namespace ArmyRush
         {
             _engaged = true;
             _targetCrowd = crowd;
+            _damageable?.SetTargetable(true);
             _runManager?.PauseForCombat();
             _nextAttackTime = Time.time + 1.1f;
 
@@ -410,6 +414,7 @@ namespace ArmyRush
             UpdateLabel();
             _engaged = false;
             _attackWarningActive = false;
+            _damageable?.SetTargetable(false);
             if (_triggerCollider != null)
             {
                 _triggerCollider.enabled = false;

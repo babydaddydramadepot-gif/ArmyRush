@@ -2910,11 +2910,43 @@ Retest Levels 1-4 as a physical iPhone first-session sequence. Level 4 should re
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Level 5 Tank Boss Milestone
+
+Files:
+
+Assets/_Project/Scripts/Combat/Damageable.cs
+Assets/_Project/Scripts/Combat/TargetRegistry.cs
+Assets/_Project/Scripts/Bosses/BossController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Levels/SO_Level_005.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Converted Level 5 from overlapping chunk composition into a direct authored first tank boss milestone. The level now opens with a generous `+30` vs `x2` gate, includes a safe 28-count enemy check, gives a second `+30` vs `x2` growth beat, introduces a single 520 HP turret obstacle, then offers a final `+50` vs `x2` boss lead-in before a 3000 HP tank. Boss damageables are now untargetable after spawn and only become valid combat targets when `BossController.Engage` starts the encounter, preventing player volleys from pre-melting the boss before the combat pause and telegraph loop can be seen.
+
+Result:
+
+Level 5 asset data, project-builder generation, and production validation guardrails now agree on the same first boss layout. `git diff --check` passed. Static no-upgrade checks estimate the first enemy takes 1173 possible damage before contact, the turret takes 2560 possible damage before contact, and the tank fight lasts about 2.17 seconds after the 22-soldier collision penalty on the optimal growth route. Unity production validation was retried with log `/tmp/armyrush_unity_level5_validate.log`, but the local Unity Licensing Client issue tracked as AR-009 again failed with unsupported protocol version `1.18.1` before `ArmyRushProjectBuilder.ValidateProductionFoundation` could execute.
+
+Follow Up:
+
+Retest Levels 1-5 on a physical iPhone as a full first-session ramp. Level 5 should now present as the first boss payoff: readable growth, one obstacle confidence check, tank contact, visible telegraph, boss defeat, and reward flow.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-46%
+47%
 
 UI Systems
 
@@ -2930,7 +2962,7 @@ Audio Systems
 
 Level Systems
 
-45%
+47%
 
 Progression Systems
 
@@ -2938,7 +2970,7 @@ Progression Systems
 
 Boss Systems
 
-47%
+49%
 
 Optimization
 
@@ -3202,7 +3234,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, and Level 4 now follows a direct obstacle-chain teaching ramp. Static simulation estimates Levels 1-4 clear their first combat/obstacle teaching beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, negative-gate readability, obstacle-chain readability, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, and Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled. Static simulation estimates Levels 1-5 clear their intended first-session combat, obstacle, and boss beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, negative-gate readability, obstacle-chain readability, boss telegraph readability, and first-run power fantasy.
 
 Issue ID:
 
@@ -3210,7 +3242,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level4_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level5_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

@@ -33,6 +33,10 @@ namespace ArmyRush
                     Targets.RemoveAt(i);
                     continue;
                 }
+                if (!target.IsTargetable)
+                {
+                    continue;
+                }
 
                 Vector3 offset = target.transform.position - origin;
                 if (offset.z <= 0f || offset.z > range || Mathf.Abs(offset.x) > lateralRange)

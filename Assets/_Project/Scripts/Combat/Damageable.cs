@@ -8,6 +8,7 @@ namespace ArmyRush
         [SerializeField] private CombatTargetKind _kind = CombatTargetKind.Enemy;
         [SerializeField] private int _maxHealth = 100;
         [SerializeField] private TextMesh _label;
+        [SerializeField] private bool _targetable = true;
 
         private int _health;
         private bool _alive;
@@ -18,6 +19,7 @@ namespace ArmyRush
         public CombatTargetKind Kind => _kind;
         public int Health => _health;
         public bool IsAlive => _alive && _health > 0 && gameObject.activeInHierarchy;
+        public bool IsTargetable => _targetable;
         public Vector3 AimPoint => transform.position + Vector3.up * 0.8f;
 
         private void OnEnable()
@@ -27,7 +29,10 @@ namespace ArmyRush
                 _health = _maxHealth;
             }
             _alive = true;
-            TargetRegistry.Register(this);
+            if (_targetable)
+            {
+                TargetRegistry.Register(this);
+            }
             UpdateLabel();
         }
 
@@ -43,6 +48,7 @@ namespace ArmyRush
             _label = label;
             WorldTextGuard.Clamp(_label);
             ResetHealth();
+            RefreshTargetRegistration();
         }
 
         public void ResetHealth()
@@ -50,6 +56,13 @@ namespace ArmyRush
             _health = _maxHealth;
             _alive = true;
             UpdateLabel();
+            RefreshTargetRegistration();
+        }
+
+        public void SetTargetable(bool targetable)
+        {
+            _targetable = targetable;
+            RefreshTargetRegistration();
         }
 
         public void ApplyDamage(int amount)
@@ -69,7 +82,25 @@ namespace ArmyRush
             if (_health <= 0)
             {
                 _alive = false;
+                TargetRegistry.Unregister(this);
                 Died?.Invoke(this);
+            }
+        }
+
+        private void RefreshTargetRegistration()
+        {
+            if (!isActiveAndEnabled)
+            {
+                return;
+            }
+
+            if (_targetable && IsAlive)
+            {
+                TargetRegistry.Register(this);
+            }
+            else
+            {
+                TargetRegistry.Unregister(this);
             }
         }
 
