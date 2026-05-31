@@ -109,6 +109,33 @@ Date:
 
 System:
 
+Post-Reward Breakdown iOS Simulator Smoke Validation
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran a fresh simulator validation chain from the latest result reward breakdown build. Unity exported `ArmyRush_iOSSimulatorBuild`, Xcode built the generated `Unity-iPhone` scheme with signing disabled into `/tmp/armyrush_iossim_reward_breakdown_derived/Build/Products/Debug-iphonesimulator/ArmyRush.app`, the app installed and launched as `com.armyrush.game` on the booted iPhone 17 Pro simulator, and a portrait screenshot was captured at `/tmp/armyrush_reward_breakdown_smoke.png`.
+
+Result:
+
+Unity simulator export completed with `Build Finished, Result: Success`. Xcode completed with `** BUILD SUCCEEDED **`, with only expected Unity-generated local-build warnings such as optional Unity Cloud Diagnostics symbol upload missing `USYM_UPLOAD_AUTH_TOKEN`, UnityRuntime simulator linker warnings, and run-script dependency warnings. The launched simulator app reached the portrait main menu, and a targeted managed-runtime scan found no exception, null-reference, missing-reference, stacktrace, or fatal signatures.
+
+Follow Up:
+
+Physical iPhone QA should still retest Drag To Start, Levels 1-5 combat feel, result reward breakdown readability, and full Levels 1-20 progression on device. This simulator pass confirms the latest build/export/launch path, not physical touch feel.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Result Reward Breakdown Polish
 
 Files:
@@ -4078,7 +4105,7 @@ AR-005
 
 Status:
 
-Generated Xcode project builds successfully with signing disabled, simulator launch QA passes through the post-muzzle validation pass, and branded app icon packaging is validated. User-reported physical iPhone smoke confirms the opening menu, Start Game flow, gameplay scene load, and Drag To Start beginning the run after the input/world-text fix. Full physical iPhone/iPad playthrough and balance QA are still pending.
+Generated Xcode project builds successfully with signing disabled, simulator launch QA passes through the post-result-reward-breakdown validation pass, and branded app icon packaging is validated. User-reported physical iPhone smoke confirms the opening menu, Start Game flow, gameplay scene load, and Drag To Start beginning the run after the input/world-text fix. Full physical iPhone/iPad playthrough and balance QA are still pending.
 
 Issue ID:
 
@@ -4110,7 +4137,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the result reward breakdown polish pass. Latest successful validation log: `/tmp/armyrush_unity_reward_breakdown_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the result reward breakdown polish pass. Latest successful validation log: `/tmp/armyrush_unity_reward_breakdown_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the result reward breakdown polish pass, with screenshot `/tmp/armyrush_reward_breakdown_smoke.png` and no targeted managed exception/fatal signatures.
 
 ---
 

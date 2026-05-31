@@ -217,6 +217,7 @@ Implementation Pass 1 Result:
 - Hardened level rebuild state by clearing transient pooled combat/VFX objects and the static target registry on level rebuild, with production validation for repeated rebuild target consistency.
 - Added a bounded first-session `POWER START` combat boost for Levels 1-3, tightened perceived fire cadence/targeting/projectile response, strengthened opening and post-gate volley feedback, increased early rally/contact mercy margins, and refreshed production validation after physical iPhone balance feedback.
 - Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
+- Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1528,7 +1529,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Post-Muzzle Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
+Status: Latest Post-Result-Reward-Breakdown Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1545,6 +1546,7 @@ Tasks:
 - [x] Run refreshed physical-input/world-text fix Xcode simulator export, signing-independent build, install, and launch smoke test.
 - [x] Record user-reported physical iPhone smoke result: main menu opens, Start Game reaches gameplay, and Drag To Start begins the run after the input/world-text fix; full balance playthrough remains pending.
 - [x] Run refreshed post-muzzle Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception scan.
+- [x] Run refreshed post-result-reward-breakdown Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception/fatal scan.
 
 Acceptance Criteria:
 
