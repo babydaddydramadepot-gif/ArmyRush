@@ -37,6 +37,8 @@ namespace ArmyRush
         public float closeRangeAssistDistance = 8.5f;
         public float closeRangeFireRateMultiplier = 1.35f;
         public float closeRangeDamageMultiplier = 1.15f;
+        public float runBoostGateDuration = 10f;
+        public float maxRunBoostGateMultiplier = 1.75f;
 
         [Header("Rewards")]
         public int soldierCoinValue = 2;

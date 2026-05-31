@@ -630,7 +630,7 @@ namespace ArmyRush
             {
                 GameObject gateObject = SpawnLevelObject(_gatePrefab, new Vector3(data.x, 0f, data.z));
                 GateController gate = GetLevelComponent<GateController>(gateObject);
-                gate?.Configure(data.operation, data.value, data.tutorialHighlight);
+                gate?.Configure(data.operation, data.value, data.tutorialHighlight, _runManager);
                 _spawned.Add(gateObject);
             }
         }

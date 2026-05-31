@@ -377,6 +377,8 @@ public static class ArmyRushProjectBuilder
         tuning.closeRangeAssistDistance = 8.5f;
         tuning.closeRangeFireRateMultiplier = 1.35f;
         tuning.closeRangeDamageMultiplier = 1.15f;
+        tuning.runBoostGateDuration = 10f;
+        tuning.maxRunBoostGateMultiplier = 1.75f;
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
@@ -1960,6 +1962,7 @@ public static class ArmyRushProjectBuilder
                 data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 35 });
                 data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
                 data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 35, healthPerUnit = 12, width = 3f });
+                data.gates.Add(new GateSpawnData { z = 48f, x = 0f, operation = GateOperation.FireRateBoost, value = 25 });
                 data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Add, value = 50 });
                 data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
                 AddObstacle(data, 82f, -1.35f, 320, 11, FindObstacleDefinitionInChunks(chunks, ObstacleKind.BarrelCluster));
@@ -1977,6 +1980,7 @@ public static class ArmyRushProjectBuilder
                 data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Subtract, value = 20 });
                 AddObstacle(data, 82f, -1.35f, 600, 14, FindObstacleDefinitionInChunks(chunks, ObstacleKind.FuelTank));
                 AddObstacle(data, 82f, 1.35f, 260, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
+                data.gates.Add(new GateSpawnData { z = 94f, x = 0f, operation = GateOperation.DamageBoost, value = 25 });
                 data.gates.Add(new GateSpawnData { z = 106f, x = -1.45f, operation = GateOperation.Add, value = 55 });
                 data.gates.Add(new GateSpawnData { z = 106f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
                 data.enemyGroups.Add(new EnemyGroupSpawnData { z = 132f, x = 0f, count = 78, healthPerUnit = 15, width = 3.3f });
@@ -2027,6 +2031,7 @@ public static class ArmyRushProjectBuilder
         data.enemyGroups.Add(new EnemyGroupSpawnData { z = 108f, x = 0f, count = 90, healthPerUnit = 16, width = 3.6f });
         data.gates.Add(new GateSpawnData { z = 128f, x = -1.45f, operation = GateOperation.Add, value = 100 });
         data.gates.Add(new GateSpawnData { z = 128f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        data.gates.Add(new GateSpawnData { z = 146f, x = 0f, operation = GateOperation.FireRateBoost, value = 30 });
     }
 
     private static void AddLevelElevenToFourteenHeavierCombatData(LevelData data, int level, LevelChunkData[] chunks)
@@ -3164,6 +3169,14 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Close-range combat damage assist should be a small onboarding safety margin, not a full balance override.");
         }
+        if (tuning.runBoostGateDuration < 6f || tuning.runBoostGateDuration > 16f)
+        {
+            failures.Add("Run boost gates should last long enough to feel powerful without covering an entire level by default.");
+        }
+        if (tuning.maxRunBoostGateMultiplier < 1.25f || tuning.maxRunBoostGateMultiplier > 2.25f)
+        {
+            failures.Add("Run boost gate multiplier cap should support exciting power-ups without replacing permanent upgrade progression.");
+        }
         if (tuning.earlyDefeatRewardLevelLimit < 3)
         {
             failures.Add("Early defeat rewards should cover at least the first three onboarding levels.");
@@ -4075,6 +4088,14 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(label + " should refresh negative-gate avoidance before the first true boss level.");
         }
+        if (level.levelIndex == 6 && !gates.Any(gate => gate.operation == GateOperation.FireRateBoost && gate.value >= 20))
+        {
+            failures.Add(label + " should introduce a readable fire-rate boost gate after the first boss milestone.");
+        }
+        if (level.levelIndex == 7 && !gates.Any(gate => gate.operation == GateOperation.DamageBoost && gate.value >= 20))
+        {
+            failures.Add(label + " should introduce a readable damage boost gate after the fire-rate boost tutorial.");
+        }
 
         if (enemies.Count < 2)
         {
@@ -4144,6 +4165,10 @@ public static class ArmyRushProjectBuilder
         if (!HasGate(gates, 128f, GateOperation.Add, 100) || !HasGate(gates, 128f, GateOperation.Multiply, 2))
         {
             failures.Add(label + " must include a final boss lead-in power choice.");
+        }
+        if (!gates.Any(gate => gate.operation == GateOperation.FireRateBoost && gate.value >= 25 && gate.z > 128f))
+        {
+            failures.Add(label + " should include a pre-boss fire-rate boost gate to make the first true boss feel powerful.");
         }
 
         if (enemies.Count < 2 || enemies.First().count < 50 || enemies.Last().count < 85)

@@ -23,6 +23,7 @@ namespace ArmyRush
         private Vector3 _tutorialMarkerBaseScale = Vector3.one;
         private MaterialPropertyBlock _propertyBlock;
         private Coroutine _animationRoutine;
+        private RunManager _runManager;
 
         private void Awake()
         {
@@ -46,11 +47,12 @@ namespace ArmyRush
             }
         }
 
-        public void Configure(GateOperation operation, int value, bool tutorialHighlight = false)
+        public void Configure(GateOperation operation, int value, bool tutorialHighlight = false, RunManager runManager = null)
         {
             _operation = operation;
             _value = value;
             _tutorialHighlight = tutorialHighlight;
+            _runManager = runManager;
             _used = false;
             ResetAnimationState();
             UpdateVisuals();
@@ -134,6 +136,11 @@ namespace ArmyRush
                 case GateOperation.Divide:
                     crowd.Divide(_value);
                     break;
+                case GateOperation.DamageBoost:
+                case GateOperation.FireRateBoost:
+                case GateOperation.CoinBoost:
+                    _runManager?.ApplyRunBoostGate(_operation, _value, transform.position);
+                    break;
             }
         }
 
@@ -174,6 +181,12 @@ namespace ArmyRush
                     return "x" + _value;
                 case GateOperation.Divide:
                     return "/" + _value;
+                case GateOperation.DamageBoost:
+                    return "DMG+" + _value + "%";
+                case GateOperation.FireRateBoost:
+                    return "FIRE+" + _value + "%";
+                case GateOperation.CoinBoost:
+                    return "COIN+" + _value + "%";
                 default:
                     return _operation.ToString();
             }

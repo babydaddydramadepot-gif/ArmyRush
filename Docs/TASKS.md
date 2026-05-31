@@ -208,6 +208,7 @@ Implementation Pass 1 Result:
 - Added nonblocking `BEST` guidance markers to the intended positive tutorial gates in Levels 1-3, routed the data through level spawning, clamped the marker with `WorldTextGuard`, and added production validation so highlighted gates stay positive and tutorial-only.
 - Added data-driven immediate hit-confirmation damage to player volleys so physical-device combat responds as soon as a target is acquired while keeping projectile tracers and impact damage meaningful.
 - Added bounded early close-range combat urgency assist so Levels 1-5 fire faster and hit slightly harder near imminent contact, with one-time `PUSH` feedback and validator guardrails.
+- Added functional run boost gates for temporary damage, fire-rate, and coin power-ups, then introduced fire-rate/damage boost pickups in Levels 6, 7, and 10 to extend the first-session power fantasy beyond raw army count.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -500,7 +501,7 @@ Acceptance Criteria:
 
 ## 1.5 Gate System
 
-Status: Functional Pass Implemented with Activation Animation; Feedback QA Pending
+Status: Functional Pass Implemented with Activation Animation, Tutorial Markers, and Run Boost Gate Support; Feedback QA Pending
 Priority: Critical
 
 Tasks:
@@ -513,6 +514,7 @@ Tasks:
 - Implement gate trigger detection.
 - [x] Implement gate visual activation.
 - [x] Implement floating result feedback.
+- [x] Implement temporary run boost gates for damage, fire rate, and coin reward multipliers.
 
 Acceptance Criteria:
 
@@ -831,6 +833,7 @@ Tasks:
 - [x] Convert Levels 16-19 to direct authored risk/reward mastery layouts with x3 routes, high-risk negative gates, elite enemy waves, and heavy obstacle pressure.
 - [x] Convert Level 20 to a direct authored major helicopter boss milestone with 14500 HP tuning, MissileStrike validation, and a long clean boss approach.
 - [x] Add nonblocking tutorial guidance markers to the intended positive gates in Levels 1-3 so first-session players get readable route help without modal UI.
+- [x] Add post-first-boss run boost gate pickups to Levels 6, 7, and 10 for more visible power spikes and boss preparation.
 
 Acceptance Criteria:
 
@@ -1611,7 +1614,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning and Close-Range Combat Urgency
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, and Run Boost Gates
 Priority: Critical
 
 Tasks:
@@ -1619,6 +1622,7 @@ Tasks:
 - Add final game feel pass.
 - [x] Add camera shake tuning.
 - [x] Add early close-range combat urgency feedback for first-session near-contact pressure.
+- [x] Add temporary run boost gates that make post-boss combat and boss preparation feel more powerful.
 - Add reward polish.
 - Add UI polish.
 - Add VFX polish.

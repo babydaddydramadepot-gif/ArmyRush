@@ -59,6 +59,7 @@ namespace ArmyRush
                 damagePerSoldier = Mathf.RoundToInt(Mathf.Max(1f, _upgradeService.GetValue(UpgradeType.Damage)));
                 fireRateMultiplier = Mathf.Max(1f, _upgradeService.GetValue(UpgradeType.FireRate));
             }
+            fireRateMultiplier *= _runManager != null ? _runManager.ActiveFireRateBoostMultiplier : 1f;
 
             float baseFireInterval = Mathf.Max(_tuning.minFireInterval, _tuning.baseFireInterval);
             float targetDistance = Mathf.Max(0f, target.transform.position.z - origin.z);
@@ -76,7 +77,8 @@ namespace ArmyRush
             float targetMultiplier = GetTargetMultiplier(target, out bool critical);
             float openingMultiplier = openingVolley ? Mathf.Max(1f, _tuning.openingVolleyDamageMultiplier) : 1f;
             float urgencyMultiplier = closeRangeAssist ? Mathf.Max(1f, _tuning.closeRangeDamageMultiplier) : 1f;
-            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, _crowd.Count) * baseFireInterval * targetMultiplier * openingMultiplier * urgencyMultiplier));
+            float runBoostMultiplier = _runManager != null ? _runManager.ActiveDamageBoostMultiplier : 1f;
+            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, _crowd.Count) * baseFireInterval * targetMultiplier * openingMultiplier * urgencyMultiplier * runBoostMultiplier));
             if (critical)
             {
                 VfxManager.SpawnFloatingText("CRIT", target.AimPoint + Vector3.up * 0.65f, new Color(1f, 0.9f, 0.15f));

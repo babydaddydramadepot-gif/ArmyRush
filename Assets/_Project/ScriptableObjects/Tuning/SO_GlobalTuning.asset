@@ -39,6 +39,8 @@ MonoBehaviour:
   closeRangeAssistDistance: 8.5
   closeRangeFireRateMultiplier: 1.35
   closeRangeDamageMultiplier: 1.15
+  runBoostGateDuration: 10
+  maxRunBoostGateMultiplier: 1.75
   soldierCoinValue: 2
   enemyCoinValue: 2
   obstacleCoinValue: 12

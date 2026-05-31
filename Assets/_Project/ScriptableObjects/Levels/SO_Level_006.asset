@@ -34,6 +34,10 @@ MonoBehaviour:
     x: 1.45
     operation: 2
     value: 2
+  - z: 48
+    x: 0
+    operation: 5
+    value: 25
   - z: 58
     x: -1.45
     operation: 0

@@ -50,6 +50,10 @@ MonoBehaviour:
     x: 1.45
     operation: 2
     value: 2
+  - z: 146
+    x: 0
+    operation: 5
+    value: 30
   enemyGroups:
   - z: 38
     x: 0

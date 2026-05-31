@@ -19,11 +19,20 @@ namespace ArmyRush
         private int _rallyAssistUses;
         private int _contactMercyUses;
         private float _nextRallyAssistTime;
+        private float _damageBoostMultiplier = 1f;
+        private float _fireRateBoostMultiplier = 1f;
+        private float _coinBoostMultiplier = 1f;
+        private float _damageBoostEndTime;
+        private float _fireRateBoostEndTime;
+        private float _coinBoostEndTime;
 
         public event Action<RunState> StateChanged;
         public RunState State { get; private set; } = RunState.None;
         public int RunCoins => _runCoins;
         public int CurrentLevelIndex => _levelManager != null && _levelManager.CurrentLevel != null ? _levelManager.CurrentLevel.levelIndex : 1;
+        public float ActiveDamageBoostMultiplier => GetActiveBoostMultiplier(_damageBoostMultiplier, _damageBoostEndTime);
+        public float ActiveFireRateBoostMultiplier => GetActiveBoostMultiplier(_fireRateBoostMultiplier, _fireRateBoostEndTime);
+        public float ActiveCoinBoostMultiplier => GetActiveBoostMultiplier(_coinBoostMultiplier, _coinBoostEndTime);
 
         private void Start()
         {
@@ -68,6 +77,7 @@ namespace ArmyRush
             _runCoins = 0;
             _bonusCoins = 0;
             _levelCompleted = false;
+            ResetRunBoosts();
             _gameplayUI?.SetRunCoinPreview(0);
             SetState(RunState.Running);
             if (ServiceLocator.TryGet(out AudioService audio))
@@ -140,7 +150,46 @@ namespace ArmyRush
         private int GetPreviewRewardCoins()
         {
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            return Mathf.RoundToInt(Mathf.Max(0, _bonusCoins) * coinMultiplier);
+            return Mathf.RoundToInt(Mathf.Max(0, _bonusCoins) * coinMultiplier * ActiveCoinBoostMultiplier);
+        }
+
+        public void ApplyRunBoostGate(GateOperation operation, int value, Vector3 worldPosition)
+        {
+            if (State != RunState.Running && State != RunState.CombatPaused && State != RunState.FinishSequence)
+            {
+                return;
+            }
+
+            float boost = CalculateRunBoostMultiplier(value);
+            float endTime = Time.time + Mathf.Max(1f, _tuning != null ? _tuning.runBoostGateDuration : 10f);
+            string label;
+            switch (operation)
+            {
+                case GateOperation.DamageBoost:
+                    _damageBoostMultiplier = Mathf.Max(ActiveDamageBoostMultiplier, boost);
+                    _damageBoostEndTime = endTime;
+                    label = "DAMAGE +" + Mathf.Max(1, value) + "%";
+                    break;
+                case GateOperation.FireRateBoost:
+                    _fireRateBoostMultiplier = Mathf.Max(ActiveFireRateBoostMultiplier, boost);
+                    _fireRateBoostEndTime = endTime;
+                    label = "FIRE +" + Mathf.Max(1, value) + "%";
+                    break;
+                case GateOperation.CoinBoost:
+                    _coinBoostMultiplier = Mathf.Max(ActiveCoinBoostMultiplier, boost);
+                    _coinBoostEndTime = endTime;
+                    _gameplayUI?.SetRunCoinPreview(GetPreviewRewardCoins());
+                    label = "COINS +" + Mathf.Max(1, value) + "%";
+                    break;
+                default:
+                    return;
+            }
+
+            VfxManager.SpawnFloatingText(label, worldPosition + Vector3.up * 1.85f, new Color(0.32f, 0.92f, 1f));
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Light);
+            }
         }
 
         public void WinRun()
@@ -164,7 +213,7 @@ namespace ArmyRush
             }
             int survivorBonus = (_crowd != null ? _crowd.Count : 0) * (_tuning != null ? _tuning.soldierCoinValue : 2);
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus + _bonusCoins) * coinMultiplier);
+            _runCoins = Mathf.RoundToInt((baseReward + bossBonus + survivorBonus + _bonusCoins) * coinMultiplier * ActiveCoinBoostMultiplier);
 
             _gameplayUI?.SetRunCoinPreview(0);
             _economy?.AddCoins(_runCoins);
@@ -342,12 +391,34 @@ namespace ArmyRush
             }
 
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            _runCoins = Mathf.RoundToInt(pendingCoins * coinMultiplier);
+            _runCoins = Mathf.RoundToInt(pendingCoins * coinMultiplier * ActiveCoinBoostMultiplier);
             _economy?.AddCoins(_runCoins);
             if (_crowd != null)
             {
                 VfxManager.SpawnFloatingText("+" + _runCoins + " COINS", _crowd.transform.position + Vector3.up * 2.2f, new Color(1f, 0.78f, 0.12f));
             }
+        }
+
+        private void ResetRunBoosts()
+        {
+            _damageBoostMultiplier = 1f;
+            _fireRateBoostMultiplier = 1f;
+            _coinBoostMultiplier = 1f;
+            _damageBoostEndTime = 0f;
+            _fireRateBoostEndTime = 0f;
+            _coinBoostEndTime = 0f;
+        }
+
+        private float CalculateRunBoostMultiplier(int value)
+        {
+            float boost = 1f + Mathf.Max(1, value) / 100f;
+            float maxMultiplier = _tuning != null ? Mathf.Max(1f, _tuning.maxRunBoostGateMultiplier) : 1.75f;
+            return Mathf.Clamp(boost, 1f, maxMultiplier);
+        }
+
+        private static float GetActiveBoostMultiplier(float multiplier, float endTime)
+        {
+            return Time.time <= endTime ? Mathf.Max(1f, multiplier) : 1f;
         }
 
         private void SetState(RunState state)
