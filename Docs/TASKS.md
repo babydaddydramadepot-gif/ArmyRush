@@ -1642,7 +1642,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, and Boss Victory Result Polish
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Boss Victory Result Polish, and Production Debug-Control Audit
 Priority: Critical
 
 Tasks:
@@ -1654,12 +1654,14 @@ Tasks:
 - [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
 - [x] Add boss victory milestone reward polish to the result screen.
 - [x] Add result panel UI validation for milestone header fit and action/status overlap.
+- [x] Limit keyboard-only runner steering to Unity Editor builds so production iOS builds keep the documented touch/mouse input surface without hidden debug controls.
+- [x] Audit runtime scripts for production-visible debug UI, cheat shortcuts, and `OnGUI` overlays.
 - Add reward polish.
 - Add UI polish.
 - Add VFX polish.
 - Add audio polish.
 - Add animation polish.
-- Remove debug tools.
+- [x] Remove debug tools covered by the current runtime script audit.
 - Remove temporary assets.
 
 Acceptance Criteria:

@@ -34,7 +34,9 @@ namespace ArmyRush
 #if ENABLE_INPUT_SYSTEM
             ReadInputSystemTouch();
             ReadInputSystemMouse();
+#if UNITY_EDITOR
             ReadInputSystemKeyboard();
+#endif
 #else
             ReadTouch();
             ReadMouse();
@@ -131,6 +133,7 @@ namespace ArmyRush
             }
         }
 
+#if UNITY_EDITOR
         private void ReadInputSystemKeyboard()
         {
             Keyboard keyboard = Keyboard.current;
@@ -155,6 +158,7 @@ namespace ArmyRush
                 _startPressed = true;
             }
         }
+#endif
 #else
         private void ReadTouch()
         {
@@ -213,6 +217,7 @@ namespace ArmyRush
             }
         }
 
+#if UNITY_EDITOR
         private void ReadKeyboard()
         {
             float keyboard = 0f;
@@ -231,6 +236,7 @@ namespace ArmyRush
                 _startPressed = true;
             }
         }
+#endif
 #endif
 
         private void BeginDrag(Vector2 position, int touchId)

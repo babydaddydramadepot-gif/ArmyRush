@@ -109,6 +109,34 @@ Date:
 
 System:
 
+Production Debug-Control Audit
+
+Files:
+
+Assets/_Project/Scripts/Input/RunnerInputController.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Audited runtime scripts for production-visible debug UI, cheat shortcuts, and `OnGUI` overlays. No visible debug overlays or cheat systems were present. Tightened the remaining hidden keyboard steering path so Input System keyboard movement compiles only in Unity Editor builds, matching the documented production mobile input surface while preserving editor convenience during local testing.
+
+Result:
+
+Touch input and mouse drag remain active for gameplay; keyboard-only steering is now editor-only instead of shipping in iOS builds. This reduces hidden production control paths without affecting the physical iPhone Drag To Start/touch fix. `git diff --check` passed, and Unity production validation passed with log `/tmp/armyrush_unity_debug_input_validate.log`.
+
+Follow Up:
+
+Keep the remaining release-polish work focused on manual physical iPhone/iPad playthrough, final authored VFX/audio, and device-feel tuning.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Production Reference Validation Hardening
 
 Files:
@@ -3958,7 +3986,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the production reference-validation hardening pass. Latest successful validation log: `/tmp/armyrush_unity_reference_validation_final.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the production debug-control audit pass. Latest successful validation log: `/tmp/armyrush_unity_debug_input_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
 
 ---
 
