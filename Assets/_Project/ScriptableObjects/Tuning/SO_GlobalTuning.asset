@@ -34,6 +34,9 @@ MonoBehaviour:
   enemyCoinValue: 2
   obstacleCoinValue: 12
   bossCoinValue: 250
+  earlyDefeatRewardLevelLimit: 5
+  earlyDefeatRewardFraction: 0.4
+  earlyDefeatMinimumCoins: 100
   cameraOffset: {x: 0, y: 10, z: -10.5}
   cameraEuler: {x: 42, y: 0, z: 0}
   cameraSmooth: 9

@@ -6,6 +6,18 @@ namespace ArmyRush
 {
     public sealed class UpgradeService
     {
+        private static readonly UpgradeType[] RecommendationPriority =
+        {
+            UpgradeType.Damage,
+            UpgradeType.FireRate,
+            UpgradeType.StartingTroops,
+            UpgradeType.CoinReward,
+            UpgradeType.ObstacleDamage,
+            UpgradeType.BossDamage,
+            UpgradeType.CriticalChance,
+            UpgradeType.CriticalDamage
+        };
+
         private readonly SaveService _saveService;
         private readonly EconomyService _economyService;
         private readonly ProgressionService _progressionService;
@@ -101,6 +113,27 @@ namespace ArmyRush
             _saveService.Save();
             UpgradePurchased?.Invoke(type, nextLevel);
             return true;
+        }
+
+        public bool TryGetRecommendedPurchase(out UpgradeType type)
+        {
+            for (int i = 0; i < RecommendationPriority.Length; i++)
+            {
+                UpgradeType candidate = RecommendationPriority[i];
+                if (CanPurchase(candidate))
+                {
+                    type = candidate;
+                    return true;
+                }
+            }
+
+            type = default(UpgradeType);
+            return false;
+        }
+
+        public bool IsRecommendedPurchase(UpgradeType type)
+        {
+            return TryGetRecommendedPurchase(out UpgradeType recommendedType) && recommendedType == type;
         }
 
         public bool TryGetDefinition(UpgradeType type, out UpgradeDefinition definition)

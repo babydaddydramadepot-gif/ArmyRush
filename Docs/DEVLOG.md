@@ -91,11 +91,11 @@ Production Vertical Slice Foundation
 
 Current Focus:
 
-Core gameplay feel, early onboarding balance, manual QA, iOS device readiness, and vertical-slice polish
+Core gameplay feel, first-session retention, early onboarding balance, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-84%
+85%
 
 Last Updated:
 
@@ -3044,15 +3044,48 @@ Retest Levels 1-20 on the physical iPhone. Confirm the run still starts cleanly,
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+First-Session Retention and Upgrade Guidance
+
+Files:
+
+Assets/_Project/Scripts/Core/GlobalTuning.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/Scripts/Progression/UpgradeService.cs
+Assets/_Project/Scripts/UI/UpgradeButtonView.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Tuning/SO_GlobalTuning.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added data-driven early defeat consolation rewards for the first five levels so a failed first-session run still grants useful coin progression instead of ending as a zero-progress failure. Added upgrade-service recommendation priority that points the player at affordable power upgrades before economy upgrades, and upgraded the upgrade grid to show compact before/after value previews plus a pulsing recommendation glow.
+
+Result:
+
+`git diff --check` passed. Static retention smoke passed: Level 1's 100 base coin reward, 0.4 consolation fraction, and 100 coin minimum produce a 100 coin defeat payout, which funds the first Damage upgrade exactly; the first affordable recommendation is Damage. Unity production validation was retried with log `/tmp/armyrush_unity_retention_validate.log`, but the local Unity Licensing Client issue tracked as AR-009 again failed with unsupported protocol version `1.18.1` before `ArmyRushProjectBuilder.ValidateProductionFoundation` could execute.
+
+Follow Up:
+
+Retest a Level 1 loss and Level 1 victory on the physical iPhone. A loss should show earned coins and allow an immediate Damage upgrade, while a win should still feel generous and point the player at the next meaningful power purchase.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-50%
+51%
 
 UI Systems
 
-45%
+46%
 
 Visual Systems
 
@@ -3068,7 +3101,7 @@ Level Systems
 
 Progression Systems
 
-55%
+57%
 
 Boss Systems
 
@@ -3084,7 +3117,7 @@ Polish
 
 Release Readiness
 
-33%
+34%
 
 ---
 
@@ -3336,7 +3369,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Early defeat consolation and recommended upgrade guidance now ensure first-session failures still produce visible progression. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3344,7 +3377,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level20_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_retention_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

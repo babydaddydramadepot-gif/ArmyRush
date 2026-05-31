@@ -34,6 +34,9 @@ namespace ArmyRush
         public int enemyCoinValue = 2;
         public int obstacleCoinValue = 12;
         public int bossCoinValue = 250;
+        public int earlyDefeatRewardLevelLimit = 5;
+        [Range(0f, 1f)] public float earlyDefeatRewardFraction = 0.4f;
+        public int earlyDefeatMinimumCoins = 100;
 
         [Header("Camera")]
         public Vector3 cameraOffset = new Vector3(0f, 10f, -10.5f);

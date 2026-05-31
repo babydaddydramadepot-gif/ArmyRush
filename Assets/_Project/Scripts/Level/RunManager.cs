@@ -203,14 +203,32 @@ namespace ArmyRush
 
         private void AwardDefeatCoins()
         {
-            if (_bonusCoins <= 0 || _runCoins > 0)
+            if (_runCoins > 0)
+            {
+                return;
+            }
+
+            int pendingCoins = Mathf.Max(0, _bonusCoins);
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            if (currentLevel != null && _tuning != null && currentLevel.levelIndex <= Mathf.Max(0, _tuning.earlyDefeatRewardLevelLimit))
+            {
+                int consolation = Mathf.RoundToInt(Mathf.Max(0, currentLevel.baseCoinReward) * Mathf.Clamp01(_tuning.earlyDefeatRewardFraction));
+                consolation = Mathf.Max(consolation, Mathf.Max(0, _tuning.earlyDefeatMinimumCoins));
+                pendingCoins = Mathf.Max(pendingCoins, consolation);
+            }
+
+            if (pendingCoins <= 0)
             {
                 return;
             }
 
             float coinMultiplier = _upgrades != null ? Mathf.Max(1f, _upgrades.GetValue(UpgradeType.CoinReward)) : 1f;
-            _runCoins = Mathf.RoundToInt(_bonusCoins * coinMultiplier);
+            _runCoins = Mathf.RoundToInt(pendingCoins * coinMultiplier);
             _economy?.AddCoins(_runCoins);
+            if (_crowd != null)
+            {
+                VfxManager.SpawnFloatingText("+" + _runCoins + " COINS", _crowd.transform.position + Vector3.up * 2.2f, new Color(1f, 0.78f, 0.12f));
+            }
         }
 
         private void SetState(RunState state)

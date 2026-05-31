@@ -204,6 +204,7 @@ Implementation Pass 1 Result:
 - Converted Level 10 into a direct authored first true helicopter boss milestone with pre-boss combat checks, truck/turret pressure, final growth gate, 6000 HP boss tuning, and validation guardrails.
 - Converted Levels 16-19 into direct authored risk/reward mastery layouts with x3 routes, high-risk negative lanes, elite groups, truck/turret/fuel pressure, and production validation guardrails.
 - Converted Level 20 into a direct authored major helicopter boss milestone with 14500 HP tuning, readable pre-boss gauntlet pressure, and static no-upgrade survivability coverage.
+- Added first-session retention support with data-driven early defeat consolation coins, upgrade value previews, and a recommended affordable power-upgrade highlight so early failures still point players toward visible strength.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -968,7 +969,7 @@ Acceptance Criteria:
 
 ## 5.2 Upgrade System
 
-Status: Functional Pass Implemented with Unlock Levels and Milestone Value Curves; Economy Balance QA Pending
+Status: Functional Pass Implemented with Unlock Levels, Milestone Value Curves, Value Previews, and Recommended Power Upgrade Highlight; Economy Balance QA Pending
 Priority: Critical
 
 Tasks:
@@ -986,6 +987,8 @@ Implement upgrades:
 - [x] Add documented unlock levels for boss, obstacle, critical chance, and critical damage upgrades.
 - [x] Add milestone value curves for documented Level 10/25/50/100 upgrade targets.
 - [x] Add validator coverage for upgrade unlocks, caps, costs, and non-regressing values.
+- [x] Add compact before/after value previews on upgrade buttons.
+- [x] Add recommended affordable upgrade highlighting that prioritizes first-session power upgrades before economy upgrades.
 
 Acceptance Criteria:
 
@@ -999,7 +1002,7 @@ Acceptance Criteria:
 
 ## 5.3 Reward Calculation
 
-Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, and Automated Early-Economy Validation; Manual Balance QA Pending
+Status: Functional Pass Implemented with Enemy, Obstacle, Boss, Bonus, Multiplier Rewards, Early Defeat Consolation, and Automated Early-Economy Validation; Manual Balance QA Pending
 Priority: High
 
 Tasks:
@@ -1011,6 +1014,7 @@ Tasks:
 - [x] Calculate bonus run crate rewards.
 - [x] Apply coin multipliers.
 - [x] Add validator simulation for early one-upgrade-per-run affordability.
+- [x] Add data-driven early defeat consolation coins for Levels 1-5 so failed first-session runs still fund visible progression.
 
 Acceptance Criteria:
 
@@ -1097,7 +1101,7 @@ Acceptance Criteria:
 
 ## 6.3 Upgrade Screen
 
-Status: Functional Pass Implemented with Purchase Animation and Glow Feedback; Device Fit QA Pending
+Status: Functional Pass Implemented with Purchase Animation, Glow Feedback, Value Preview, and Recommended Upgrade Highlight; Device Fit QA Pending
 Priority: Critical
 
 Tasks:
@@ -1109,6 +1113,8 @@ Tasks:
 - Add purchase buttons.
 - Add disabled state when unaffordable.
 - [x] Add purchase animation.
+- [x] Add before/after value preview text for every upgrade.
+- [x] Add recommended affordable upgrade glow for the highest-priority power purchase.
 
 Acceptance Criteria:
 
@@ -1561,6 +1567,7 @@ Tasks:
 - [x] Record physical iPhone launch/menu/gameplay-start smoke result: the game now reaches gameplay and Drag To Start begins the run on device.
 - [x] Tighten physical-device combat cadence/readability after no-upgrade feedback and extend balance fixes through the Levels 11-15 heavier-combat/mech boss ramp.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
+- [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

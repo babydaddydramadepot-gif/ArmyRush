@@ -367,6 +367,9 @@ public static class ArmyRushProjectBuilder
         tuning.minFireInterval = 0.08f;
         tuning.baseDamage = 10;
         tuning.projectileVisualBurst = 6;
+        tuning.earlyDefeatRewardLevelLimit = 5;
+        tuning.earlyDefeatRewardFraction = 0.4f;
+        tuning.earlyDefeatMinimumCoins = 100;
         EditorUtility.SetDirty(tuning);
         return tuning;
     }
@@ -2528,8 +2531,8 @@ public static class ArmyRushProjectBuilder
             Button button = CreateButton("Upgrade_" + types[i], safe.transform, string.Empty, anchor, new Vector2(392f, 88f), new Color(0.08f, 0.28f, 0.95f));
             UpgradeButtonView view = button.gameObject.AddComponent<UpgradeButtonView>();
             Text titleText = CreateUIText("Title", button.transform, types[i].ToString().ToUpperInvariant(), 21, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.58f, 0.66f), new Vector2(245f, 32f));
-            Text levelText = CreateUIText("Level", button.transform, "Lv. 0", 18, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.43f, 0.29f), new Vector2(140f, 26f));
-            Text costText = CreateUIText("Cost", button.transform, "100", 22, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f), new Vector2(0.82f, 0.29f), new Vector2(118f, 30f));
+            Text levelText = CreateUIText("Level", button.transform, "Lv. 0 10>12", 18, FontStyle.Bold, TextAnchor.MiddleLeft, Color.white, new Vector2(0.47f, 0.29f), new Vector2(178f, 26f));
+            Text costText = CreateUIText("Cost", button.transform, "100", 22, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.83f, 0.2f), new Vector2(0.85f, 0.29f), new Vector2(98f, 30f));
             view.Configure(types[i]);
             SetObject(view, "_titleText", titleText);
             SetObject(view, "_levelText", levelText);
@@ -3088,6 +3091,21 @@ public static class ArmyRushProjectBuilder
         if (tuning.projectileVisualBurst < 6)
         {
             failures.Add("Projectile visual burst count is too low for readable small-crowd combat on device.");
+        }
+        if (tuning.earlyDefeatRewardLevelLimit < 3)
+        {
+            failures.Add("Early defeat rewards should cover at least the first three onboarding levels.");
+        }
+        if (tuning.earlyDefeatRewardFraction <= 0f || tuning.earlyDefeatRewardFraction > 0.75f)
+        {
+            failures.Add("Early defeat reward fraction should be generous but bounded for retention balance.");
+        }
+        UpgradeDefinition damageUpgrade = AssetDatabase.FindAssets("t:UpgradeDefinition", new[] { UpgradeDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<UpgradeDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+            .FirstOrDefault(definition => definition != null && definition.type == UpgradeType.Damage);
+        if (damageUpgrade != null && tuning.earlyDefeatMinimumCoins < damageUpgrade.GetCost(0))
+        {
+            failures.Add("Early defeat minimum coins should fund the first Damage upgrade so first-session failures still progress.");
         }
     }
 
