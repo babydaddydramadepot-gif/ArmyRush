@@ -2881,6 +2881,35 @@ Retest Levels 1-3 on the physical iPhone as a continuous first-session ramp, esp
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Level 4 Obstacle Intro Alignment
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Levels/SO_Level_004.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Converted Level 4 from overlapping chunk composition into a direct authored obstacle-chain teaching level aligned with the documented first-session ramp. The level now opens with `+25` vs `x2`, introduces forgiving lane obstacles, gives a recovery `+20` vs `x2` gate, teaches a central concrete blocker, follows with a safe 30-count enemy, and closes with a final `+30` vs `x2` power choice. The project builder now regenerates Level 4 deterministically and production validation includes a Level 4-specific layout guard.
+
+Result:
+
+Static spacing and no-upgrade balance checks pass for the new Level 4 route: the largest encounter gap is 24m, the first obstacle pair, central concrete blocker, and follow-up enemy all have enough no-upgrade damage window after the intended gates, and `git diff --check` passes. Unity production validation was attempted with log `/tmp/armyrush_unity_level4_validate.log`, but the local Unity Licensing Client issue tracked as AR-009 again failed protocol handshake before `ArmyRushProjectBuilder.ValidateProductionFoundation` could execute.
+
+Follow Up:
+
+Retest Levels 1-4 as a physical iPhone first-session sequence. Level 4 should read as an obstacle-chain tutorial rather than a difficulty spike, while still preparing the player for the Level 5 boss milestone.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -2901,7 +2930,7 @@ Audio Systems
 
 Level Systems
 
-44%
+45%
 
 Progression Systems
 
@@ -3173,7 +3202,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, and static simulation estimates Levels 1-3 clear their first enemy before contact with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, negative-gate readability, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, and Level 4 now follows a direct obstacle-chain teaching ramp. Static simulation estimates Levels 1-4 clear their first combat/obstacle teaching beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, negative-gate readability, obstacle-chain readability, and first-run power fantasy.
 
 Issue ID:
 
@@ -3181,7 +3210,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level23_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level4_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

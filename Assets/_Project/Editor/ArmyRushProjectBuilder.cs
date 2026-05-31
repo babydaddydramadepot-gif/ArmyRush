@@ -1766,6 +1766,11 @@ public static class ArmyRushProjectBuilder
             AddLevelThreeTutorialData(data, chunks);
             return;
         }
+        if (level == 4)
+        {
+            AddLevelFourObstacleIntroData(data, chunks);
+            return;
+        }
 
         AddLevelChunk(data, intro, 8f, false, Mathf.Max(1f, difficultyMultiplier * 0.85f));
         AddLevelChunk(data, gateEnemy, 30f, mirror, difficultyMultiplier);
@@ -1836,6 +1841,21 @@ public static class ArmyRushProjectBuilder
         data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Multiply, value = 2 });
         data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Add, value = 30 });
         AddObstacle(data, 90f, 0f, 150, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
+    }
+
+    private static void AddLevelFourObstacleIntroData(LevelData data, LevelChunkData[] chunks)
+    {
+        data.trackLength = Mathf.Max(data.trackLength, 140f);
+        data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 25 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        AddObstacle(data, 38f, -1.35f, 120, 7, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
+        AddObstacle(data, 38f, 1.35f, 135, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
+        data.gates.Add(new GateSpawnData { z = 56f, x = -1.45f, operation = GateOperation.Add, value = 20 });
+        data.gates.Add(new GateSpawnData { z = 56f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        AddObstacle(data, 76f, 0f, 180, 10, FindObstacleDefinitionInChunks(chunks, ObstacleKind.ConcreteBlock));
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 98f, x = 0f, count = 30, healthPerUnit = 12, width = 3f });
+        data.gates.Add(new GateSpawnData { z = 116f, x = -1.45f, operation = GateOperation.Add, value = 30 });
+        data.gates.Add(new GateSpawnData { z = 116f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
     }
 
     private static ObstacleDefinition FindObstacleDefinitionInChunks(LevelChunkData[] chunks, ObstacleKind kind)
@@ -3104,12 +3124,12 @@ public static class ArmyRushProjectBuilder
             {
                 failures.Add(label + " has invalid bonus-run reward data.");
             }
-            bool directOnboardingLevel = IsDirectOnboardingLevel(level);
-            if (!directOnboardingLevel && (level.chunks == null || level.chunks.Count < 3))
+            bool directTeachingLevel = IsDirectTeachingLevel(level);
+            if (!directTeachingLevel && (level.chunks == null || level.chunks.Count < 3))
             {
                 failures.Add(label + " does not reference enough reusable level chunks.");
             }
-            else if (!directOnboardingLevel)
+            else if (!directTeachingLevel)
             {
                 ValidateChunkPlacements(failures, level, label, trackHalfWidth);
             }
@@ -3137,6 +3157,10 @@ public static class ArmyRushProjectBuilder
             {
                 ValidateLevelThreeTutorialLayout(failures, level, label);
             }
+            else if (level.levelIndex == 4)
+            {
+                ValidateLevelFourObstacleIntroLayout(failures, level, label);
+            }
             ValidateEncounterCadence(failures, level, label, forwardSpeed);
 
             if (level.hasBoss)
@@ -3159,9 +3183,9 @@ public static class ArmyRushProjectBuilder
         }
     }
 
-    private static bool IsDirectOnboardingLevel(LevelData level)
+    private static bool IsDirectTeachingLevel(LevelData level)
     {
-        return level != null && level.levelIndex >= 1 && level.levelIndex <= 3 && (level.chunks == null || level.chunks.Count == 0);
+        return level != null && level.levelIndex >= 1 && level.levelIndex <= 4 && (level.chunks == null || level.chunks.Count == 0);
     }
 
     private static void ValidateLevelOneTutorialLayout(List<string> failures, LevelData level, string label)
@@ -3300,6 +3324,56 @@ public static class ArmyRushProjectBuilder
         if (firstObstacle == null || firstObstacle.definition == null || firstObstacle.definition.kind != ObstacleKind.Barricade || firstObstacle.health != 150)
         {
             failures.Add(label + " must end the onboarding sequence with a 150 HP barricade.");
+        }
+    }
+
+    private static void ValidateLevelFourObstacleIntroLayout(List<string> failures, LevelData level, string label)
+    {
+        if (level.chunks != null && level.chunks.Count > 0)
+        {
+            failures.Add(label + " should use direct teaching spawns so Level 4 cleanly introduces the obstacle chain.");
+        }
+
+        List<GateSpawnData> gates = GetOrderedGates(level);
+        List<EnemyGroupSpawnData> enemies = GetOrderedEnemies(level);
+        List<ObstacleSpawnData> obstacles = GetOrderedObstacles(level);
+
+        if (!HasGate(gates, 16f, GateOperation.Add, 25) || !HasGate(gates, 16f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must open with a meaningful +25 vs x2 choice before the obstacle chain.");
+        }
+
+        if (!HasGate(gates, 56f, GateOperation.Add, 20) || !HasGate(gates, 56f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must provide a recovery gate after the first obstacle pair.");
+        }
+
+        if (obstacles.Count < 3)
+        {
+            failures.Add(label + " must introduce an obstacle chain with at least three obstacles.");
+        }
+
+        bool hasLanePair = obstacles.Count(obstacle => Mathf.Abs(obstacle.z - 38f) <= 1f && Mathf.Abs(obstacle.x) >= 1f) >= 2;
+        bool hasCenterBlock = obstacles.Any(obstacle => Mathf.Abs(obstacle.z - 76f) <= 1f && Mathf.Abs(obstacle.x) <= 0.25f && obstacle.definition != null && obstacle.definition.kind == ObstacleKind.ConcreteBlock && obstacle.health <= 180);
+        if (!hasLanePair || !hasCenterBlock)
+        {
+            failures.Add(label + " must teach both lane-specific obstacles and a central concrete blocker at safe early HP values.");
+        }
+
+        if (obstacles.Any(obstacle => obstacle.health > 180 || obstacle.collisionPenalty > 10))
+        {
+            failures.Add(label + " obstacle intro HP and penalties must stay forgiving for the first-session ramp.");
+        }
+
+        EnemyGroupSpawnData firstEnemy = enemies.FirstOrDefault();
+        if (firstEnemy == null || firstEnemy.z <= 76f || firstEnemy.count != 30 || firstEnemy.healthPerUnit > 12)
+        {
+            failures.Add(label + " must place a tutorial-safe 30-count enemy after the obstacle chain.");
+        }
+
+        if (!HasGate(gates, 116f, GateOperation.Add, 30) || !HasGate(gates, 116f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must end the teaching sequence with a final +30 vs x2 power choice.");
         }
     }
 

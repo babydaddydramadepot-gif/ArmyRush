@@ -195,6 +195,7 @@ Implementation Pass 1 Result:
 - Tuned early physical-device combat feel by restoring documented base-fire cadence, scaling volley damage by logical army count, extending first-contact targeting responsiveness, softening Level 1's first enemy/obstacle beats, and adding validator coverage for first-enemy onboarding survivability.
 - Aligned Level 1 with the higher-priority `GAMEPLAY_LOOP.md` tutorial sequence as a direct authored layout: `+5` vs `+10`, first enemy count 8, post-enemy `x2`, and a 40 HP crate wall, with production validation guarding that sequence.
 - Aligned Levels 2 and 3 with the higher-priority `GAMEPLAY_LOOP.md` onboarding sequence as direct authored layouts, resolving the lower-priority `LEVEL_DESIGN.md` intro-label conflict in favor of gameplay source-of-truth pacing.
+- Aligned Level 4 with the documented obstacle-chain teaching ramp as a direct authored layout: `+25` vs `x2`, forgiving lane obstacles, recovery gate, central concrete blocker, safe enemy follow-up, and a final power gate, with production validation guarding that sequence.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
@@ -782,7 +783,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-3 Tutorial Alignment
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-4 Teaching Alignment
 Priority: Critical
 
 Tasks:
@@ -790,7 +791,7 @@ Tasks:
 - [x] Create Level 1 tutorial.
 - [x] Create direct Level 2 slightly harder choice intro per `GAMEPLAY_LOOP.md`.
 - [x] Create direct Level 3 negative gate intro per `GAMEPLAY_LOOP.md`.
-- Create Level 4 obstacle intro.
+- [x] Create direct Level 4 obstacle-chain intro per `LEVEL_DESIGN.md` first-session ramp.
 - Create Level 5 tank boss.
 - Create Levels 6-10 advanced gates.
 - Create Levels 11-15 heavier combat.
@@ -800,6 +801,7 @@ Tasks:
 - [x] Retune Level 1 first enemy and first obstacle corridor from physical iPhone feedback so the opener teaches power rather than causing early failure.
 - [x] Convert Level 1 to a direct authored tutorial layout matching `GAMEPLAY_LOOP.md`: `+5` vs `+10`, first enemy count 8, `x2`, 40 HP crate, finish.
 - [x] Convert Levels 2 and 3 to direct authored onboarding layouts matching `GAMEPLAY_LOOP.md` and add validation coverage for their exact teaching beats.
+- [x] Convert Level 4 to a direct authored obstacle intro with forgiving lane blockers, a central concrete blocker, safe follow-up combat, and validation coverage for the exact teaching beats.
 
 Acceptance Criteria:
 
@@ -1492,7 +1494,7 @@ Tasks:
 
 - [x] Add automated authored level data validation.
 - [x] Add static early-combat survivability estimate for Levels 1-3.
-- [x] Add production validation for the exact Levels 1-3 tutorial sequences.
+- [x] Add production validation for the exact Levels 1-4 tutorial/teaching sequences.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
