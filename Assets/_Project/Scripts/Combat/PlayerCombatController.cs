@@ -188,7 +188,7 @@ namespace ArmyRush
             int projectileDamage = Mathf.Max(1, totalDamage - immediateDamage);
             int damagePerProjectile = Mathf.Max(1, Mathf.CeilToInt(projectileDamage / (float)projectileCount));
             _crowd.PlayShootFeedback(projectileCount + 1);
-            VfxManager.Spawn(VfxCue.MuzzleFlash, origin + Vector3.forward * 0.35f);
+            SpawnMuzzleFlashBurst(origin, projectileCount);
 
             if (target.IsAlive)
             {
@@ -203,6 +203,19 @@ namespace ArmyRush
             if (ServiceLocator.TryGet(out AudioService audio))
             {
                 audio.Play(AudioCue.Shoot);
+            }
+        }
+
+        private void SpawnMuzzleFlashBurst(Vector3 origin, int projectileCount)
+        {
+            int flashCount = Mathf.Clamp(projectileCount, 1, Mathf.Max(1, _tuning.muzzleFlashVisualBurst));
+            Vector3 basePosition = origin + Vector3.forward * 0.35f;
+            for (int i = 0; i < flashCount; i++)
+            {
+                Vector3 jitter = flashCount == 1
+                    ? Vector3.zero
+                    : new Vector3(Random.Range(-0.38f, 0.38f), Random.Range(-0.04f, 0.18f), Random.Range(-0.18f, 0.12f));
+                VfxManager.Spawn(VfxCue.MuzzleFlash, basePosition + jitter);
             }
         }
 

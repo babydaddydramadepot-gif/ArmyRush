@@ -368,6 +368,7 @@ public static class ArmyRushProjectBuilder
         tuning.minFireInterval = 0.08f;
         tuning.baseDamage = 10;
         tuning.projectileVisualBurst = 6;
+        tuning.muzzleFlashVisualBurst = 4;
         tuning.openingVolleyDamageMultiplier = 1.35f;
         tuning.openingVolleyExtraProjectiles = 2;
         tuning.openingVolleyCooldown = 0.6f;
@@ -3138,6 +3139,10 @@ public static class ArmyRushProjectBuilder
         if (tuning.projectileVisualBurst < 6)
         {
             failures.Add("Projectile visual burst count is too low for readable small-crowd combat on device.");
+        }
+        if (tuning.muzzleFlashVisualBurst < 2 || tuning.muzzleFlashVisualBurst > tuning.projectileVisualBurst)
+        {
+            failures.Add("Muzzle flash visual burst count should make aggregate volleys readable without exceeding projectile density.");
         }
         if (tuning.openingVolleyDamageMultiplier < 1.25f || tuning.openingVolleyDamageMultiplier > 1.8f)
         {

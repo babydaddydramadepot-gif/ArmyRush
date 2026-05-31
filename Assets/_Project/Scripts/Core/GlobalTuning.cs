@@ -28,6 +28,7 @@ namespace ArmyRush
         public float minFireInterval = 0.08f;
         public int baseDamage = 10;
         public int projectileVisualBurst = 6;
+        public int muzzleFlashVisualBurst = 4;
         public float openingVolleyDamageMultiplier = 1.35f;
         public int openingVolleyExtraProjectiles = 2;
         public float openingVolleyCooldown = 0.6f;
