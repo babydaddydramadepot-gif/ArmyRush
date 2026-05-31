@@ -12,6 +12,10 @@ namespace ArmyRush
         [SerializeField] private Damageable _damageable;
         [SerializeField] private int _coinReward = 10;
 
+        private const float CountLabelPulseDuration = 0.22f;
+        private const float CountLabelStartScale = 0.9f;
+        private const float CountLabelLift = 0.1f;
+
         private readonly List<SoldierUnitVisual> _units = new List<SoldierUnitVisual>();
         private int _unitCount;
         private int _healthPerUnit;
@@ -20,6 +24,12 @@ namespace ArmyRush
         private int _attackFeedbackCursor;
         private float _nextAttackFeedbackTime;
         private bool _rewardClaimed;
+        private Damageable _boundDamageable;
+        private bool _countLabelPoseCached;
+        private float _countLabelPulseTimer;
+        private Vector3 _countLabelBaseScale = Vector3.one;
+        private Vector3 _countLabelBaseLocalPosition;
+        private Color _countLabelRestColor = Color.white;
 
         private void Awake()
         {
@@ -30,25 +40,24 @@ namespace ArmyRush
             {
                 _damageable = GetComponent<Damageable>();
             }
+            CacheCountLabelPose();
+        }
+
+        private void Update()
+        {
+            UpdateCountLabelPulse();
         }
 
         private void OnEnable()
         {
-            if (_damageable != null)
-            {
-                _damageable.Damaged += OnDamaged;
-                _damageable.Died += OnDied;
-            }
+            BindDamageableEvents();
         }
 
         private void OnDisable()
         {
-            if (_damageable != null)
-            {
-                _damageable.Damaged -= OnDamaged;
-                _damageable.Died -= OnDied;
-            }
+            UnbindDamageableEvents();
             SyncUnits(0);
+            ResetCountLabelPulse();
         }
 
         public void Configure(int count, int healthPerUnit, GameObject unitPrefab, PoolManager poolManager)
@@ -68,15 +77,48 @@ namespace ArmyRush
             _attackFeedbackCursor = 0;
             _nextAttackFeedbackTime = 0f;
             _rewardClaimed = false;
+            _countLabelPoseCached = false;
+            _countLabelPulseTimer = 0f;
 
             if (_damageable == null)
             {
                 _damageable = GetComponent<Damageable>();
             }
             _damageable.Configure(CombatTargetKind.Enemy, _unitCount * _healthPerUnit, _countLabel);
+            BindDamageableEvents();
 
             SyncUnits(_unitCount);
             UpdateLabel();
+        }
+
+        private void BindDamageableEvents()
+        {
+            if (_boundDamageable == _damageable)
+            {
+                return;
+            }
+
+            UnbindDamageableEvents();
+            if (_damageable == null)
+            {
+                return;
+            }
+
+            _damageable.Damaged += OnDamaged;
+            _damageable.Died += OnDied;
+            _boundDamageable = _damageable;
+        }
+
+        private void UnbindDamageableEvents()
+        {
+            if (_boundDamageable == null)
+            {
+                return;
+            }
+
+            _boundDamageable.Damaged -= OnDamaged;
+            _boundDamageable.Died -= OnDied;
+            _boundDamageable = null;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -123,6 +165,7 @@ namespace ArmyRush
             {
                 SyncUnits(remainingUnits);
                 _lastDisplayedUnitCount = remainingUnits;
+                PlayCountLabelDamagePulse();
             }
             PlayHitFeedback(amount);
             if (damageable.Health > 0)
@@ -199,8 +242,82 @@ namespace ArmyRush
             if (_countLabel != null && _damageable != null)
             {
                 _countLabel.text = Mathf.CeilToInt(_damageable.Health / (float)_healthPerUnit).ToString();
+                if (_countLabelPulseTimer <= 0f)
+                {
+                    _countLabel.color = _countLabelRestColor;
+                }
                 WorldTextGuard.Clamp(_countLabel);
+                CacheCountLabelPose();
             }
+        }
+
+        private void PlayCountLabelDamagePulse()
+        {
+            if (_countLabel == null)
+            {
+                return;
+            }
+
+            CacheCountLabelPose();
+            _countLabelPulseTimer = CountLabelPulseDuration;
+            _countLabel.color = new Color(1f, 0.3f, 0.16f);
+        }
+
+        private void UpdateCountLabelPulse()
+        {
+            if (_countLabel == null || _countLabelPulseTimer <= 0f)
+            {
+                return;
+            }
+
+            CacheCountLabelPose();
+            _countLabelPulseTimer = Mathf.Max(0f, _countLabelPulseTimer - Time.deltaTime);
+            float normalized = 1f - Mathf.Clamp01(_countLabelPulseTimer / CountLabelPulseDuration);
+            float eased = EaseOutCubic(normalized);
+            float hop = Mathf.Sin(normalized * Mathf.PI);
+            float scale = Mathf.Lerp(CountLabelStartScale, 1f, eased);
+            _countLabel.transform.localScale = _countLabelBaseScale * scale;
+            _countLabel.transform.localPosition = _countLabelBaseLocalPosition + Vector3.up * (CountLabelLift * hop);
+            _countLabel.color = Color.Lerp(new Color(1f, 0.3f, 0.16f), _countLabelRestColor, eased);
+
+            if (_countLabelPulseTimer <= 0f)
+            {
+                ResetCountLabelPulse();
+            }
+        }
+
+        private void ResetCountLabelPulse()
+        {
+            if (_countLabel == null || !_countLabelPoseCached)
+            {
+                return;
+            }
+
+            _countLabelPulseTimer = 0f;
+            _countLabel.transform.localScale = _countLabelBaseScale;
+            _countLabel.transform.localPosition = _countLabelBaseLocalPosition;
+            _countLabel.color = _countLabelRestColor;
+        }
+
+        private void CacheCountLabelPose()
+        {
+            if (_countLabel == null || _countLabelPoseCached)
+            {
+                return;
+            }
+
+            WorldTextGuard.Clamp(_countLabel);
+            Transform labelTransform = _countLabel.transform;
+            _countLabelBaseScale = labelTransform.localScale;
+            _countLabelBaseLocalPosition = labelTransform.localPosition;
+            _countLabelRestColor = _countLabel.color;
+            _countLabelPoseCached = true;
+        }
+
+        private static float EaseOutCubic(float value)
+        {
+            float inverse = 1f - Mathf.Clamp01(value);
+            return 1f - inverse * inverse * inverse;
         }
 
         private void PlayHitFeedback(int damageAmount)

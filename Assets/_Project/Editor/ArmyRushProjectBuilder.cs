@@ -5541,10 +5541,23 @@ public static class ArmyRushProjectBuilder
             return;
         }
 
-        damageable.ApplyDamage(1);
-        if (label.text != displayedUnits.ToString())
+        int inferredHealthPerUnit = Mathf.Max(1, Mathf.RoundToInt(startingHealth / (float)displayedUnits));
+        damageable.ApplyDamage(inferredHealthPerUnit);
+        int expectedDisplayedUnits = Mathf.CeilToInt(damageable.Health / (float)inferredHealthPerUnit);
+        if (!int.TryParse(label.text, out int displayedAfterDamage))
+        {
+            failures.Add("Enemy group count label became non-numeric after damage.");
+            return;
+        }
+
+        if (displayedAfterDamage != expectedDisplayedUnits)
         {
             failures.Add("Enemy group count label switched from unit count to raw health after damage, making combat look weaker on device.");
+        }
+
+        if (expectedDisplayedUnits < displayedUnits && (label.color.r < 0.85f || label.color.g > 0.65f))
+        {
+            failures.Add("Enemy group count label should visibly pulse red when enemy unit count drops.");
         }
     }
 

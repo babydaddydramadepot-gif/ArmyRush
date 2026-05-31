@@ -109,6 +109,35 @@ Date:
 
 System:
 
+Enemy Count Damage Feedback
+
+Files:
+
+Assets/_Project/Scripts/Enemies/EnemyGroup.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added visible damage feedback to enemy group count labels. When player fire reduces the remaining enemy unit count, the count label now pulses red with a small safe lift/scale animation, then settles back to its clamped resting pose. Enemy groups now also bind their `Damageable` event path during configuration so pooled or validation-spawned groups reliably own count updates. The existing production validation now damages a spawned enemy by one inferred unit of health, confirms the label stays on remaining-unit count, and verifies a red damage pulse is applied.
+
+Result:
+
+`git diff --check` passed. Unity production validation passed with log `/tmp/armyrush_unity_enemy_count_pulse_validate.log`, including the new spawned-enemy damage-pulse guard. Targeted log scanning found no `error CS`, `Exception`, `NullReference`, `MissingReference`, `Fatal`, or validation-failure signatures after the final rerun.
+
+Follow Up:
+
+Physical iPhone QA should retest early enemies and confirm enemy numbers visibly tick down as progress, making damage output feel clearer without changing combat balance.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Enemy Count Label Readability
 
 Files:
@@ -4307,7 +4336,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades, and Levels 1-3 first-enemy validation now uses a target-lock timeline that accounts for pre-gate shots, gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, onboarding combat boost, and projectile travel. A bounded visible 24-second `POWER START` boost now gives Levels 1-3 35% faster fire rate and 35% stronger damage during the first combat window, opening/power-spike volleys now make newly acquired targets and post-gate growth feel immediately pressured, immediate hit-confirmation damage makes target health respond before projectile travel completes, bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact, threat-first target priority prevents farther obstacles from stealing volleys from closer enemy contacts, pooled multi-muzzle flashes make aggregate volleys read denser on physical screens, enemy count labels now stay as remaining-unit counts instead of raw HP after damage, and run boost/onboarding boost HUD fill now uses the active boost duration. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, save-backed early retry power, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm `POWER START` readability/impact, `RETRY POWER` readability/impact after an early loss, enemy count label readability, perceived fire rate, muzzle-flash readability, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, target-priority readability in mixed lanes, active run-boost HUD readability/impact, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades, and Levels 1-3 first-enemy validation now uses a target-lock timeline that accounts for pre-gate shots, gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, onboarding combat boost, and projectile travel. A bounded visible 24-second `POWER START` boost now gives Levels 1-3 35% faster fire rate and 35% stronger damage during the first combat window, opening/power-spike volleys now make newly acquired targets and post-gate growth feel immediately pressured, immediate hit-confirmation damage makes target health respond before projectile travel completes, bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact, threat-first target priority prevents farther obstacles from stealing volleys from closer enemy contacts, pooled multi-muzzle flashes make aggregate volleys read denser on physical screens, enemy count labels now stay as remaining-unit counts instead of raw HP after damage and pulse red when unit counts drop, and run boost/onboarding boost HUD fill now uses the active boost duration. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, save-backed early retry power, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm `POWER START` readability/impact, `RETRY POWER` readability/impact after an early loss, enemy count label readability and damage-pulse feedback, perceived fire rate, muzzle-flash readability, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, target-priority readability in mixed lanes, active run-boost HUD readability/impact, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -4315,7 +4344,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the enemy count label readability fix. Latest successful validation log: `/tmp/armyrush_unity_enemy_count_label_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding overdrive tuning pass, with screenshot `/tmp/armyrush_onboarding_overdrive_smoke.png` and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the enemy count damage feedback pass. Latest successful validation log: `/tmp/armyrush_unity_enemy_count_pulse_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding overdrive tuning pass, with screenshot `/tmp/armyrush_onboarding_overdrive_smoke.png` and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
 
 ---
 
