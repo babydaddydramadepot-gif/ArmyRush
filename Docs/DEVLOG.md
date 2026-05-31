@@ -109,6 +109,38 @@ Date:
 
 System:
 
+Early Close-Range Combat Urgency
+
+Files:
+
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Scripts/Core/GlobalTuning.cs
+Assets/_Project/Scripts/Level/RunManager.cs
+Assets/_Project/ScriptableObjects/Tuning/SO_GlobalTuning.asset
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a bounded early close-range urgency assist for first-session combat. In Levels 1-5, non-bonus targets inside the final 8.5m before contact apply a small data-driven fire-rate multiplier and damage multiplier to player volleys. The assist uses the existing target acquisition, army-scaled damage, pooled projectile, and immediate hit-confirmation paths, and shows a one-time `PUSH` callout when a target enters the assisted close range.
+
+Result:
+
+Physical-device early combat now has a last-moment pressure ramp without globally buffing every encounter or replacing upgrade progression. The assist excludes bonus crates, is level-bounded through `RunManager.CurrentLevelIndex`, and has production-validator guardrails for level range, distance, fire-rate multiplier, and damage multiplier.
+
+Follow Up:
+
+Physical iPhone QA should verify that Levels 1-5 feel more responsive when enemies or obstacles are about to collide, while later levels still depend on route choice and upgrades. Static validation passed with `git diff --check` and a close-range urgency smoke check. Unity production validation was retried with log `/tmp/armyrush_unity_close_range_urgency_validate.log`, but AR-009 Unity Licensing Client protocol failures again prevented `ArmyRushProjectBuilder.ValidateProductionFoundation` from starting.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Immediate Combat Hit Confirmation
 
 Files:
@@ -3645,7 +3677,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over, and immediate hit-confirmation damage makes target health respond before projectile travel completes. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm perceived fire rate, immediate hit-confirmation readability, opening-salvo readability, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Opening salvos now make newly acquired targets feel immediately pressured before steady-fire cadence takes over, immediate hit-confirmation damage makes target health respond before projectile travel completes, and bounded close-range urgency assist makes Levels 1-5 fire faster and hit slightly harder only when non-bonus targets are near contact. Early defeat consolation, recommended upgrade guidance, result-screen quick purchase, bounded early contact mercy, bounded early rally assist, animated soldier-count feedback, and globally clamped camera-shake tuning now keep first-session mistakes, close clears, recovery beats, and impact moments readable. Physical iPhone retest is still required to confirm perceived fire rate, immediate hit-confirmation readability, opening-salvo readability, close-range urgency readability, contact-mercy fairness/readability, rally-assist readability/generosity, crowd-count pulse readability, camera-shake comfort/readability, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3653,7 +3685,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_immediate_damage_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_close_range_urgency_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

@@ -23,6 +23,7 @@ namespace ArmyRush
         public event Action<RunState> StateChanged;
         public RunState State { get; private set; } = RunState.None;
         public int RunCoins => _runCoins;
+        public int CurrentLevelIndex => _levelManager != null && _levelManager.CurrentLevel != null ? _levelManager.CurrentLevel.levelIndex : 1;
 
         private void Start()
         {

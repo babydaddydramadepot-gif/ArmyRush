@@ -207,6 +207,7 @@ Implementation Pass 1 Result:
 - Added first-session retention support with data-driven early defeat consolation coins, upgrade value previews, and a recommended affordable power-upgrade highlight so early failures still point players toward visible strength.
 - Added nonblocking `BEST` guidance markers to the intended positive tutorial gates in Levels 1-3, routed the data through level spawning, clamped the marker with `WorldTextGuard`, and added production validation so highlighted gates stay positive and tutorial-only.
 - Added data-driven immediate hit-confirmation damage to player volleys so physical-device combat responds as soon as a target is acquired while keeping projectile tracers and impact damage meaningful.
+- Added bounded early close-range combat urgency assist so Levels 1-5 fire faster and hit slightly harder near imminent contact, with one-time `PUSH` feedback and validator guardrails.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -620,7 +621,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Army-Scaled DPS, Faster Physical Cadence, Opening Salvo Punch, Immediate Hit Confirmation, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Faster Physical Cadence, Opening Salvo Punch, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
@@ -633,6 +634,7 @@ Tasks:
 - [x] Tighten physical-device no-upgrade combat cadence/readability with 0.30s baseline volleys, 24m targeting, 36 speed projectiles, and a 6-shot visual burst cap.
 - [x] Add data-driven opening salvos so each newly acquired target gets a stronger first volley and denser tracer burst.
 - [x] Add data-driven immediate hit-confirmation damage so target health responds before projectile travel can make physical-device combat feel late.
+- [x] Add bounded close-range urgency assist for onboarding combat targets so imminent enemy/obstacle contact feels responsive on physical devices.
 - [x] Add validator coverage for early first-enemy survivability.
 - [x] Add projectile pooling.
 - [x] Add bullet trails.
@@ -1560,7 +1562,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Immediate Hit Confirmation, Early Balance, Contact Mercy, Rally Assist, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1585,6 +1587,7 @@ Tasks:
 - [x] Tighten physical-device combat cadence/readability after no-upgrade feedback and extend balance fixes through the Levels 11-15 heavier-combat/mech boss ramp.
 - [x] Add opening-salvo first-contact feedback to make newly acquired enemies, obstacles, and bosses feel immediately pressured on device.
 - [x] Add immediate volley hit-confirmation damage so projectile travel and contact timing cannot make responsive combat appear delayed on physical iPhone.
+- [x] Add bounded close-range combat urgency assist so Levels 1-5 apply a small fire-rate/damage boost only when non-bonus targets are near contact.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
 - [x] Add guarded early gate guidance markers for Levels 1-3 to reduce first-session wrong-route confusion on physical-device playthroughs.
@@ -1608,13 +1611,14 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning
+Status: In Progress with Camera Shake Tuning and Close-Range Combat Urgency
 Priority: Critical
 
 Tasks:
 
 - Add final game feel pass.
 - [x] Add camera shake tuning.
+- [x] Add early close-range combat urgency feedback for first-session near-contact pressure.
 - Add reward polish.
 - Add UI polish.
 - Add VFX polish.

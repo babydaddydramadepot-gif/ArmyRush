@@ -373,6 +373,10 @@ public static class ArmyRushProjectBuilder
         tuning.openingVolleyCooldown = 0.6f;
         tuning.volleyImmediateDamageFraction = 0.3f;
         tuning.openingVolleyImmediateDamageFraction = 0.5f;
+        tuning.earlyCloseRangeAssistLevelLimit = 5;
+        tuning.closeRangeAssistDistance = 8.5f;
+        tuning.closeRangeFireRateMultiplier = 1.35f;
+        tuning.closeRangeDamageMultiplier = 1.15f;
         tuning.earlyDefeatRewardLevelLimit = 5;
         tuning.earlyDefeatRewardFraction = 0.4f;
         tuning.earlyDefeatMinimumCoins = 100;
@@ -3143,6 +3147,22 @@ public static class ArmyRushProjectBuilder
         if (tuning.openingVolleyImmediateDamageFraction < tuning.volleyImmediateDamageFraction)
         {
             failures.Add("Opening volley immediate damage should be at least as responsive as steady volley damage.");
+        }
+        if (tuning.earlyCloseRangeAssistLevelLimit < 3 || tuning.earlyCloseRangeAssistLevelLimit > 8)
+        {
+            failures.Add("Early close-range combat assist should cover onboarding but stay bounded to first-session levels.");
+        }
+        if (tuning.closeRangeAssistDistance < 5f || tuning.closeRangeAssistDistance > 12f || tuning.closeRangeAssistDistance >= tuning.targetRange)
+        {
+            failures.Add("Close-range combat assist distance should only activate when an onboarding target is near contact.");
+        }
+        if (tuning.closeRangeFireRateMultiplier < 1.15f || tuning.closeRangeFireRateMultiplier > 1.75f)
+        {
+            failures.Add("Close-range combat fire-rate assist should make imminent contact feel urgent without replacing upgrades.");
+        }
+        if (tuning.closeRangeDamageMultiplier < 1.05f || tuning.closeRangeDamageMultiplier > 1.35f)
+        {
+            failures.Add("Close-range combat damage assist should be a small onboarding safety margin, not a full balance override.");
         }
         if (tuning.earlyDefeatRewardLevelLimit < 3)
         {
