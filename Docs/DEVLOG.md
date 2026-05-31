@@ -109,6 +109,34 @@ Date:
 
 System:
 
+Production Reference Validation Hardening
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Hardened `ArmyRushProjectBuilder.ValidateProductionFoundation` so the production validator now scans nested prefab and scene hierarchies for missing scripts, checks serialized object-reference properties for broken references, and scans ArmyRush ScriptableObject data for missing asset references. This makes missing-reference and broken-prefab regressions fail the repeatable Unity validation path instead of relying on manual scene inspection.
+
+Result:
+
+`git diff --check` passed. Unity production validation passed with log `/tmp/armyrush_unity_reference_validation_final.log`; the final run produced no C# compiler warnings and found no missing serialized references or broken ArmyRush production prefabs/scenes/data. The log still contains a transient Unity Licensing Client startup handshake message before entitlement resolution, but validation completed successfully.
+
+Follow Up:
+
+Keep running production validation after generated scene/prefab/data changes, and complete the remaining manual physical iPhone/iPad playthrough to catch device-only gameplay, layout, and balance issues that static validation cannot prove.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Post-Muzzle iOS Simulator Smoke Validation
 
 Files:
@@ -3930,7 +3958,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the multi-muzzle feedback pass. Latest successful validation log: `/tmp/armyrush_unity_multi_muzzle_validate.log`. Latest iOS simulator export/build/install/launch smoke also passed after the multi-muzzle feedback pass.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the production reference-validation hardening pass. Latest successful validation log: `/tmp/armyrush_unity_reference_validation_final.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
 
 ---
 

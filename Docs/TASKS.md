@@ -213,6 +213,7 @@ Implementation Pass 1 Result:
 - Added functional run boost gates for temporary damage, fire-rate, and coin power-ups, then introduced fire-rate/damage boost pickups in Levels 6, 7, and 10 to extend the first-session power fantasy beyond raw army count.
 - Added a compact active run-boost HUD indicator with countdown fill, safe-area placement, nonblocking raycasts, runtime fallback creation for older scenes, and production validation coverage.
 - Corrected combat target priority so volleys focus the nearest enemy/obstacle threat instead of letting farther obstacles steal target lock, and lowered the boost HUD fallback band so it no longer overlaps the boss health panel in production validation.
+- Hardened production validation so nested prefab/scene missing scripts, missing serialized object references, and ScriptableObject broken asset references are checked across the ArmyRush production content set.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1621,10 +1622,12 @@ Tasks:
 - [x] Confirm post-muzzle simulator launch has no managed Unity exception signatures after latest combat-feedback changes.
 - [x] Fix active boost HUD fallback placement so production validation confirms it does not overlap the boss health panel.
 - [x] Add result panel validation for victory/defeat header, reward, status, and action layout so boss milestone copy stays portrait-safe.
+- [x] Add production validation for nested missing scripts and missing serialized object references across prefabs, scenes, and ScriptableObject data.
+- [x] Confirm current production validation finds no missing serialized references or broken production prefabs.
 - Fix console errors.
-- Fix missing references.
+- [x] Fix missing references covered by the production validation pass.
 - Fix animation errors.
-- Fix broken prefabs.
+- [x] Fix broken prefabs covered by the production validation pass.
 - Fix UI overlap.
 - Fix save/load bugs.
 - Fix level loading bugs.

@@ -63,6 +63,7 @@ public static class ArmyRushProjectBuilder
         ValidatePoolingSetup(failures);
         ValidateBossPrefabs(failures);
         ValidateObstaclePrefabs(failures);
+        ValidateScriptableObjectReferenceIntegrity(failures);
         ValidateLevelChunkDataAssets(failures);
         ValidateLevelDataAssets(failures);
         ValidateUpgradeDefinitions(failures);
@@ -2741,11 +2742,13 @@ public static class ArmyRushProjectBuilder
                 continue;
             }
 
-            int missing = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(prefab);
+            int missing = CountMissingScriptsInHierarchy(prefab);
             if (missing > 0)
             {
                 failures.Add($"{path} has {missing} missing scripts.");
             }
+
+            ValidateSerializedReferencesInHierarchy(prefab, path, failures);
         }
     }
 
@@ -3546,16 +3549,135 @@ public static class ArmyRushProjectBuilder
         Scene scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
         foreach (GameObject root in scene.GetRootGameObjects())
         {
-            int missing = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(root);
+            int missing = CountMissingScriptsInHierarchy(root);
             if (missing > 0)
             {
                 failures.Add($"{path}/{root.name} has {missing} missing scripts.");
             }
+
+            ValidateSerializedReferencesInHierarchy(root, $"{path}/{root.name}", failures);
         }
 
         ValidateInputModules(path, failures);
         validate(scene, failures);
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+    }
+
+    private static void ValidateScriptableObjectReferenceIntegrity(List<string> failures)
+    {
+        string[] guids = AssetDatabase.FindAssets("t:ScriptableObject", new[] { Root + "/ScriptableObjects" });
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            Object[] assets = AssetDatabase.LoadAllAssetsAtPath(path);
+            foreach (Object asset in assets)
+            {
+                if (asset is ScriptableObject)
+                {
+                    ValidateSerializedReferences(asset, path + "/" + asset.name, failures);
+                }
+            }
+        }
+    }
+
+    private static int CountMissingScriptsInHierarchy(GameObject root)
+    {
+        if (root == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+        foreach (Transform child in transforms)
+        {
+            count += GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(child.gameObject);
+        }
+
+        return count;
+    }
+
+    private static void ValidateSerializedReferencesInHierarchy(GameObject root, string context, List<string> failures)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+        foreach (Transform child in transforms)
+        {
+            string hierarchyPath = GetRelativeHierarchyPath(root.transform, child);
+            Component[] components = child.GetComponents<Component>();
+            foreach (Component component in components)
+            {
+                if (component == null)
+                {
+                    continue;
+                }
+
+                ValidateSerializedReferences(component, context + "/" + hierarchyPath + "/" + component.GetType().Name, failures);
+            }
+        }
+    }
+
+    private static void ValidateSerializedReferences(Object target, string context, List<string> failures)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        SerializedObject serialized;
+        try
+        {
+            serialized = new SerializedObject(target);
+        }
+        catch (System.Exception exception)
+        {
+            failures.Add(context + " could not be inspected for missing references: " + exception.Message);
+            return;
+        }
+
+        SerializedProperty property = serialized.GetIterator();
+        bool enterChildren = true;
+        while (property.NextVisible(enterChildren))
+        {
+            enterChildren = false;
+            EntityId referenceId = property.propertyType == SerializedPropertyType.ObjectReference
+                ? property.objectReferenceEntityIdValue
+                : default;
+            if (property.propertyType == SerializedPropertyType.ObjectReference
+                && property.objectReferenceValue == null
+                && !referenceId.Equals(default(EntityId)))
+            {
+                failures.Add(context + " has a missing serialized object reference at " + property.propertyPath + ".");
+            }
+        }
+    }
+
+    private static string GetRelativeHierarchyPath(Transform root, Transform current)
+    {
+        if (root == null || current == null || current == root)
+        {
+            return root != null ? root.name : "Unknown";
+        }
+
+        List<string> names = new List<string>();
+        Transform iterator = current;
+        while (iterator != null)
+        {
+            names.Add(iterator.name);
+            if (iterator == root)
+            {
+                break;
+            }
+
+            iterator = iterator.parent;
+        }
+
+        names.Reverse();
+        return string.Join("/", names);
     }
 
     private static void ValidateInputModules(string path, List<string> failures)
