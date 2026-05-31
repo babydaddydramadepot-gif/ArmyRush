@@ -43,6 +43,7 @@ namespace ArmyRush
         public float x;
         public GateOperation operation;
         public int value;
+        public bool tutorialHighlight;
     }
 
     [Serializable]

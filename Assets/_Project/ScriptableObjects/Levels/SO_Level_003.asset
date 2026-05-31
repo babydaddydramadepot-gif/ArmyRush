@@ -30,6 +30,7 @@ MonoBehaviour:
     x: -1.45
     operation: 0
     value: 20
+    tutorialHighlight: 1
   - z: 16
     x: 1.45
     operation: 1
@@ -38,6 +39,7 @@ MonoBehaviour:
     x: -1.45
     operation: 2
     value: 2
+    tutorialHighlight: 1
   - z: 58
     x: 1.45
     operation: 0

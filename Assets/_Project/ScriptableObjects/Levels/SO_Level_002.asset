@@ -34,10 +34,12 @@ MonoBehaviour:
     x: 1.45
     operation: 0
     value: 15
+    tutorialHighlight: 1
   - z: 54
     x: -1.45
     operation: 2
     value: 2
+    tutorialHighlight: 1
   - z: 54
     x: 1.45
     operation: 0

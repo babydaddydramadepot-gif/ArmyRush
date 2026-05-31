@@ -480,7 +480,7 @@ namespace ArmyRush
                     GateSpawnData gate = CurrentLevel.gates[i];
                     if (gate != null)
                     {
-                        _resolvedGates.Add(new GateSpawnData { z = gate.z, x = gate.x, operation = gate.operation, value = gate.value });
+                        _resolvedGates.Add(new GateSpawnData { z = gate.z, x = gate.x, operation = gate.operation, value = gate.value, tutorialHighlight = gate.tutorialHighlight });
                     }
                 }
             }
@@ -530,7 +530,8 @@ namespace ArmyRush
                         z = placement.z + gate.z,
                         x = placement.x + gate.x * xSign,
                         operation = gate.operation,
-                        value = ScaleGateValue(gate, multiplier)
+                        value = ScaleGateValue(gate, multiplier),
+                        tutorialHighlight = gate.tutorialHighlight
                     });
                 }
             }
@@ -629,7 +630,7 @@ namespace ArmyRush
             {
                 GameObject gateObject = SpawnLevelObject(_gatePrefab, new Vector3(data.x, 0f, data.z));
                 GateController gate = GetLevelComponent<GateController>(gateObject);
-                gate?.Configure(data.operation, data.value);
+                gate?.Configure(data.operation, data.value, data.tutorialHighlight);
                 _spawned.Add(gateObject);
             }
         }

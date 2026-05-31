@@ -205,6 +205,7 @@ Implementation Pass 1 Result:
 - Converted Levels 16-19 into direct authored risk/reward mastery layouts with x3 routes, high-risk negative lanes, elite groups, truck/turret/fuel pressure, and production validation guardrails.
 - Converted Level 20 into a direct authored major helicopter boss milestone with 14500 HP tuning, readable pre-boss gauntlet pressure, and static no-upgrade survivability coverage.
 - Added first-session retention support with data-driven early defeat consolation coins, upgrade value previews, and a recommended affordable power-upgrade highlight so early failures still point players toward visible strength.
+- Added nonblocking `BEST` guidance markers to the intended positive tutorial gates in Levels 1-3, routed the data through level spawning, clamped the marker with `WorldTextGuard`, and added production validation so highlighted gates stay positive and tutorial-only.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -520,7 +521,7 @@ Acceptance Criteria:
 
 ## 1.6 Gate Visuals
 
-Status: Functional Pass Implemented with Glow, Activation Animation, and Positive/Negative Variants; Device Readability QA Pending
+Status: Functional Pass Implemented with Glow, Activation Animation, Positive/Negative Variants, and Early Tutorial Guidance; Device Readability QA Pending
 Priority: Critical
 
 Tasks:
@@ -531,6 +532,7 @@ Tasks:
 - [x] Add glow effects.
 - [x] Add activation animation.
 - [x] Add positive and negative variants.
+- [x] Add nonblocking `BEST` markers for intended tutorial gates in Levels 1-3.
 
 Acceptance Criteria:
 
@@ -819,6 +821,7 @@ Tasks:
 - [x] Convert Level 15 to a direct authored mech boss milestone with 10500 HP tuning, ShockwaveSlam validation, truck/turret/fuel pressure, and conservative no-upgrade balance coverage.
 - [x] Convert Levels 16-19 to direct authored risk/reward mastery layouts with x3 routes, high-risk negative gates, elite enemy waves, and heavy obstacle pressure.
 - [x] Convert Level 20 to a direct authored major helicopter boss milestone with 14500 HP tuning, MissileStrike validation, and a long clean boss approach.
+- [x] Add nonblocking tutorial guidance markers to the intended positive gates in Levels 1-3 so first-session players get readable route help without modal UI.
 
 Acceptance Criteria:
 
@@ -1526,6 +1529,7 @@ Tasks:
 - [x] Add static no-upgrade balance checks for direct Levels 11-15 including Level 15 boss engagement timing.
 - [x] Add production validation for direct Levels 16-19 risk/reward mastery and the Level 20 major helicopter boss milestone.
 - [x] Add static no-upgrade balance checks for direct Levels 16-20 including Level 20 boss engagement timing.
+- [x] Add production validation for tutorial gate guidance: Levels 1-3 must highlight the intended positive gates, and highlighted gates cannot be negative or appear in later levels.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
@@ -1568,6 +1572,7 @@ Tasks:
 - [x] Tighten physical-device combat cadence/readability after no-upgrade feedback and extend balance fixes through the Levels 11-15 heavier-combat/mech boss ramp.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
+- [x] Add guarded early gate guidance markers for Levels 1-3 to reduce first-session wrong-route confusion on physical-device playthroughs.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

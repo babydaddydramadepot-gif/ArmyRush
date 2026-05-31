@@ -8,6 +8,7 @@ namespace ArmyRush
         [SerializeField] private GateOperation _operation;
         [SerializeField] private int _value = 10;
         [SerializeField] private TextMesh _label;
+        [SerializeField] private TextMesh _tutorialMarker;
         [SerializeField] private Renderer _panelRenderer;
         [SerializeField] private ParticleSystem _burst;
         [SerializeField] private float _activationHalfWidth = 1.05f;
@@ -16,8 +17,10 @@ namespace ArmyRush
         [SerializeField] private float _emissionStrength = 0.85f;
 
         private bool _used;
+        private bool _tutorialHighlight;
         private Color _baseColor;
         private Vector3 _baseScale;
+        private Vector3 _tutorialMarkerBaseScale = Vector3.one;
         private MaterialPropertyBlock _propertyBlock;
         private Coroutine _animationRoutine;
 
@@ -31,6 +34,7 @@ namespace ArmyRush
             {
                 _baseColor = _panelRenderer.sharedMaterial != null ? _panelRenderer.sharedMaterial.color : Color.white;
             }
+            CacheTutorialMarkerScale();
         }
 
         private void Update()
@@ -38,16 +42,19 @@ namespace ArmyRush
             if (!_used)
             {
                 UpdateIdleGlow();
+                UpdateTutorialMarker();
             }
         }
 
-        public void Configure(GateOperation operation, int value)
+        public void Configure(GateOperation operation, int value, bool tutorialHighlight = false)
         {
             _operation = operation;
             _value = value;
+            _tutorialHighlight = tutorialHighlight;
             _used = false;
             ResetAnimationState();
             UpdateVisuals();
+            UpdateTutorialMarkerVisibility();
         }
 
         private void OnEnable()
@@ -55,12 +62,17 @@ namespace ArmyRush
             _used = false;
             ResetAnimationState();
             UpdateVisuals();
+            UpdateTutorialMarkerVisibility();
         }
 
         private void OnDisable()
         {
             StopActivationAnimation();
             transform.localScale = _baseScale;
+            if (_tutorialMarker != null)
+            {
+                _tutorialMarker.gameObject.SetActive(false);
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -82,6 +94,7 @@ namespace ArmyRush
             }
 
             _used = true;
+            UpdateTutorialMarkerVisibility();
             Apply(crowd);
             VfxManager.SpawnFloatingText(GetLabel(), crowd.transform.position + Vector3.up * 2.45f, IsPositive() ? new Color(0.2f, 1f, 0.65f) : new Color(1f, 0.25f, 0.15f));
             if (_burst != null)
@@ -131,6 +144,14 @@ namespace ArmyRush
                 _label.text = GetLabel();
                 _label.color = Color.white;
                 WorldTextGuard.Clamp(_label);
+            }
+
+            EnsureTutorialMarker();
+            if (_tutorialMarker != null)
+            {
+                _tutorialMarker.text = "BEST";
+                _tutorialMarker.color = new Color(1f, 0.9f, 0.18f, 1f);
+                WorldTextGuard.Clamp(_tutorialMarker);
             }
 
             if (_panelRenderer != null)
@@ -183,6 +204,67 @@ namespace ArmyRush
             _panelRenderer.SetPropertyBlock(_propertyBlock);
         }
 
+        private void EnsureTutorialMarker()
+        {
+            if (!_tutorialHighlight || _tutorialMarker != null)
+            {
+                return;
+            }
+
+            GameObject markerObject = new GameObject("GateHintLabel");
+            markerObject.transform.SetParent(transform, false);
+            markerObject.transform.localPosition = new Vector3(0f, 2.28f, -0.09f);
+            markerObject.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            _tutorialMarker = markerObject.AddComponent<TextMesh>();
+            _tutorialMarker.fontSize = 54;
+            _tutorialMarker.characterSize = 0.064f;
+            _tutorialMarker.anchor = TextAnchor.MiddleCenter;
+            _tutorialMarker.alignment = TextAlignment.Center;
+            _tutorialMarkerBaseScale = markerObject.transform.localScale;
+            WorldTextGuard.Ensure(_tutorialMarker);
+        }
+
+        private void UpdateTutorialMarker()
+        {
+            if (_tutorialMarker == null || !_tutorialMarker.gameObject.activeSelf)
+            {
+                return;
+            }
+
+            float phase = Time.time * 5.4f + transform.position.z * 0.09f;
+            float pulse = 0.5f + Mathf.Sin(phase) * 0.5f;
+            _tutorialMarker.transform.localScale = _tutorialMarkerBaseScale * Mathf.Lerp(0.92f, 1.08f, pulse);
+            _tutorialMarker.color = Color.Lerp(new Color(1f, 0.72f, 0.08f, 0.88f), new Color(1f, 1f, 0.58f, 1f), pulse);
+            WorldTextGuard.Clamp(_tutorialMarker);
+        }
+
+        private void UpdateTutorialMarkerVisibility()
+        {
+            if (_tutorialHighlight)
+            {
+                EnsureTutorialMarker();
+            }
+
+            if (_tutorialMarker != null)
+            {
+                _tutorialMarker.gameObject.SetActive(_tutorialHighlight && !_used);
+                if (_tutorialMarker.gameObject.activeSelf)
+                {
+                    _tutorialMarker.transform.localScale = _tutorialMarkerBaseScale;
+                    WorldTextGuard.Clamp(_tutorialMarker);
+                }
+            }
+        }
+
+        private void CacheTutorialMarkerScale()
+        {
+            if (_tutorialMarker != null)
+            {
+                _tutorialMarkerBaseScale = _tutorialMarker.transform.localScale;
+                WorldTextGuard.Ensure(_tutorialMarker);
+            }
+        }
+
         private void UpdateIdleGlow()
         {
             if (_panelRenderer == null)
@@ -210,6 +292,7 @@ namespace ArmyRush
             {
                 _label.color = Color.white;
             }
+            UpdateTutorialMarkerVisibility();
         }
 
         private void StopActivationAnimation()

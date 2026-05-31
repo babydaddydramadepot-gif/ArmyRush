@@ -3077,6 +3077,41 @@ Retest a Level 1 loss and Level 1 victory on the physical iPhone. A loss should 
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Early Tutorial Gate Guidance
+
+Files:
+
+Assets/_Project/Scripts/Level/LevelData.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Scripts/Gates/GateController.cs
+Assets/_Project/Scripts/Utility/WorldTextGuard.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Levels/SO_Level_001.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_002.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_003.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added nonblocking early gate guidance for the first-session tutorial ramp. `GateSpawnData` now supports a tutorial-highlight flag, `LevelManager` carries that data into spawned gates, and `GateController` renders a small guarded world-space `BEST` marker above intended positive choices. Levels 1-3 highlight the documented best route beats: Level 1's `+10` and post-enemy `x2`, Level 2's `+15` and recovery `x2`, and Level 3's safe `+20` plus follow-up `x2`.
+
+Result:
+
+The guidance stays in-world, modal-free, and clamped through `WorldTextGuard` so it cannot repeat the physical-device oversized-text issue. Production validation now requires the exact early tutorial highlights, rejects highlighted negative gates, and rejects tutorial guidance outside Levels 1-3. `git diff --check` passed. Unity production validation was retried with log `/tmp/armyrush_unity_tutorial_guidance_validate.log`, but AR-009 Unity Licensing Client protocol failures again prevented `ArmyRushProjectBuilder.ValidateProductionFoundation` from starting.
+
+Follow Up:
+
+Retest Levels 1-3 on a physical iPhone. The highlighted route should be readable in portrait, should not block touch input, and should help new players choose the intended gates without feeling like a separate tutorial overlay.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems

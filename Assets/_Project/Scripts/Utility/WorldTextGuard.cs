@@ -105,6 +105,13 @@ namespace ArmyRush
                 return;
             }
 
+            if (labelName.Contains("GateHintLabel"))
+            {
+                maxFontSize = 50;
+                maxCharacterSize = 0.062f;
+                return;
+            }
+
             if (labelName.Contains("CountLabel"))
             {
                 maxFontSize = 52;

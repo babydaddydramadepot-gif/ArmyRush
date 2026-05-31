@@ -1860,28 +1860,28 @@ public static class ArmyRushProjectBuilder
     private static void AddLevelOneTutorialData(LevelData data, LevelChunkData[] chunks)
     {
         data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 5 });
-        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 10 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 10, tutorialHighlight = true });
         data.enemyGroups.Add(new EnemyGroupSpawnData { z = 36f, x = 0f, count = 8, healthPerUnit = 6, width = 2.4f });
-        data.gates.Add(new GateSpawnData { z = 54f, x = 0f, operation = GateOperation.Multiply, value = 2 });
+        data.gates.Add(new GateSpawnData { z = 54f, x = 0f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
         AddObstacle(data, 88f, 0f, 40, 4, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
     }
 
     private static void AddLevelTwoTutorialData(LevelData data, LevelChunkData[] chunks)
     {
         data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 10 });
-        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 15 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Add, value = 15, tutorialHighlight = true });
         data.enemyGroups.Add(new EnemyGroupSpawnData { z = 36f, x = 0f, count = 20, healthPerUnit = 8, width = 2.6f });
-        data.gates.Add(new GateSpawnData { z = 54f, x = -1.45f, operation = GateOperation.Multiply, value = 2 });
+        data.gates.Add(new GateSpawnData { z = 54f, x = -1.45f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
         data.gates.Add(new GateSpawnData { z = 54f, x = 1.45f, operation = GateOperation.Add, value = 20 });
         AddObstacle(data, 86f, 0f, 100, 6, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
     }
 
     private static void AddLevelThreeTutorialData(LevelData data, LevelChunkData[] chunks)
     {
-        data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 20 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 20, tutorialHighlight = true });
         data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Subtract, value = 10 });
         data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 25, healthPerUnit = 10, width = 2.8f });
-        data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Multiply, value = 2 });
+        data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Multiply, value = 2, tutorialHighlight = true });
         data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Add, value = 30 });
         AddObstacle(data, 90f, 0f, 150, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
     }
@@ -2312,7 +2312,8 @@ public static class ArmyRushProjectBuilder
                     z = placement.z + gate.z,
                     x = placement.x + gate.x * xSign,
                     operation = gate.operation,
-                    value = ScaleChunkGateValue(gate, multiplier)
+                    value = ScaleChunkGateValue(gate, multiplier),
+                    tutorialHighlight = gate.tutorialHighlight
                 });
             }
         }
@@ -3612,6 +3613,10 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(label + " must teach the first choice as +5 vs +10 near the start.");
         }
+        if (!HasHighlightedGate(gates, 16f, GateOperation.Add, 10))
+        {
+            failures.Add(label + " must highlight the better opening +10 tutorial gate.");
+        }
 
         EnemyGroupSpawnData firstEnemy = enemies.FirstOrDefault();
         if (firstEnemy == null)
@@ -3635,6 +3640,10 @@ public static class ArmyRushProjectBuilder
         if (!hasPostEnemyX2)
         {
             failures.Add(label + " must present an x2 gate after the first enemy and before the first crate.");
+        }
+        if (!HasHighlightedGate(gates, 54f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must highlight the post-enemy x2 tutorial gate.");
         }
 
         ObstacleSpawnData firstObstacle = obstacles.FirstOrDefault();
@@ -3670,6 +3679,10 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(label + " must teach Level 2's opening +10 vs +15 choice.");
         }
+        if (!HasHighlightedGate(gates, 16f, GateOperation.Add, 15))
+        {
+            failures.Add(label + " must highlight Level 2's better opening +15 gate.");
+        }
 
         EnemyGroupSpawnData firstEnemy = enemies.FirstOrDefault();
         if (firstEnemy == null || firstEnemy.count != 20 || firstEnemy.healthPerUnit > 10)
@@ -3680,6 +3693,10 @@ public static class ArmyRushProjectBuilder
         if (!HasGate(gates, 54f, GateOperation.Multiply, 2) || !HasGate(gates, 54f, GateOperation.Add, 20))
         {
             failures.Add(label + " must present the documented x2 vs +20 recovery choice.");
+        }
+        if (!HasHighlightedGate(gates, 54f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must highlight Level 2's x2 recovery gate.");
         }
 
         ObstacleSpawnData firstObstacle = obstacles.FirstOrDefault();
@@ -3704,6 +3721,10 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(label + " must introduce the first negative gate as +20 vs -10.");
         }
+        if (!HasHighlightedGate(gates, 16f, GateOperation.Add, 20))
+        {
+            failures.Add(label + " must highlight Level 3's safe +20 gate over the first negative gate.");
+        }
 
         EnemyGroupSpawnData firstEnemy = enemies.FirstOrDefault();
         if (firstEnemy == null || firstEnemy.count != 25 || firstEnemy.healthPerUnit > 12)
@@ -3714,6 +3735,10 @@ public static class ArmyRushProjectBuilder
         if (!HasGate(gates, 58f, GateOperation.Multiply, 2) || !HasGate(gates, 58f, GateOperation.Add, 30))
         {
             failures.Add(label + " must present the documented x2 vs +30 follow-up choice.");
+        }
+        if (!HasHighlightedGate(gates, 58f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must highlight Level 3's x2 follow-up gate.");
         }
 
         ObstacleSpawnData firstObstacle = obstacles.FirstOrDefault();
@@ -4260,6 +4285,20 @@ public static class ArmyRushProjectBuilder
         return gates.Any(gate => Mathf.Abs(gate.z - z) <= 1f && gate.operation == operation && gate.value == value);
     }
 
+    private static bool HasHighlightedGate(List<GateSpawnData> gates, float z, GateOperation operation, int value)
+    {
+        return gates.Any(gate => gate.tutorialHighlight && Mathf.Abs(gate.z - z) <= 1f && gate.operation == operation && gate.value == value);
+    }
+
+    private static bool IsPositiveGateOperation(GateOperation operation)
+    {
+        return operation == GateOperation.Add
+            || operation == GateOperation.Multiply
+            || operation == GateOperation.DamageBoost
+            || operation == GateOperation.FireRateBoost
+            || operation == GateOperation.CoinBoost;
+    }
+
     private static void ValidateEncounterCadence(List<string> failures, LevelData level, string label, float forwardSpeed)
     {
         const float DecisionCadenceSeconds = 5.5f;
@@ -4431,6 +4470,17 @@ public static class ArmyRushProjectBuilder
             if (gate.value <= 0)
             {
                 failures.Add(label + " has gate " + i + " with a non-positive value.");
+            }
+            if (gate.tutorialHighlight)
+            {
+                if (level.levelIndex > 3)
+                {
+                    failures.Add(label + " has tutorial gate guidance outside the first three onboarding levels.");
+                }
+                if (!IsPositiveGateOperation(gate.operation))
+                {
+                    failures.Add(label + " highlights a non-positive gate, which would teach the wrong route.");
+                }
             }
         }
     }
