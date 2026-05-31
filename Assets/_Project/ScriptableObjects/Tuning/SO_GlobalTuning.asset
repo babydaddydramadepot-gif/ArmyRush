@@ -33,6 +33,10 @@ MonoBehaviour:
   openingVolleyDamageMultiplier: 1.35
   openingVolleyExtraProjectiles: 2
   openingVolleyCooldown: 0.6
+  powerSpikeVolleyMinimumGain: 5
+  powerSpikeVolleyDamageMultiplier: 1.25
+  powerSpikeVolleyExtraProjectiles: 1
+  powerSpikeVolleyCooldown: 0.35
   volleyImmediateDamageFraction: 0.3
   openingVolleyImmediateDamageFraction: 0.5
   earlyCloseRangeAssistLevelLimit: 5

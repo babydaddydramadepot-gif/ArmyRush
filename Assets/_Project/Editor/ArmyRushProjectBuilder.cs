@@ -371,6 +371,10 @@ public static class ArmyRushProjectBuilder
         tuning.openingVolleyDamageMultiplier = 1.35f;
         tuning.openingVolleyExtraProjectiles = 2;
         tuning.openingVolleyCooldown = 0.6f;
+        tuning.powerSpikeVolleyMinimumGain = 5;
+        tuning.powerSpikeVolleyDamageMultiplier = 1.25f;
+        tuning.powerSpikeVolleyExtraProjectiles = 1;
+        tuning.powerSpikeVolleyCooldown = 0.35f;
         tuning.volleyImmediateDamageFraction = 0.3f;
         tuning.openingVolleyImmediateDamageFraction = 0.5f;
         tuning.earlyCloseRangeAssistLevelLimit = 5;
@@ -3147,6 +3151,22 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add("Opening volley cooldown should prevent spam while preserving fast target-acquisition feel.");
         }
+        if (tuning.powerSpikeVolleyMinimumGain < 4 || tuning.powerSpikeVolleyMinimumGain > 12)
+        {
+            failures.Add("Power-spike volley minimum gain should catch meaningful onboarding gates without firing on tiny count changes.");
+        }
+        if (tuning.powerSpikeVolleyDamageMultiplier < 1.1f || tuning.powerSpikeVolleyDamageMultiplier > tuning.openingVolleyDamageMultiplier)
+        {
+            failures.Add("Power-spike volley damage should make post-gate strength readable without outpacing first-contact opening volleys.");
+        }
+        if (tuning.powerSpikeVolleyExtraProjectiles < 1 || tuning.powerSpikeVolleyExtraProjectiles > tuning.openingVolleyExtraProjectiles)
+        {
+            failures.Add("Power-spike volley projectiles should visibly thicken post-gate fire without exceeding opening salvo density.");
+        }
+        if (tuning.powerSpikeVolleyCooldown < 0.15f || tuning.powerSpikeVolleyCooldown > 1f)
+        {
+            failures.Add("Power-spike volley cooldown should prevent spam while still making gate gains feel immediate.");
+        }
         if (tuning.volleyImmediateDamageFraction < 0.2f || tuning.volleyImmediateDamageFraction > 0.45f)
         {
             failures.Add("Volley immediate damage fraction should make combat responsive while preserving projectile impact value.");
@@ -3336,6 +3356,21 @@ public static class ArmyRushProjectBuilder
 
             int startingSoldiers = level.startingSoldiersOverride > 0 ? level.startingSoldiersOverride : Mathf.Max(1, tuning.defaultStartingSoldiers);
             int soldiersAtEnemy = EstimateBestGatePathBefore(level, startingSoldiers, firstEnemy.z);
+            GateSpawnData firstGateBeforeEnemy = level.gates != null
+                ? level.gates.Where(gate => gate != null && gate.z < firstEnemy.z).OrderBy(gate => gate.z).FirstOrDefault()
+                : null;
+            if (firstGateBeforeEnemy != null && firstEnemy.z - tuning.targetRange < firstGateBeforeEnemy.z - 0.1f)
+            {
+                int gateGrowthBeforeEnemy = Mathf.Max(0, soldiersAtEnemy - startingSoldiers);
+                if (gateGrowthBeforeEnemy > 0 && tuning.powerSpikeVolleyMinimumGain > gateGrowthBeforeEnemy)
+                {
+                    failures.Add(level.name + " first enemy can be target-locked before the first gate, but power-spike volley gain tuning will not trigger from that gate.");
+                }
+                if (gateGrowthBeforeEnemy >= tuning.powerSpikeVolleyMinimumGain && tuning.powerSpikeVolleyDamageMultiplier < 1.15f)
+                {
+                    failures.Add(level.name + " first enemy can be target-locked before gate growth, so power-spike volley damage must make the post-gate strength change readable.");
+                }
+            }
             int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
             int damagePerVolley = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, soldiersAtEnemy) * baseFireInterval));
             int openingVolleyDamage = Mathf.RoundToInt(damagePerVolley * Mathf.Max(1f, tuning.openingVolleyDamageMultiplier));

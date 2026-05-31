@@ -31,6 +31,10 @@ namespace ArmyRush
         public float openingVolleyDamageMultiplier = 1.35f;
         public int openingVolleyExtraProjectiles = 2;
         public float openingVolleyCooldown = 0.6f;
+        public int powerSpikeVolleyMinimumGain = 5;
+        public float powerSpikeVolleyDamageMultiplier = 1.25f;
+        public int powerSpikeVolleyExtraProjectiles = 1;
+        public float powerSpikeVolleyCooldown = 0.35f;
         [Range(0f, 1f)] public float volleyImmediateDamageFraction = 0.3f;
         [Range(0f, 1f)] public float openingVolleyImmediateDamageFraction = 0.5f;
         public int earlyCloseRangeAssistLevelLimit = 5;

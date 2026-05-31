@@ -13,17 +13,27 @@ namespace ArmyRush
 
         private float _nextFireTime;
         private float _nextOpeningVolleyTime;
+        private float _nextPowerSpikeVolleyTime;
         private Damageable _currentTarget;
         private Damageable _closeAssistTarget;
+        private CrowdManager _subscribedCrowd;
         private UpgradeService _upgradeService;
+        private bool _powerSpikeVolleyQueued;
+        private int _lastCrowdCount;
 
         private void Start()
         {
             ServiceLocator.TryGet(out _upgradeService);
+            SubscribeToCrowd();
             if (_poolManager != null && _projectilePrefab != null && _tuning != null)
             {
                 _poolManager.Prewarm(_projectilePrefab, 50);
             }
+        }
+
+        private void OnDestroy()
+        {
+            UnsubscribeFromCrowd();
         }
 
         private void Update()
@@ -39,6 +49,7 @@ namespace ArmyRush
             {
                 _currentTarget = null;
                 _closeAssistTarget = null;
+                _powerSpikeVolleyQueued = false;
                 return;
             }
 
@@ -51,6 +62,10 @@ namespace ArmyRush
             bool openingVolley = acquiredNewTarget
                 && Time.time >= _nextOpeningVolleyTime
                 && _tuning.openingVolleyDamageMultiplier > 1f;
+            bool powerSpikeVolley = !openingVolley
+                && _powerSpikeVolleyQueued
+                && Time.time >= _nextPowerSpikeVolleyTime
+                && _tuning.powerSpikeVolleyDamageMultiplier > 1f;
 
             float fireRateMultiplier = 1f;
             int damagePerSoldier = Mathf.Max(1, _tuning.baseDamage);
@@ -69,19 +84,24 @@ namespace ArmyRush
                 fireRateMultiplier *= Mathf.Max(1f, _tuning.closeRangeFireRateMultiplier);
             }
             float fireInterval = Mathf.Max(_tuning.minFireInterval, baseFireInterval / fireRateMultiplier);
-            if (Time.time < _nextFireTime && !openingVolley)
+            if (Time.time < _nextFireTime && !openingVolley && !powerSpikeVolley)
             {
                 return;
             }
 
             float targetMultiplier = GetTargetMultiplier(target, out bool critical);
             float openingMultiplier = openingVolley ? Mathf.Max(1f, _tuning.openingVolleyDamageMultiplier) : 1f;
+            float powerSpikeMultiplier = powerSpikeVolley ? Mathf.Max(1f, _tuning.powerSpikeVolleyDamageMultiplier) : 1f;
             float urgencyMultiplier = closeRangeAssist ? Mathf.Max(1f, _tuning.closeRangeDamageMultiplier) : 1f;
             float runBoostMultiplier = _runManager != null ? _runManager.ActiveDamageBoostMultiplier : 1f;
-            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, _crowd.Count) * baseFireInterval * targetMultiplier * openingMultiplier * urgencyMultiplier * runBoostMultiplier));
+            int armyScaledDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, _crowd.Count) * baseFireInterval * targetMultiplier * openingMultiplier * powerSpikeMultiplier * urgencyMultiplier * runBoostMultiplier));
             if (critical)
             {
                 VfxManager.SpawnFloatingText("CRIT", target.AimPoint + Vector3.up * 0.65f, new Color(1f, 0.9f, 0.15f));
+            }
+            if (powerSpikeVolley)
+            {
+                VfxManager.SpawnFloatingText("POWER", target.AimPoint + Vector3.up * 0.95f, new Color(0.25f, 0.95f, 1f));
             }
             if (!closeRangeAssist)
             {
@@ -92,10 +112,18 @@ namespace ArmyRush
                 _closeAssistTarget = target;
                 VfxManager.SpawnFloatingText("PUSH", target.AimPoint + Vector3.up * 0.85f, new Color(0.32f, 0.92f, 1f));
             }
-            FireVisualBurst(target, armyScaledDamage, openingVolley, origin);
+            FireVisualBurst(target, armyScaledDamage, openingVolley, powerSpikeVolley, origin);
             if (openingVolley)
             {
                 _nextOpeningVolleyTime = Time.time + Mathf.Max(0f, _tuning.openingVolleyCooldown);
+            }
+            if (openingVolley || powerSpikeVolley)
+            {
+                _powerSpikeVolleyQueued = false;
+            }
+            if (powerSpikeVolley)
+            {
+                _nextPowerSpikeVolleyTime = Time.time + Mathf.Max(0f, _tuning.powerSpikeVolleyCooldown);
             }
             _nextFireTime = Time.time + fireInterval;
         }
@@ -108,6 +136,7 @@ namespace ArmyRush
             _poolManager = poolManager;
             _projectilePrefab = projectilePrefab;
             _aimOrigin = aimOrigin;
+            SubscribeToCrowd();
         }
 
         private float GetTargetMultiplier(Damageable target, out bool critical)
@@ -138,7 +167,7 @@ namespace ArmyRush
             return multiplier;
         }
 
-        private void FireVisualBurst(Damageable target, int totalDamage, bool openingVolley, Vector3 origin)
+        private void FireVisualBurst(Damageable target, int totalDamage, bool openingVolley, bool powerSpikeVolley, Vector3 origin)
         {
             if (_poolManager == null || _projectilePrefab == null || target == null)
             {
@@ -146,9 +175,11 @@ namespace ArmyRush
                 return;
             }
 
-            int extraProjectiles = openingVolley ? Mathf.Max(0, _tuning.openingVolleyExtraProjectiles) : 0;
+            int extraProjectiles = openingVolley
+                ? Mathf.Max(0, _tuning.openingVolleyExtraProjectiles)
+                : powerSpikeVolley ? Mathf.Max(0, _tuning.powerSpikeVolleyExtraProjectiles) : 0;
             int projectileCount = Mathf.Clamp(_crowd.Count / 8 + 1 + extraProjectiles, 1, _tuning.projectileVisualBurst);
-            int immediateDamage = CalculateImmediateDamage(totalDamage, openingVolley);
+            int immediateDamage = CalculateImmediateDamage(totalDamage, openingVolley || powerSpikeVolley);
             if (immediateDamage > 0 && target.IsAlive)
             {
                 target.ApplyDamage(immediateDamage);
@@ -201,6 +232,65 @@ namespace ArmyRush
             }
 
             return targetDistance <= Mathf.Max(0f, _tuning.closeRangeAssistDistance);
+        }
+
+        private void SubscribeToCrowd()
+        {
+            if (_subscribedCrowd == _crowd)
+            {
+                return;
+            }
+
+            UnsubscribeFromCrowd();
+            if (_crowd == null)
+            {
+                return;
+            }
+
+            _subscribedCrowd = _crowd;
+            _lastCrowdCount = _crowd.Count;
+            _crowd.CountChanged += OnCrowdCountChanged;
+        }
+
+        private void UnsubscribeFromCrowd()
+        {
+            if (_subscribedCrowd == null)
+            {
+                return;
+            }
+
+            _subscribedCrowd.CountChanged -= OnCrowdCountChanged;
+            _subscribedCrowd = null;
+        }
+
+        private void OnCrowdCountChanged(int count)
+        {
+            int previousCount = _lastCrowdCount;
+            _lastCrowdCount = count;
+            if (_tuning == null || previousCount <= 0 || count <= previousCount)
+            {
+                return;
+            }
+
+            int gained = count - previousCount;
+            int minimumGain = Mathf.Max(1, _tuning.powerSpikeVolleyMinimumGain);
+            bool meaningfulGrowth = gained >= minimumGain || count >= Mathf.CeilToInt(previousCount * 1.35f);
+            if (!meaningfulGrowth || Time.time < _nextPowerSpikeVolleyTime)
+            {
+                return;
+            }
+
+            if (_runManager == null || (_runManager.State != RunState.Running && _runManager.State != RunState.CombatPaused && _runManager.State != RunState.FinishSequence))
+            {
+                return;
+            }
+
+            if (_currentTarget == null || !_currentTarget.IsAlive)
+            {
+                return;
+            }
+
+            _powerSpikeVolleyQueued = true;
         }
     }
 }

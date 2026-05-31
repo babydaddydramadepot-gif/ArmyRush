@@ -625,7 +625,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, Faster Physical Cadence, Opening Salvo Punch, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, Faster Physical Cadence, Opening Salvo Punch, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
@@ -637,6 +637,7 @@ Tasks:
 - [x] Increase early target acquisition/projectile responsiveness for physical-device combat readability.
 - [x] Tighten physical-device no-upgrade combat cadence/readability with 0.30s baseline volleys, 24m targeting, 36 speed projectiles, and a 6-shot visual burst cap.
 - [x] Add data-driven opening salvos so each newly acquired target gets a stronger first volley and denser tracer burst.
+- [x] Add data-driven post-gate power-spike volleys so meaningful army gains immediately strengthen fire on targets that were already locked before the gate.
 - [x] Add data-driven immediate hit-confirmation damage so target health responds before projectile travel can make physical-device combat feel late.
 - [x] Add bounded close-range urgency assist for onboarding combat targets so imminent enemy/obstacle contact feels responsive on physical devices.
 - [x] Correct target priority so closer enemies are not ignored in favor of farther obstacles while still shooting the nearest blocking obstacle first.
@@ -1575,7 +1576,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Target Priority, Opening Salvo Feel, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1599,6 +1600,7 @@ Tasks:
 - [x] Record physical iPhone launch/menu/gameplay-start smoke result: the game now reaches gameplay and Drag To Start begins the run on device.
 - [x] Tighten physical-device combat cadence/readability after no-upgrade feedback and extend balance fixes through the Levels 11-15 heavier-combat/mech boss ramp.
 - [x] Add opening-salvo first-contact feedback to make newly acquired enemies, obstacles, and bosses feel immediately pressured on device.
+- [x] Add post-gate power-spike volley feedback so early enemies already targeted before the first gate still feel pressured by the new crowd size immediately after gate collection.
 - [x] Add immediate volley hit-confirmation damage so projectile travel and contact timing cannot make responsive combat appear delayed on physical iPhone.
 - [x] Add bounded close-range combat urgency assist so Levels 1-5 apply a small fire-rate/damage boost only when non-bonus targets are near contact.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.

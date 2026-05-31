@@ -109,6 +109,37 @@ Date:
 
 System:
 
+Post-Gate Combat Feel
+
+Files:
+
+Assets/_Project/Scripts/Core/GlobalTuning.cs
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/ScriptableObjects/Tuning/SO_GlobalTuning.asset
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a data-driven power-spike volley for meaningful crowd-size gains while the player already has a combat target locked. This addresses the physical-device first-session feel case where the first enemy can enter target range before the opening gate is collected, causing the normal opening volley to fire with only the starting squad. When the army gains enough soldiers during active combat, the next shot now bypasses cadence, applies a bounded damage multiplier, adds an extra tracer, uses immediate hit confirmation, and displays a compact `POWER` floating label. Global tuning, the tuning asset, and production validation now guard the gain threshold, damage multiplier, projectile count, cooldown, and first-enemy pre-gate target-lock condition.
+
+Result:
+
+Early gates should now feel like immediate power spikes even when combat target lock began before the gate, reducing the chance that Level 1's first enemy feels unfairly durable on physical iPhone. `git diff --check` passed, and Unity production validation passed with log `/tmp/armyrush_unity_power_spike_volley_validate.log`.
+
+Follow Up:
+
+Retest Level 1 on physical iPhone and confirm that collecting the first positive gate visibly accelerates the first enemy clear without UI/world-text overlap.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Boss Victory Result Polish
 
 Files:
