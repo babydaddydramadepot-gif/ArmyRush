@@ -837,6 +837,9 @@ namespace ArmyRush
 
         private void ClearLevel()
         {
+            ReleaseTransientPooledObjects();
+            TargetRegistry.Clear();
+
             for (int i = 0; i < _spawned.Count; i++)
             {
                 GameObject spawned = _spawned[i];
@@ -859,6 +862,20 @@ namespace ArmyRush
             _resolvedEnemyGroups.Clear();
             _resolvedObstacles.Clear();
             ActiveBoss = null;
+            TargetRegistry.Clear();
+        }
+
+        private void ReleaseTransientPooledObjects()
+        {
+            if (_poolManager == null)
+            {
+                return;
+            }
+
+            _poolManager.ReleaseActiveWithComponent<Projectile>();
+            _poolManager.ReleaseActiveWithComponent<FloatingText>();
+            _poolManager.ReleaseActiveWithComponent<PooledParticleVfx>();
+            _poolManager.ReleaseActiveWithComponent<PooledBossTelegraphVfx>();
         }
     }
 }

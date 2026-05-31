@@ -5339,8 +5339,31 @@ public static class ArmyRushProjectBuilder
         ValidatePooledLevelObjects<FinishLineTrigger>(failures, "finish trigger");
         ValidatePooledLevelObjects<BonusCrateController>(failures, "bonus crate");
         ValidatePooledLevelObjects<BonusEndTrigger>(failures, "bonus end trigger");
+        ValidateLevelRebuildState(levelManager, failures);
         ValidateWorldTextSafety(failures);
         ValidateGameplayHudLayout(failures);
+    }
+
+    private static void ValidateLevelRebuildState(LevelManager levelManager, List<string> failures)
+    {
+        if (levelManager == null)
+        {
+            return;
+        }
+
+        int firstTargetCount = TargetRegistry.RegisteredCount;
+        levelManager.BuildCurrentLevel();
+        int secondTargetCount = TargetRegistry.RegisteredCount;
+        Damageable[] activeDamageables = Object.FindObjectsByType<Damageable>(FindObjectsInactive.Exclude);
+        int activeTargetableCount = activeDamageables.Count(damageable => damageable != null && damageable.IsAlive && damageable.IsTargetable);
+        if (firstTargetCount <= 0 || secondTargetCount <= 0)
+        {
+            failures.Add("Level rebuild validation did not register active combat targets.");
+        }
+        if (secondTargetCount != activeTargetableCount)
+        {
+            failures.Add("Level rebuild validation found stale or missing TargetRegistry entries after rebuilding the current level.");
+        }
     }
 
     private static void ValidateWorldTextSafety(List<string> failures)

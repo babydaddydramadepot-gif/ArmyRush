@@ -109,6 +109,37 @@ Date:
 
 System:
 
+Level Rebuild State Cleanup
+
+Files:
+
+Assets/_Project/Scripts/Utility/PoolManager.cs
+Assets/_Project/Scripts/Combat/TargetRegistry.cs
+Assets/_Project/Scripts/Level/LevelManager.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Hardened retry/next-level rebuild cleanup. `PoolManager` now tracks active pooled instances and can release active objects by component type, `LevelManager` clears transient projectiles, floating text, particle VFX, boss telegraphs, and target-registry state before rebuilding a level, and `TargetRegistry` exposes a bounded clear/count path for rebuild safety. Production validation now rebuilds the current Game scene level twice and verifies registered combat targets match active targetable `Damageable` instances after the rebuild.
+
+Result:
+
+`git diff --check` passed, and Unity production validation passed with log `/tmp/armyrush_unity_level_rebuild_validate.log`. This reduces the risk of stale projectiles, floating feedback, VFX, or target locks carrying across retries or next-level loads.
+
+Follow Up:
+
+Manual playthrough should still verify retry, next-level, victory-to-next, defeat-to-retry, and boss-level transitions on physical iPhone/iPad.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Save Normalization and Migration Hardening
 
 Files:
@@ -4018,7 +4049,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the save normalization hardening pass. Latest successful validation log: `/tmp/armyrush_unity_save_normalization_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the level rebuild cleanup pass. Latest successful validation log: `/tmp/armyrush_unity_level_rebuild_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
 
 ---
 

@@ -6,6 +6,7 @@ namespace ArmyRush
     public sealed class PoolManager : MonoBehaviour
     {
         private readonly Dictionary<GameObject, Queue<PooledObject>> _pools = new Dictionary<GameObject, Queue<PooledObject>>();
+        private readonly HashSet<PooledObject> _active = new HashSet<PooledObject>();
 
         public void Prewarm(GameObject prefab, int count)
         {
@@ -37,6 +38,7 @@ namespace ArmyRush
             Transform pooledTransform = pooled.transform;
             pooledTransform.SetParent(parent, false);
             pooledTransform.SetPositionAndRotation(position, rotation);
+            _active.Add(pooled);
             pooled.gameObject.SetActive(true);
             return pooled;
         }
@@ -44,6 +46,11 @@ namespace ArmyRush
         public void Release(PooledObject pooled)
         {
             if (pooled == null)
+            {
+                return;
+            }
+
+            if (!_active.Remove(pooled) && !pooled.gameObject.activeSelf)
             {
                 return;
             }
@@ -57,6 +64,28 @@ namespace ArmyRush
             }
 
             GetQueue(pooled.SourcePrefab).Enqueue(pooled);
+        }
+
+        public void ReleaseActiveWithComponent<T>() where T : Component
+        {
+            if (_active.Count == 0)
+            {
+                return;
+            }
+
+            List<PooledObject> matches = new List<PooledObject>();
+            foreach (PooledObject pooled in _active)
+            {
+                if (pooled != null && pooled.GetCachedComponent<T>() != null)
+                {
+                    matches.Add(pooled);
+                }
+            }
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                Release(matches[i]);
+            }
         }
 
         private PooledObject Create(GameObject prefab)

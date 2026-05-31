@@ -214,6 +214,7 @@ Implementation Pass 1 Result:
 - Added a compact active run-boost HUD indicator with countdown fill, safe-area placement, nonblocking raycasts, runtime fallback creation for older scenes, and production validation coverage.
 - Corrected combat target priority so volleys focus the nearest enemy/obstacle threat instead of letting farther obstacles steal target lock, and lowered the boost HUD fallback band so it no longer overlaps the boss health panel in production validation.
 - Hardened production validation so nested prefab/scene missing scripts, missing serialized object references, and ScriptableObject broken asset references are checked across the ArmyRush production content set.
+- Hardened level rebuild state by clearing transient pooled combat/VFX objects and the static target registry on level rebuild, with production validation for repeated rebuild target consistency.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1477,6 +1478,7 @@ Tasks:
 - [x] Pool level fixtures for track segments, gates, enemy groups, obstacles, bosses, finish triggers, bonus crates, and bonus-end triggers across level rebuilds.
 - [x] Add production validation coverage ensuring spawned level fixtures are owned by `PoolManager`.
 - [x] Keep active boost HUD refresh allocation-conscious by reusing the active label between second/count changes.
+- [x] Clear transient pooled projectiles, floating text, particle VFX, boss telegraphs, and target registry state when rebuilding levels.
 
 Acceptance Criteria:
 
@@ -1633,7 +1635,7 @@ Tasks:
 - [x] Fix broken prefabs covered by the production validation pass.
 - Fix UI overlap.
 - [x] Fix save/load bugs covered by save normalization, corrupt-save rewrite, and currency overflow guards.
-- Fix level loading bugs.
+- [x] Fix level loading bugs covered by level rebuild state cleanup and target-registry validation.
 
 Acceptance Criteria:
 

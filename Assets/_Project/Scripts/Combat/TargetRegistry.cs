@@ -7,6 +7,8 @@ namespace ArmyRush
     {
         private static readonly List<Damageable> Targets = new List<Damageable>();
 
+        public static int RegisteredCount => Targets.Count;
+
         public static void Register(Damageable target)
         {
             if (target != null && !Targets.Contains(target))
@@ -18,6 +20,11 @@ namespace ArmyRush
         public static void Unregister(Damageable target)
         {
             Targets.Remove(target);
+        }
+
+        public static void Clear()
+        {
+            Targets.Clear();
         }
 
         public static Damageable FindBestTarget(Vector3 origin, float range, float lateralRange)
