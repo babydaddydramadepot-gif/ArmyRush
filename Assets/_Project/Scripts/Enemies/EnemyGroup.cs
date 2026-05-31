@@ -186,6 +186,7 @@ namespace ArmyRush
 
         private void ClearGroup()
         {
+            VfxManager.Spawn(VfxCue.EnemyDefeat, transform.position + Vector3.up * 0.9f);
             VfxManager.SpawnFloatingText("CLEAR", transform.position + Vector3.up * 2.15f, new Color(1f, 0.85f, 0.18f));
             ClaimReward();
             SyncUnits(0);

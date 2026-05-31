@@ -654,6 +654,7 @@ public static class ArmyRushProjectBuilder
         prefabs.hitSpark = CreateParticleVfxPrefab("PF_VFX_HitSpark", new Color(1f, 0.84f, 0.18f), 0.38f, 0.28f, 3.4f, 14, 0.14f, 0.18f, materials.vfxParticle);
         prefabs.gatePositiveBurst = CreateParticleVfxPrefab("PF_VFX_GatePositive", new Color(0.16f, 1f, 0.62f), 0.62f, 0.42f, 2.2f, 26, 0.22f, 0.55f, materials.vfxParticle);
         prefabs.gateNegativeBurst = CreateParticleVfxPrefab("PF_VFX_GateNegative", new Color(1f, 0.24f, 0.12f), 0.62f, 0.42f, 2.2f, 22, 0.2f, 0.55f, materials.vfxParticle);
+        prefabs.enemyDefeatBurst = CreateParticleVfxPrefab("PF_VFX_EnemyDefeat", new Color(1f, 0.18f, 0.08f), 0.52f, 0.26f, 3.15f, 24, 0.18f, 0.52f, materials.vfxParticle);
         prefabs.crowdGainBurst = CreateParticleVfxPrefab("PF_VFX_CrowdGain", new Color(0.16f, 1f, 0.62f), 0.48f, 0.34f, 2.7f, 20, 0.15f, 0.42f, materials.vfxParticle);
         prefabs.crowdLossBurst = CreateParticleVfxPrefab("PF_VFX_CrowdLoss", new Color(1f, 0.24f, 0.12f), 0.48f, 0.34f, 2.7f, 18, 0.14f, 0.38f, materials.vfxParticle);
         prefabs.coinBurst = CreateParticleVfxPrefab("PF_VFX_CoinBurst", new Color(1f, 0.76f, 0.12f), 0.72f, 0.5f, 2.8f, 30, 0.17f, 0.75f, materials.vfxParticle);
@@ -2714,7 +2715,7 @@ public static class ArmyRushProjectBuilder
 
         playerController.Configure(tuning, input, crowd, run);
         combat.Configure(tuning, crowd, run, pool, prefabs.projectile, aimOrigin);
-        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.obstacleExplosion, prefabs.victoryBurst, prefabs.bossExplosion, prefabs.smokePuff, prefabs.heavySmoke, prefabs.bossTelegraph);
+        vfx.Configure(pool, prefabs.floatingText, prefabs.muzzleFlash, prefabs.hitSpark, prefabs.gatePositiveBurst, prefabs.gateNegativeBurst, prefabs.enemyDefeatBurst, prefabs.crowdGainBurst, prefabs.crowdLossBurst, prefabs.coinBurst, prefabs.obstacleDebris, prefabs.obstacleExplosion, prefabs.victoryBurst, prefabs.bossExplosion, prefabs.smokePuff, prefabs.heavySmoke, prefabs.bossTelegraph);
 
         levelManager.Configure(tuning, levels, pool, crowd, run, prefabs.trackSegment, prefabs.gate, prefabs.enemyGroup, prefabs.enemySoldier, prefabs.obstacle, prefabs.bossTank, prefabs.finishLine, prefabs.bonusCrate, prefabs.bonusEnd, levelRoot.transform);
         run.Configure(tuning, levelManager, crowd, gameplayUI);
@@ -6641,6 +6642,7 @@ public static class ArmyRushProjectBuilder
         public GameObject hitSpark;
         public GameObject gatePositiveBurst;
         public GameObject gateNegativeBurst;
+        public GameObject enemyDefeatBurst;
         public GameObject crowdGainBurst;
         public GameObject crowdLossBurst;
         public GameObject coinBurst;

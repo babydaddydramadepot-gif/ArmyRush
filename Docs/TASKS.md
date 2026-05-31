@@ -220,6 +220,7 @@ Implementation Pass 1 Result:
 - Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
 - Fixed enemy group count label readability so damage can no longer overwrite remaining-unit labels with raw HP values, and added production validation for that physical-device combat-readability regression.
 - Added red pulse/lift feedback to enemy count labels when enemy units drop so physical-device damage output reads more clearly without adding another hidden balance buff.
+- Added a pooled red enemy-defeat burst cue, runtime fallback, and future generated prefab wiring so cleared enemy groups get a stronger visual payoff beyond count pulses, clear text, audio, and coins.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
@@ -1323,12 +1324,13 @@ Acceptance Criteria:
 
 ## 7.4 Required VFX
 
-Status: Functional Pass Implemented with Boss Telegraph Readability and Multi-Muzzle Volley Feedback; Final Authored Styling Pending
+Status: Functional Pass Implemented with Boss Telegraph Readability, Multi-Muzzle Volley Feedback, and Enemy Defeat Burst Feedback; Final Authored Styling Pending
 Priority: High
 
 Add VFX for:
 
 - [x] Multi-muzzle player volley flashes
+- [x] Enemy defeat burst
 - Muzzle flash
 - Bullet trails
 - Hit sparks
@@ -1608,7 +1610,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Enemy Count Label Readability/Feedback, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Early Retry Power, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Enemy Count Label Readability/Feedback, Enemy Defeat Burst Feedback, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Early Retry Power, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1656,6 +1658,7 @@ Tasks:
 - [x] Fix enemy group count labels so damage updates cannot replace remaining-unit counts with raw HP values on physical-device screens.
 - [x] Add production validation that damages a spawned enemy and confirms its count label remains a unit count.
 - [x] Add enemy count damage-pulse feedback and production validation so dropping enemy units visibly reads as progress on physical iPhone.
+- [x] Add pooled enemy defeat burst feedback so cleared red groups produce a visible payoff on physical iPhone without changing combat balance.
 - Fix console errors.
 - [x] Fix missing references covered by the production validation pass.
 - Fix animation errors.
@@ -1674,7 +1677,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Early Retry Power, Boss Victory Result Polish, Result Reward Breakdown Polish, Main Menu Boss Milestone Beacon, and Production Debug-Control Audit
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Early Retry Power, Enemy Defeat Burst Feedback, Boss Victory Result Polish, Result Reward Breakdown Polish, Main Menu Boss Milestone Beacon, and Production Debug-Control Audit
 Priority: Critical
 
 Tasks:
@@ -1686,6 +1689,7 @@ Tasks:
 - [x] Add active run-boost countdown feedback so temporary power-ups stay readable during combat and boss preparation.
 - [x] Add bounded first-session combat boost feedback so the tutorial starts with visible power rather than a hidden difficulty assist.
 - [x] Add bounded retry-power feedback so early failed runs restart with a readable recovery boost instead of feeling stuck.
+- [x] Add enemy defeat burst feedback so red group clears feel more decisive during early physical-device combat.
 - [x] Add boss victory milestone reward polish to the result screen.
 - [x] Add compact reward breakdown polish to victory and defeat result screens.
 - [x] Add main-menu boss milestone beacon to reinforce first-session progression goals.

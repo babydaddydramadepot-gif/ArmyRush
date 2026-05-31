@@ -8,6 +8,7 @@ namespace ArmyRush
         HitSpark,
         GatePositive,
         GateNegative,
+        EnemyDefeat,
         CrowdGain,
         CrowdLoss,
         CoinBurst,
@@ -27,6 +28,7 @@ namespace ArmyRush
         [SerializeField] private GameObject _hitSparkPrefab;
         [SerializeField] private GameObject _gatePositivePrefab;
         [SerializeField] private GameObject _gateNegativePrefab;
+        [SerializeField] private GameObject _enemyDefeatPrefab;
         [SerializeField] private GameObject _crowdGainPrefab;
         [SerializeField] private GameObject _crowdLossPrefab;
         [SerializeField] private GameObject _coinBurstPrefab;
@@ -45,6 +47,7 @@ namespace ArmyRush
         {
             _active = this;
             EnsureSmokePrefabs();
+            EnsureEnemyDefeatPrefab();
             EnsureObstacleExplosionPrefab();
             EnsureBossTelegraphPrefab();
             if (_poolManager != null && _floatingTextPrefab != null)
@@ -55,6 +58,7 @@ namespace ArmyRush
             Prewarm(_hitSparkPrefab, 32);
             Prewarm(_gatePositivePrefab, 8);
             Prewarm(_gateNegativePrefab, 8);
+            Prewarm(_enemyDefeatPrefab, 10);
             Prewarm(_crowdGainPrefab, 10);
             Prewarm(_crowdLossPrefab, 10);
             Prewarm(_coinBurstPrefab, 8);
@@ -82,6 +86,7 @@ namespace ArmyRush
             GameObject hitSparkPrefab,
             GameObject gatePositivePrefab,
             GameObject gateNegativePrefab,
+            GameObject enemyDefeatPrefab,
             GameObject crowdGainPrefab,
             GameObject crowdLossPrefab,
             GameObject coinBurstPrefab,
@@ -99,6 +104,7 @@ namespace ArmyRush
             _hitSparkPrefab = hitSparkPrefab;
             _gatePositivePrefab = gatePositivePrefab;
             _gateNegativePrefab = gateNegativePrefab;
+            _enemyDefeatPrefab = enemyDefeatPrefab;
             _crowdGainPrefab = crowdGainPrefab;
             _crowdLossPrefab = crowdLossPrefab;
             _coinBurstPrefab = coinBurstPrefab;
@@ -183,6 +189,8 @@ namespace ArmyRush
                     return _gatePositivePrefab;
                 case VfxCue.GateNegative:
                     return _gateNegativePrefab;
+                case VfxCue.EnemyDefeat:
+                    return _enemyDefeatPrefab;
                 case VfxCue.CrowdGain:
                     return _crowdGainPrefab;
                 case VfxCue.CrowdLoss:
@@ -223,6 +231,25 @@ namespace ArmyRush
             ConfigureExplosionParticleSystem(particles, new Color(1f, 0.42f, 0.08f), 0.6f, 0.34f, 3.45f, 34, 0.28f, 0.82f, RuntimeSmokeMaterial);
             pooledVfx.Configure(new[] { particles }, 0.72f);
             _obstacleExplosionPrefab = root;
+        }
+
+        private void EnsureEnemyDefeatPrefab()
+        {
+            if (_enemyDefeatPrefab != null)
+            {
+                return;
+            }
+
+            GameObject root = new GameObject("PF_RuntimeEnemyDefeat");
+            root.SetActive(false);
+            root.transform.SetParent(transform, false);
+            root.AddComponent<PooledObject>();
+            ParticleSystem particles = root.AddComponent<ParticleSystem>();
+            PooledParticleVfx pooledVfx = root.AddComponent<PooledParticleVfx>();
+
+            ConfigureExplosionParticleSystem(particles, new Color(1f, 0.18f, 0.08f), 0.52f, 0.26f, 3.15f, 24, 0.18f, 0.52f, RuntimeSmokeMaterial);
+            pooledVfx.Configure(new[] { particles }, 0.64f);
+            _enemyDefeatPrefab = root;
         }
 
         private void EnsureSmokePrefabs()
