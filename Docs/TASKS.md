@@ -219,6 +219,7 @@ Implementation Pass 1 Result:
 - Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
+- Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1532,7 +1533,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Post-Result-Reward-Breakdown Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
+Status: Latest Post-Menu-Beacon Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1550,6 +1551,7 @@ Tasks:
 - [x] Record user-reported physical iPhone smoke result: main menu opens, Start Game reaches gameplay, and Drag To Start begins the run after the input/world-text fix; full balance playthrough remains pending.
 - [x] Run refreshed post-muzzle Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception scan.
 - [x] Run refreshed post-result-reward-breakdown Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception/fatal scan.
+- [x] Run refreshed post-menu-beacon Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted runtime exception/fatal scan.
 
 Acceptance Criteria:
 

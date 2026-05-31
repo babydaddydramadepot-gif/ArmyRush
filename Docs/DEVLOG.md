@@ -109,6 +109,33 @@ Date:
 
 System:
 
+Post-Menu-Beacon iOS Simulator Smoke Validation
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran a fresh simulator validation chain after the main-menu boss milestone beacon pass. Unity exported `ArmyRush_iOSSimulatorBuild`, Xcode built the generated `Unity-iPhone` scheme with signing disabled into `/tmp/armyrush_iossim_menu_beacon_derived/Build/Products/Debug-iphonesimulator/ArmyRush.app`, the app installed and launched as `com.armyrush.game` on the booted simulator, and a portrait screenshot was captured at `/tmp/armyrush_menu_beacon_smoke.png`.
+
+Result:
+
+Unity simulator export completed with `Build Finished, Result: Success`. Xcode completed with `** BUILD SUCCEEDED **`. Simulator install and launch returned cleanly, the menu screenshot shows the boss milestone beacon in portrait layout, and a targeted runtime log scan found no `Exception`, `NullReference`, `MissingReference`, `Stacktrace`, or `Fatal` signatures. Remaining build noise was limited to expected Unity simulator linker warnings, Unity Cloud Diagnostics symbol-upload auth warnings, and an old iPad icon catalog notice.
+
+Follow Up:
+
+Physical iPhone QA should still verify the new main-menu boss milestone text under real device brightness, notch/safe-area behavior, and first-session menu flow.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Main Menu Boss Milestone Beacon
 
 Files:
@@ -4167,7 +4194,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the result reward breakdown polish pass. Latest successful validation log: `/tmp/armyrush_unity_reward_breakdown_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the result reward breakdown polish pass, with screenshot `/tmp/armyrush_reward_breakdown_smoke.png` and no targeted managed exception/fatal signatures.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the main-menu boss milestone beacon pass. Latest successful validation log: `/tmp/armyrush_unity_menu_beacon_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the main-menu boss milestone beacon pass, with screenshot `/tmp/armyrush_menu_beacon_smoke.png` and no targeted runtime exception/fatal signatures.
 
 ---
 
