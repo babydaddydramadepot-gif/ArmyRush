@@ -140,6 +140,33 @@ Date:
 
 System:
 
+Post-Onboarding-Overdrive iOS Simulator Smoke Validation
+
+Files:
+
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran a fresh simulator validation chain after the physical iPhone onboarding overdrive tuning pass. Unity exported `ArmyRush_iOSSimulatorBuild`, Xcode built the generated `Unity-iPhone` scheme with signing disabled into `/tmp/armyrush_iossim_onboarding_overdrive_derived/Build/Products/Debug-iphonesimulator/ArmyRush.app`, the app installed and launched as `com.armyrush.game` on the booted iPhone 17 Pro simulator, and a portrait screenshot was captured at `/tmp/armyrush_onboarding_overdrive_smoke.png`.
+
+Result:
+
+Unity simulator export completed with `Build Finished, Result: Success` in `/tmp/armyrush_unity_onboarding_overdrive_iossim_export.log`. Xcode completed with `** BUILD SUCCEEDED **`. Simulator install and launch returned cleanly, the screenshot confirms the portrait main menu renders with readable upgrade tiles and boss milestone copy after the latest onboarding tuning, and a targeted runtime log scan found no `Exception`, `NullReference`, `MissingReference`, or `Fatal` signatures. Broader simulator `Error` scanning only surfaced unsigned local-build simulator service noise and CoreMotion preference noise, while Xcode build noise remained limited to expected Unity simulator linker warnings, Unity Cloud Diagnostics symbol-upload auth warnings, and an old iPad icon catalog notice.
+
+Follow Up:
+
+Physical iPhone QA remains the authoritative retest for the original touch, portrait world-text scale, and first-enemy combat-feel reports. Use the current committed build as the next device-test candidate.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Post-Menu-Beacon iOS Simulator Smoke Validation
 
 Files:
@@ -4225,7 +4252,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the physical iPhone onboarding overdrive tuning pass. Latest successful validation log: `/tmp/armyrush_unity_onboarding_overdrive_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the main-menu boss milestone beacon pass, with screenshot `/tmp/armyrush_menu_beacon_smoke.png` and no targeted runtime exception/fatal signatures.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the physical iPhone onboarding overdrive tuning pass. Latest successful validation log: `/tmp/armyrush_unity_onboarding_overdrive_validate.log`. Latest iOS simulator export/build/install/launch smoke passed after the onboarding overdrive tuning pass, with screenshot `/tmp/armyrush_onboarding_overdrive_smoke.png` and no targeted runtime exception/null-reference/missing-reference/fatal signatures. The simulator smoke still does not replace physical iPhone retesting for the original device-only touch, portrait scale, and combat-feel findings.
 
 ---
 

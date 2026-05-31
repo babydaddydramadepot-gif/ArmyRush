@@ -221,6 +221,7 @@ Implementation Pass 1 Result:
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Ran a post-menu-beacon iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_menu_beacon_smoke.png`, and targeted runtime exception/fatal scan all passed.
+- Ran a post-onboarding-overdrive iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_onboarding_overdrive_smoke.png`, and targeted runtime exception/fatal scan all passed.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1535,7 +1536,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Post-Menu-Beacon Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
+Status: Latest Post-Onboarding-Overdrive Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1554,6 +1555,7 @@ Tasks:
 - [x] Run refreshed post-muzzle Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception scan.
 - [x] Run refreshed post-result-reward-breakdown Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception/fatal scan.
 - [x] Run refreshed post-menu-beacon Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted runtime exception/fatal scan.
+- [x] Run refreshed post-onboarding-overdrive Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted runtime exception/fatal scan.
 
 Acceptance Criteria:
 
@@ -1632,6 +1634,7 @@ Tasks:
 - [x] Add immediate volley hit-confirmation damage so projectile travel and contact timing cannot make responsive combat appear delayed on physical iPhone.
 - [x] Add visible first-session `POWER START` damage/fire-rate boost for Levels 1-3 and retune baseline firing/targeting/projectile feedback after physical iPhone balance feedback that the first encounter still felt too punishing.
 - [x] Strengthen the bounded first-session `POWER START` window and make the active boost HUD fill use the actual boost duration so the physical iPhone onboarding countdown remains readable.
+- [x] Confirm post-onboarding-overdrive simulator export/build/install/launch has no targeted Unity exception, null-reference, missing-reference, or fatal signatures.
 - [x] Add bounded close-range combat urgency assist so Levels 1-5 apply a small fire-rate/damage boost only when non-bonus targets are near contact.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
