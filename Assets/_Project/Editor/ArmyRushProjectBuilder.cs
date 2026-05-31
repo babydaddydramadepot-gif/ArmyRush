@@ -67,6 +67,8 @@ public static class ArmyRushProjectBuilder
         ValidateLevelDataAssets(failures);
         ValidateUpgradeDefinitions(failures);
         ValidateEconomyProgression(failures);
+        ValidateCombatTuning(failures);
+        ValidateEarlyCombatOnboarding(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
         ValidateScene(ScenePath + "/Game.unity", failures, ValidateGameScene);
@@ -359,6 +361,11 @@ public static class ArmyRushProjectBuilder
             tuning = ScriptableObject.CreateInstance<GlobalTuning>();
             AssetDatabase.CreateAsset(tuning, path);
         }
+        tuning.targetRange = 22f;
+        tuning.projectileSpeed = 32f;
+        tuning.baseFireInterval = 0.35f;
+        tuning.minFireInterval = 0.08f;
+        tuning.baseDamage = 10;
         EditorUtility.SetDirty(tuning);
         return tuning;
     }
@@ -1741,6 +1748,14 @@ public static class ArmyRushProjectBuilder
         float difficultyMultiplier = 1f + Mathf.Max(0, level - 1) * 0.055f;
         bool mirror = level % 2 == 0;
 
+        if (level == 1)
+        {
+            AddLevelChunk(data, intro, 8f, false, 1f);
+            AddLevelChunk(data, gateEnemy, 30f, false, 0.5f);
+            AddLevelChunk(data, obstacleCorridor, 58f, true, 0.45f);
+            return;
+        }
+
         AddLevelChunk(data, intro, 8f, false, Mathf.Max(1f, difficultyMultiplier * 0.85f));
         AddLevelChunk(data, gateEnemy, 30f, mirror, difficultyMultiplier);
         AddLevelChunk(data, obstacleCorridor, 58f, !mirror, difficultyMultiplier);
@@ -2609,6 +2624,118 @@ public static class ArmyRushProjectBuilder
     private static int GetSimulatedUpgradeLevel(Dictionary<UpgradeType, int> simulatedUpgradeLevels, UpgradeType type)
     {
         return simulatedUpgradeLevels.TryGetValue(type, out int level) ? Mathf.Max(0, level) : 0;
+    }
+
+    private static void ValidateCombatTuning(List<string> failures)
+    {
+        GlobalTuning tuning = AssetDatabase.LoadAssetAtPath<GlobalTuning>(TuningPath + "/SO_GlobalTuning.asset");
+        if (tuning == null)
+        {
+            failures.Add("Missing global tuning asset for combat validation.");
+            return;
+        }
+
+        if (tuning.baseDamage < 10)
+        {
+            failures.Add("Global combat base damage is below the documented first-session power target.");
+        }
+        if (tuning.baseFireInterval <= 0f || tuning.baseFireInterval > 0.45f)
+        {
+            failures.Add("Global combat base fire interval should stay fast enough for the first-session power fantasy.");
+        }
+        if (tuning.targetRange < 20f)
+        {
+            failures.Add("Combat target range is too short for physical-device onboarding fights.");
+        }
+        if (tuning.projectileSpeed < 28f)
+        {
+            failures.Add("Projectile speed is too low for responsive physical-device combat feedback.");
+        }
+    }
+
+    private static void ValidateEarlyCombatOnboarding(List<string> failures)
+    {
+        GlobalTuning tuning = AssetDatabase.LoadAssetAtPath<GlobalTuning>(TuningPath + "/SO_GlobalTuning.asset");
+        if (tuning == null)
+        {
+            return;
+        }
+
+        LevelData[] levels = AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null && asset.levelIndex <= 3)
+            .OrderBy(asset => asset.levelIndex)
+            .ToArray();
+        UpgradeDefinition[] definitions = AssetDatabase.FindAssets("t:UpgradeDefinition", new[] { UpgradeDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<UpgradeDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToArray();
+
+        UpgradeDefinition damageUpgrade = definitions.FirstOrDefault(definition => definition.type == UpgradeType.Damage);
+        UpgradeDefinition fireRateUpgrade = definitions.FirstOrDefault(definition => definition.type == UpgradeType.FireRate);
+        int damagePerSoldier = Mathf.RoundToInt(Mathf.Max(tuning.baseDamage, damageUpgrade != null ? damageUpgrade.GetValue(0) : tuning.baseDamage));
+        float fireRateMultiplier = Mathf.Max(1f, fireRateUpgrade != null ? fireRateUpgrade.GetValue(0) : 1f);
+        float baseFireInterval = Mathf.Max(tuning.minFireInterval, tuning.baseFireInterval);
+        float fireInterval = Mathf.Max(tuning.minFireInterval, baseFireInterval / fireRateMultiplier);
+        float projectileDelay = tuning.projectileSpeed > 0f ? tuning.targetRange / tuning.projectileSpeed : 0f;
+        float contactWindow = tuning.forwardSpeed > 0f ? tuning.targetRange / tuning.forwardSpeed : 0f;
+        float damageWindow = Mathf.Max(0.05f, contactWindow - projectileDelay);
+        int volleyCount = Mathf.Max(1, Mathf.FloorToInt(damageWindow / fireInterval) + 1);
+
+        foreach (LevelData level in levels)
+        {
+            EnemyGroupSpawnData firstEnemy = level.enemyGroups != null
+                ? level.enemyGroups.Where(enemy => enemy != null).OrderBy(enemy => enemy.z).FirstOrDefault()
+                : null;
+            if (firstEnemy == null)
+            {
+                continue;
+            }
+
+            int startingSoldiers = level.startingSoldiersOverride > 0 ? level.startingSoldiersOverride : Mathf.Max(1, tuning.defaultStartingSoldiers);
+            int soldiersAtEnemy = EstimateBestGatePathBefore(level, startingSoldiers, firstEnemy.z);
+            int enemyHealth = Mathf.Max(1, firstEnemy.count) * Mathf.Max(1, firstEnemy.healthPerUnit);
+            int damagePerVolley = Mathf.Max(1, Mathf.RoundToInt(damagePerSoldier * Mathf.Max(1, soldiersAtEnemy) * baseFireInterval));
+            int damageBeforeContact = damagePerVolley * volleyCount;
+            int remainingHealth = Mathf.Max(0, enemyHealth - damageBeforeContact);
+            int remainingEnemies = Mathf.CeilToInt(remainingHealth / (float)Mathf.Max(1, firstEnemy.healthPerUnit));
+            int survivors = soldiersAtEnemy - remainingEnemies;
+            int requiredSurvivors = Mathf.CeilToInt(soldiersAtEnemy * (level.levelIndex == 1 ? 0.8f : 0.55f));
+
+            if (survivors < requiredSurvivors)
+            {
+                failures.Add(level.name + " first enemy leaves only " + survivors + "/" + soldiersAtEnemy + " soldiers in the no-upgrade onboarding estimate.");
+            }
+
+            if (level.levelIndex == 1 && (firstEnemy.count > 10 || firstEnemy.healthPerUnit > 8))
+            {
+                failures.Add("Level 1 first enemy should remain a tutorial-safe light group near 8 enemies with low health.");
+            }
+        }
+    }
+
+    private static int EstimateBestGatePathBefore(LevelData level, int startingSoldiers, float zLimit)
+    {
+        int count = Mathf.Max(1, startingSoldiers);
+        List<GateSpawnData> gates = level.gates
+            .Where(gate => gate != null && gate.z < zLimit - 0.1f)
+            .OrderBy(gate => gate.z)
+            .ToList();
+
+        for (int i = 0; i < gates.Count;)
+        {
+            float z = gates[i].z;
+            int best = count;
+            while (i < gates.Count && Mathf.Abs(gates[i].z - z) <= 0.1f)
+            {
+                best = Mathf.Max(best, ApplyGateEstimate(count, gates[i]));
+                i++;
+            }
+
+            count = best;
+        }
+
+        return Mathf.Max(0, count);
     }
 
     private static void ValidateScene(string path, List<string> failures, System.Action<Scene, List<string>> validate)

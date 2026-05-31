@@ -192,6 +192,7 @@ Implementation Pass 1 Result:
 - Added pooled crowd gain/loss VFX bursts for army count changes after the initial spawn count.
 - Ran a post-mech iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted runtime exception scan all passed.
 - Fixed physical iPhone gameplay-start blocking risk by moving runner touch handling onto the Unity Input System path, disabling passive gameplay HUD raycast targets, clamping world-space TextMesh labels, and adding production validation for UI/world-text safety.
+- Tuned early physical-device combat feel by restoring documented base-fire cadence, scaling volley damage by logical army count, extending first-contact targeting responsiveness, softening Level 1's first enemy/obstacle beats, and adding validator coverage for first-enemy onboarding survivability.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
@@ -600,13 +601,17 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Projectile Trails and Impact Feedback; Device Feel QA Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
 
 - Implement automatic weapon firing.
 - Units target nearest valid enemy or obstacle.
+- [x] Apply documented army-count damage scaling so early crowds feel powerful.
+- [x] Use global base-fire cadence as the no-upgrade baseline and let fire-rate upgrades multiply it.
+- [x] Increase early target acquisition/projectile responsiveness for physical-device combat readability.
+- [x] Add validator coverage for early first-enemy survivability.
 - [x] Add projectile pooling.
 - [x] Add bullet trails.
 - [x] Add muzzle flashes.
@@ -775,7 +780,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Level 1 Onboarding Balance Pass
 Priority: Critical
 
 Tasks:
@@ -790,6 +795,7 @@ Tasks:
 - Create Level 15 boss variant.
 - Create Levels 16-20 risk/reward mastery.
 - Create Level 20 major boss.
+- [x] Retune Level 1 first enemy and first obstacle corridor from physical iPhone feedback so the opener teaches power rather than causing early failure.
 
 Acceptance Criteria:
 
@@ -1475,12 +1481,13 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA and Early Combat Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
 
 - [x] Add automated authored level data validation.
+- [x] Add static early-combat survivability estimate for Levels 1-3.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
@@ -1498,7 +1505,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Gameplay Input and World Text Scaling Fix Implemented; Device Retest Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, and Early Combat Balance Fixes Implemented; Device Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1514,6 +1521,9 @@ Tasks:
 - [x] Disable passive gameplay HUD raycast targets so invisible text/image panels cannot block run input.
 - [x] Clamp soldier count, gate, combat, boss, bonus, and floating world-space text to safe production sizes.
 - [x] Add production validation for world-text size limits, gameplay CanvasScaler configuration, and passive HUD raycast targets.
+- [x] Fix physical iPhone early run balance where the first enemy encounter could feel effectively unbeatable.
+- [x] Fix no-upgrade combat cadence regression that made fire rate feel too slow.
+- [x] Add production validation for combat tuning and early onboarding survivability.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

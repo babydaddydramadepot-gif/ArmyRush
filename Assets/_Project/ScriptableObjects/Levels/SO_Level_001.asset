@@ -34,12 +34,12 @@ MonoBehaviour:
     z: 30
     x: 0
     mirrorX: 0
-    difficultyMultiplier: 1
+    difficultyMultiplier: 0.5
   - chunk: {fileID: 11400000, guid: 8ec5ebe02084d4b69aa46fd83092ba32, type: 2}
     z: 58
     x: 0
     mirrorX: 1
-    difficultyMultiplier: 1
+    difficultyMultiplier: 0.45
   gates:
   - z: 16
     x: -1.45
@@ -52,7 +52,7 @@ MonoBehaviour:
   - z: 38
     x: -1.45
     operation: 0
-    value: 12
+    value: 6
   - z: 38
     x: 1.45
     operation: 2
@@ -60,7 +60,7 @@ MonoBehaviour:
   - z: 88
     x: 1.45
     operation: 0
-    value: 18
+    value: 8
   - z: 88
     x: -1.45
     operation: 2
@@ -68,28 +68,28 @@ MonoBehaviour:
   enemyGroups:
   - z: 53
     x: 0
-    count: 16
-    healthPerUnit: 12
+    count: 8
+    healthPerUnit: 6
     width: 2.4
   obstacles:
   - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
     z: 70
     x: 1.35
-    health: 110
-    collisionPenalty: 7
-    coinReward: 14
+    health: 50
+    collisionPenalty: 3
+    coinReward: 6
     width: 1.65
   - definition: {fileID: 11400000, guid: 4ed90245936644e4584a6047c47679d8, type: 2}
     z: 70
     x: -1.35
-    health: 125
-    collisionPenalty: 8
-    coinReward: 16
+    health: 56
+    collisionPenalty: 4
+    coinReward: 7
     width: 1.7
   - definition: {fileID: 11400000, guid: 4adfd09552cea498b8f41ed1ad079806, type: 2}
     z: 79
     x: 0
-    health: 160
-    collisionPenalty: 10
-    coinReward: 20
+    health: 72
+    collisionPenalty: 5
+    coinReward: 9
     width: 1.9

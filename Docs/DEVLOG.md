@@ -91,15 +91,15 @@ Production Vertical Slice Foundation
 
 Current Focus:
 
-Core gameplay feel, manual QA, iOS device readiness, and vertical-slice polish
+Core gameplay feel, early onboarding balance, manual QA, iOS device readiness, and vertical-slice polish
 
 Completion Estimate:
 
-77%
+78%
 
 Last Updated:
 
-2026-05-30
+2026-05-31
 
 ---
 
@@ -2790,6 +2790,37 @@ Retest on the physical iPhone from main menu into gameplay: Drag To Start should
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Physical iPhone Early Combat Balance
+
+Files:
+
+Assets/_Project/Scripts/Combat/PlayerCombatController.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Tuning/SO_GlobalTuning.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_001.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Addressed the physical-device report that gameplay now starts but the first enemy encounter feels effectively unbeatable. Player combat now follows the documented army-count DPS model: baseline volley cadence comes from `GlobalTuning.baseFireInterval`, fire-rate upgrades multiply that cadence, and aggregate volley damage scales from logical army size instead of using the previous per-10-soldier divisor. Increased early targeting range and projectile speed for more responsive first-contact shooting. Softened Level 1's gate-enemy and obstacle-corridor chunk multipliers so the tutorial opener presents an 8-unit low-health first enemy and lighter first barriers.
+
+Result:
+
+Static balance simulation estimates Levels 1-3 clear the first enemy before contact with no upgrades; Level 1 reaches the first enemy with 40 soldiers against an 8-unit, 6-HP-per-unit group. Added production-validator checks for combat tuning and early first-enemy survivability so future generated content cannot silently regress into an unwinnable opener. Unity batch validation was attempted both inside the sandbox and with the already-approved Unity command prefix, but the editor did not reach validation because the Unity Licensing Client repeatedly failed protocol handshakes and timed out before `ArmyRushProjectBuilder.ValidateProductionFoundation` executed.
+
+Follow Up:
+
+Retest the first three levels on a physical iPhone. The first fight should resolve quickly, fire rate should feel active immediately, and the player should reach the first bonus/power spike before any serious fail pressure. Re-run Unity production validation once the local Unity licensing client is healthy.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
@@ -3075,6 +3106,22 @@ AR-007
 Status:
 
 Resolved. Main-menu upgrade tiles were widened and relaid out, icon/text overlap validation was added, and simulator visual QA confirms readable portrait phone layout.
+
+Issue ID:
+
+AR-008
+
+Status:
+
+Early combat tuning has been updated after physical iPhone feedback, and static simulation estimates Levels 1-3 clear their first enemy before contact with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, and first-run power fantasy.
+
+Issue ID:
+
+AR-009
+
+Status:
+
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Re-run production validation once local Unity licensing is healthy.
 
 ---
 

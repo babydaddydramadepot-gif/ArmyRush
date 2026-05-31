@@ -22,9 +22,9 @@ MonoBehaviour:
   soldierSpacingX: 0.48
   soldierSpacingZ: 0.46
   maxFormationColumns: 13
-  targetRange: 18
+  targetRange: 22
   targetLateralRange: 3.8
-  projectileSpeed: 26
+  projectileSpeed: 32
   projectileLifetime: 1.6
   baseFireInterval: 0.35
   minFireInterval: 0.08
