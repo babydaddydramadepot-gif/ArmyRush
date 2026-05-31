@@ -109,6 +109,36 @@ Date:
 
 System:
 
+Main Menu Boss Milestone Beacon
+
+Files:
+
+Assets/_Project/Scripts/UI/MainMenuUI.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/Scenes/MainMenu.unity
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added a compact main-menu progression beacon that tells players how close they are to the next boss milestone. `MainMenuUI` now reads authored boss `LevelData` references when available, falls back to the documented five-level boss cadence for endless progression, and displays `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL`. The existing MainMenu scene now serializes the label and level references, while runtime fallback creation protects older scenes. Production validation now checks the beacon exists, uses phone-safe best-fit text, stays between the level label and upgrade grid, does not overlap nearby UI, and cannot block menu input raycasts.
+
+Result:
+
+Unity applied the MainMenu scene polish through `ArmyRushProjectBuilder.PolishMainMenuProgressionBeacon`. `git diff --check` passed after cleaning Unity YAML trailing whitespace. Unity production validation passed with log `/tmp/armyrush_unity_menu_beacon_validate.log`, including the new main-menu progression beacon guardrails and the existing scene/prefab/reference/UI/world-text/level-validation suite.
+
+Follow Up:
+
+Physical iPhone QA should verify the new boss milestone text remains readable on the opening menu and helps first-session players understand the short-term Level 5 boss goal without crowding upgrades or the play button.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Post-Reward Breakdown iOS Simulator Smoke Validation
 
 Files:

@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -294,8 +294,30 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  _levelDefinitions:
+  - {fileID: 11400000, guid: c25b8377313ed4a1e93d0ceecad71f25, type: 2}
+  - {fileID: 11400000, guid: b83971e44850c4905940a6d1d085e04c, type: 2}
+  - {fileID: 11400000, guid: 0845a1f8417c54b0491a12e32afaf17f, type: 2}
+  - {fileID: 11400000, guid: 5602a60a8c77a4ae9b4140d303598a10, type: 2}
+  - {fileID: 11400000, guid: 0237c50961a8c4733b0023dfd1ffba6f, type: 2}
+  - {fileID: 11400000, guid: 69c2a5a34648243a89a0a89bd229ed6d, type: 2}
+  - {fileID: 11400000, guid: ec6a4fb3b239949b88c545919ba4b90d, type: 2}
+  - {fileID: 11400000, guid: 17e9436abc9ac48e7a32a84aacb49352, type: 2}
+  - {fileID: 11400000, guid: 0c2256545211e42fc8acdd6651725fdf, type: 2}
+  - {fileID: 11400000, guid: 0dcb84d4f1fa044edbe39ed10a24b314, type: 2}
+  - {fileID: 11400000, guid: b750e04779cf3470795064012c0da06e, type: 2}
+  - {fileID: 11400000, guid: 4bccf10a19a1a416688abefdf3fe6b95, type: 2}
+  - {fileID: 11400000, guid: 594a6fbf313b5444187fbcc97edd5b1d, type: 2}
+  - {fileID: 11400000, guid: 27855b44b63a14e31817371e07d32607, type: 2}
+  - {fileID: 11400000, guid: b1e44aeafe30343e4856d08e66355f3d, type: 2}
+  - {fileID: 11400000, guid: b42490c0e6b914a4a96702775f1d69f1, type: 2}
+  - {fileID: 11400000, guid: 51a82e885999543a1a1c469e845e8fd2, type: 2}
+  - {fileID: 11400000, guid: dcf426275a7d043a48b892e75ac5eeea, type: 2}
+  - {fileID: 11400000, guid: 54230a113d76746f49f3bd77cb40fbdc, type: 2}
+  - {fileID: 11400000, guid: 3b2a84faf2439482cad62fe9172e1dfb, type: 2}
   _coinsText: {fileID: 520881743}
   _levelText: {fileID: 795166103}
+  _milestoneText: {fileID: 1545508816}
   _upgradeButtons:
   - {fileID: 148084388}
   - {fileID: 1844635576}
@@ -1400,7 +1422,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3831,6 +3853,7 @@ RectTransform:
   - {fileID: 2074228306}
   - {fileID: 900263019}
   - {fileID: 1928175623}
+  - {fileID: 1545508815}
   m_Father: {fileID: 40315769}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -14351,6 +14374,85 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1526575690}
   m_Mesh: {fileID: 4300000, guid: 101518a43f0b3462197a7878b02c0979, type: 2}
+--- !u!1 &1545508814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1545508815}
+  - component: {fileID: 1545508817}
+  - component: {fileID: 1545508816}
+  m_Layer: 0
+  m_Name: BossMilestoneText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1545508815
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545508814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 478937395}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.722}
+  m_AnchorMax: {x: 0.5, y: 0.722}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 560, y: 54}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1545508816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545508814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0.78, b: 0.12, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 28
+    m_FontStyle: 1
+    m_BestFit: 1
+    m_MinSize: 14
+    m_MaxSize: 28
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: BOSS IN 4 LEVELS
+--- !u!222 &1545508817
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545508814}
+  m_CullTransparentMesh: 1
 --- !u!1 &1550817678
 GameObject:
   m_ObjectHideFlags: 0

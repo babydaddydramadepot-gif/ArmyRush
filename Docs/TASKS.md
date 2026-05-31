@@ -218,6 +218,7 @@ Implementation Pass 1 Result:
 - Added a bounded first-session `POWER START` combat boost for Levels 1-3, tightened perceived fire cadence/targeting/projectile response, strengthened opening and post-gate volley feedback, increased early rally/contact mercy margins, and refreshed production validation after physical iPhone balance feedback.
 - Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
+- Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, full Levels 1-20 physical-device playthrough, and full art polish remain pending.
 
 ---
@@ -1119,7 +1120,7 @@ Acceptance Criteria:
 
 ## 6.2 Main Menu
 
-Status: Functional Pass Implemented with Animated Character Showcase; Final Brand/Device Polish Pending
+Status: Functional Pass Implemented with Animated Character Showcase and Boss Milestone Beacon; Final Brand/Device Polish Pending
 Priority: Critical
 
 Tasks:
@@ -1130,12 +1131,14 @@ Tasks:
 - [x] Add settings button.
 - [x] Add currency display.
 - [x] Add animated background or character showcase.
+- [x] Add next-boss milestone beacon so first-session progression has a visible short-term goal from the menu.
 
 Acceptance Criteria:
 
 - Main menu feels production-ready.
 - Player can start gameplay within one tap.
 - Buttons animate and respond.
+- Next boss milestone guidance is readable, portrait-safe, and does not block menu input.
 
 ---
 
@@ -1655,7 +1658,7 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Boss Victory Result Polish, Result Reward Breakdown Polish, and Production Debug-Control Audit
+Status: In Progress with Camera Shake Tuning, Close-Range Combat Urgency, Run Boost Gates, Active Boost Feedback, Boss Victory Result Polish, Result Reward Breakdown Polish, Main Menu Boss Milestone Beacon, and Production Debug-Control Audit
 Priority: Critical
 
 Tasks:
@@ -1668,6 +1671,7 @@ Tasks:
 - [x] Add bounded first-session combat boost feedback so the tutorial starts with visible power rather than a hidden difficulty assist.
 - [x] Add boss victory milestone reward polish to the result screen.
 - [x] Add compact reward breakdown polish to victory and defeat result screens.
+- [x] Add main-menu boss milestone beacon to reinforce first-session progression goals.
 - [x] Add result panel UI validation for milestone header fit and action/status overlap.
 - [x] Limit keyboard-only runner steering to Unity Editor builds so production iOS builds keep the documented touch/mouse input surface without hidden debug controls.
 - [x] Audit runtime scripts for production-visible debug UI, cheat shortcuts, and `OnGUI` overlays.

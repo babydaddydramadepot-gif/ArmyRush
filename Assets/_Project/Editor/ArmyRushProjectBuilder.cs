@@ -43,7 +43,7 @@ public static class ArmyRushProjectBuilder
         LevelData[] levels = CreateLevels(bosses, chunks);
 
         CreateBootScene(upgrades);
-        CreateMainMenuScene(upgrades, materials, meshes);
+        CreateMainMenuScene(upgrades, levels, materials, meshes);
         CreateGameScene(tuning, upgrades, prefabs, levels, materials, meshes);
         PolishUiArt();
         GenerateAppIconAsset();
@@ -188,6 +188,26 @@ public static class ArmyRushProjectBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("ArmyRush UI art polish applied.");
+    }
+
+    [MenuItem("ArmyRush/Polish Main Menu Progression Beacon")]
+    public static void PolishMainMenuProgressionBeacon()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath + "/MainMenu.unity", OpenSceneMode.Single);
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        Transform safe = canvas != null ? FindDeepChild(canvas.transform, "SafeArea") : null;
+        MainMenuUI menu = canvas != null ? canvas.GetComponent<MainMenuUI>() : Object.FindAnyObjectByType<MainMenuUI>();
+        if (safe == null || menu == null)
+        {
+            throw new System.Exception("MainMenu scene is missing SafeArea or MainMenuUI.");
+        }
+
+        ApplyMainMenuProgressionBeacon(safe, menu, LoadLevelDataAssets());
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("ArmyRush main menu progression beacon polish applied.");
     }
 
     [MenuItem("ArmyRush/Generate App Icon")]
@@ -2536,7 +2556,7 @@ public static class ArmyRushProjectBuilder
         EditorSceneManager.SaveScene(scene, ScenePath + "/Boot.unity");
     }
 
-    private static void CreateMainMenuScene(UpgradeDefinition[] upgrades, MaterialSet materials, MeshSet meshes)
+    private static void CreateMainMenuScene(UpgradeDefinition[] upgrades, LevelData[] levels, MaterialSet materials, MeshSet meshes)
     {
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CreateLighting();
@@ -2553,6 +2573,7 @@ public static class ArmyRushProjectBuilder
         Text title = CreateUIText("Title", safe.transform, "ARMY RUSH", 86, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(0.08f, 0.16f, 0.32f), new Vector2(0.5f, 0.88f), new Vector2(760f, 120f));
         Text coins = CreateUIText("CoinsText", safe.transform, "0", 42, FontStyle.Bold, TextAnchor.MiddleRight, new Color(1f, 0.78f, 0.12f), new Vector2(0.82f, 0.955f), new Vector2(260f, 80f));
         Text level = CreateUIText("LevelText", safe.transform, "LEVEL 1", 40, FontStyle.Bold, TextAnchor.MiddleCenter, Color.white, new Vector2(0.5f, 0.78f), new Vector2(400f, 80f));
+        Text bossMilestone = CreateUIText("BossMilestoneText", safe.transform, "BOSS IN 4 LEVELS", 28, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(1f, 0.78f, 0.12f), new Vector2(0.5f, 0.722f), new Vector2(560f, 54f));
         Button settingsButton = CreateButton("SettingsButton", safe.transform, "SETTINGS", new Vector2(0.16f, 0.955f), new Vector2(250f, 64f), new Color(0.05f, 0.13f, 0.24f));
         UnityEventTools.AddPersistentListener(settingsButton.onClick, settings.Open);
 
@@ -2590,8 +2611,10 @@ public static class ArmyRushProjectBuilder
         }
 
         SetObjectArray(menu, "_upgradeDefinitions", upgrades);
+        SetObjectArray(menu, "_levelDefinitions", levels);
         SetObject(menu, "_coinsText", coins);
         SetObject(menu, "_levelText", level);
+        SetObject(menu, "_milestoneText", bossMilestone);
         SetObjectArray(menu, "_upgradeButtons", views);
         CreateSettingsPanel(safe.transform, settings);
 
@@ -3799,7 +3822,80 @@ public static class ArmyRushProjectBuilder
         }
 
         ValidateMainMenuShowcase(failures);
+        ValidateMainMenuProgressionBeacon(failures);
         ValidateMainMenuUpgradeLayout(failures);
+    }
+
+    private static void ValidateMainMenuProgressionBeacon(List<string> failures)
+    {
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        Transform safe = canvas != null ? FindDeepChild(canvas.transform, "SafeArea") : null;
+        if (safe == null)
+        {
+            failures.Add("MainMenu scene is missing SafeArea for progression beacon validation.");
+            return;
+        }
+
+        if (!TryGetChildRect(safe, "BossMilestoneText", out RectTransform milestoneRect))
+        {
+            failures.Add("MainMenu scene is missing BossMilestoneText progression beacon.");
+            return;
+        }
+
+        Text milestoneText = milestoneRect.GetComponent<Text>();
+        if (milestoneText == null)
+        {
+            failures.Add("BossMilestoneText is missing its Text component.");
+        }
+        else
+        {
+            if (!milestoneText.resizeTextForBestFit || milestoneText.resizeTextMinSize > 16 || milestoneText.resizeTextMaxSize < 28)
+            {
+                failures.Add("BossMilestoneText must use best-fit sizing for compact phone layouts.");
+            }
+            if (milestoneText.raycastTarget)
+            {
+                failures.Add("BossMilestoneText must not block main-menu touch input.");
+            }
+            if (string.IsNullOrWhiteSpace(milestoneText.text) || !milestoneText.text.Contains("BOSS"))
+            {
+                failures.Add("BossMilestoneText must communicate the next boss milestone.");
+            }
+        }
+
+        if (milestoneRect.sizeDelta.x > 620f || milestoneRect.sizeDelta.y > 64f)
+        {
+            failures.Add("BossMilestoneText should stay compact above the upgrade grid.");
+        }
+        if (milestoneRect.anchorMin.y < 0.68f || milestoneRect.anchorMin.y > 0.75f)
+        {
+            failures.Add("BossMilestoneText should sit between the level label and upgrade grid.");
+        }
+        if (TryGetChildRect(safe, "LevelText", out RectTransform levelRect) && RectTransformsOverlap(milestoneRect, levelRect))
+        {
+            failures.Add("BossMilestoneText overlaps the main-menu level label.");
+        }
+        if (TryGetChildRect(safe, "Title", out RectTransform titleRect) && RectTransformsOverlap(milestoneRect, titleRect))
+        {
+            failures.Add("BossMilestoneText overlaps the main-menu title.");
+        }
+
+        UpgradeButtonView[] upgradeButtons = Object.FindObjectsByType<UpgradeButtonView>(FindObjectsInactive.Include);
+        foreach (UpgradeButtonView upgradeButton in upgradeButtons)
+        {
+            RectTransform upgradeRect = upgradeButton != null ? upgradeButton.GetComponent<RectTransform>() : null;
+            if (upgradeRect != null && RectTransformsOverlap(milestoneRect, upgradeRect))
+            {
+                failures.Add("BossMilestoneText overlaps the main-menu upgrade grid.");
+                break;
+            }
+        }
+
+        LevelData[] levels = LoadLevelDataAssets();
+        if (levels.Count(level => level != null && level.hasBoss) < 4)
+        {
+            failures.Add("MainMenu progression beacon cannot resolve the authored boss milestones.");
+        }
     }
 
     private static void ValidateMainMenuShowcase(List<string> failures)
@@ -3880,6 +3976,20 @@ public static class ArmyRushProjectBuilder
         return false;
     }
 
+    private static void SetRect(Transform target, Vector2 anchorPosition, Vector2 size)
+    {
+        if (target == null || !target.TryGetComponent(out RectTransform rect))
+        {
+            return;
+        }
+
+        rect.anchorMin = anchorPosition;
+        rect.anchorMax = anchorPosition;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = Vector2.zero;
+    }
+
     private static bool RectTransformsOverlap(RectTransform first, RectTransform second)
     {
         Rect firstRect = GetWorldRect(first);
@@ -3892,6 +4002,15 @@ public static class ArmyRushProjectBuilder
         Vector3[] corners = new Vector3[4];
         rectTransform.GetWorldCorners(corners);
         return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+    }
+
+    private static LevelData[] LoadLevelDataAssets()
+    {
+        return AssetDatabase.FindAssets("t:LevelData", new[] { LevelDataPath })
+            .Select(guid => AssetDatabase.LoadAssetAtPath<LevelData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .OrderBy(asset => asset.levelIndex)
+            .ToArray();
     }
 
     private static void ValidateLevelChunkDataAssets(List<string> failures)
@@ -5914,6 +6033,31 @@ public static class ArmyRushProjectBuilder
         actionButton = CreateButton("ActionButton", panel.transform, header == "VICTORY" ? "NEXT" : "RETRY", new Vector2(0.3f, 0.13f), new Vector2(268f, 78f), new Color(0.05f, 0.75f, 0.35f));
         upgradeButton = CreateButton("UpgradeButton", panel.transform, "UPGRADES", new Vector2(0.7f, 0.13f), new Vector2(268f, 78f), new Color(0.08f, 0.28f, 0.95f));
         return panel;
+    }
+
+    private static void ApplyMainMenuProgressionBeacon(Transform safe, MainMenuUI menu, LevelData[] levels)
+    {
+        Transform existing = safe.Find("BossMilestoneText");
+        Text milestoneText;
+        if (existing != null && existing.TryGetComponent(out milestoneText))
+        {
+            SetRect(existing, new Vector2(0.5f, 0.722f), new Vector2(560f, 54f));
+        }
+        else
+        {
+            milestoneText = CreateUIText("BossMilestoneText", safe, "BOSS IN 4 LEVELS", 28, FontStyle.Bold, TextAnchor.MiddleCenter, new Color(1f, 0.78f, 0.12f), new Vector2(0.5f, 0.722f), new Vector2(560f, 54f));
+        }
+
+        milestoneText.fontSize = 28;
+        milestoneText.fontStyle = FontStyle.Bold;
+        milestoneText.alignment = TextAnchor.MiddleCenter;
+        milestoneText.color = new Color(1f, 0.78f, 0.12f);
+        milestoneText.resizeTextForBestFit = true;
+        milestoneText.resizeTextMinSize = 14;
+        milestoneText.resizeTextMaxSize = 28;
+        milestoneText.raycastTarget = false;
+        SetObjectArray(menu, "_levelDefinitions", levels);
+        SetObject(menu, "_milestoneText", milestoneText);
     }
 
     private static void CreateSettingsPanel(Transform parent, SettingsPanelUI settings)
