@@ -109,6 +109,34 @@ Date:
 
 System:
 
+Post-Muzzle iOS Simulator Smoke Validation
+
+Files:
+
+.gitignore
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Ran a fresh simulator validation chain after the multi-muzzle volley feedback pass. Unity exported `ArmyRush_iOSSimulatorBuild`, Xcode built the generated project with signing disabled into `/tmp/armyrush_iossim_derived_after_muzzle/Build/Products/Debug-iphonesimulator/ArmyRush.app`, the app installed and launched as `com.armyrush.game` on the iPhone 17 Pro simulator, and a portrait screenshot was captured at `/tmp/armyrush_after_muzzle_smoke.png`.
+
+Result:
+
+Unity simulator export succeeded. Xcode ended with `** BUILD SUCCEEDED **`. The generated app Info.plist reports portrait-only iPhone orientation, the launched simulator menu renders correctly, and a targeted managed-runtime log scan found no `NullReferenceException`, `MissingReferenceException`, `ArgumentException`, `UnityException`, stacktrace, or crash signatures. Remaining log noise was limited to expected local simulator conditions: unsigned-simulator entitlement/container messages, CoreMotion simulator preference chatter, UnityRuntime linker warnings, and optional Unity Cloud Diagnostics symbol-upload auth warnings. Added `ArmyRush_iOSSimulatorBuild/` to `.gitignore` so generated simulator exports do not appear as source changes.
+
+Follow Up:
+
+Physical iPhone QA should retest Levels 1-5 and boss milestones to verify the denser muzzle flashes improve perceived fire rate without cluttering gates, combat labels, or HUD readability.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Multi-Muzzle Volley Feedback
 
 Files:
@@ -3870,7 +3898,7 @@ AR-005
 
 Status:
 
-Generated Xcode project builds successfully with signing disabled, simulator launch QA passes, and branded app icon packaging is validated. User-reported physical iPhone smoke confirms the opening menu, Start Game flow, gameplay scene load, and Drag To Start beginning the run after the input/world-text fix. Full physical iPhone/iPad playthrough and balance QA are still pending.
+Generated Xcode project builds successfully with signing disabled, simulator launch QA passes through the post-muzzle validation pass, and branded app icon packaging is validated. User-reported physical iPhone smoke confirms the opening menu, Start Game flow, gameplay scene load, and Drag To Start beginning the run after the input/world-text fix. Full physical iPhone/iPad playthrough and balance QA are still pending.
 
 Issue ID:
 
@@ -3902,7 +3930,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the first-enemy timeline validation pass. Latest successful validation log: `/tmp/armyrush_unity_first_enemy_timeline_validate.log`.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the multi-muzzle feedback pass. Latest successful validation log: `/tmp/armyrush_unity_multi_muzzle_validate.log`. Latest iOS simulator export/build/install/launch smoke also passed after the multi-muzzle feedback pass.
 
 ---
 

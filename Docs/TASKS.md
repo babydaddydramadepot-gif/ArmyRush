@@ -209,6 +209,7 @@ Implementation Pass 1 Result:
 - Added data-driven immediate hit-confirmation damage to player volleys so physical-device combat responds as soon as a target is acquired while keeping projectile tracers and impact damage meaningful.
 - Added bounded early close-range combat urgency assist so Levels 1-5 fire faster and hit slightly harder near imminent contact, with one-time `PUSH` feedback and validator guardrails.
 - Added data-driven multi-muzzle volley feedback so aggregate army shots show several pooled muzzle flashes per volley on physical devices without changing balance math.
+- Ran a post-muzzle iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture, and targeted managed-runtime exception scan all passed.
 - Added functional run boost gates for temporary damage, fire-rate, and coin power-ups, then introduced fire-rate/damage boost pickups in Levels 6, 7, and 10 to extend the first-session power fantasy beyond raw army count.
 - Added a compact active run-boost HUD indicator with countdown fill, safe-area placement, nonblocking raycasts, runtime fallback creation for older scenes, and production validation coverage.
 - Corrected combat target priority so volleys focus the nearest enemy/obstacle threat instead of letting farther obstacles steal target lock, and lowered the boost HUD fallback band so it no longer overlaps the boss health panel in production validation.
@@ -1516,7 +1517,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Physical-Fix Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
+Status: Latest Post-Muzzle Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Game Start Passed; Full Device Playthrough/Balance Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1532,6 +1533,7 @@ Tasks:
 - [x] Run refreshed post-boss Xcode simulator build, install, launch, screenshot, and targeted runtime log scan after boss telegraph, boss audio, and floating-text optimization work.
 - [x] Run refreshed physical-input/world-text fix Xcode simulator export, signing-independent build, install, and launch smoke test.
 - [x] Record user-reported physical iPhone smoke result: main menu opens, Start Game reaches gameplay, and Drag To Start begins the run after the input/world-text fix; full balance playthrough remains pending.
+- [x] Run refreshed post-muzzle Unity iOS simulator export, signing-independent Xcode build, install, launch, screenshot, and targeted managed-runtime exception scan.
 
 Acceptance Criteria:
 
@@ -1616,6 +1618,7 @@ Tasks:
 - [x] Add persistent, safe-area active run-boost HUD feedback so boost pickups do not rely only on one-shot floating labels.
 - [x] Fix target acquisition priority so a farther obstacle cannot steal fire from a closer enemy contact threat.
 - [x] Add pooled multi-muzzle flash feedback so physical-device volleys look denser without globally increasing damage or fire rate.
+- [x] Confirm post-muzzle simulator launch has no managed Unity exception signatures after latest combat-feedback changes.
 - [x] Fix active boost HUD fallback placement so production validation confirms it does not overlap the boss health panel.
 - [x] Add result panel validation for victory/defeat header, reward, status, and action layout so boss milestone copy stays portrait-safe.
 - Fix console errors.
