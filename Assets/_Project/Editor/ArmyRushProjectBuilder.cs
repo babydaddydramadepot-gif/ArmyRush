@@ -1776,6 +1776,16 @@ public static class ArmyRushProjectBuilder
             AddLevelFiveTankBossData(data, chunks);
             return;
         }
+        if (level >= 6 && level <= 9)
+        {
+            AddLevelSixToNineAdvancedGateData(data, level, chunks);
+            return;
+        }
+        if (level == 10)
+        {
+            AddLevelTenHelicopterBossData(data, chunks);
+            return;
+        }
 
         AddLevelChunk(data, intro, 8f, false, Mathf.Max(1f, difficultyMultiplier * 0.85f));
         AddLevelChunk(data, gateEnemy, 30f, mirror, difficultyMultiplier);
@@ -1876,6 +1886,88 @@ public static class ArmyRushProjectBuilder
         AddObstacle(data, 80f, 0f, 520, 12, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Turret));
         data.gates.Add(new GateSpawnData { z = 106f, x = -1.45f, operation = GateOperation.Add, value = 50 });
         data.gates.Add(new GateSpawnData { z = 106f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+    }
+
+    private static void AddLevelSixToNineAdvancedGateData(LevelData data, int level, LevelChunkData[] chunks)
+    {
+        data.hasBoss = false;
+        data.bossDefinition = null;
+        data.bossHealth = 0;
+
+        switch (level)
+        {
+            case 6:
+                data.trackLength = Mathf.Max(data.trackLength, 152f);
+                data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 35 });
+                data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 35, healthPerUnit = 12, width = 3f });
+                data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Add, value = 50 });
+                data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                AddObstacle(data, 82f, -1.35f, 320, 11, FindObstacleDefinitionInChunks(chunks, ObstacleKind.BarrelCluster));
+                AddObstacle(data, 82f, 1.35f, 260, 9, FindObstacleDefinitionInChunks(chunks, ObstacleKind.CrateStack));
+                data.gates.Add(new GateSpawnData { z = 106f, x = -1.45f, operation = GateOperation.Add, value = 50 });
+                data.gates.Add(new GateSpawnData { z = 106f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 130f, x = 0f, count = 70, healthPerUnit = 14, width = 3.2f });
+                break;
+            case 7:
+                data.trackLength = Mathf.Max(data.trackLength, 158f);
+                data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 35 });
+                data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 40, healthPerUnit = 13, width = 3f });
+                data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Add, value = 45 });
+                data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Subtract, value = 20 });
+                AddObstacle(data, 82f, -1.35f, 600, 14, FindObstacleDefinitionInChunks(chunks, ObstacleKind.FuelTank));
+                AddObstacle(data, 82f, 1.35f, 260, 8, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Barricade));
+                data.gates.Add(new GateSpawnData { z = 106f, x = -1.45f, operation = GateOperation.Add, value = 55 });
+                data.gates.Add(new GateSpawnData { z = 106f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 132f, x = 0f, count = 78, healthPerUnit = 15, width = 3.3f });
+                break;
+            case 8:
+                data.trackLength = Mathf.Max(data.trackLength, 164f);
+                data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 40 });
+                data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 45, healthPerUnit = 14, width = 3.1f });
+                data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Add, value = 45 });
+                data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                AddObstacle(data, 82f, -1.35f, 760, 16, FindObstacleDefinitionInChunks(chunks, ObstacleKind.MilitaryTruck));
+                AddObstacle(data, 84f, 1.35f, 460, 12, FindObstacleDefinitionInChunks(chunks, ObstacleKind.BarrelCluster));
+                data.gates.Add(new GateSpawnData { z = 104f, x = -1.45f, operation = GateOperation.Add, value = 75 });
+                data.gates.Add(new GateSpawnData { z = 104f, x = 1.45f, operation = GateOperation.Multiply, value = 3 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 132f, x = 0f, count = 95, healthPerUnit = 16, width = 3.5f });
+                break;
+            case 9:
+                data.trackLength = Mathf.Max(data.trackLength, 174f);
+                data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 35 });
+                data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 48, healthPerUnit = 15, width = 3.1f });
+                data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Add, value = 30 });
+                data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+                AddObstacle(data, 84f, -1.35f, 520, 13, FindObstacleDefinitionInChunks(chunks, ObstacleKind.ConcreteBlock));
+                AddObstacle(data, 84f, 1.35f, 700, 15, FindObstacleDefinitionInChunks(chunks, ObstacleKind.FuelTank));
+                data.gates.Add(new GateSpawnData { z = 104f, x = -1.45f, operation = GateOperation.Add, value = 80 });
+                data.gates.Add(new GateSpawnData { z = 104f, x = 1.45f, operation = GateOperation.Multiply, value = 3 });
+                data.enemyGroups.Add(new EnemyGroupSpawnData { z = 132f, x = 0f, count = 120, healthPerUnit = 17, width = 3.8f });
+                data.gates.Add(new GateSpawnData { z = 150f, x = -1.45f, operation = GateOperation.Add, value = 30 });
+                data.gates.Add(new GateSpawnData { z = 150f, x = 1.45f, operation = GateOperation.Subtract, value = 30 });
+                break;
+        }
+    }
+
+    private static void AddLevelTenHelicopterBossData(LevelData data, LevelChunkData[] chunks)
+    {
+        data.trackLength = Mathf.Max(data.trackLength, 184f);
+        data.hasBoss = true;
+        data.bossHealth = 6000;
+        data.gates.Add(new GateSpawnData { z = 16f, x = -1.45f, operation = GateOperation.Add, value = 50 });
+        data.gates.Add(new GateSpawnData { z = 16f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 38f, x = 0f, count = 52, healthPerUnit = 15, width = 3.2f });
+        data.gates.Add(new GateSpawnData { z = 58f, x = -1.45f, operation = GateOperation.Add, value = 60 });
+        data.gates.Add(new GateSpawnData { z = 58f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
+        AddObstacle(data, 84f, -1.35f, 900, 16, FindObstacleDefinitionInChunks(chunks, ObstacleKind.MilitaryTruck));
+        AddObstacle(data, 84f, 1.35f, 760, 14, FindObstacleDefinitionInChunks(chunks, ObstacleKind.Turret));
+        data.enemyGroups.Add(new EnemyGroupSpawnData { z = 108f, x = 0f, count = 90, healthPerUnit = 16, width = 3.6f });
+        data.gates.Add(new GateSpawnData { z = 128f, x = -1.45f, operation = GateOperation.Add, value = 100 });
+        data.gates.Add(new GateSpawnData { z = 128f, x = 1.45f, operation = GateOperation.Multiply, value = 2 });
     }
 
     private static ObstacleDefinition FindObstacleDefinitionInChunks(LevelChunkData[] chunks, ObstacleKind kind)
@@ -3185,6 +3277,14 @@ public static class ArmyRushProjectBuilder
             {
                 ValidateLevelFiveTankBossLayout(failures, level, label);
             }
+            else if (level.levelIndex >= 6 && level.levelIndex <= 9)
+            {
+                ValidateLevelSixToNineAdvancedGateLayout(failures, level, label, defaultStartingSoldiers);
+            }
+            else if (level.levelIndex == 10)
+            {
+                ValidateLevelTenHelicopterBossLayout(failures, level, label, defaultStartingSoldiers);
+            }
             ValidateEncounterCadence(failures, level, label, forwardSpeed);
 
             if (level.hasBoss)
@@ -3209,7 +3309,7 @@ public static class ArmyRushProjectBuilder
 
     private static bool IsDirectTeachingLevel(LevelData level)
     {
-        return level != null && level.levelIndex >= 1 && level.levelIndex <= 5 && (level.chunks == null || level.chunks.Count == 0);
+        return level != null && level.levelIndex >= 1 && level.levelIndex <= 10 && (level.chunks == null || level.chunks.Count == 0);
     }
 
     private static void ValidateLevelOneTutorialLayout(List<string> failures, LevelData level, string label)
@@ -3451,6 +3551,150 @@ public static class ArmyRushProjectBuilder
         {
             failures.Add(label + " needs enough track length for a readable first boss arena.");
         }
+    }
+
+    private static void ValidateLevelSixToNineAdvancedGateLayout(List<string> failures, LevelData level, string label, int defaultStartingSoldiers)
+    {
+        if (level.chunks != null && level.chunks.Count > 0)
+        {
+            failures.Add(label + " should use direct authored spawns so the post-first-boss advanced gate ramp stays readable.");
+        }
+        if (level.hasBoss)
+        {
+            failures.Add(label + " should be an advanced gate/combat level, not a boss level.");
+        }
+
+        List<GateSpawnData> gates = GetOrderedGates(level);
+        List<EnemyGroupSpawnData> enemies = GetOrderedEnemies(level);
+        List<ObstacleSpawnData> obstacles = GetOrderedObstacles(level);
+
+        int requiredGateCount = level.levelIndex == 9 ? 8 : 6;
+        if (gates.Count < requiredGateCount)
+        {
+            failures.Add(label + " needs enough gate decisions for the advanced post-boss ramp.");
+        }
+        if (!HasGate(gates, 16f, GateOperation.Add, level.levelIndex >= 8 ? 40 : 35) && !HasGate(gates, 16f, GateOperation.Add, 35))
+        {
+            failures.Add(label + " should open with a generous additive gate after the first boss.");
+        }
+        if (!gates.Any(gate => gate.operation == GateOperation.Multiply && gate.value == 2))
+        {
+            failures.Add(label + " must keep x2 growth readable in the advanced ramp.");
+        }
+        if (level.levelIndex >= 8 && !gates.Any(gate => gate.operation == GateOperation.Multiply && gate.value == 3))
+        {
+            failures.Add(label + " must introduce x3 advanced-gate excitement by Level 8.");
+        }
+        if (level.levelIndex == 7 && !gates.Any(gate => gate.operation == GateOperation.Subtract && gate.value == 20))
+        {
+            failures.Add(label + " should refresh negative-gate avoidance with a safe -20 contrast.");
+        }
+        if (level.levelIndex == 9 && !gates.Any(gate => gate.operation == GateOperation.Subtract && gate.value == 30))
+        {
+            failures.Add(label + " should refresh negative-gate avoidance before the first true boss level.");
+        }
+
+        if (enemies.Count < 2)
+        {
+            failures.Add(label + " must include a warmup enemy and a power-spend enemy.");
+        }
+        else
+        {
+            EnemyGroupSpawnData firstEnemy = enemies.First();
+            EnemyGroupSpawnData finalEnemy = enemies.Last();
+            if (firstEnemy.count < 35 || firstEnemy.healthPerUnit > 15)
+            {
+                failures.Add(label + " first enemy should stay readable and fair after the opening gate.");
+            }
+            if (finalEnemy.count < 65 || finalEnemy.healthPerUnit > 18)
+            {
+                failures.Add(label + " final enemy should spend the grown army without becoming punishing.");
+            }
+        }
+
+        if (obstacles.Count < 2)
+        {
+            failures.Add(label + " must include an advanced obstacle choice.");
+        }
+        if (!obstacles.Any(IsAdvancedObstacle))
+        {
+            failures.Add(label + " should use advanced obstacle silhouettes after Level 5.");
+        }
+
+        int bestCount = EstimateBestGatePath(level, defaultStartingSoldiers);
+        if (bestCount > 300)
+        {
+            failures.Add(label + " best gate path should not exceed the current logical soldier hard cap before the finish.");
+        }
+        if (level.trackLength < 150f)
+        {
+            failures.Add(label + " needs enough length for advanced gates, combat, and recovery beats.");
+        }
+    }
+
+    private static void ValidateLevelTenHelicopterBossLayout(List<string> failures, LevelData level, string label, int defaultStartingSoldiers)
+    {
+        if (level.chunks != null && level.chunks.Count > 0)
+        {
+            failures.Add(label + " should use direct authored spawns so the first true boss ramp stays clean.");
+        }
+        if (!level.hasBoss || level.bossDefinition == null || level.bossDefinition.attackPattern != BossAttackPattern.MissileStrike)
+        {
+            failures.Add(label + " must be the first true helicopter boss milestone.");
+        }
+        if (level.bossHealth < 5200 || level.bossHealth > 7000)
+        {
+            failures.Add(label + " true boss health should create a visible fight against the post-Level-5 army power curve.");
+        }
+
+        List<GateSpawnData> gates = GetOrderedGates(level);
+        List<EnemyGroupSpawnData> enemies = GetOrderedEnemies(level);
+        List<ObstacleSpawnData> obstacles = GetOrderedObstacles(level);
+
+        if (!HasGate(gates, 16f, GateOperation.Add, 50) || !HasGate(gates, 16f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must open the true-boss level with a strong +50 vs x2 decision.");
+        }
+        if (!HasGate(gates, 58f, GateOperation.Add, 60) || !HasGate(gates, 58f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must include a second boss-prep power gate.");
+        }
+        if (!HasGate(gates, 128f, GateOperation.Add, 100) || !HasGate(gates, 128f, GateOperation.Multiply, 2))
+        {
+            failures.Add(label + " must include a final boss lead-in power choice.");
+        }
+
+        if (enemies.Count < 2 || enemies.First().count < 50 || enemies.Last().count < 85)
+        {
+            failures.Add(label + " needs a warmup enemy and a stronger pre-boss enemy.");
+        }
+        if (!obstacles.Any(obstacle => obstacle.definition != null && obstacle.definition.kind == ObstacleKind.MilitaryTruck) ||
+            !obstacles.Any(obstacle => obstacle.definition != null && obstacle.definition.kind == ObstacleKind.Turret))
+        {
+            failures.Add(label + " should stage a truck/turret obstacle check before the helicopter boss.");
+        }
+        if (EstimateBestGatePath(level, defaultStartingSoldiers) > 300)
+        {
+            failures.Add(label + " best gate path should stay within the current logical soldier hard cap before the boss.");
+        }
+        if (GetBossApproachStart(level) < 136f)
+        {
+            failures.Add(label + " needs enough final approach space for the helicopter boss health bar and telegraph setup.");
+        }
+    }
+
+    private static bool IsAdvancedObstacle(ObstacleSpawnData obstacle)
+    {
+        if (obstacle == null || obstacle.definition == null)
+        {
+            return false;
+        }
+
+        ObstacleKind kind = obstacle.definition.kind;
+        return kind == ObstacleKind.BarrelCluster ||
+            kind == ObstacleKind.FuelTank ||
+            kind == ObstacleKind.MilitaryTruck ||
+            kind == ObstacleKind.Turret;
     }
 
     private static List<GateSpawnData> GetOrderedGates(LevelData level)

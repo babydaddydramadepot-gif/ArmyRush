@@ -197,6 +197,8 @@ Implementation Pass 1 Result:
 - Aligned Levels 2 and 3 with the higher-priority `GAMEPLAY_LOOP.md` onboarding sequence as direct authored layouts, resolving the lower-priority `LEVEL_DESIGN.md` intro-label conflict in favor of gameplay source-of-truth pacing.
 - Aligned Level 4 with the documented obstacle-chain teaching ramp as a direct authored layout: `+25` vs `x2`, forgiving lane obstacles, recovery gate, central concrete blocker, safe enemy follow-up, and a final power gate, with production validation guarding that sequence.
 - Converted Level 5 into a direct authored first tank boss milestone with generous pre-boss growth gates, a safe enemy check, a turret obstacle check, a final boss lead-in power gate, and boss targetability gated until the encounter actually engages.
+- Converted Levels 6-9 into direct authored advanced-gate layouts with x2/x3 growth, negative-gate refresh, heavier enemies, and advanced obstacle checks.
+- Converted Level 10 into a direct authored first true helicopter boss milestone with pre-boss combat checks, truck/turret pressure, final growth gate, 6000 HP boss tuning, and validation guardrails.
 - Manual Unity play-mode QA, physical device signing/deployment, final audio assets, final VFX assets, boss balance polish, and full art polish remain pending.
 
 ---
@@ -784,7 +786,7 @@ Acceptance Criteria:
 
 ## 3.4 First 20 Designed Levels
 
-Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-5 First-Session Alignment
+Status: In Progress; 20 Data-Driven Levels Generated with Boss Levels and Direct Levels 1-10 First-Session Alignment
 Priority: Critical
 
 Tasks:
@@ -794,7 +796,7 @@ Tasks:
 - [x] Create direct Level 3 negative gate intro per `GAMEPLAY_LOOP.md`.
 - [x] Create direct Level 4 obstacle-chain intro per `LEVEL_DESIGN.md` first-session ramp.
 - [x] Create direct Level 5 tank boss milestone.
-- Create Levels 6-10 advanced gates.
+- [x] Create direct Levels 6-10 advanced gate and true boss ramp.
 - Create Levels 11-15 heavier combat.
 - Create Level 15 boss variant.
 - Create Levels 16-20 risk/reward mastery.
@@ -804,6 +806,8 @@ Tasks:
 - [x] Convert Levels 2 and 3 to direct authored onboarding layouts matching `GAMEPLAY_LOOP.md` and add validation coverage for their exact teaching beats.
 - [x] Convert Level 4 to a direct authored obstacle intro with forgiving lane blockers, a central concrete blocker, safe follow-up combat, and validation coverage for the exact teaching beats.
 - [x] Convert Level 5 to a direct authored first boss milestone with `+30` vs `x2`, safe enemy check, second power gate, turret obstacle, final `+50` vs `x2`, and 3000 HP tank boss tuning.
+- [x] Convert Levels 6-9 to direct authored advanced-gate layouts with x2/x3 growth, one negative-gate refresh, heavier enemies, and advanced obstacle checks.
+- [x] Convert Level 10 to a direct authored helicopter boss milestone with 6000 HP tuning, truck/turret pressure, and validation coverage for the boss approach.
 
 Acceptance Criteria:
 
@@ -1459,7 +1463,7 @@ Acceptance Criteria:
 
 ## 9.3 Xcode Export Validation
 
-Status: Latest Physical-Fix Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, and Runtime Smoke Passed; Physical Device Retest Pending
+Status: Latest Physical-Fix Unity Xcode Simulator Export, Signing-Independent Xcode Simulator Build, Simulator Install/Launch, Runtime Smoke, and User-Reported Physical iPhone Launch/Gameplay-Scene Load Passed; Physical Gameplay-Start Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1467,19 +1471,20 @@ Tasks:
 - [x] Export Unity project to Xcode.
 - [x] Confirm Xcode project builds without signing requirements.
 - [x] Confirm app launches in simulator if available.
-- [ ] Confirm app launches on device if available.
+- [x] Confirm app launches on device if available.
 - [x] Fix signing-independent iOS build errors.
 - [x] Assign branded iOS app icon across Unity iOS icon slots.
 - [x] Confirm simulator Xcode build no longer reports missing 1024x1024 App Store icon.
 - [x] Run refreshed post-mech Xcode simulator build, install, launch, screenshot, and targeted runtime log scan.
 - [x] Run refreshed post-boss Xcode simulator build, install, launch, screenshot, and targeted runtime log scan after boss telegraph, boss audio, and floating-text optimization work.
 - [x] Run refreshed physical-input/world-text fix Xcode simulator export, signing-independent build, install, and launch smoke test.
+- [x] Record user-reported physical iPhone smoke result: main menu opens and Start Game reaches gameplay; Drag To Start physical retest remains pending after the input/world-text fix.
 
 Acceptance Criteria:
 
 - [x] Xcode project builds without signing-independent errors.
 - [x] App launches successfully in simulator.
-- [ ] App launches successfully on a physical device.
+- [x] App launches successfully on a physical device.
 - [x] No missing signing-independent build issues.
 - [x] Generated Xcode asset catalog contains the required App Store icon.
 - [x] Latest simulator launch log scan finds no Unity exception, missing-reference, null-reference, argument-exception, or crash signatures.
@@ -1490,14 +1495,15 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA and Early Combat/Boss Simulation Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA and Levels 1-10 First-Session Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
 
 - [x] Add automated authored level data validation.
 - [x] Add static early-combat survivability estimate for Levels 1-3.
-- [x] Add production validation for the exact Levels 1-5 tutorial/teaching/boss milestone sequences.
+- [x] Add production validation for the exact Levels 1-10 tutorial/teaching/advanced-gate/boss milestone sequences.
+- [x] Add static no-upgrade balance checks for the direct Levels 6-10 advanced-gate and first true boss ramp.
 - Test every authored level.
 - Confirm all levels are beatable.
 - Confirm losses trigger correctly.
@@ -1515,7 +1521,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Early Combat Balance, and Boss Engagement Fixes Implemented; Device Retest Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Early Combat Balance, Boss Engagement, and Levels 6-10 First-Session Ramp Fixes Implemented; Physical Gameplay-Start Retest Pending
 Priority: Critical
 
 Tasks:
@@ -1535,6 +1541,7 @@ Tasks:
 - [x] Fix no-upgrade combat cadence regression that made fire rate feel too slow.
 - [x] Add production validation for combat tuning and early onboarding survivability.
 - [x] Fix boss pre-engagement targetability so combat volleys cannot damage boss entities before the trigger starts the encounter.
+- [x] Record physical iPhone launch/menu/gameplay-scene smoke result and continue balance fixes through the Levels 6-10 first-session ramp.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

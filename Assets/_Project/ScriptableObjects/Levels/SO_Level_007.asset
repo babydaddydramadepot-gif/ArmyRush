@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_Level_007
   m_EditorClassIdentifier: Assembly-CSharp::ArmyRush.LevelData
   levelIndex: 7
-  trackLength: 148.42105
+  trackLength: 158
   startingSoldiersOverride: 0
   baseCoinReward: 447
   difficultyRating: 7
@@ -24,122 +24,55 @@ MonoBehaviour:
   bonusCrateHealth: 224
   bonusCrateReward: 57
   bonusSectionLength: 34
-  chunks:
-  - chunk: {fileID: 11400000, guid: ff0094077705948b6a267c906eaa6fb5, type: 2}
-    z: 8
-    x: 0
-    mirrorX: 0
-    difficultyMultiplier: 1.1305001
-  - chunk: {fileID: 11400000, guid: d30ef39903f334eb9bdb82b614347f9f, type: 2}
-    z: 30
-    x: 0
-    mirrorX: 0
-    difficultyMultiplier: 1.33
-  - chunk: {fileID: 11400000, guid: 8ec5ebe02084d4b69aa46fd83092ba32, type: 2}
-    z: 58
-    x: 0
-    mirrorX: 1
-    difficultyMultiplier: 1.33
-  - chunk: {fileID: 11400000, guid: 7d1cef1a744c5411293b8eea8ec01860, type: 2}
-    z: 86
-    x: 0
-    mirrorX: 0
-    difficultyMultiplier: 1.33
-  - chunk: {fileID: 11400000, guid: d30ef39903f334eb9bdb82b614347f9f, type: 2}
-    z: 100.42105
-    x: 0
-    mirrorX: 0
-    difficultyMultiplier: 1.4300001
+  chunks: []
   gates:
   - z: 16
     x: -1.45
     operation: 0
-    value: 11
+    value: 35
   - z: 16
     x: 1.45
     operation: 2
     value: 2
-  - z: 38
+  - z: 58
     x: -1.45
     operation: 0
-    value: 16
-  - z: 38
+    value: 45
+  - z: 58
     x: 1.45
-    operation: 2
-    value: 2
-  - z: 88
-    x: 1.45
-    operation: 0
-    value: 24
-  - z: 88
-    x: -1.45
-    operation: 2
-    value: 2
-  - z: 93
+    operation: 1
+    value: 20
+  - z: 106
     x: -1.45
     operation: 0
-    value: 27
-  - z: 93
-    x: 1.45
-    operation: 2
-    value: 2
-  - z: 108.42105
-    x: -1.45
-    operation: 0
-    value: 17
-  - z: 108.42105
+    value: 55
+  - z: 106
     x: 1.45
     operation: 2
     value: 2
   enemyGroups:
-  - z: 53
+  - z: 38
     x: 0
-    count: 21
-    healthPerUnit: 16
-    width: 2.4
-  - z: 116
+    count: 40
+    healthPerUnit: 13
+    width: 3
+  - z: 132
     x: 0
-    count: 29
-    healthPerUnit: 19
-    width: 2.4
-  - z: 123.42105
-    x: 0
-    count: 23
-    healthPerUnit: 17
-    width: 2.4
+    count: 78
+    healthPerUnit: 15
+    width: 3.3
   obstacles:
-  - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
-    z: 70
-    x: 1.35
-    health: 146
-    collisionPenalty: 9
-    coinReward: 19
-    width: 1.65
-  - definition: {fileID: 11400000, guid: 4ed90245936644e4584a6047c47679d8, type: 2}
-    z: 70
-    x: -1.35
-    health: 166
-    collisionPenalty: 11
-    coinReward: 21
-    width: 1.7
-  - definition: {fileID: 11400000, guid: 4adfd09552cea498b8f41ed1ad079806, type: 2}
-    z: 79
-    x: 0
-    health: 213
-    collisionPenalty: 13
-    coinReward: 27
-    width: 1.9
-  - definition: {fileID: 11400000, guid: 0f87bc6cfbfde47d78ab7e81d86450e9, type: 2}
-    z: 104
-    x: -1.45
-    health: 200
-    collisionPenalty: 15
-    coinReward: 35
-    width: 1.75
   - definition: {fileID: 11400000, guid: 3b1a7c49bf23f4556a51fcd7e29101d9, type: 2}
-    z: 104
-    x: 1.45
-    health: 253
-    collisionPenalty: 19
-    coinReward: 55
+    z: 82
+    x: -1.35
+    health: 600
+    collisionPenalty: 14
+    coinReward: 50
     width: 2
+  - definition: {fileID: 11400000, guid: 0f5fbefaaf2c2417bbf78d6374faa3c0, type: 2}
+    z: 82
+    x: 1.35
+    health: 260
+    collisionPenalty: 8
+    coinReward: 18
+    width: 1.65

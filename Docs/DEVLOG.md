@@ -95,7 +95,7 @@ Core gameplay feel, early onboarding balance, manual QA, iOS device readiness, a
 
 Completion Estimate:
 
-80%
+81%
 
 Last Updated:
 
@@ -2942,11 +2942,44 @@ Retest Levels 1-5 on a physical iPhone as a full first-session ramp. Level 5 sho
 
 ---
 
+Date:
+
+2026-05-31
+
+System:
+
+Levels 6-10 Advanced Gate and True Boss Ramp
+
+Files:
+
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Assets/_Project/ScriptableObjects/Levels/SO_Level_006.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_007.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_008.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_009.asset
+Assets/_Project/ScriptableObjects/Levels/SO_Level_010.asset
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Converted Levels 6-9 from chunk-composed layouts into direct authored advanced-gate runs that escalate from safe x2 growth into x3 gate choices, negative-gate refresh, heavier enemy groups, and advanced obstacle checks. Converted Level 10 into the first true helicopter boss milestone with two pre-boss combat reads, military truck and turret pressure, a final growth gate, and 6000 HP boss tuning. The project builder now regenerates and validates the same direct Levels 6-10 layouts, including true-boss guardrails for the helicopter boss definition and MissileStrike pattern. Recorded the user-reported physical iPhone smoke result that the opening menu, Start Game flow, and gameplay scene load worked on device before the Drag To Start fix; physical gameplay-start retest remains pending.
+
+Result:
+
+`git diff --check` passed. Static authored-level validation passed for Levels 6-10: all five levels use direct data with empty chunk lists, Levels 6-9 have no boss, Level 10 references the helicopter boss with 6000 HP, Levels 8-9 include x3 gates, Levels 7 and 9 include negative-gate refreshes, and each level has the expected gate/enemy/obstacle beat counts. A no-upgrade balance estimate reports final counts of 190, 180, 300, 300, and 240 for Levels 6-10, with Level 10 boss engagement lasting about 2.7 seconds after the pre-boss route. Unity production validation was retried with log `/tmp/armyrush_unity_level10_validate.log`, but the local Unity Licensing Client issue tracked as AR-009 again failed with unsupported protocol version `1.18.1` before `ArmyRushProjectBuilder.ValidateProductionFoundation` could execute.
+
+Follow Up:
+
+Retest Levels 1-10 on a physical iPhone as one continuous first-session ramp. Confirm the advanced gates stay readable in portrait, the x3 and negative gates are understandable under touch steering, and the Level 10 helicopter boss feels like a clear escalation rather than a sudden spike.
+
+---
+
 # Completion Tracking
 
 Gameplay Systems
 
-47%
+48%
 
 UI Systems
 
@@ -2962,7 +2995,7 @@ Audio Systems
 
 Level Systems
 
-47%
+50%
 
 Progression Systems
 
@@ -2970,7 +3003,7 @@ Progression Systems
 
 Boss Systems
 
-49%
+50%
 
 Optimization
 
@@ -2982,7 +3015,7 @@ Polish
 
 Release Readiness
 
-29%
+31%
 
 ---
 
@@ -3210,7 +3243,7 @@ AR-005
 
 Status:
 
-Generated Xcode project builds successfully with signing disabled, simulator launch QA passes, and branded app icon packaging is validated. Physical iPhone deployment is still pending because signing credentials/provisioning are required.
+Generated Xcode project builds successfully with signing disabled, simulator launch QA passes, and branded app icon packaging is validated. User-reported physical iPhone smoke confirms the opening menu, Start Game flow, and gameplay scene load. The Drag To Start fix still needs physical retest, and full physical iPhone/iPad playthrough QA is still pending.
 
 Issue ID:
 
@@ -3234,7 +3267,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, and Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled. Static simulation estimates Levels 1-5 clear their intended first-session combat, obstacle, and boss beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, negative-gate readability, obstacle-chain readability, boss telegraph readability, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, and Level 10 now uses a direct helicopter boss milestone. Static simulation estimates Levels 1-10 clear their intended first-session combat, obstacle, advanced-gate, and boss beats with no upgrades. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, and first-run power fantasy.
 
 Issue ID:
 
@@ -3242,7 +3275,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level5_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_level10_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 
@@ -3270,7 +3303,7 @@ RB-001
 
 Status:
 
-Physical iPhone deployment and full-device playthrough have not been completed yet.
+Physical iPhone launch/menu/gameplay-scene smoke has been user-confirmed, but the Drag To Start fix and full physical iPhone/iPad playthrough still need device QA.
 
 ---
 
