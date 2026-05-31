@@ -416,7 +416,7 @@ Acceptance Criteria:
 
 ## 1.2 Follow Camera
 
-Status: Functional Pass Implemented with Corrected Rig Framing, Dynamic Look-Ahead, and Impact Shake; Device Framing QA Pending
+Status: Functional Pass Implemented with Corrected Rig Framing, Dynamic Look-Ahead, Impact Shake, and Data-Driven Shake Tuning; Device Framing QA Pending
 Priority: Critical
 
 Tasks:
@@ -431,6 +431,7 @@ Tasks:
 - [x] Correct generated camera rig double-offset.
 - [x] Validate camera child local-zero framing under the follow rig.
 - [x] Add speed-based forward look-ahead during movement.
+- [x] Add data-driven, globally clamped camera shake profiles for obstacle, boss hit, boss defeat, and victory cues.
 
 Acceptance Criteria:
 
@@ -1602,13 +1603,13 @@ Acceptance Criteria:
 
 ## 10.3 Final Polish Checklist
 
-Status: Not Started
+Status: In Progress with Camera Shake Tuning
 Priority: Critical
 
 Tasks:
 
 - Add final game feel pass.
-- Add camera shake tuning.
+- [x] Add camera shake tuning.
 - Add reward polish.
 - Add UI polish.
 - Add VFX polish.

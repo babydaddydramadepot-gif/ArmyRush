@@ -68,6 +68,7 @@ public static class ArmyRushProjectBuilder
         ValidateUpgradeDefinitions(failures);
         ValidateEconomyProgression(failures);
         ValidateCombatTuning(failures);
+        ValidateCameraTuning(failures);
         ValidateEarlyCombatOnboarding(failures);
         ValidateScene(ScenePath + "/Boot.unity", failures, ValidateBootScene);
         ValidateScene(ScenePath + "/MainMenu.unity", failures, ValidateMainMenuScene);
@@ -378,6 +379,17 @@ public static class ArmyRushProjectBuilder
         tuning.earlyRallyAssistTargetSoldiers = 12;
         tuning.earlyRallyAssistMaxUsesPerRun = 2;
         tuning.earlyRallyAssistCooldown = 4f;
+        tuning.cameraShakeGlobalScale = 0.7f;
+        tuning.cameraShakeMaxAmplitude = 0.16f;
+        tuning.cameraShakeFrequency = 26f;
+        tuning.obstacleShakeAmplitude = 0.055f;
+        tuning.obstacleShakeDuration = 0.1f;
+        tuning.bossHitShakeAmplitude = 0.085f;
+        tuning.bossHitShakeDuration = 0.16f;
+        tuning.bossDefeatShakeAmplitude = 0.145f;
+        tuning.bossDefeatShakeDuration = 0.24f;
+        tuning.victoryShakeAmplitude = 0.075f;
+        tuning.victoryShakeDuration = 0.18f;
         EditorUtility.SetDirty(tuning);
         return tuning;
     }
@@ -3147,6 +3159,59 @@ public static class ArmyRushProjectBuilder
         if (tuning.earlyRallyAssistCooldown < 1f || tuning.earlyRallyAssistCooldown > 8f)
         {
             failures.Add("Early rally assist cooldown should prevent rapid repeated top-ups while preserving onboarding forgiveness.");
+        }
+    }
+
+    private static void ValidateCameraTuning(List<string> failures)
+    {
+        GlobalTuning tuning = AssetDatabase.LoadAssetAtPath<GlobalTuning>(TuningPath + "/SO_GlobalTuning.asset");
+        if (tuning == null)
+        {
+            failures.Add("Missing global tuning asset for camera validation.");
+            return;
+        }
+
+        if (tuning.cameraShakeGlobalScale < 0.35f || tuning.cameraShakeGlobalScale > 1f)
+        {
+            failures.Add("Camera shake global scale should stay restrained for portrait mobile readability.");
+        }
+        if (tuning.cameraShakeMaxAmplitude < 0.08f || tuning.cameraShakeMaxAmplitude > 0.18f)
+        {
+            failures.Add("Camera shake max amplitude should prevent excessive portrait-device camera movement.");
+        }
+        if (tuning.cameraShakeFrequency < 16f || tuning.cameraShakeFrequency > 42f)
+        {
+            failures.Add("Camera shake frequency should remain quick but readable on iPhone screens.");
+        }
+
+        ValidateShakeProfile(failures, "Obstacle", tuning.obstacleShakeAmplitude, tuning.obstacleShakeDuration, tuning.cameraShakeMaxAmplitude, 0.03f, 0.09f, 0.06f, 0.16f);
+        ValidateShakeProfile(failures, "Boss hit", tuning.bossHitShakeAmplitude, tuning.bossHitShakeDuration, tuning.cameraShakeMaxAmplitude, 0.055f, 0.12f, 0.1f, 0.22f);
+        ValidateShakeProfile(failures, "Boss defeat", tuning.bossDefeatShakeAmplitude, tuning.bossDefeatShakeDuration, tuning.cameraShakeMaxAmplitude, 0.1f, 0.16f, 0.16f, 0.32f);
+        ValidateShakeProfile(failures, "Victory", tuning.victoryShakeAmplitude, tuning.victoryShakeDuration, tuning.cameraShakeMaxAmplitude, 0.05f, 0.11f, 0.1f, 0.24f);
+
+        if (tuning.bossHitShakeAmplitude < tuning.obstacleShakeAmplitude)
+        {
+            failures.Add("Boss hit shake should be stronger than obstacle-break shake.");
+        }
+        if (tuning.bossDefeatShakeAmplitude < tuning.bossHitShakeAmplitude)
+        {
+            failures.Add("Boss defeat shake should be the strongest camera impact profile.");
+        }
+    }
+
+    private static void ValidateShakeProfile(List<string> failures, string label, float amplitude, float duration, float maxAmplitude, float minAmplitude, float profileMaxAmplitude, float minDuration, float maxDuration)
+    {
+        if (amplitude < minAmplitude || amplitude > profileMaxAmplitude)
+        {
+            failures.Add(label + " camera shake amplitude is outside the safe portrait readability range.");
+        }
+        if (amplitude > maxAmplitude)
+        {
+            failures.Add(label + " camera shake amplitude must not exceed the global camera shake clamp.");
+        }
+        if (duration < minDuration || duration > maxDuration)
+        {
+            failures.Add(label + " camera shake duration is outside the safe portrait readability range.");
         }
     }
 

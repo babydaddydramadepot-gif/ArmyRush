@@ -50,3 +50,14 @@ MonoBehaviour:
   cameraSmooth: 9
   cameraLookAhead: 5
   cameraFov: 52
+  cameraShakeGlobalScale: 0.7
+  cameraShakeMaxAmplitude: 0.16
+  cameraShakeFrequency: 26
+  obstacleShakeAmplitude: 0.055
+  obstacleShakeDuration: 0.1
+  bossHitShakeAmplitude: 0.085
+  bossHitShakeDuration: 0.16
+  bossDefeatShakeAmplitude: 0.145
+  bossDefeatShakeDuration: 0.24
+  victoryShakeAmplitude: 0.075
+  victoryShakeDuration: 0.18

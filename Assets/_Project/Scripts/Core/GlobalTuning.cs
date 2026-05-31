@@ -52,5 +52,18 @@ namespace ArmyRush
         public float cameraSmooth = 9f;
         public float cameraLookAhead = 5f;
         public float cameraFov = 52f;
+
+        [Header("Camera Shake")]
+        public float cameraShakeGlobalScale = 0.7f;
+        public float cameraShakeMaxAmplitude = 0.16f;
+        public float cameraShakeFrequency = 26f;
+        public float obstacleShakeAmplitude = 0.055f;
+        public float obstacleShakeDuration = 0.1f;
+        public float bossHitShakeAmplitude = 0.085f;
+        public float bossHitShakeDuration = 0.16f;
+        public float bossDefeatShakeAmplitude = 0.145f;
+        public float bossDefeatShakeDuration = 0.24f;
+        public float victoryShakeAmplitude = 0.075f;
+        public float victoryShakeDuration = 0.18f;
     }
 }
