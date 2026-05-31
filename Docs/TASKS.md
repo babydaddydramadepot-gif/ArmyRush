@@ -972,7 +972,7 @@ Acceptance Criteria:
 
 ## 5.2 Upgrade System
 
-Status: Functional Pass Implemented with Unlock Levels, Milestone Value Curves, Value Previews, and Recommended Power Upgrade Highlight; Economy Balance QA Pending
+Status: Functional Pass Implemented with Unlock Levels, Milestone Value Curves, Value Previews, Recommended Power Upgrade Highlight, and Result-Screen Quick Purchase; Economy Balance QA Pending
 Priority: Critical
 
 Tasks:
@@ -992,6 +992,7 @@ Implement upgrades:
 - [x] Add validator coverage for upgrade unlocks, caps, costs, and non-regressing values.
 - [x] Add compact before/after value previews on upgrade buttons.
 - [x] Add recommended affordable upgrade highlighting that prioritizes first-session power upgrades before economy upgrades.
+- [x] Add one-tap recommended upgrade purchase from victory and defeat result panels when affordable.
 
 Acceptance Criteria:
 
@@ -1129,7 +1130,7 @@ Acceptance Criteria:
 
 ## 6.4 Victory Screen
 
-Status: Functional Pass Implemented with Animated Reveal, Rewarded Placeholder, and Upgrade Shortcut; Device Fit QA Pending
+Status: Functional Pass Implemented with Animated Reveal, Rewarded Placeholder, Upgrade Shortcut, and Recommended Quick Purchase; Device Fit QA Pending
 Priority: Critical
 
 Tasks:
@@ -1139,6 +1140,7 @@ Tasks:
 - Show bonus rewards in earned coin total.
 - Add next level button.
 - [x] Add upgrade shortcut.
+- [x] Add direct recommended upgrade purchase when the player can immediately afford one.
 - [x] Add optional rewarded ad placeholder architecture.
 
 Acceptance Criteria:
@@ -1151,7 +1153,7 @@ Acceptance Criteria:
 
 ## 6.5 Defeat Screen
 
-Status: Functional Pass Implemented with Animated Reveal, Partial Rewards, Revive Placeholder, and Upgrade Shortcut; Device Fit QA Pending
+Status: Functional Pass Implemented with Animated Reveal, Partial Rewards, Revive Placeholder, Upgrade Shortcut, and Recommended Quick Purchase; Device Fit QA Pending
 Priority: High
 
 Tasks:
@@ -1159,6 +1161,7 @@ Tasks:
 - Create defeat screen.
 - Add retry button.
 - [x] Add upgrade button.
+- [x] Add direct recommended upgrade purchase when defeat rewards fund an immediate power upgrade.
 - [x] Add coins earned.
 - [x] Add revive architecture for rewarded ads future.
 

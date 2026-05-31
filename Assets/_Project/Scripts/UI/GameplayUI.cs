@@ -33,14 +33,18 @@ namespace ArmyRush
 
         private EconomyService _economy;
         private ProgressionService _progression;
+        private UpgradeService _upgrades;
         private Coroutine _victoryCoinRoutine;
         private Coroutine _defeatFadeRoutine;
         private static readonly Color DefeatFadeColor = new Color(0.24f, 0.02f, 0.04f, 0.54f);
+        private static readonly Color ResultUpgradeMenuColor = new Color(0.08f, 0.28f, 0.95f);
+        private static readonly Color ResultRecommendedUpgradeColor = new Color(0.96f, 0.62f, 0.08f);
 
         private void Start()
         {
             ServiceLocator.TryGet(out _economy);
             ServiceLocator.TryGet(out _progression);
+            ServiceLocator.TryGet(out _upgrades);
             if (_economy != null)
             {
                 _economy.CoinsChanged += OnCoinsChanged;
@@ -130,6 +134,7 @@ namespace ArmyRush
                 _victoryCoinRoutine = StartCoroutine(CountVictoryCoins(Mathf.Max(0, coinsEarned)));
             }
             SetResultStatus(_victoryStatusText, string.Empty);
+            RefreshResultUpgradeButtons();
         }
 
         public void ShowDefeat(int coinsEarned)
@@ -143,6 +148,7 @@ namespace ArmyRush
                 _defeatText.text = coinsEarned > 0 ? $"TRY AGAIN\n+{coinsEarned} COINS" : "TRY AGAIN";
             }
             SetResultStatus(_defeatStatusText, string.Empty);
+            RefreshResultUpgradeButtons();
             StartDefeatFade();
         }
 
@@ -166,6 +172,28 @@ namespace ArmyRush
             BackToMenu();
         }
 
+        public void TryPurchaseRecommendedUpgrade()
+        {
+            if (!TryGetRecommendedUpgrade(out UpgradeType type, out UpgradeDefinition definition))
+            {
+                OpenUpgrades();
+                return;
+            }
+
+            if (!_upgrades.Purchase(type))
+            {
+                PlayResultPlaceholderFeedback();
+                SetResultStatus(GetActiveResultStatusText(), "UPGRADE UNAVAILABLE");
+                RefreshResultUpgradeButtons();
+                return;
+            }
+
+            PlayResultUpgradeFeedback();
+            string displayName = GetResultUpgradeDisplayName(type, definition);
+            SetResultStatus(GetActiveResultStatusText(), $"{displayName.ToUpperInvariant()} LV. {_upgrades.GetLevel(type)} BOUGHT");
+            RefreshResultUpgradeButtons();
+        }
+
         public void ShowRewardedPlaceholder()
         {
             PlayResultPlaceholderFeedback();
@@ -184,6 +212,7 @@ namespace ArmyRush
             {
                 _coinText.text = coins.ToString();
             }
+            RefreshResultUpgradeButtons();
         }
 
         private void OnBossSpawned(BossController boss)
@@ -369,11 +398,11 @@ namespace ArmyRush
         {
             if (_victoryUpgradeButton != null)
             {
-                _victoryUpgradeButton.onClick.AddListener(OpenUpgrades);
+                _victoryUpgradeButton.onClick.AddListener(TryPurchaseRecommendedUpgrade);
             }
             if (_defeatUpgradeButton != null)
             {
-                _defeatUpgradeButton.onClick.AddListener(OpenUpgrades);
+                _defeatUpgradeButton.onClick.AddListener(TryPurchaseRecommendedUpgrade);
             }
             if (_victoryRewardedButton != null)
             {
@@ -389,11 +418,11 @@ namespace ArmyRush
         {
             if (_victoryUpgradeButton != null)
             {
-                _victoryUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+                _victoryUpgradeButton.onClick.RemoveListener(TryPurchaseRecommendedUpgrade);
             }
             if (_defeatUpgradeButton != null)
             {
-                _defeatUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+                _defeatUpgradeButton.onClick.RemoveListener(TryPurchaseRecommendedUpgrade);
             }
             if (_victoryRewardedButton != null)
             {
@@ -506,6 +535,81 @@ namespace ArmyRush
             }
         }
 
+        private void RefreshResultUpgradeButtons()
+        {
+            RefreshResultUpgradeButton(_victoryUpgradeButton);
+            RefreshResultUpgradeButton(_defeatUpgradeButton);
+        }
+
+        private void RefreshResultUpgradeButton(Button button)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            bool hasRecommendedPurchase = TryGetRecommendedUpgrade(out UpgradeType type, out UpgradeDefinition definition);
+            SetResultButtonText(button, hasRecommendedPurchase ? BuildResultUpgradeButtonText(type, definition) : "UPGRADES");
+            SetResultButtonColor(button, hasRecommendedPurchase ? ResultRecommendedUpgradeColor : ResultUpgradeMenuColor);
+            button.interactable = true;
+        }
+
+        private bool TryGetRecommendedUpgrade(out UpgradeType type, out UpgradeDefinition definition)
+        {
+            definition = null;
+            if (_upgrades == null || !_upgrades.TryGetRecommendedPurchase(out type))
+            {
+                type = default(UpgradeType);
+                return false;
+            }
+
+            return _upgrades.TryGetDefinition(type, out definition);
+        }
+
+        private Text GetActiveResultStatusText()
+        {
+            if (_defeatPanel != null && _defeatPanel.activeInHierarchy)
+            {
+                return _defeatStatusText;
+            }
+            if (_victoryPanel != null && _victoryPanel.activeInHierarchy)
+            {
+                return _victoryStatusText;
+            }
+
+            return _victoryStatusText != null ? _victoryStatusText : _defeatStatusText;
+        }
+
+        private static string BuildResultUpgradeButtonText(UpgradeType type, UpgradeDefinition definition)
+        {
+            return $"BUY {GetResultUpgradeDisplayName(type, definition).ToUpperInvariant()}";
+        }
+
+        private static string GetResultUpgradeDisplayName(UpgradeType type, UpgradeDefinition definition)
+        {
+            switch (type)
+            {
+                case UpgradeType.StartingTroops:
+                    return "Troops";
+                case UpgradeType.Damage:
+                    return "Damage";
+                case UpgradeType.FireRate:
+                    return "Fire Rate";
+                case UpgradeType.CoinReward:
+                    return "Coins";
+                case UpgradeType.BossDamage:
+                    return "Boss Dmg";
+                case UpgradeType.ObstacleDamage:
+                    return "Obstacle Dmg";
+                case UpgradeType.CriticalChance:
+                    return "Crit Chance";
+                case UpgradeType.CriticalDamage:
+                    return "Crit Dmg";
+                default:
+                    return definition != null && !string.IsNullOrWhiteSpace(definition.displayName) ? definition.displayName : "Upgrade";
+            }
+        }
+
         private static void SetResultChildRect(Transform target, Vector2 anchorPosition, Vector2 size)
         {
             if (target == null || !target.TryGetComponent(out RectTransform rect))
@@ -529,6 +633,47 @@ namespace ArmyRush
             {
                 haptics.Play(HapticCue.Light);
             }
+        }
+
+        private static void PlayResultUpgradeFeedback()
+        {
+            if (ServiceLocator.TryGet(out AudioService audio))
+            {
+                audio.Play(AudioCue.Upgrade);
+            }
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Light);
+            }
+        }
+
+        private static void SetResultButtonText(Button button, string text)
+        {
+            Text label = button.GetComponentInChildren<Text>(true);
+            if (label != null)
+            {
+                label.text = text;
+            }
+        }
+
+        private static void SetResultButtonColor(Button button, Color color)
+        {
+            if (button.targetGraphic != null)
+            {
+                button.targetGraphic.color = color;
+            }
+            if (button.TryGetComponent(out Image image))
+            {
+                image.color = color;
+            }
+
+            ColorBlock colors = button.colors;
+            colors.normalColor = color;
+            colors.highlightedColor = Color.Lerp(color, Color.white, 0.08f);
+            colors.pressedColor = Color.Lerp(color, Color.black, 0.12f);
+            colors.disabledColor = new Color(0.35f, 0.38f, 0.44f, 0.75f);
+            colors.colorMultiplier = 1f;
+            button.colors = colors;
         }
 
         private static Button CreateResultButton(string name, Transform parent, string text, Vector2 anchorPosition, Vector2 size, Color color)

@@ -105,6 +105,34 @@ Last Updated:
 
 Date:
 
+2026-05-31
+
+System:
+
+Result Screen Recommended Upgrade Purchase
+
+Files:
+
+Assets/_Project/Scripts/UI/GameplayUI.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added direct recommended upgrade purchasing to the victory and defeat result panels. The result upgrade shortcut now changes to the highest-priority affordable power purchase, uses a stronger purchase color, buys the upgrade in one tap with upgrade audio/haptics, updates result status text, and falls back to the full upgrade menu when no immediate recommended purchase is available.
+
+Result:
+
+First-session wins and consolation-reward defeats can now convert earned coins into power without sending the player through an extra menu step, making early failure recovery clearer and less punishing.
+
+Follow Up:
+
+Physical iPhone QA should verify the result-panel button labels, purchase feedback, and post-purchase coin/upgrade state. Static validation passed with `git diff --check`; Unity production validation was attempted but remains blocked before project validation by AR-009 licensing protocol failures. Latest retry log: `/tmp/armyrush_unity_result_upgrade_validate.log`.
+
+---
+
+Date:
+
 2026-05-30
 
 System:
@@ -3404,7 +3432,7 @@ AR-008
 
 Status:
 
-Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Early defeat consolation and recommended upgrade guidance now ensure first-session failures still produce visible progression. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, and first-run power fantasy.
+Early combat tuning has been updated after physical iPhone feedback, Levels 1-3 now follow direct `GAMEPLAY_LOOP.md` tutorial/onboarding sequences, Level 4 now follows a direct obstacle-chain teaching ramp, Level 5 now uses a direct tank boss milestone with boss pre-engagement targetability disabled, Levels 6-9 now use direct authored advanced-gate layouts, Level 10 now uses a direct helicopter boss milestone, Levels 11-14 now use direct heavier-combat layouts, Level 15 now uses a direct mech boss milestone, Levels 16-19 now use direct risk/reward mastery layouts, and Level 20 now uses a direct major helicopter boss milestone. Static simulation estimates Levels 1-20 clear their intended first-session combat, obstacle, advanced-gate, heavier-combat, mastery, and boss beats with no upgrades. Early defeat consolation, recommended upgrade guidance, and result-screen quick purchase now ensure first-session failures still produce visible progression. Physical iPhone retest is still required to confirm perceived fire rate, projectile readability, x3/negative-gate readability, obstacle-chain readability, boss telegraph readability, late-level mastery pacing, Level 20 boss pacing, upgrade recommendation clarity, result-screen quick-purchase clarity, and first-run power fantasy.
 
 Issue ID:
 
@@ -3412,7 +3440,7 @@ AR-009
 
 Status:
 
-Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_retention_validate.log`. Re-run production validation once local Unity licensing is healthy.
+Unity batch validation is temporarily blocked on this workstation by Unity Licensing Client protocol handshake failures before `ArmyRushProjectBuilder.ValidateProductionFoundation` executes. Latest retry log: `/tmp/armyrush_unity_result_upgrade_validate.log`. Re-run production validation once local Unity licensing is healthy.
 
 ---
 
