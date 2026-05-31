@@ -68,6 +68,7 @@ public static class ArmyRushProjectBuilder
         ValidateLevelDataAssets(failures);
         ValidateUpgradeDefinitions(failures);
         ValidateEconomyProgression(failures);
+        ValidateSaveDataNormalization(failures);
         ValidateCombatTuning(failures);
         ValidateCameraTuning(failures);
         ValidateEarlyCombatOnboarding(failures);
@@ -3032,6 +3033,54 @@ public static class ArmyRushProjectBuilder
         if (earlyAffordableRuns < Mathf.Min(10, levels.Length))
         {
             failures.Add("Early economy simulation failed the one-upgrade-per-run target.");
+        }
+    }
+
+    private static void ValidateSaveDataNormalization(List<string> failures)
+    {
+        PlayerSaveData data = JsonUtility.FromJson<PlayerSaveData>(
+            "{\"saveVersion\":0,\"currentLevelIndex\":-4,\"coins\":-100,\"gems\":-5,\"startingTroopsLevel\":-1,\"damageLevel\":-2,\"fireRateLevel\":-3,\"coinRewardLevel\":-4,\"bossDamageLevel\":-5,\"obstacleDamageLevel\":-6,\"criticalChanceLevel\":-7,\"criticalDamageLevel\":-8,\"musicVolume\":2.5,\"sfxVolume\":-0.5}");
+        if (data == null)
+        {
+            failures.Add("PlayerSaveData JSON migration smoke could not deserialize.");
+            return;
+        }
+
+        bool changed = data.Normalize();
+        if (!changed)
+        {
+            failures.Add("PlayerSaveData normalization did not detect invalid migrated values.");
+        }
+        if (data.saveVersion < PlayerSaveData.CurrentSaveVersion)
+        {
+            failures.Add("PlayerSaveData normalization did not raise old save version.");
+        }
+        if (data.currentLevelIndex != 1 || data.coins != 0 || data.gems != 0)
+        {
+            failures.Add("PlayerSaveData normalization did not clamp level and currency defaults.");
+        }
+        if (data.GetUpgradeLevel(UpgradeType.StartingTroops) != 0
+            || data.GetUpgradeLevel(UpgradeType.Damage) != 0
+            || data.GetUpgradeLevel(UpgradeType.FireRate) != 0
+            || data.GetUpgradeLevel(UpgradeType.CoinReward) != 0
+            || data.GetUpgradeLevel(UpgradeType.BossDamage) != 0
+            || data.GetUpgradeLevel(UpgradeType.ObstacleDamage) != 0
+            || data.GetUpgradeLevel(UpgradeType.CriticalChance) != 0
+            || data.GetUpgradeLevel(UpgradeType.CriticalDamage) != 0)
+        {
+            failures.Add("PlayerSaveData normalization did not clamp upgrade levels.");
+        }
+        if (!Mathf.Approximately(data.musicVolume, 1f) || !Mathf.Approximately(data.sfxVolume, 0f))
+        {
+            failures.Add("PlayerSaveData normalization did not clamp volume settings.");
+        }
+        if (PlayerSaveData.ClampCurrency((long)int.MaxValue + 50L) != int.MaxValue)
+        {
+            failures.Add("PlayerSaveData currency clamp does not protect against overflow.");
+        }
+        if (PlayerSaveData.ClampCurrency(-25L) != 0)
+        {
+            failures.Add("PlayerSaveData currency clamp does not protect against negative currency.");
         }
     }
 

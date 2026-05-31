@@ -24,7 +24,7 @@ namespace ArmyRush
                 return;
             }
 
-            _saveService.Data.coins += amount;
+            _saveService.Data.coins = PlayerSaveData.ClampCurrency((long)_saveService.Data.coins + amount);
             _saveService.Save();
             CoinsChanged?.Invoke(_saveService.Data.coins);
         }
@@ -41,7 +41,7 @@ namespace ArmyRush
                 return false;
             }
 
-            _saveService.Data.coins -= amount;
+            _saveService.Data.coins = PlayerSaveData.ClampCurrency((long)_saveService.Data.coins - amount);
             _saveService.Save();
             CoinsChanged?.Invoke(_saveService.Data.coins);
             return true;
@@ -54,7 +54,7 @@ namespace ArmyRush
                 return;
             }
 
-            _saveService.Data.gems += amount;
+            _saveService.Data.gems = PlayerSaveData.ClampCurrency((long)_saveService.Data.gems + amount);
             _saveService.Save();
             GemsChanged?.Invoke(_saveService.Data.gems);
         }

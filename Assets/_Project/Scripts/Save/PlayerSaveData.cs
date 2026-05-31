@@ -6,6 +6,9 @@ namespace ArmyRush
     [Serializable]
     public sealed class PlayerSaveData
     {
+        public const int CurrentSaveVersion = 1;
+
+        public int saveVersion = CurrentSaveVersion;
         public int currentLevelIndex = 1;
         public int coins;
         public int gems;
@@ -21,6 +24,36 @@ namespace ArmyRush
         public float musicVolume = 1f;
         public float sfxVolume = 1f;
         public bool hapticsEnabled = true;
+
+        public bool Normalize()
+        {
+            bool changed = false;
+            changed |= SetIfChanged(ref saveVersion, Mathf.Max(1, saveVersion));
+            changed |= SetIfChanged(ref currentLevelIndex, Mathf.Max(1, currentLevelIndex));
+            changed |= SetIfChanged(ref coins, ClampCurrency(coins));
+            changed |= SetIfChanged(ref gems, ClampCurrency(gems));
+            changed |= SetIfChanged(ref startingTroopsLevel, Mathf.Max(0, startingTroopsLevel));
+            changed |= SetIfChanged(ref damageLevel, Mathf.Max(0, damageLevel));
+            changed |= SetIfChanged(ref fireRateLevel, Mathf.Max(0, fireRateLevel));
+            changed |= SetIfChanged(ref coinRewardLevel, Mathf.Max(0, coinRewardLevel));
+            changed |= SetIfChanged(ref bossDamageLevel, Mathf.Max(0, bossDamageLevel));
+            changed |= SetIfChanged(ref obstacleDamageLevel, Mathf.Max(0, obstacleDamageLevel));
+            changed |= SetIfChanged(ref criticalChanceLevel, Mathf.Max(0, criticalChanceLevel));
+            changed |= SetIfChanged(ref criticalDamageLevel, Mathf.Max(0, criticalDamageLevel));
+            changed |= SetIfChanged(ref musicVolume, ClampVolume(musicVolume));
+            changed |= SetIfChanged(ref sfxVolume, ClampVolume(sfxVolume));
+            return changed;
+        }
+
+        public static int ClampCurrency(long value)
+        {
+            if (value <= 0)
+            {
+                return 0;
+            }
+
+            return value >= int.MaxValue ? int.MaxValue : (int)value;
+        }
 
         public int GetUpgradeLevel(UpgradeType type)
         {
@@ -77,6 +110,38 @@ namespace ArmyRush
                     criticalDamageLevel = level;
                     break;
             }
+        }
+
+        private static float ClampVolume(float value)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value))
+            {
+                return 1f;
+            }
+
+            return Mathf.Clamp01(value);
+        }
+
+        private static bool SetIfChanged(ref int current, int normalized)
+        {
+            if (current == normalized)
+            {
+                return false;
+            }
+
+            current = normalized;
+            return true;
+        }
+
+        private static bool SetIfChanged(ref float current, float normalized)
+        {
+            if (Mathf.Approximately(current, normalized))
+            {
+                return false;
+            }
+
+            current = normalized;
+            return true;
         }
     }
 }

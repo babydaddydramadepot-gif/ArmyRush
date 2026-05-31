@@ -109,6 +109,38 @@ Date:
 
 System:
 
+Save Normalization and Migration Hardening
+
+Files:
+
+Assets/_Project/Scripts/Save/PlayerSaveData.cs
+Assets/_Project/Scripts/Save/SaveService.cs
+Assets/_Project/Scripts/Economy/EconomyService.cs
+Assets/_Project/Scripts/Progression/ProgressionService.cs
+Assets/_Project/Editor/ArmyRushProjectBuilder.cs
+Docs/TASKS.md
+Docs/DEVLOG.md
+
+Summary:
+
+Added save-version metadata and a normalization pass for loaded or migrated save data. Save loading now rewrites missing, corrupt, or normalized saves; save writes clamp invalid values before persistence; economy currency gains/spends use overflow-safe clamps; and level completion avoids integer overflow. Production validation now includes a JSON migration smoke test for negative progression, currency, upgrade levels, out-of-range volumes, old save versions, and currency overflow boundaries.
+
+Result:
+
+`git diff --check` passed, and Unity production validation passed with log `/tmp/armyrush_unity_save_normalization_validate.log`. The validator confirms invalid migrated save data normalizes back to safe defaults and currency clamps protect against negative and overflow values.
+
+Follow Up:
+
+Physical device QA should still verify persistence across app relaunches after completing, failing, buying upgrades, and changing settings.
+
+---
+
+Date:
+
+2026-05-31
+
+System:
+
 Production Debug-Control Audit
 
 Files:
@@ -3986,7 +4018,7 @@ AR-009
 
 Status:
 
-Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the production debug-control audit pass. Latest successful validation log: `/tmp/armyrush_unity_debug_input_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
+Unity batch validation has had intermittent workstation licensing protocol failures in recent passes, but the latest `ArmyRushProjectBuilder.ValidateProductionFoundation` run completed successfully after the save normalization hardening pass. Latest successful validation log: `/tmp/armyrush_unity_save_normalization_validate.log`. Latest iOS simulator export/build/install/launch smoke still passed after the multi-muzzle feedback pass.
 
 ---
 

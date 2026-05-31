@@ -1054,7 +1054,7 @@ Acceptance Criteria:
 
 ## 5.4 Save System
 
-Status: Functional Pass Implemented; Migration QA Pending
+Status: Functional Pass Implemented with Save Normalization and Migration Validation; Device Persistence QA Pending
 Priority: Critical
 
 Tasks:
@@ -1068,6 +1068,9 @@ Save:
 - Settings
 - Unlocked cosmetics future data
 - Tutorial completion
+- [x] Add save-version metadata and normalization for migrated or invalid save values.
+- [x] Clamp progression, upgrade, currency, and volume values before persistence.
+- [x] Add production validation for save-data normalization and currency overflow guards.
 
 Acceptance Criteria:
 
@@ -1629,7 +1632,7 @@ Tasks:
 - Fix animation errors.
 - [x] Fix broken prefabs covered by the production validation pass.
 - Fix UI overlap.
-- Fix save/load bugs.
+- [x] Fix save/load bugs covered by save normalization, corrupt-save rewrite, and currency overflow guards.
 - Fix level loading bugs.
 
 Acceptance Criteria:

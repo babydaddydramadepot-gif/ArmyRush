@@ -13,7 +13,10 @@ namespace ArmyRush
 
         public void CompleteCurrentLevel()
         {
-            _saveService.Data.currentLevelIndex++;
+            if (_saveService.Data.currentLevelIndex < int.MaxValue)
+            {
+                _saveService.Data.currentLevelIndex++;
+            }
             _saveService.Data.tutorialCompleted = true;
             _saveService.Save();
         }

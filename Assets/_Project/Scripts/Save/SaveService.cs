@@ -11,21 +11,30 @@ namespace ArmyRush
         public void Load()
         {
             string json = PlayerPrefs.GetString(SaveKey, string.Empty);
+            bool shouldSave = false;
             if (string.IsNullOrWhiteSpace(json))
             {
                 Data = new PlayerSaveData();
-                Save();
-                return;
+                shouldSave = true;
+            }
+            else
+            {
+                try
+                {
+                    Data = JsonUtility.FromJson<PlayerSaveData>(json) ?? new PlayerSaveData();
+                }
+                catch
+                {
+                    Debug.LogWarning("Save data was unreadable. Creating a fresh save.");
+                    Data = new PlayerSaveData();
+                    shouldSave = true;
+                }
             }
 
-            try
+            shouldSave |= Data.Normalize();
+            if (shouldSave)
             {
-                Data = JsonUtility.FromJson<PlayerSaveData>(json) ?? new PlayerSaveData();
-            }
-            catch
-            {
-                Debug.LogWarning("Save data was unreadable. Creating a fresh save.");
-                Data = new PlayerSaveData();
+                Save();
             }
         }
 
@@ -36,6 +45,7 @@ namespace ArmyRush
                 Data = new PlayerSaveData();
             }
 
+            Data.Normalize();
             PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(Data));
             PlayerPrefs.Save();
         }
