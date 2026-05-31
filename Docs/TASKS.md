@@ -216,6 +216,7 @@ Implementation Pass 1 Result:
 - Hardened production validation so nested prefab/scene missing scripts, missing serialized object references, and ScriptableObject broken asset references are checked across the ArmyRush production content set.
 - Hardened level rebuild state by clearing transient pooled combat/VFX objects and the static target registry on level rebuild, with production validation for repeated rebuild target consistency.
 - Added a bounded first-session `POWER START` combat boost for Levels 1-3, tightened perceived fire cadence/targeting/projectile response, strengthened opening and post-gate volley feedback, increased early rally/contact mercy margins, and refreshed production validation after physical iPhone balance feedback.
+- Strengthened the first-session `POWER START` onboarding window for physical iPhone feel with 35% damage/fire-rate boosts, 28m targeting, 48-speed projectiles, denser opening/power-spike volleys, boost-duration-aware HUD fill, and validation that Levels 1-3 clear their first enemy before contact.
 - Added compact victory/defeat reward breakdown copy so result panels explain base rewards, combat loot, bonus-run coins, survivor value, boss bonuses, multipliers, and consolation floors without adding extra taps.
 - Ran a post-result-reward-breakdown iOS simulator validation pass: Unity simulator export, signing-independent Xcode simulator build, simulator install, simulator launch, portrait screenshot capture at `/tmp/armyrush_reward_breakdown_smoke.png`, and targeted managed-runtime exception/fatal scan all passed.
 - Added a main-menu boss milestone beacon that shows `BOSS IN N LEVELS`, `BOSS NEXT`, or `BOSS LEVEL` from authored boss level data with an endless-mode fallback, plus production validation for layout, text fit, and nonblocking raycasts.
@@ -634,7 +635,7 @@ Acceptance Criteria:
 
 ## 1.10 Auto Shooting System
 
-Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, First-Session POWER START Boost, Faster Physical Cadence, Multi-Muzzle Volley Feedback, Opening Salvo Punch, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
+Status: Functional Pass Implemented with Army-Scaled DPS, Threat-First Targeting, Strengthened First-Session POWER START Boost, Faster Physical Cadence, Multi-Muzzle Volley Feedback, Opening Salvo Punch, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Projectile Trails, and Impact Feedback; Physical Device Retest Pending
 Priority: High
 
 Tasks:
@@ -649,6 +650,7 @@ Tasks:
 - [x] Add data-driven post-gate power-spike volleys so meaningful army gains immediately strengthen fire on targets that were already locked before the gate.
 - [x] Add data-driven immediate hit-confirmation damage so target health responds before projectile travel can make physical-device combat feel late.
 - [x] Add bounded visible first-session `POWER START` damage/fire-rate boost for Levels 1-3 so the tutorial opener feels empowering on physical iPhone.
+- [x] Strengthen the physical iPhone onboarding overdrive to 35% damage/fire-rate boosts, 28m target range, 48-speed projectiles, denser opening/power-spike volleys, and stricter first-enemy clear-before-contact validation.
 - [x] Tighten physical-device perceived combat cadence with faster baseline volleys, longer targeting, faster projectiles, stronger immediate confirmation, and denser visual bursts.
 - [x] Add bounded close-range urgency assist for onboarding combat targets so imminent enemy/obstacle contact feels responsive on physical devices.
 - [x] Add data-driven multi-muzzle volley feedback so aggregate crowd shooting reads as several soldiers firing instead of one tiny flash.
@@ -1568,7 +1570,7 @@ Acceptance Criteria:
 
 ## 10.1 Gameplay QA
 
-Status: Automated Level Data QA, First-Enemy Target-Lock Timeline Validation, and Levels 1-20 First-Session/Mastery Simulation Baseline Implemented; Manual Playthrough Pending
+Status: Automated Level Data QA, Strict First-Enemy Target-Lock Timeline Validation, and Levels 1-20 First-Session/Mastery Simulation Baseline Implemented; Manual Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1576,6 +1578,7 @@ Tasks:
 - [x] Add automated authored level data validation.
 - [x] Add static early-combat survivability estimate for Levels 1-3.
 - [x] Replace the optimistic Levels 1-3 first-enemy estimate with a target-lock timeline that accounts for pre-gate shots, best-gate timing, opening salvos, post-gate power-spike volleys, immediate hit confirmation, and projectile travel before contact.
+- [x] Harden the Levels 1-3 first-enemy validator so the opening enemy must clear before physical contact, not merely leave enough survivors after collision.
 - [x] Add production validation for the exact Levels 1-10 tutorial/teaching/advanced-gate/boss milestone sequences.
 - [x] Add static no-upgrade balance checks for the direct Levels 6-10 advanced-gate and first true boss ramp.
 - [x] Add production validation for the exact direct Levels 11-14 heavier-combat ramp and Level 15 mech boss milestone.
@@ -1600,7 +1603,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, First-Session POWER START Boost, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Strengthened First-Session POWER START Boost, Multi-Muzzle Volley Feedback, Target Priority, Opening Salvo Feel, Post-Gate Power-Spike Volleys, Immediate Hit Confirmation, Close-Range Urgency Assist, Early Balance, Contact Mercy, Rally Assist, Active Boost Feedback, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1628,6 +1631,7 @@ Tasks:
 - [x] Add post-gate power-spike volley feedback so early enemies already targeted before the first gate still feel pressured by the new crowd size immediately after gate collection.
 - [x] Add immediate volley hit-confirmation damage so projectile travel and contact timing cannot make responsive combat appear delayed on physical iPhone.
 - [x] Add visible first-session `POWER START` damage/fire-rate boost for Levels 1-3 and retune baseline firing/targeting/projectile feedback after physical iPhone balance feedback that the first encounter still felt too punishing.
+- [x] Strengthen the bounded first-session `POWER START` window and make the active boost HUD fill use the actual boost duration so the physical iPhone onboarding countdown remains readable.
 - [x] Add bounded close-range combat urgency assist so Levels 1-5 apply a small fire-rate/damage boost only when non-bonus targets are near contact.
 - [x] Extend first-session/static balance fixes through the Levels 16-20 risk/reward mastery ramp and Level 20 major helicopter boss milestone.
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.

@@ -22,32 +22,32 @@ MonoBehaviour:
   soldierSpacingX: 0.48
   soldierSpacingZ: 0.46
   maxFormationColumns: 13
-  targetRange: 26
+  targetRange: 28
   targetLateralRange: 3.8
-  projectileSpeed: 42
+  projectileSpeed: 48
   projectileLifetime: 1.6
   baseFireInterval: 0.24
   minFireInterval: 0.08
   baseDamage: 10
-  projectileVisualBurst: 7
-  muzzleFlashVisualBurst: 5
-  openingVolleyDamageMultiplier: 1.5
-  openingVolleyExtraProjectiles: 3
+  projectileVisualBurst: 8
+  muzzleFlashVisualBurst: 6
+  openingVolleyDamageMultiplier: 1.6
+  openingVolleyExtraProjectiles: 4
   openingVolleyCooldown: 0.45
   powerSpikeVolleyMinimumGain: 5
-  powerSpikeVolleyDamageMultiplier: 1.35
-  powerSpikeVolleyExtraProjectiles: 2
+  powerSpikeVolleyDamageMultiplier: 1.45
+  powerSpikeVolleyExtraProjectiles: 3
   powerSpikeVolleyCooldown: 0.25
-  volleyImmediateDamageFraction: 0.38
-  openingVolleyImmediateDamageFraction: 0.58
+  volleyImmediateDamageFraction: 0.42
+  openingVolleyImmediateDamageFraction: 0.64
   onboardingCombatBoostLevelLimit: 3
-  onboardingCombatBoostDuration: 22
-  onboardingCombatDamageMultiplier: 1.25
-  onboardingCombatFireRateMultiplier: 1.25
+  onboardingCombatBoostDuration: 24
+  onboardingCombatDamageMultiplier: 1.35
+  onboardingCombatFireRateMultiplier: 1.35
   earlyCloseRangeAssistLevelLimit: 5
-  closeRangeAssistDistance: 9.5
-  closeRangeFireRateMultiplier: 1.45
-  closeRangeDamageMultiplier: 1.2
+  closeRangeAssistDistance: 10
+  closeRangeFireRateMultiplier: 1.55
+  closeRangeDamageMultiplier: 1.25
   runBoostGateDuration: 10
   maxRunBoostGateMultiplier: 1.75
   soldierCoinValue: 2
