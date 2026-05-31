@@ -100,6 +100,11 @@ namespace ArmyRush
                 crowd.Remove(remainingEnemies);
                 _damageable.ApplyDamage(_damageable.Health);
             }
+            else if (_runManager != null && _runManager.TryApplyEarlyContactMercy(crowd, remainingEnemies, transform.position))
+            {
+                PlayAttackFeedback(Mathf.Min(remainingEnemies, _lastDisplayedUnitCount), true);
+                _damageable.ApplyDamage(_damageable.Health);
+            }
             else
             {
                 PlayAttackFeedback(crowd.Count, true);

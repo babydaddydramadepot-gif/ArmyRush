@@ -594,7 +594,7 @@ Acceptance Criteria:
 
 ## 1.9 Crowd Combat Resolution
 
-Status: Functional Pass Implemented with Animated Unit Removal; QA Pending
+Status: Functional Pass Implemented with Animated Unit Removal and Early Contact Mercy; QA Pending
 Priority: Critical
 
 Tasks:
@@ -605,6 +605,7 @@ Tasks:
 - Continue level if player survives.
 - Trigger failure if player reaches zero.
 - Add VFX and audio.
+- [x] Add bounded early contact mercy so near-win enemy collisions in onboarding levels preserve momentum instead of causing instant wipes.
 
 Acceptance Criteria:
 
@@ -1557,7 +1558,7 @@ Acceptance Criteria:
 
 ## 10.2 Bug Fix Pass
 
-Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Early Balance, Rally Assist, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
+Status: In Progress; Physical iPhone Input, World Text Scaling, Combat Cadence/Readability, Opening Salvo Feel, Early Balance, Contact Mercy, Rally Assist, Boss Engagement, and Levels 1-20 Ramp Fixes Implemented; Full Device Playthrough Pending
 Priority: Critical
 
 Tasks:
@@ -1585,6 +1586,7 @@ Tasks:
 - [x] Add early defeat consolation rewards and recommended upgrade guidance so first-session failures still become power progression instead of dead ends.
 - [x] Add guarded early gate guidance markers for Levels 1-3 to reduce first-session wrong-route confusion on physical-device playthroughs.
 - [x] Add data-driven early rally assist so low-count first-session survivors can recover momentum without making defeat impossible.
+- [x] Add one-use early contact mercy for near-win onboarding enemy collisions so projectile travel/contact timing cannot instantly erase a close clear.
 - Fix console errors.
 - Fix missing references.
 - Fix animation errors.

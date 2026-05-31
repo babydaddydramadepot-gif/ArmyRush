@@ -45,6 +45,11 @@ namespace ArmyRush
         public int earlyRallyAssistTargetSoldiers = 12;
         public int earlyRallyAssistMaxUsesPerRun = 2;
         public float earlyRallyAssistCooldown = 4f;
+        public int earlyContactMercyLevelLimit = 5;
+        public int earlyContactMercyMinimumSoldiers = 4;
+        public int earlyContactMercyEnemyBuffer = 6;
+        public int earlyContactMercySurvivors = 3;
+        public int earlyContactMercyMaxUsesPerRun = 1;
 
         [Header("Camera")]
         public Vector3 cameraOffset = new Vector3(0f, 10f, -10.5f);

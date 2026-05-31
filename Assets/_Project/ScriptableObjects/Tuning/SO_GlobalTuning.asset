@@ -45,6 +45,11 @@ MonoBehaviour:
   earlyRallyAssistTargetSoldiers: 12
   earlyRallyAssistMaxUsesPerRun: 2
   earlyRallyAssistCooldown: 4
+  earlyContactMercyLevelLimit: 5
+  earlyContactMercyMinimumSoldiers: 4
+  earlyContactMercyEnemyBuffer: 6
+  earlyContactMercySurvivors: 3
+  earlyContactMercyMaxUsesPerRun: 1
   cameraOffset: {x: 0, y: 10, z: -10.5}
   cameraEuler: {x: 42, y: 0, z: 0}
   cameraSmooth: 9

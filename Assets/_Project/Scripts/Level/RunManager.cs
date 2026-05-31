@@ -17,6 +17,7 @@ namespace ArmyRush
         private ProgressionService _progression;
         private UpgradeService _upgrades;
         private int _rallyAssistUses;
+        private int _contactMercyUses;
         private float _nextRallyAssistTime;
 
         public event Action<RunState> StateChanged;
@@ -61,6 +62,7 @@ namespace ArmyRush
             }
 
             _rallyAssistUses = 0;
+            _contactMercyUses = 0;
             _nextRallyAssistTime = 0f;
             _runCoins = 0;
             _bonusCoins = 0;
@@ -208,6 +210,55 @@ namespace ArmyRush
             {
                 haptics.Play(HapticCue.Failure);
             }
+        }
+
+        public bool TryApplyEarlyContactMercy(CrowdManager crowd, int remainingEnemies, Vector3 worldPosition)
+        {
+            if (_tuning == null || crowd == null || remainingEnemies <= 0)
+            {
+                return false;
+            }
+
+            if (State != RunState.Running && State != RunState.CombatPaused)
+            {
+                return false;
+            }
+
+            LevelData currentLevel = _levelManager != null ? _levelManager.CurrentLevel : null;
+            if (currentLevel == null || currentLevel.levelIndex > Mathf.Max(0, _tuning.earlyContactMercyLevelLimit))
+            {
+                return false;
+            }
+
+            int maxUses = Mathf.Max(0, _tuning.earlyContactMercyMaxUsesPerRun);
+            if (maxUses == 0 || _contactMercyUses >= maxUses)
+            {
+                return false;
+            }
+
+            int currentCount = crowd.Count;
+            int minimumSoldiers = Mathf.Max(1, _tuning.earlyContactMercyMinimumSoldiers);
+            int enemyBuffer = Mathf.Max(0, _tuning.earlyContactMercyEnemyBuffer);
+            if (currentCount < minimumSoldiers || remainingEnemies <= currentCount || remainingEnemies - currentCount > enemyBuffer)
+            {
+                return false;
+            }
+
+            int survivors = Mathf.Clamp(_tuning.earlyContactMercySurvivors, 1, currentCount);
+            int loss = currentCount - survivors;
+            _contactMercyUses++;
+            if (loss > 0)
+            {
+                crowd.Remove(loss);
+            }
+
+            VfxManager.SpawnFloatingText("LAST STAND", worldPosition + Vector3.up * 1.2f, new Color(0.28f, 1f, 0.68f));
+            if (ServiceLocator.TryGet(out HapticsService haptics))
+            {
+                haptics.Play(HapticCue.Medium);
+            }
+
+            return true;
         }
 
         private void OnCrowdCountChanged(int count)

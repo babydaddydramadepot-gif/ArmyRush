@@ -379,6 +379,11 @@ public static class ArmyRushProjectBuilder
         tuning.earlyRallyAssistTargetSoldiers = 12;
         tuning.earlyRallyAssistMaxUsesPerRun = 2;
         tuning.earlyRallyAssistCooldown = 4f;
+        tuning.earlyContactMercyLevelLimit = 5;
+        tuning.earlyContactMercyMinimumSoldiers = 4;
+        tuning.earlyContactMercyEnemyBuffer = 6;
+        tuning.earlyContactMercySurvivors = 3;
+        tuning.earlyContactMercyMaxUsesPerRun = 1;
         tuning.cameraShakeGlobalScale = 0.7f;
         tuning.cameraShakeMaxAmplitude = 0.16f;
         tuning.cameraShakeFrequency = 26f;
@@ -3159,6 +3164,26 @@ public static class ArmyRushProjectBuilder
         if (tuning.earlyRallyAssistCooldown < 1f || tuning.earlyRallyAssistCooldown > 8f)
         {
             failures.Add("Early rally assist cooldown should prevent rapid repeated top-ups while preserving onboarding forgiveness.");
+        }
+        if (tuning.earlyContactMercyLevelLimit < 3 || tuning.earlyContactMercyLevelLimit > tuning.earlyRallyAssistLevelLimit)
+        {
+            failures.Add("Early contact mercy should cover onboarding contact mistakes but not outlast rally-assist levels.");
+        }
+        if (tuning.earlyContactMercyMinimumSoldiers < 2 || tuning.earlyContactMercyMinimumSoldiers > tuning.earlyRallyAssistMinimumSoldiers)
+        {
+            failures.Add("Early contact mercy minimum soldiers should require a real surviving squad before saving a near-win.");
+        }
+        if (tuning.earlyContactMercyEnemyBuffer < 2 || tuning.earlyContactMercyEnemyBuffer > 8)
+        {
+            failures.Add("Early contact mercy enemy buffer should catch near-wins without forgiving hopeless contacts.");
+        }
+        if (tuning.earlyContactMercySurvivors < 1 || tuning.earlyContactMercySurvivors >= tuning.earlyContactMercyMinimumSoldiers)
+        {
+            failures.Add("Early contact mercy survivors should leave a tiny squad that can flow into rally assist.");
+        }
+        if (tuning.earlyContactMercyMaxUsesPerRun < 1 || tuning.earlyContactMercyMaxUsesPerRun > 2)
+        {
+            failures.Add("Early contact mercy uses should be limited so defeat remains possible.");
         }
     }
 
